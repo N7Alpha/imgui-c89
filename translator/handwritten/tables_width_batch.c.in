@@ -1,0 +1,88 @@
+/* Handwritten C89 table width and auto-fit state. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_set_column_width */
+ImGuiTable *table;
+ImGuiTableColumn *column;
+ImGuiTableColumn *neighbor;
+float min_width;
+float max_width;
+float neighbor_width;
+table = imgui_c89_ctx->CurrentTable;
+column = &table->Columns.Data[column_n];
+min_width = table->MinColumnWidth;
+max_width = column->WidthMax > min_width ? column->WidthMax : min_width;
+if (width < min_width)
+    width = min_width;
+else if (width > max_width)
+    width = max_width;
+if (width == column->WidthGiven || width == column->WidthRequest)
+    return;
+neighbor = column->NextEnabledColumn == -1 ? 0 :
+    &table->Columns.Data[column->NextEnabledColumn];
+if ((column->Flags & @WIDTH_FIXED@) &&
+    (!neighbor || table->LeftMostStretchedColumn == -1 ||
+     table->Columns.Data[table->LeftMostStretchedColumn].DisplayOrder >= column->DisplayOrder))
+{
+    column->WidthRequest = width;
+    table->IsSettingsDirty = 1;
+    return;
+}
+if (!neighbor && column->PrevEnabledColumn != -1)
+    neighbor = &table->Columns.Data[column->PrevEnabledColumn];
+if (!neighbor)
+    return;
+neighbor_width = neighbor->WidthRequest - (width - column->WidthRequest);
+if (neighbor_width < min_width)
+    neighbor_width = min_width;
+width = column->WidthRequest + neighbor->WidthRequest - neighbor_width;
+column->WidthRequest = width;
+neighbor->WidthRequest = neighbor_width;
+if ((column->Flags | neighbor->Flags) & @WIDTH_STRETCH@)
+    @UPDATE_WEIGHTS@(table);
+table->IsSettingsDirty = 1;
+/* IMGUI_C89_FUNCTION_END table_set_column_width */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_set_column_width_auto_single */
+ImGuiTableColumn *column;
+column = &table->Columns.Data[column_n];
+if (!column->IsEnabled)
+    return;
+column->CannotSkipItemsQueue = 1;
+table->AutoFitSingleColumn = (ImGuiTableColumnIdx)column_n;
+/* IMGUI_C89_FUNCTION_END table_set_column_width_auto_single */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_set_column_width_auto_all */
+ImGuiTableColumn *column;
+int n;
+for (n = 0; n < table->ColumnsCount; n++)
+{
+    column = &table->Columns.Data[n];
+    if (!column->IsEnabled && !(column->Flags & @WIDTH_STRETCH@))
+        continue;
+    column->CannotSkipItemsQueue = 1;
+    column->AutoFitQueue = 2;
+}
+/* IMGUI_C89_FUNCTION_END table_set_column_width_auto_all */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_update_columns_weight_from_width */
+ImGuiTableColumn *column;
+float visible_weight;
+float visible_width;
+int n;
+visible_weight = visible_width = 0.0f;
+for (n = 0; n < table->ColumnsCount; n++)
+{
+    column = &table->Columns.Data[n];
+    if (column->IsEnabled && (column->Flags & @WIDTH_STRETCH@))
+    {
+        visible_weight += column->StretchWeight;
+        visible_width += column->WidthRequest;
+    }
+}
+for (n = 0; n < table->ColumnsCount; n++)
+{
+    column = &table->Columns.Data[n];
+    if (column->IsEnabled && (column->Flags & @WIDTH_STRETCH@))
+        column->StretchWeight = column->WidthRequest / visible_width * visible_weight;
+}
+/* IMGUI_C89_FUNCTION_END table_update_columns_weight_from_width */

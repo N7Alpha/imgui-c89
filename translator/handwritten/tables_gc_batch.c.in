@@ -1,0 +1,65 @@
+/* Handwritten C89 table garbage-collection cluster. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_remove */
+int index;
+index = @POOL_INDEX@(&imgui_c89_ctx->Tables, table);
+@POOL_REMOVE@(imgui_c89_ctx, &imgui_c89_ctx->Tables, table->ID, table);
+imgui_c89_ctx->TablesLastTimeActive.Data[index] = -1.0f;
+/* IMGUI_C89_FUNCTION_END table_remove */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_gc_compact_table */
+int n;
+table->SortSpecs.Specs = 0;
+@SORT_CLEAR@(imgui_c89_ctx, &table->SortSpecsMulti);
+table->IsSortSpecsDirty = 1;
+@TEXT_CLEAR@(imgui_c89_ctx, &table->ColumnsNames);
+table->MemoryCompacted = 1;
+for (n = 0; n < table->ColumnsCount; n++)
+    @COLUMN_AT@(&table->Columns, n)->NameOffset = -1;
+imgui_c89_ctx->TablesLastTimeActive.Data[@POOL_INDEX@(&imgui_c89_ctx->Tables, table)] = -1.0f;
+/* IMGUI_C89_FUNCTION_END table_gc_compact_table */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_gc_compact_temp_data */
+@HEADER_CLEAR@(imgui_c89_ctx, &temp_data->AngledHeadersRequests);
+@SPLITTER_CLEAR@(imgui_c89_ctx, &temp_data->DrawSplitter);
+temp_data->LastTimeActive = -1.0f;
+/* IMGUI_C89_FUNCTION_END table_gc_compact_temp_data */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_gc_compact_settings */
+ImChunkStream_ImGuiTableSettings compact;
+ImGuiTableSettings *settings;
+ImGuiTable *table;
+size_t bytes;
+int required;
+int table_n;
+required = 0;
+settings = @CHUNK_BEGIN@(&imgui_c89_ctx->SettingsTables);
+while (settings)
+{
+    if (settings->ID)
+        required += (int)@CALC_SIZE@(settings->ColumnsCount);
+    settings = @CHUNK_NEXT@(&imgui_c89_ctx->SettingsTables, settings);
+}
+if (required == imgui_c89_ctx->SettingsTables.Buf.Size)
+    return;
+memset(&compact, 0, sizeof(compact));
+@BYTE_RESERVE@(imgui_c89_ctx, &compact.Buf, required);
+settings = @CHUNK_BEGIN@(&imgui_c89_ctx->SettingsTables);
+while (settings)
+{
+    if (settings->ID)
+    {
+        bytes = @CALC_SIZE@(settings->ColumnsCount);
+        memcpy(@CHUNK_ALLOC@(imgui_c89_ctx, &compact, bytes), settings, bytes);
+    }
+    settings = @CHUNK_NEXT@(&imgui_c89_ctx->SettingsTables, settings);
+}
+@CHUNK_SWAP@(&imgui_c89_ctx->SettingsTables, &compact);
+for (table_n = 0; table_n < @POOL_MAP_SIZE@(&imgui_c89_ctx->Tables); table_n++)
+{
+    table = @POOL_TRY_GET@(&imgui_c89_ctx->Tables, table_n);
+    if (table)
+        table->SettingsOffset = -1;
+}
+@BYTE_DESTROY@(imgui_c89_ctx, &compact.Buf);
+/* IMGUI_C89_FUNCTION_END table_gc_compact_settings */

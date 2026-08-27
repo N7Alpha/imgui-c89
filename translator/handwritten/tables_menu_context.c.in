@@ -1,0 +1,174 @@
+/* Table visibility/reorder menu behavior, maintained as direct C89. */
+
+/* IMGUI_C89_FUNCTION_BEGIN menu_item_for_column_reorder */
+ImGuiWindow *window;
+ImGuiMenuColumns *offsets;
+ImVec2 size;
+ImVec2 pos;
+ImGuiID id;
+ImGuiSelectableFlags selectable_flags;
+unsigned char moved;
+unsigned char ret;
+float checkmark_w;
+float min_w;
+float stretch_w;
+window = imgui_c89_ctx->CurrentWindow;
+size = @CALC_TEXT_SIZE@(imgui_c89_ctx, label, 0, 1, -1.0f);
+offsets = &window->DC.MenuColumns;
+checkmark_w = @TRUNC@(imgui_c89_ctx->FontSize * 1.20f);
+min_w = @DECL_COLUMNS@(offsets, 0.0f, size.x, 0.0f, checkmark_w);
+stretch_w = @MAX@(0.0f,
+    @CONTENT_AVAIL@(imgui_c89_ctx).x - min_w);
+pos.x = window->DC.CursorPos.x;
+pos.y = window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset;
+id = @GET_ID@(imgui_c89_ctx, label);
+selectable_flags = @SELECT_ON_RELEASE@ | @SPAN_AVAIL_WIDTH@;
+if (imgui_c89_ctx->ActiveId == id)
+    selectable_flags |= @HIGHLIGHT@;
+moved = imgui_c89_ctx->ActiveId == id &&
+    imgui_c89_ctx->ActiveIdHasBeenEditedBefore;
+@BEGIN_DISABLED@(imgui_c89_ctx, !enabled);
+size.x = min_w;
+ret = @SELECTABLE@(imgui_c89_ctx, label, 0, selectable_flags, &size) &&
+    !moved;
+if ((imgui_c89_ctx->LastItemData.StatusFlags & @VISIBLE@) && selected)
+{
+    pos.x += offsets->OffsetMark + stretch_w +
+        imgui_c89_ctx->FontSize * 0.40f;
+    pos.y += imgui_c89_ctx->FontSize * 0.134f * 0.5f;
+    @RENDER_CHECK@(imgui_c89_ctx, window->DrawList, pos,
+        @GET_COLOR@(imgui_c89_ctx, @TEXT_COLOR@, 1.0f),
+        imgui_c89_ctx->FontSize * 0.866f);
+}
+@END_DISABLED@(imgui_c89_ctx);
+@TEST_ENGINE_ITEM_INFO@
+return ret;
+/* IMGUI_C89_FUNCTION_END menu_item_for_column_reorder */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_context_menu */
+ImGuiWindow *window;
+ImGuiTableColumn *context_column;
+ImGuiTableColumn *column;
+const char *label;
+const char *name;
+unsigned char want_separator;
+unsigned char can_resize;
+unsigned char menu_enabled;
+unsigned char is_reordering;
+int context_column_n;
+int src_order;
+int min_order;
+int max_order;
+int order_n;
+int column_n;
+int direction;
+int steps;
+int dst_order;
+float mouse_y;
+float amount;
+window = imgui_c89_ctx->CurrentWindow;
+if (window->SkipItems)
+    return;
+want_separator = 0;
+context_column_n = table->ContextPopupColumn;
+if (context_column_n < 0 || context_column_n >= table->ColumnsCount)
+    context_column_n = -1;
+context_column = context_column_n >= 0 ?
+    &table->Columns.Data[context_column_n] : 0;
+if (flags_for_section_to_display & @RESIZABLE@)
+{
+    if (context_column)
+    {
+        can_resize = !(context_column->Flags & @NO_RESIZE@) &&
+            context_column->IsEnabled;
+        label = @LOCALIZE@(imgui_c89_ctx, @SIZE_ONE@);
+        if (@MENU_ITEM@(imgui_c89_ctx, label, 0, 0, can_resize))
+            @SET_WIDTH_AUTO_ONE@(table, context_column_n);
+    }
+    label = table->ColumnsEnabledFixedCount == table->ColumnsEnabledCount &&
+        (table->Flags & @SIZING_MASK@) != @SIZING_FIXED_SAME@ ?
+        @LOCALIZE@(imgui_c89_ctx, @SIZE_ALL_FIT@) :
+        @LOCALIZE@(imgui_c89_ctx, @SIZE_ALL_DEFAULT@);
+    if (@MENU_ITEM@(imgui_c89_ctx, label, 0, 0, 1))
+        @SET_WIDTH_AUTO_ALL@(table);
+    want_separator = 1;
+}
+if (flags_for_section_to_display & (@REORDERABLE@ | @HIDEABLE@))
+{
+    label = @LOCALIZE@(imgui_c89_ctx, @RESET@);
+    if (@BEGIN_MENU@(imgui_c89_ctx, label, 1))
+    {
+        if ((flags_for_section_to_display & @REORDERABLE@) &&
+            @MENU_ITEM@(imgui_c89_ctx,
+                @LOCALIZE@(imgui_c89_ctx, @RESET_ORDER@), 0, 0,
+                !table->IsDefaultDisplayOrder))
+            table->IsResetDisplayOrderRequest = 1;
+        if ((flags_for_section_to_display & @HIDEABLE@) &&
+            @MENU_ITEM@(imgui_c89_ctx,
+                @LOCALIZE@(imgui_c89_ctx, @RESET_VISIBILITY@), 0, 0,
+                !table->IsDefaultVisibility))
+            table->IsResetVisibilityRequest = 1;
+        @END_MENU@(imgui_c89_ctx);
+    }
+}
+if (flags_for_section_to_display & @HIDEABLE@)
+{
+    if (want_separator)
+        @SEPARATOR@(imgui_c89_ctx);
+    is_reordering = imgui_c89_ctx->ActiveId &&
+        imgui_c89_ctx->ActiveIdWindow == imgui_c89_ctx->CurrentWindow &&
+        table->ReorderColumn != -1 &&
+        imgui_c89_ctx->ActiveIdHasBeenEditedBefore;
+    src_order = is_reordering ?
+        table->Columns.Data[table->ReorderColumn].DisplayOrder : -1;
+    min_order = is_reordering ? @MAX_ORDER@(table, src_order, 0) : 0;
+    max_order = is_reordering ? @MAX_ORDER@(table, src_order,
+        table->ColumnsCount - 1) : table->ColumnsCount - 1;
+    @PUSH_ITEM_FLAG@(imgui_c89_ctx, @AUTO_CLOSE_POPUPS@, 0);
+    for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+    {
+        column_n = table->DisplayOrderToIndex.Data[order_n];
+        column = &table->Columns.Data[column_n];
+        if (column->Flags & @DISABLED@)
+            continue;
+        name = @GET_COLUMN_NAME@(table, column_n);
+        if (!name || !*name)
+            name = "<Unknown>";
+        menu_enabled = !(column->Flags & @NO_HIDE@);
+        if (column->IsUserEnabled && table->ColumnsEnabledCount <= 1)
+            menu_enabled = 0;
+        if (is_reordering && (column->DisplayOrder < min_order ||
+            column->DisplayOrder > max_order))
+            menu_enabled = 0;
+        if (@REORDER_MENU_ITEM@(imgui_c89_ctx, name,
+            column->IsUserEnabled, menu_enabled))
+            column->IsUserEnabledNextFrame = !column->IsUserEnabled;
+        if (@IS_ITEM_ACTIVE@(imgui_c89_ctx) &&
+            @IS_MOUSE_DRAGGING@(imgui_c89_ctx, 0, -1.0f) &&
+            imgui_c89_ctx->ActiveIdSource == @MOUSE_SOURCE@ &&
+            (table->Flags & @REORDERABLE@))
+        {
+            imgui_c89_ctx->ActiveIdHasBeenEditedBefore = 1;
+            table->ReorderColumn = (ImGuiTableColumnIdx)column_n;
+            if (!@IS_ITEM_HOVERED@(imgui_c89_ctx, 0))
+            {
+                mouse_y = imgui_c89_ctx->IO.MousePos.y;
+                direction = mouse_y <
+                    (imgui_c89_ctx->LastItemData.Rect.Min.y +
+                     imgui_c89_ctx->LastItemData.Rect.Max.y) * 0.5f ? -1 : 1;
+                amount = (direction < 0 ?
+                    imgui_c89_ctx->LastItemData.Rect.Min.y - mouse_y :
+                    mouse_y - imgui_c89_ctx->LastItemData.Rect.Max.y) /
+                    (imgui_c89_ctx->LastItemData.Rect.Max.y -
+                     imgui_c89_ctx->LastItemData.Rect.Min.y);
+                steps = (int)amount;
+                if ((float)steps < amount)
+                    steps++;
+                dst_order = column->DisplayOrder + steps * direction;
+                @QUEUE_ORDER@(table, column_n, dst_order);
+            }
+        }
+    }
+    @POP_ITEM_FLAG@(imgui_c89_ctx);
+}
+/* IMGUI_C89_FUNCTION_END table_context_menu */

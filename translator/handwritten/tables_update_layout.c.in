@@ -1,0 +1,550 @@
+/* Maintained strict-C89 implementation of ImGui::TableUpdateLayout(). */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_update_layout */
+    @IMGUI_CONTEXT@ *g;
+    @IMGUI_TABLE_TEMP_DATA@ *temp_data;
+    @IMGUI_TABLE_COLUMN@ *column;
+    @IMGUI_TABLE_INSTANCE_DATA@ *table_instance;
+    @IMGUI_WINDOW@ *inner_window;
+    @IMGUI_BOX_SELECT_STATE@ *box_select;
+    @IMRECT@ work_rect;
+    @IMRECT@ mouse_hit_rect;
+    @IMRECT@ host_clip_rect;
+    @IMGUI_TABLE_FLAGS@ init_flags;
+    @IMGUI_TABLE_FLAGS@ table_sizing_policy;
+    @IMGUI_ID@ backup_active_id;
+    int columns_count;
+    int n;
+    int order_n;
+    int column_n;
+    int count_fixed;
+    int count_stretch;
+    int prev_visible_column_idx;
+    float new_ref_scale_unit;
+    float scale_factor;
+    float stretch_sum_width_auto;
+    float fixed_max_width_auto;
+    float sum_width_requests;
+    float stretch_sum_weights;
+    float width_auto;
+    float width_spacings;
+    float width_removed;
+    float width_avail;
+    float width_avail_for_stretched_columns;
+    float width_remaining_for_stretched_columns;
+    float weight_ratio;
+    float mouse_skewed_x;
+    float offset_x;
+    float previous_instance_work_min_x;
+    float offset_from_previous_instance;
+    float unused_x1;
+    float window_content_max_y;
+    unsigned char start_auto_fit;
+    unsigned char column_is_resizable;
+    unsigned char has_auto_fit_request;
+    unsigned char has_resizable;
+    unsigned char is_hovering_table;
+    unsigned char has_output_column;
+    unsigned char offset_x_frozen;
+    unsigned char is_visible;
+
+    g = imgui_c89_ctx;
+    temp_data = table->TempData;
+    columns_count = table->ColumnsCount;
+
+    if (temp_data->ReconcileColumnsRequests.Size > 0)
+        @TABLE_RECONCILE_COLUMNS@(imgui_c89_ctx, table);
+    if (temp_data->OldColumnsRawData != 0) {
+        @MEM_FREE@(imgui_c89_ctx, temp_data->OldColumnsRawData);
+        temp_data->OldColumnsRawData = 0;
+        temp_data->OldColumnsData.Data = 0;
+        temp_data->OldColumnsData.DataEnd = 0;
+    }
+
+    if (table->IsSettingsRequestLoad)
+        @TABLE_LOAD_SETTINGS_FOR_COLUMNS@(imgui_c89_ctx, table);
+    if (table->IsInitializing || table->IsSettingsRequestLoad) {
+        for (n = 0; n < columns_count; ++n) {
+            column = &table->Columns.Data[n];
+            if (table->IsSettingsRequestLoad)
+                init_flags = column->IsLoadedSettings
+                    ? ~table->SettingsLoadedFlags : ~0;
+            else
+                init_flags = column->IsJustCreated ? ~0 : 0;
+            @TABLE_INIT_COLUMN_DEFAULTS@(table, column, init_flags);
+        }
+        @TABLE_FIX_DISPLAY_ORDER@(imgui_c89_ctx, table);
+        table->IsSettingsRequestLoad = 0;
+    }
+    @TABLE_APPLY_QUEUED_REQUESTS@(imgui_c89_ctx, table);
+
+    new_ref_scale_unit = g->FontSize;
+    if (table->RefScale != 0.0f && table->RefScale != new_ref_scale_unit) {
+        scale_factor = new_ref_scale_unit / table->RefScale;
+        for (n = 0; n < columns_count; ++n)
+            table->Columns.Data[n].WidthRequest *= scale_factor;
+    }
+    table->RefScale = new_ref_scale_unit;
+
+    table_sizing_policy = table->Flags & @SIZING_MASK@;
+    table->IsDefaultVisibility = 1;
+    table->IsDefaultDisplayOrder = 1;
+    table->ColumnsEnabledCount = 0;
+    @BIT_ARRAY_CLEAR_ALL@(table->EnabledMaskByIndex, columns_count);
+    @BIT_ARRAY_CLEAR_ALL@(
+        table->EnabledMaskByDisplayOrder, columns_count);
+    table->LeftMostEnabledColumn = -1;
+    table->MinColumnWidth = @MAX_FLOAT@(
+        1.0f, g->Style.FramePadding.x * 1.0f);
+
+    count_fixed = 0;
+    count_stretch = 0;
+    prev_visible_column_idx = -1;
+    has_auto_fit_request = 0;
+    has_resizable = 0;
+    stretch_sum_width_auto = 0.0f;
+    fixed_max_width_auto = 0.0f;
+    for (order_n = 0; order_n < columns_count; ++order_n) {
+        column_n = table->DisplayOrderToIndex.Data[order_n];
+        column = &table->Columns.Data[column_n];
+
+        if (table->DeclColumnsCount <= column_n) {
+            @TABLE_SETUP_COLUMN_FLAGS@(table, column, @COLUMN_NONE@);
+            column->NameOffset = -1;
+            column->UserData = 0;
+            column->ID = 0;
+            column->InitStretchWeightOrWidth = -1.0f;
+        }
+        if ((table->Flags & @HIDEABLE@) == 0 ||
+            (column->Flags & @NO_HIDE@) != 0)
+            column->IsUserEnabledNextFrame = 1;
+        if (column->IsUserEnabled != column->IsUserEnabledNextFrame) {
+            column->IsUserEnabled = column->IsUserEnabledNextFrame;
+            table->IsSettingsDirty = 1;
+        }
+        column->IsEnabled = (unsigned char)(column->IsUserEnabled &&
+            (column->Flags & @DISABLED@) == 0);
+        column->IsJustCreated = 0;
+        if (column->IsEnabled !=
+            ((column->Flags & @DEFAULT_HIDE@) != 0 ? 0 : 1))
+            table->IsDefaultVisibility = 0;
+        if (column_n != order_n)
+            table->IsDefaultDisplayOrder = 0;
+        if (column->SortOrder != -1 && !column->IsEnabled)
+            table->IsSortSpecsDirty = 1;
+        if (column->SortOrder > 0 &&
+            (table->Flags & @SORT_MULTI@) == 0)
+            table->IsSortSpecsDirty = 1;
+
+        start_auto_fit = (unsigned char)(
+            (column->Flags & @WIDTH_FIXED@) != 0
+                ? column->WidthRequest < 0.0f
+                : column->StretchWeight < 0.0f);
+        if (start_auto_fit) {
+            column->CannotSkipItemsQueue = (1 << 3) - 1;
+            column->AutoFitQueue = (1 << 3) - 1;
+        }
+        if (!column->IsEnabled) {
+            column->IndexWithinEnabledSet = -1;
+            continue;
+        }
+
+        column->PrevEnabledColumn =
+            (@IMGUI_TABLE_COLUMN_IDX@)prev_visible_column_idx;
+        column->NextEnabledColumn = -1;
+        if (prev_visible_column_idx != -1)
+            table->Columns.Data[prev_visible_column_idx].NextEnabledColumn =
+                (@IMGUI_TABLE_COLUMN_IDX@)column_n;
+        else
+            table->LeftMostEnabledColumn =
+                (@IMGUI_TABLE_COLUMN_IDX@)column_n;
+        column->IndexWithinEnabledSet = table->ColumnsEnabledCount++;
+        @BIT_ARRAY_SET@(table->EnabledMaskByIndex, column_n);
+        @BIT_ARRAY_SET@(
+            table->EnabledMaskByDisplayOrder, column->DisplayOrder);
+        prev_visible_column_idx = column_n;
+
+        if (!column->IsPreserveWidthAuto && table->InstanceCurrent == 0)
+            column->WidthAuto =
+                @TABLE_GET_COLUMN_WIDTH_AUTO@(table, column);
+        column_is_resizable = (unsigned char)(
+            (column->Flags & @NO_RESIZE@) == 0);
+        if (column_is_resizable)
+            has_resizable = 1;
+        if ((column->Flags & @WIDTH_FIXED@) != 0 &&
+            column->InitStretchWeightOrWidth > 0.0f &&
+            !column_is_resizable)
+            column->WidthAuto = column->InitStretchWeightOrWidth;
+        if (column->AutoFitQueue != 0)
+            has_auto_fit_request = 1;
+        if ((column->Flags & @WIDTH_STRETCH@) != 0) {
+            stretch_sum_width_auto += column->WidthAuto;
+            ++count_stretch;
+        } else {
+            fixed_max_width_auto = @MAX_FLOAT@(
+                fixed_max_width_auto, column->WidthAuto);
+            ++count_fixed;
+        }
+    }
+    if ((table->Flags & @SORTABLE@) != 0 &&
+        table->SortSpecsCount == 0 &&
+        (table->Flags & @SORT_TRISTATE@) == 0)
+        table->IsSortSpecsDirty = 1;
+    table->RightMostEnabledColumn =
+        (@IMGUI_TABLE_COLUMN_IDX@)prev_visible_column_idx;
+
+    if (has_auto_fit_request && table->OuterWindow != table->InnerWindow)
+        table->InnerWindow->SkipItems = 0;
+    if (has_auto_fit_request)
+        table->IsSettingsDirty = 1;
+
+    sum_width_requests = 0.0f;
+    stretch_sum_weights = 0.0f;
+    table->RightMostStretchedColumn = -1;
+    table->LeftMostStretchedColumn = -1;
+    for (column_n = 0; column_n < columns_count; ++column_n) {
+        if ((table->EnabledMaskByIndex[column_n >> 5] &
+             ((ImU32)1 << (column_n & 31))) == 0)
+            continue;
+        column = &table->Columns.Data[column_n];
+        column_is_resizable = (unsigned char)(
+            (column->Flags & @NO_RESIZE@) == 0);
+        if ((column->Flags & @WIDTH_FIXED@) != 0) {
+            width_auto = column->WidthAuto;
+            if (table_sizing_policy == @SIZING_FIXED_SAME@ &&
+                (column->AutoFitQueue != 0 || !column_is_resizable))
+                width_auto = fixed_max_width_auto;
+            if (column->AutoFitQueue != 0)
+                column->WidthRequest = width_auto;
+            else if (!column_is_resizable && column->IsRequestOutput)
+                column->WidthRequest = width_auto;
+            if (column->AutoFitQueue > 1 && table->IsInitializing &&
+                !column->IsPreserveWidthAuto)
+                column->WidthRequest = @MAX_FLOAT@(
+                    column->WidthRequest, table->MinColumnWidth * 4.0f);
+            sum_width_requests += column->WidthRequest;
+        } else {
+            if (column->AutoFitQueue != 0 ||
+                column->StretchWeight < 0.0f ||
+                !column_is_resizable) {
+                if (column->InitStretchWeightOrWidth > 0.0f)
+                    column->StretchWeight =
+                        column->InitStretchWeightOrWidth;
+                else if (table_sizing_policy == @SIZING_STRETCH_PROP@)
+                    column->StretchWeight =
+                        (column->WidthAuto / stretch_sum_width_auto) *
+                        count_stretch;
+                else
+                    column->StretchWeight = 1.0f;
+            }
+            stretch_sum_weights += column->StretchWeight;
+            if (table->LeftMostStretchedColumn == -1 ||
+                table->Columns.Data[table->LeftMostStretchedColumn]
+                    .DisplayOrder > column->DisplayOrder)
+                table->LeftMostStretchedColumn =
+                    (@IMGUI_TABLE_COLUMN_IDX@)column_n;
+            if (table->RightMostStretchedColumn == -1 ||
+                table->Columns.Data[table->RightMostStretchedColumn]
+                    .DisplayOrder < column->DisplayOrder)
+                table->RightMostStretchedColumn =
+                    (@IMGUI_TABLE_COLUMN_IDX@)column_n;
+        }
+        column->IsPreserveWidthAuto = 0;
+        sum_width_requests += table->CellPaddingX * 2.0f;
+    }
+    table->ColumnsEnabledFixedCount =
+        (@IMGUI_TABLE_COLUMN_IDX@)count_fixed;
+    table->ColumnsStretchSumWeights = stretch_sum_weights;
+
+    work_rect = table->WorkRect;
+    width_spacings = table->OuterPaddingX * 2.0f +
+        (table->CellSpacingX1 + table->CellSpacingX2) *
+        (table->ColumnsEnabledCount - 1);
+    width_removed = table->HasScrollbarYPrev &&
+        !table->InnerWindow->ScrollbarY
+            ? g->Style.ScrollbarSize : 0.0f;
+    width_avail = @MAX_FLOAT@(
+        1.0f,
+        (((table->Flags & @SCROLL_X@) != 0 &&
+          table->InnerWidth == 0.0f)
+            ? table->InnerClipRect.Max.x - table->InnerClipRect.Min.x
+            : work_rect.Max.x - work_rect.Min.x) - width_removed);
+    width_avail_for_stretched_columns =
+        width_avail - width_spacings - sum_width_requests;
+    width_remaining_for_stretched_columns =
+        width_avail_for_stretched_columns;
+    table->ColumnsGivenWidth = width_spacings +
+        table->CellPaddingX * 2.0f * table->ColumnsEnabledCount;
+    for (column_n = 0; column_n < columns_count; ++column_n) {
+        if ((table->EnabledMaskByIndex[column_n >> 5] &
+             ((ImU32)1 << (column_n & 31))) == 0)
+            continue;
+        column = &table->Columns.Data[column_n];
+        if ((column->Flags & @WIDTH_STRETCH@) != 0) {
+            weight_ratio = column->StretchWeight / stretch_sum_weights;
+            column->WidthRequest = @TRUNC_FLOAT@(
+                @MAX_FLOAT@(
+                    width_avail_for_stretched_columns * weight_ratio,
+                    table->MinColumnWidth) + 0.01f);
+            width_remaining_for_stretched_columns -= column->WidthRequest;
+        }
+        if (column->NextEnabledColumn == -1 &&
+            table->LeftMostStretchedColumn != -1)
+            column->Flags |= @NO_DIRECT_RESIZE@;
+        column->WidthGiven = @TRUNC_FLOAT@(
+            @MAX_FLOAT@(column->WidthRequest, table->MinColumnWidth));
+        table->ColumnsGivenWidth += column->WidthGiven;
+    }
+
+    if (width_remaining_for_stretched_columns >= 1.0f &&
+        (table->Flags & @PRECISE_WIDTHS@) == 0) {
+        for (order_n = columns_count - 1;
+             stretch_sum_weights > 0.0f &&
+             width_remaining_for_stretched_columns >= 1.0f &&
+             order_n >= 0;
+             --order_n) {
+            if ((table->EnabledMaskByDisplayOrder[order_n >> 5] &
+                 ((ImU32)1 << (order_n & 31))) == 0)
+                continue;
+            column = &table->Columns.Data[
+                table->DisplayOrderToIndex.Data[order_n]];
+            if ((column->Flags & @WIDTH_STRETCH@) == 0)
+                continue;
+            column->WidthRequest += 1.0f;
+            column->WidthGiven += 1.0f;
+            width_remaining_for_stretched_columns -= 1.0f;
+        }
+    }
+
+    table_instance = @TABLE_GET_INSTANCE_DATA@(
+        table, table->InstanceCurrent);
+    table_instance->HoveredRowLast = table_instance->HoveredRowNext;
+    table_instance->HoveredRowNext = -1;
+    table->HoveredColumnBorder = -1;
+    table->HoveredColumnBody = -1;
+    mouse_hit_rect.Min.x = table->OuterRect.Min.x;
+    mouse_hit_rect.Min.y = table->OuterRect.Min.y;
+    mouse_hit_rect.Max.x = table->OuterRect.Max.x;
+    mouse_hit_rect.Max.y = @MAX_FLOAT@(
+        table->OuterRect.Max.y,
+        table->OuterRect.Min.y + table_instance->LastOuterHeight);
+    backup_active_id = g->ActiveId;
+    g->ActiveId = 0;
+    is_hovering_table = @ITEM_HOVERABLE@(
+        imgui_c89_ctx, &mouse_hit_rect, 0, @ITEM_NONE@);
+    g->ActiveId = backup_active_id;
+
+    mouse_skewed_x = g->IO.MousePos.x;
+    if (table->AngledHeadersHeight > 0.0f &&
+        g->IO.MousePos.y >= table->OuterRect.Min.y &&
+        g->IO.MousePos.y <=
+            table->OuterRect.Min.y + table->AngledHeadersHeight)
+        mouse_skewed_x += @TRUNC_FLOAT@(
+            (table->OuterRect.Min.y + table->AngledHeadersHeight -
+             g->IO.MousePos.y) * table->AngledHeadersSlope);
+
+    has_output_column = 0;
+    offset_x_frozen = (unsigned char)(table->FreezeColumnsCount > 0);
+    offset_x = (table->FreezeColumnsCount > 0
+        ? table->OuterRect.Min.x : work_rect.Min.x) +
+        table->OuterPaddingX - table->CellSpacingX1;
+    host_clip_rect = table->InnerClipRect;
+    @BIT_ARRAY_CLEAR_ALL@(table->VisibleMaskByIndex, columns_count);
+    for (order_n = 0; order_n < columns_count; ++order_n) {
+        column_n = table->DisplayOrderToIndex.Data[order_n];
+        column = &table->Columns.Data[column_n];
+        column->NavLayerCurrent = (@IMS8@)(
+            table->FreezeRowsCount > 0 ? @NAV_LAYER_MENU@ : table->NavLayer);
+        if (offset_x_frozen && table->FreezeColumnsCount == order_n) {
+            offset_x += work_rect.Min.x - table->OuterRect.Min.x;
+            offset_x_frozen = 0;
+        }
+        column->Flags &= ~@STATUS_MASK@;
+
+        if ((table->EnabledMaskByDisplayOrder[order_n >> 5] &
+             ((ImU32)1 << (order_n & 31))) == 0) {
+            column->ClipRect.Max.x = offset_x;
+            column->ClipRect.Min.x = offset_x;
+            column->WorkMinX = offset_x;
+            column->MaxX = offset_x;
+            column->MinX = offset_x;
+            column->WidthGiven = 0.0f;
+            column->ClipRect.Min.y = work_rect.Min.y;
+            column->ClipRect.Max.y = @FLOAT_MAX@;
+            @RECT_CLIP_WITH_FULL@(&column->ClipRect, &host_clip_rect);
+            column->IsRequestOutput = 0;
+            column->IsVisibleY = 0;
+            column->IsVisibleX = 0;
+            column->IsSkipItems = 1;
+            column->ItemWidth = 1.0f;
+            continue;
+        }
+
+        column->MinX = offset_x;
+        column->WidthMax = @TABLE_CALC_MAX_COLUMN_WIDTH@(
+            table, column_n);
+        column->WidthGiven = @MIN_FLOAT@(
+            column->WidthGiven, column->WidthMax);
+        column->WidthGiven = @MAX_FLOAT@(
+            column->WidthGiven,
+            @MIN_FLOAT@(column->WidthRequest, table->MinColumnWidth));
+        column->MaxX = offset_x + column->WidthGiven +
+            table->CellSpacingX1 + table->CellSpacingX2 +
+            table->CellPaddingX * 2.0f;
+        previous_instance_work_min_x = column->WorkMinX;
+        column->WorkMinX = column->MinX + table->CellPaddingX +
+            table->CellSpacingX1;
+        column->WorkMaxX = column->MaxX - table->CellPaddingX -
+            table->CellSpacingX2;
+        column->ItemWidth = @TRUNC_FLOAT@(column->WidthGiven * 0.65f);
+        column->ClipRect.Min.x = column->MinX;
+        column->ClipRect.Min.y = work_rect.Min.y;
+        column->ClipRect.Max.x = column->MaxX;
+        column->ClipRect.Max.y = @FLOAT_MAX@;
+        @RECT_CLIP_WITH_FULL@(&column->ClipRect, &host_clip_rect);
+        column->IsVisibleX = (unsigned char)(
+            column->ClipRect.Max.x > column->ClipRect.Min.x);
+        column->IsVisibleY = 1;
+        is_visible = column->IsVisibleX;
+        if (is_visible)
+            @BIT_ARRAY_SET@(table->VisibleMaskByIndex, column_n);
+        column->IsRequestOutput = (unsigned char)(is_visible ||
+            column->AutoFitQueue != 0 ||
+            column->CannotSkipItemsQueue != 0);
+        column->IsSkipItems = (unsigned char)(
+            !column->IsEnabled || table->HostSkipItems);
+        if (column->IsRequestOutput && !column->IsSkipItems)
+            has_output_column = 1;
+        column->Flags |= @IS_ENABLED@;
+        if (is_visible)
+            column->Flags |= @IS_VISIBLE@;
+        if (column->SortOrder != -1)
+            column->Flags |= @IS_SORTED@;
+        if (is_hovering_table &&
+            mouse_skewed_x >= column->ClipRect.Min.x &&
+            mouse_skewed_x < column->ClipRect.Max.x) {
+            column->Flags |= @IS_HOVERED@;
+            table->HoveredColumnBody =
+                (@IMGUI_TABLE_COLUMN_IDX@)column_n;
+        }
+
+        if (table->InstanceCurrent == 0) {
+            column->ContentMaxXFrozen = column->WorkMinX;
+            column->ContentMaxXUnfrozen = column->WorkMinX;
+            column->ContentMaxXHeadersUsed = column->WorkMinX;
+            column->ContentMaxXHeadersIdeal = column->WorkMinX;
+        } else {
+            offset_from_previous_instance =
+                column->WorkMinX - previous_instance_work_min_x;
+            column->ContentMaxXFrozen += offset_from_previous_instance;
+            column->ContentMaxXUnfrozen += offset_from_previous_instance;
+            column->ContentMaxXHeadersUsed += offset_from_previous_instance;
+            column->ContentMaxXHeadersIdeal += offset_from_previous_instance;
+        }
+        if (!table->HostSkipItems && table->InstanceCurrent == 0) {
+            column->AutoFitQueue >>= 1;
+            column->CannotSkipItemsQueue >>= 1;
+        }
+        if (order_n < table->FreezeColumnsCount)
+            host_clip_rect.Min.x = @CLAMP_FLOAT@(
+                column->MaxX + @TABLE_BORDER_SIZE@,
+                host_clip_rect.Min.x, host_clip_rect.Max.x);
+        offset_x += column->WidthGiven + table->CellSpacingX1 +
+            table->CellSpacingX2 + table->CellPaddingX * 2.0f;
+    }
+
+    if (!has_output_column) {
+        column = &table->Columns.Data[table->LeftMostEnabledColumn];
+        column->IsRequestOutput = 1;
+        column->IsSkipItems = 0;
+    }
+    unused_x1 = @MAX_FLOAT@(
+        table->WorkRect.Min.x,
+        table->Columns.Data[table->RightMostEnabledColumn].ClipRect.Max.x);
+    if (is_hovering_table && table->HoveredColumnBody == -1 &&
+        mouse_skewed_x >= unused_x1)
+        table->HoveredColumnBody =
+            (@IMGUI_TABLE_COLUMN_IDX@)columns_count;
+    if (!has_resizable && (table->Flags & @RESIZABLE@) != 0)
+        table->Flags &= ~@RESIZABLE@;
+    table->IsActiveIdAliveBeforeTable =
+        (unsigned char)(g->ActiveIdIsAlive != 0);
+
+    if (table->RightMostStretchedColumn != -1)
+        table->Flags &= ~@NO_HOST_EXTEND_X@;
+    if ((table->Flags & @NO_HOST_EXTEND_X@) != 0) {
+        table->WorkRect.Max.x = unused_x1;
+        table->OuterRect.Max.x = unused_x1;
+        table->InnerClipRect.Max.x = @MIN_FLOAT@(
+            table->InnerClipRect.Max.x, unused_x1);
+    }
+    table->InnerWindow->ParentWorkRect = table->WorkRect;
+    table->BorderX1 = table->InnerClipRect.Min.x;
+    table->BorderX2 = table->InnerClipRect.Max.x;
+    if ((table->Flags & @NO_HOST_EXTEND_Y@) != 0)
+        window_content_max_y = table->OuterRect.Max.y;
+    else
+        window_content_max_y = @MAX_FLOAT@(
+            table->InnerWindow->ContentRegionRect.Max.y,
+            (table->Flags & @SCROLL_Y@) != 0
+                ? 0.0f : table->OuterRect.Max.y);
+    table->InnerWindow->WorkRect.Max.y = @CLAMP_FLOAT@(
+        window_content_max_y - g->Style.CellPadding.y,
+        table->InnerWindow->WorkRect.Min.y,
+        table->InnerWindow->WorkRect.Max.y);
+
+    @TABLE_SETUP_DRAW_CHANNELS@(imgui_c89_ctx, table);
+    if ((table->Flags & @RESIZABLE@) != 0)
+        @TABLE_UPDATE_BORDERS@(imgui_c89_ctx, table);
+    table_instance->LastTopHeadersRowHeight = 0.0f;
+    table->IsLayoutLocked = 1;
+    table->IsUsingHeaders = 0;
+
+    table->HighlightColumnHeader = -1;
+    if (table->IsContextPopupOpen &&
+        table->ContextPopupColumn != -1 &&
+        table->InstanceInteracted == table->InstanceCurrent)
+        table->HighlightColumnHeader = table->ContextPopupColumn;
+    else if ((table->Flags & @HIGHLIGHT_HOVERED_COLUMN@) != 0 &&
+             table->HoveredColumnBody != -1 &&
+             table->HoveredColumnBody != columns_count &&
+             table->HoveredColumnBorder == -1 &&
+             (g->ActiveId == 0 || table->IsActiveIdInTable ||
+              g->DragDropActive))
+        table->HighlightColumnHeader = table->HoveredColumnBody;
+
+    if (!table->DisableDefaultContextMenu &&
+        @TABLE_BEGIN_CONTEXT_MENU_POPUP@(imgui_c89_ctx, table)) {
+        @TABLE_DRAW_DEFAULT_CONTEXT_MENU@(
+            imgui_c89_ctx, table, table->Flags);
+        @END_POPUP@(imgui_c89_ctx);
+    }
+    if (table->IsSortSpecsDirty &&
+        (table->Flags & @SORTABLE@) != 0)
+        @TABLE_SORT_SPECS_BUILD@(imgui_c89_ctx, table);
+
+    if (table->FreezeColumnsRequest > 0)
+        table->InnerWindow->DecoInnerSizeX1 =
+            table->Columns.Data[table->DisplayOrderToIndex.Data[
+                table->FreezeColumnsRequest - 1]].MaxX -
+            table->OuterRect.Min.x;
+    if (table->FreezeRowsRequest > 0)
+        table->InnerWindow->DecoInnerSizeY1 =
+            table_instance->LastFrozenHeight;
+    table_instance->LastFrozenHeight = 0.0f;
+
+    inner_window = table->InnerWindow;
+    box_select = &g->BoxSelectState;
+    if (box_select->Window == inner_window && box_select->UnclipMode)
+        @TABLE_APPLY_EXTERNAL_UNCLIP_RECT@(
+            table, &box_select->UnclipRect);
+    if ((table->Flags & @NO_CLIP@) != 0)
+        @DRAW_SPLITTER_SET_CURRENT_CHANNEL@(
+            imgui_c89_ctx, table->DrawSplitter, inner_window->DrawList,
+            @TABLE_DRAW_CHANNEL_NOCLIP@);
+    else
+        @DRAW_LIST_PUSH_CLIP_RECT@(
+            imgui_c89_ctx, inner_window->DrawList,
+            &inner_window->InnerClipRect.Min,
+            &inner_window->InnerClipRect.Max, 0);
+/* IMGUI_C89_FUNCTION_END table_update_layout */

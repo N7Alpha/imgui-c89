@@ -1,0 +1,42 @@
+/* Handwritten C89 standard table header-row helper. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_headers_row */
+ImGuiTable *table;
+ImGuiTableColumn *column;
+const char *name;
+float row_height;
+float row_y1;
+int column_n;
+table = imgui_c89_ctx->CurrentTable;
+if (!table)
+{
+    @ERROR_LOG@(imgui_c89_ctx,
+        "Call should only be done while in BeginTable() scope!");
+    return;
+}
+if (!table->IsLayoutLocked)
+    @UPDATE_LAYOUT@(imgui_c89_ctx, table);
+row_height = @GET_HEIGHT@(imgui_c89_ctx);
+@NEXT_ROW@(imgui_c89_ctx, @HEADERS@, row_height);
+row_y1 = imgui_c89_ctx->CurrentWindow->DC.CursorPos.y;
+if (table->HostSkipItems)
+    return;
+for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+{
+    if (!@SET_COLUMN@(imgui_c89_ctx, column_n) &&
+        table->LastHeldHeaderColumn != column_n)
+        continue;
+    column = &table->Columns.Data[column_n];
+    name = "";
+    if (!(column->Flags & @NO_HEADER_LABEL@) && column->NameOffset >= 0)
+        name = table->ColumnsNames.Buf.Data + column->NameOffset;
+    @PUSH_ID@(imgui_c89_ctx, column_n);
+    @HEADER@(imgui_c89_ctx, name);
+    @POP_ID@(imgui_c89_ctx);
+}
+if (@MOUSE_RELEASED@(imgui_c89_ctx, 1) &&
+    table->HoveredColumnBody == table->ColumnsCount &&
+    imgui_c89_ctx->IO.MousePos.y >= row_y1 &&
+    imgui_c89_ctx->IO.MousePos.y < row_y1 + row_height)
+    @OPEN_CONTEXT@(imgui_c89_ctx, table->ColumnsCount);
+/* IMGUI_C89_FUNCTION_END table_headers_row */

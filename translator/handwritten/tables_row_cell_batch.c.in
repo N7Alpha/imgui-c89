@@ -1,0 +1,159 @@
+/* Handwritten C89 table row and cell transitions. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_next_row */
+ImGuiTable *table;
+table = imgui_c89_ctx->CurrentTable;
+if (!table->IsLayoutLocked)
+    @UPDATE_LAYOUT@(imgui_c89_ctx, table);
+if (table->IsInsideRow)
+    @END_ROW@(imgui_c89_ctx, table);
+table->LastRowFlags = table->RowFlags;
+table->RowFlags = row_flags;
+table->RowCellPaddingY = imgui_c89_ctx->Style.CellPadding.y;
+table->RowMinHeight = row_min_height;
+@BEGIN_ROW@(imgui_c89_ctx, table);
+table->RowPosY2 += table->RowCellPaddingY * 2.0f;
+if (table->RowPosY2 < table->RowPosY1 + row_min_height)
+    table->RowPosY2 = table->RowPosY1 + row_min_height;
+table->InnerWindow->SkipItems = 1;
+/* IMGUI_C89_FUNCTION_END table_next_row */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_begin_row */
+ImGuiWindow *window;
+float next_y;
+window = table->InnerWindow;
+table->CurrentRow++;
+table->CurrentColumn = -1;
+table->RowBgColor[0] = table->RowBgColor[1] = (ImU32)1 << 24;
+table->RowCellDataCurrent = -1;
+table->IsInsideRow = 1;
+next_y = table->RowPosY2;
+if (table->CurrentRow == 0 && table->FreezeRowsCount > 0)
+    next_y = window->DC.CursorPos.y = table->OuterRect.Min.y;
+table->RowPosY1 = table->RowPosY2 = next_y;
+table->RowTextBaseline = 0.0f;
+table->RowIndentOffsetX = window->DC.Indent.x - table->HostIndentX;
+window->DC.PrevLineTextBaseOffset = 0.0f;
+window->DC.CursorPosPrevLine.x = window->DC.CursorPos.x;
+window->DC.CursorPosPrevLine.y = window->DC.CursorPos.y + table->RowCellPaddingY;
+window->DC.PrevLineSize.x = window->DC.PrevLineSize.y = 0.0f;
+window->DC.CurrLineSize.x = window->DC.CurrLineSize.y = 0.0f;
+window->DC.IsSameLine = window->DC.IsSetPos = 0;
+window->DC.CursorMaxPos.y = next_y;
+if (table->RowFlags & @HEADERS@)
+{
+    @SET_BG_COLOR@(imgui_c89_ctx, @ROW_BG0@,
+        @GET_COLOR@(imgui_c89_ctx, @TABLE_HEADER_BG@, 1.0f), -1);
+    if (table->CurrentRow == 0)
+        table->IsUsingHeaders = 1;
+}
+/* IMGUI_C89_FUNCTION_END table_begin_row */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_set_column_index */
+ImGuiTable *table;
+table = imgui_c89_ctx->CurrentTable;
+if (!table)
+    return 0;
+if (table->CurrentColumn != column_n)
+{
+    if (table->CurrentColumn != -1)
+        @END_CELL@(imgui_c89_ctx, table);
+    if (column_n < 0 || column_n >= table->ColumnsCount)
+    {
+        @ERROR_LOG@(imgui_c89_ctx, "TableSetColumnIndex() invalid column index!");
+        return 0;
+    }
+    @BEGIN_CELL@(imgui_c89_ctx, table, column_n);
+}
+return table->Columns.Data[column_n].IsRequestOutput;
+/* IMGUI_C89_FUNCTION_END table_set_column_index */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_next_column */
+ImGuiTable *table;
+table = imgui_c89_ctx->CurrentTable;
+if (!table)
+    return 0;
+if (table->IsInsideRow && table->CurrentColumn + 1 < table->ColumnsCount)
+{
+    if (table->CurrentColumn != -1)
+        @END_CELL@(imgui_c89_ctx, table);
+    @BEGIN_CELL@(imgui_c89_ctx, table, table->CurrentColumn + 1);
+}
+else
+{
+    @NEXT_ROW@(imgui_c89_ctx, 0, 0.0f);
+    @BEGIN_CELL@(imgui_c89_ctx, table, 0);
+}
+return table->Columns.Data[table->CurrentColumn].IsRequestOutput;
+/* IMGUI_C89_FUNCTION_END table_next_column */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_begin_cell */
+ImGuiTableColumn *column;
+ImGuiWindow *window;
+float start_x;
+column = &table->Columns.Data[column_n];
+window = table->InnerWindow;
+table->CurrentColumn = column_n;
+start_x = column->WorkMinX;
+if (column->Flags & @INDENT_ENABLE@)
+    start_x += table->RowIndentOffsetX;
+window->DC.CursorPos.x = start_x;
+window->DC.CursorPos.y = table->RowPosY1 + table->RowCellPaddingY;
+window->DC.CursorMaxPos.x = start_x;
+window->DC.ColumnsOffset.x = start_x - window->Pos.x - window->DC.Indent.x;
+window->DC.CursorPosPrevLine.x = start_x;
+window->DC.CurrLineTextBaseOffset = table->RowTextBaseline;
+window->DC.NavLayerCurrent = (ImGuiNavLayer)column->NavLayerCurrent;
+window->WorkRect.Min.y = window->DC.CursorPos.y;
+window->WorkRect.Min.x = column->WorkMinX;
+window->WorkRect.Max.x = column->WorkMaxX;
+window->DC.ItemWidth = column->ItemWidth;
+window->SkipItems = column->IsSkipItems;
+if (column->IsSkipItems)
+{
+    imgui_c89_ctx->LastItemData.ID = 0;
+    imgui_c89_ctx->LastItemData.StatusFlags = 0;
+}
+if (table->Flags & @NO_CLIP@)
+    @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+        2);
+else
+{
+    @SET_CLIP@(window, &column->ClipRect);
+    @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+        column->DrawChannelCurrent);
+}
+if (imgui_c89_ctx->LogEnabled && !column->IsSkipItems)
+{
+    @LOG_TEXT@(imgui_c89_ctx, &window->DC.CursorPos, "|", 0);
+    imgui_c89_ctx->LogLinePosY = 3.402823466e38f;
+}
+/* IMGUI_C89_FUNCTION_END table_begin_cell */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_end_cell */
+ImGuiTableColumn *column;
+ImGuiWindow *window;
+float *max_x;
+float y;
+column = &table->Columns.Data[table->CurrentColumn];
+window = table->InnerWindow;
+if (window->DC.IsSetPos)
+    @CHECK_SET_CURSOR@(imgui_c89_ctx);
+if (table->RowFlags & @HEADERS@)
+    max_x = &column->ContentMaxXHeadersUsed;
+else if (table->IsUnfrozenRows)
+    max_x = &column->ContentMaxXUnfrozen;
+else
+    max_x = &column->ContentMaxXFrozen;
+if (*max_x < window->DC.CursorMaxPos.x)
+    *max_x = window->DC.CursorMaxPos.x;
+if (column->IsEnabled)
+{
+    y = window->DC.CursorMaxPos.y + table->RowCellPaddingY;
+    if (table->RowPosY2 < y)
+        table->RowPosY2 = y;
+}
+column->ItemWidth = window->DC.ItemWidth;
+if (table->RowTextBaseline < window->DC.PrevLineTextBaseOffset)
+    table->RowTextBaseline = window->DC.PrevLineTextBaseOffset;
+/* IMGUI_C89_FUNCTION_END table_end_cell */

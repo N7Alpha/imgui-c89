@@ -1,0 +1,162 @@
+/* Handwritten C89 table row finalization and background rendering. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_end_row */
+ImGuiWindow *window;
+ImGuiTableInstanceData *instance;
+ImGuiTableCellData *cell;
+ImGuiTableColumn *column;
+ImRect rect;
+float bg_y1;
+float bg_y2;
+float y0;
+float row_height;
+ImU32 bg0;
+ImU32 bg1;
+ImU32 top_border;
+int unfreeze;
+int unfreeze_request;
+int draw_cells;
+int column_n;
+int cell_n;
+window = imgui_c89_ctx->CurrentWindow;
+if (table->CurrentColumn != -1)
+{
+    @END_CELL@(imgui_c89_ctx, table);
+    table->CurrentColumn = -1;
+}
+if (imgui_c89_ctx->LogEnabled)
+    @LOG_TEXT@(imgui_c89_ctx, 0, "|", 0);
+window->DC.CursorPos.y = table->RowPosY2;
+bg_y1 = table->RowPosY1;
+bg_y2 = table->RowPosY2;
+unfreeze = table->CurrentRow + 1 == table->FreezeRowsCount;
+unfreeze_request = table->CurrentRow + 1 == table->FreezeRowsRequest;
+instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
+    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
+if ((table->RowFlags & @HEADERS@) &&
+    (table->CurrentRow == 0 || (table->LastRowFlags & @HEADERS@)))
+    instance->LastTopHeadersRowHeight += bg_y2 - bg_y1;
+if (bg_y2 >= table->InnerClipRect.Min.y &&
+    bg_y1 <= table->InnerClipRect.Max.y)
+{
+    if (table->HoveredColumnBody != -1 &&
+        imgui_c89_ctx->IO.MousePos.y >= bg_y1 &&
+        imgui_c89_ctx->IO.MousePos.y < bg_y2 &&
+        instance->HoveredRowNext < 0)
+        instance->HoveredRowNext = table->CurrentRow;
+    bg0 = bg1 = 0;
+    if (table->RowBgColor[0] != ((ImU32)1 << 24))
+        bg0 = table->RowBgColor[0];
+    else if (table->Flags & @ROW_BG@)
+        bg0 = @GET_COLOR@(imgui_c89_ctx,
+            table->RowBgColorCounter & 1 ? @ROW_BG_ALT_COLOR@ : @ROW_BG_COLOR@,
+            1.0f);
+    if (table->RowBgColor[1] != ((ImU32)1 << 24))
+        bg1 = table->RowBgColor[1];
+    top_border = 0;
+    if (table->CurrentRow > 0 && (table->Flags & @BORDERS_INNER_H@))
+        top_border = table->LastRowFlags & @HEADERS@ ?
+            table->BorderColorStrong : table->BorderColorLight;
+    draw_cells = table->RowCellDataCurrent >= 0;
+    if (bg0 || bg1 || top_border || unfreeze || draw_cells)
+    {
+        if (!(table->Flags & @NO_CLIP@))
+        {
+            window->DrawList->_CmdHeader.ClipRect.x = table->Bg0ClipRectForDrawCmd.Min.x;
+            window->DrawList->_CmdHeader.ClipRect.y = table->Bg0ClipRectForDrawCmd.Min.y;
+            window->DrawList->_CmdHeader.ClipRect.z = table->Bg0ClipRectForDrawCmd.Max.x;
+            window->DrawList->_CmdHeader.ClipRect.w = table->Bg0ClipRectForDrawCmd.Max.y;
+        }
+        @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList, 0);
+    }
+    if (bg0 || bg1)
+    {
+        rect.Min.x = table->WorkRect.Min.x > table->BgClipRect.Min.x ?
+            table->WorkRect.Min.x : table->BgClipRect.Min.x;
+        rect.Min.y = bg_y1 > table->BgClipRect.Min.y ?
+            bg_y1 : table->BgClipRect.Min.y;
+        rect.Max.x = table->WorkRect.Max.x < table->BgClipRect.Max.x ?
+            table->WorkRect.Max.x : table->BgClipRect.Max.x;
+        rect.Max.y = bg_y2 < table->BgClipRect.Max.y ?
+            bg_y2 : table->BgClipRect.Max.y;
+        if (rect.Min.y < rect.Max.y)
+        {
+            if (bg0)
+                @ADD_RECT@(imgui_c89_ctx, window->DrawList,
+                    &rect.Min, &rect.Max, bg0, 0.0f, 0);
+            if (bg1)
+                @ADD_RECT@(imgui_c89_ctx, window->DrawList,
+                    &rect.Min, &rect.Max, bg1, 0.0f, 0);
+        }
+    }
+    for (cell_n = 0; cell_n <= table->RowCellDataCurrent; cell_n++)
+    {
+        cell = &table->RowCellData.Data[cell_n];
+        column = &table->Columns.Data[cell->Column];
+        rect.Min.x = column->MinX > table->WorkRect.Min.x ?
+            column->MinX : table->WorkRect.Min.x;
+        rect.Min.y = bg_y1;
+        rect.Max.x = column->MaxX < table->WorkRect.Max.x ?
+            column->MaxX : table->WorkRect.Max.x;
+        rect.Max.y = bg_y2;
+        if (rect.Min.x < table->BgClipRect.Min.x)
+            rect.Min.x = table->BgClipRect.Min.x;
+        if (rect.Min.y < table->BgClipRect.Min.y)
+            rect.Min.y = table->BgClipRect.Min.y;
+        if (rect.Max.x > table->BgClipRect.Max.x)
+            rect.Max.x = table->BgClipRect.Max.x;
+        if (rect.Max.y > table->BgClipRect.Max.y)
+            rect.Max.y = table->BgClipRect.Max.y;
+        if (rect.Min.x < column->ClipRect.Min.x)
+            rect.Min.x = column->ClipRect.Min.x;
+        if (rect.Max.x > column->MaxX)
+            rect.Max.x = column->MaxX;
+        if (rect.Min.y < rect.Max.y)
+            @ADD_RECT@(imgui_c89_ctx, window->DrawList,
+                &rect.Min, &rect.Max, cell->BgColor, 0.0f, 0);
+    }
+    if (top_border && bg_y1 >= table->BgClipRect.Min.y &&
+        bg_y1 < table->BgClipRect.Max.y)
+        @ADD_LINE_H@(imgui_c89_ctx, window->DrawList, table->BorderX1,
+            table->BorderX2, bg_y1, top_border, 1.0f);
+    if (unfreeze && bg_y2 >= table->BgClipRect.Min.y &&
+        bg_y2 < table->BgClipRect.Max.y)
+        @ADD_LINE_H@(imgui_c89_ctx, window->DrawList, table->BorderX1,
+            table->BorderX2, bg_y2, table->BorderColorStrong, 1.0f);
+}
+if (unfreeze_request)
+{
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+        table->Columns.Data[column_n].NavLayerCurrent = table->NavLayer;
+    y0 = table->RowPosY2 + 1.0f;
+    if (y0 < table->InnerClipRect.Min.y)
+        y0 = table->InnerClipRect.Min.y;
+    instance->LastFrozenHeight = y0 - table->OuterRect.Min.y;
+    if (unfreeze)
+    {
+        table->IsUnfrozenRows = 1;
+        if (y0 > table->InnerClipRect.Max.y)
+            y0 = table->InnerClipRect.Max.y;
+        table->BgClipRect.Min.y = table->Bg2ClipRectForDrawCmd.Min.y = y0;
+        table->BgClipRect.Max.y = table->Bg2ClipRectForDrawCmd.Max.y =
+            table->InnerClipRect.Max.y;
+        table->Bg2DrawChannelCurrent = table->Bg2DrawChannelUnfrozen;
+        row_height = table->RowPosY2 - table->RowPosY1;
+        table->RowPosY2 = window->DC.CursorPos.y =
+            table->WorkRect.Min.y + table->RowPosY2 - table->OuterRect.Min.y;
+        table->RowPosY1 = table->RowPosY2 - row_height;
+        for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+        {
+            column = &table->Columns.Data[column_n];
+            column->DrawChannelCurrent = column->DrawChannelUnfrozen;
+            column->ClipRect.Min.y = y0;
+        }
+        @SET_CLIP@(window, &table->Columns.Data[0].ClipRect);
+        @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+            table->Columns.Data[0].DrawChannelCurrent);
+    }
+}
+if (!(table->RowFlags & @HEADERS@))
+    table->RowBgColorCounter++;
+table->IsInsideRow = 0;
+/* IMGUI_C89_FUNCTION_END table_end_row */

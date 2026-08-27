@@ -1,0 +1,77 @@
+{
+  "name": "embedded_compact_full",
+  "upstream_revision": "baseline",
+  "language": "c++11",
+  "facade_language": "c++11",
+  "defines": [
+    "NDEBUG",
+    "IMGUI_DISABLE_DEBUG_TOOLS",
+    "IMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS",
+    "IMGUI_DISABLE_DEFAULT_FONT",
+    "IMGUI_DISABLE_TIME_FUNCTIONS",
+    "IMGUI_EMBEDDED_EXTERNAL_FONT"
+  ],
+  "undefines": [],
+  "translator_options": {
+    "compact_crc32": true,
+    "compact_style_colors": true,
+    "compact_truetype_only": false,
+    "compact_imvector": true,
+    "compact_key_char_mask": true,
+    "compact_nav_key_ranges": true,
+    "compact_nav_overlay_selectable": true,
+    "compact_cff_stack_guards": true,
+    "compact_static_const_arrays": true,
+    "compact_zero_constructors": [
+      "ImDrawList::ImDrawList",
+      "ImDrawListSharedData::ImDrawListSharedData",
+      "ImFontAtlas::ImFontAtlas",
+      "ImFontAtlasBuilder::ImFontAtlasBuilder",
+      "ImFontConfig::ImFontConfig",
+      "ImGuiContext::ImGuiContext",
+      "ImGuiIO::ImGuiIO",
+      "ImGuiInputTextState::ImGuiInputTextState",
+      "ImGuiKeyRoutingData::ImGuiKeyRoutingData",
+      "ImGuiMultiSelectState::ImGuiMultiSelectState",
+      "ImGuiNextItemData::ImGuiNextItemData",
+      "ImGuiPopupData::ImGuiPopupData",
+      "ImGuiTabBar::ImGuiTabBar",
+      "ImGuiTabItem::ImGuiTabItem",
+      "ImGuiTableColumn::ImGuiTableColumn",
+      "ImGuiTableInstanceData::ImGuiTableInstanceData",
+      "ImGuiViewportP::ImGuiViewportP",
+      "ImGuiWindow::ImGuiWindow",
+      "ImTextureData::ImTextureData"
+    ],
+    "pack_four_character_globals": [
+      "FONT_ATLAS_DEFAULT_TEX_DATA_PIXELS"
+    ],
+    "compress_string_pointer_globals": [
+      "GKeyNames"
+    ],
+    "trap_calls": [
+      "ImGui::ErrorLog"
+    ],
+    "omit_calls": []
+  },
+  "core_translation_units": [
+    "imgui.cpp",
+    "imgui_draw.cpp",
+    "imgui_tables.cpp",
+    "imgui_widgets.cpp"
+  ],
+  "compatibility_translation_units": [
+    "imgui_demo.cpp"
+  ],
+  "backend_translation_units": [
+    "backends/imgui_impl_null.cpp",
+    "backends/imgui_impl_sdl3.cpp",
+    "backends/imgui_impl_sdlrenderer3.cpp"
+  ],
+  "c_includes": [
+    "SDL3/SDL.h"
+  ],
+  "pkg_config_packages": [
+    "sdl3"
+  ]
+}

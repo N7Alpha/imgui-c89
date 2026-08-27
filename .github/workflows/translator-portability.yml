@@ -1,0 +1,40 @@
+name: translator portability
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gcc-linux-abi:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GCC multilib, Ninja, and LLVM 22
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gcc-multilib g++-multilib cmake ninja-build wget lsb-release software-properties-common gnupg
+          wget -q https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 22 all
+      - name: Build semantic extractor and focused gate
+        env:
+          LLVM_PREFIX: /usr/lib/llvm-22
+          CMAKE_PREFIX_PATH: /usr/lib/llvm-22
+        run: make translator-check
+      - name: Extract portable Dear ImGui core
+        env:
+          LLVM_PREFIX: /usr/lib/llvm-22
+        run: |
+          python3 translator/build_baseline.py --profile portable_core
+          python3 translator/build_baseline.py --profile portable_core_ilp32
+      - name: GCC LP64 gate
+        env:
+          PORTABILITY_CC: gcc
+          CXX: g++
+        run: python3 translator/portability_test.py --profile portable_core
+      - name: GCC ILP32 gate
+        env:
+          PORTABILITY_CC: gcc
+          CXX: g++
+        run: python3 translator/portability_test.py --profile portable_core_ilp32 --m32

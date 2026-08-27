@@ -1,0 +1,196 @@
+/*
+ * Blind strict-C89 draft for ImGui::TableHeader().
+ * Type, helper, and constant spellings are semantic integration tokens.
+ * Test-engine item-info instrumentation is intentionally omitted.
+ */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_header */
+    ImGuiContext *ctx;
+    ImGuiWindow *window;
+    ImGuiTable *table;
+    ImGuiTableColumn *column;
+    ImRect cell_rect;
+    ImRect bb;
+    ImVec2 label_size_value;
+    ImVec2 vector_value;
+    ImVec2 label_pos_value;
+    ImVec2 pos_max_value;
+    ImGuiID id;
+    ImU32 color;
+    ImGuiCol style_color;
+    ImGuiSortDirection next_direction;
+    const char *label_end;
+    char suffix[4];
+    int column_n;
+    float label_pos_x;
+    float label_pos_y;
+    float cell_min_x;
+    float cell_min_y;
+    float cell_max_x;
+    float cell_max_y;
+    float label_height;
+    float arrow_width;
+    float sort_text_width;
+    float arrow_scale;
+    float max_pos_x;
+    float ellipsis_max_x;
+    float sort_x;
+    float sort_y;
+    unsigned char sort_arrow;
+    unsigned char hovered;
+    unsigned char held;
+    unsigned char pressed;
+    unsigned char highlight;
+    unsigned char text_clipped;
+
+    ctx = imgui_c89_ctx;
+    window = ctx->CurrentWindow;
+    if (window->SkipItems)
+        return;
+    table = ctx->CurrentTable;
+    column_n = table->CurrentColumn;
+    column = &table->Columns.Data[column_n];
+    if (label == 0)
+        label = "";
+    label_end = @FIND_RENDERED_TEXT_END@(label, 0);
+    label_size_value = @CALC_TEXT_SIZE@(ctx, label, label_end, 0, -1.0f);
+    label_pos_x = window->DC.CursorPos.x;
+    label_pos_y = window->DC.CursorPos.y;
+    cell_rect = @TABLE_GET_CELL_BG_RECT@(table, column_n);
+    cell_min_x = cell_rect.Min.x;
+    cell_min_y = cell_rect.Min.y;
+    cell_max_x = cell_rect.Max.x;
+    cell_max_y = cell_rect.Max.y;
+    label_height = @MAX_FLOAT@(
+        label_size_value.y,
+        table->RowMinHeight - table->RowCellPaddingY * 2.0f);
+    arrow_width = 0.0f;
+    sort_text_width = 0.0f;
+    sort_arrow = 0;
+    suffix[0] = '\0';
+    arrow_scale = 0.65f;
+
+    if ((table->Flags & @SORTABLE@) != 0 &&
+        (column->Flags & @NO_SORT@) == 0) {
+        arrow_width = @TRUNC@(ctx->FontSize * arrow_scale +
+                             ctx->Style.FramePadding.x);
+        sort_arrow = (unsigned char)(column->SortOrder != -1);
+        if (column->SortOrder > 0) {
+            @FORMAT_STRING@(suffix, sizeof(suffix), "%d",
+                            column->SortOrder + 1);
+            vector_value = @CALC_TEXT_SIZE@(ctx, suffix, 0, 0, -1.0f);
+            sort_text_width = ctx->Style.ItemInnerSpacing.x + vector_value.x;
+        }
+    }
+
+    max_pos_x = label_pos_x + label_size_value.x +
+        arrow_width + sort_text_width;
+    column->ContentMaxXHeadersUsed = @MAX_FLOAT@(
+        column->ContentMaxXHeadersUsed,
+        sort_arrow ? cell_max_x : @MIN_FLOAT@(max_pos_x, cell_max_x));
+    column->ContentMaxXHeadersIdeal = @MAX_FLOAT@(
+        column->ContentMaxXHeadersIdeal, max_pos_x);
+
+    id = @WINDOW_GET_ID@(ctx, window, label, 0);
+    bb.Min.x = cell_min_x;
+    bb.Min.y = cell_min_y;
+    bb.Max.x = cell_max_x;
+    bb.Max.y = @MAX_FLOAT@(
+        cell_max_y,
+        cell_min_y + label_height + ctx->Style.CellPadding.y * 2.0f);
+    vector_value.x = 0.0f;
+    vector_value.y = label_height;
+    @ITEM_SIZE@(ctx, &vector_value, 0.0f);
+    if (!@ITEM_ADD@(ctx, &bb, id, 0, 0))
+        return;
+
+    highlight = (unsigned char)(table->HighlightColumnHeader == column_n);
+    hovered = 0;
+    held = 0;
+    pressed = @BUTTON_BEHAVIOR@(
+        ctx, &bb, id, &hovered, &held, @ALLOW_OVERLAP@);
+    if (held || hovered || highlight) {
+        style_color = held ? @HEADER_ACTIVE@ :
+            (hovered ? @HEADER_HOVERED@ : @HEADER@);
+        color = @GET_COLOR_U32@(ctx, style_color, 1.0f);
+        @TABLE_SET_BG_COLOR@(
+            ctx, @CELL_BG@, color, table->CurrentColumn);
+    } else if ((table->RowFlags & @HEADERS@) == 0) {
+        color = @GET_COLOR_U32@(ctx, @TABLE_HEADER_BG@, 1.0f);
+        @TABLE_SET_BG_COLOR@(
+            ctx, @CELL_BG@, color, table->CurrentColumn);
+    }
+    @RENDER_NAV_CURSOR@(ctx, &bb, id, @COMPACT@, 0.0f);
+    if (held)
+        table->HeldHeaderColumn = (ImGuiTableColumnIdx)column_n;
+    window->DC.CursorPos.y -= ctx->Style.ItemSpacing.y * 0.5f;
+
+    if (held && (table->Flags & @REORDERABLE@) != 0 &&
+        @IS_MOUSE_DRAGGING@(ctx, 0, -1.0f) && !ctx->DragDropActive) {
+        table->InstanceInteracted = table->InstanceCurrent;
+        if (ctx->IO.MouseDelta.x < 0.0f &&
+            ctx->IO.MousePos.x < cell_min_x &&
+            column->PrevEnabledColumn != -1) {
+            @TABLE_QUEUE_SET_COLUMN_DISPLAY_ORDER@(
+                table, column_n,
+                table->Columns.Data[column->PrevEnabledColumn].DisplayOrder);
+        }
+        if (ctx->IO.MouseDelta.x > 0.0f &&
+            ctx->IO.MousePos.x > cell_max_x &&
+            column->NextEnabledColumn != -1) {
+            @TABLE_QUEUE_SET_COLUMN_DISPLAY_ORDER@(
+                table, column_n,
+                table->Columns.Data[column->NextEnabledColumn].DisplayOrder);
+        }
+    }
+
+    ellipsis_max_x = @MAX_FLOAT@(
+        cell_max_x - (sort_arrow ? arrow_width + sort_text_width : 0.0f),
+        label_pos_x);
+    if ((table->Flags & @SORTABLE@) != 0 &&
+        (column->Flags & @NO_SORT@) == 0) {
+        if (column->SortOrder != -1) {
+            sort_x = @MAX_FLOAT@(
+                cell_min_x, cell_max_x - arrow_width - sort_text_width);
+            sort_y = label_pos_y;
+            if (column->SortOrder > 0) {
+                color = @GET_COLOR_U32@(ctx, @TEXT_COLOR@, 0.70f);
+                @PUSH_STYLE_COLOR@(ctx, @TEXT_COLOR@, color);
+                vector_value.x = sort_x + ctx->Style.ItemInnerSpacing.x;
+                vector_value.y = sort_y;
+                @RENDER_TEXT@(ctx, vector_value, suffix, 0, 0);
+                @POP_STYLE_COLOR@(ctx, 1);
+                sort_x += sort_text_width;
+            }
+            vector_value.x = sort_x;
+            vector_value.y = sort_y;
+            color = @GET_COLOR_U32@(ctx, @TEXT_COLOR@, 1.0f);
+            @RENDER_ARROW@(
+                ctx, window->DrawList, vector_value, color,
+                column->SortDirection == @SORT_ASCENDING@
+                    ? @DIRECTION_UP@ : @DIRECTION_DOWN@,
+                arrow_scale);
+        }
+        if (pressed && table->ReorderColumn != column_n) {
+            next_direction = @TABLE_GET_COLUMN_NEXT_SORT_DIRECTION@(column);
+            @TABLE_SET_COLUMN_SORT_DIRECTION@(
+                ctx, column_n, next_direction, ctx->IO.KeyShift);
+        }
+    }
+
+    label_pos_value.x = label_pos_x;
+    label_pos_value.y = label_pos_y;
+    pos_max_value.x = ellipsis_max_x;
+    pos_max_value.y = bb.Max.y;
+    @RENDER_TEXT_ELLIPSIS@(
+        ctx, window->DrawList, &label_pos_value, &pos_max_value,
+        ellipsis_max_x, label, label_end, &label_size_value);
+    text_clipped = (unsigned char)(
+        label_size_value.x > ellipsis_max_x - label_pos_x);
+    if (text_clipped && hovered && ctx->ActiveId == 0)
+        @SET_ITEM_TOOLTIP@(
+            ctx, "%.*s", (int)(label_end - label), label);
+    if (@IS_POPUP_OPEN_REQUEST_FOR_ITEM@(ctx, @POPUP_NONE@, id))
+        @TABLE_OPEN_CONTEXT_MENU@(ctx, column_n);
+    @TEST_ENGINE_ITEM_INFO@/* optional Test Engine item metadata */
+/* IMGUI_C89_FUNCTION_END table_header */

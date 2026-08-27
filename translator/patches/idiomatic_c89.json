@@ -1,0 +1,1394 @@
+{
+  "format_version": 1,
+  "name": "idiomatic-c89",
+  "description": "Fingerprint-guarded idiomatic C89 rewrites and size lowerings; no public API or Dear ImGui feature is removed.",
+  "translator_options": {
+    "compact_crc32": true,
+    "compact_style_colors": true,
+    "compact_name_switches": [
+      "ImGui::GetStyleColorName",
+      "ImTextureDataGetStatusName"
+    ],
+    "compact_imvector": true,
+    "compact_imvector_accessors": true,
+    "compact_imvector_lifecycle": true,
+    "compact_imvector_capacity": true,
+    "compact_imchunkstream": true,
+    "compact_impool": true,
+    "compact_checkbox_flags": true,
+    "noinline_functions": [
+      "ImFontAtlasBuilder::ImFontAtlasBuilder",
+      "ImFont::ClearOutputData",
+      "ImDrawList::PathStroke",
+      "ImGui::SetWindowClipRectBeforeSetChannel",
+      "ImGui::TableGetColumnName"
+    ],
+    "omit_unused_scalar_helpers": true,
+    "omit_unused_compatibility_shims": true,
+    "compact_assert_metadata": true,
+    "compact_input_source_names": true,
+    "compact_key_char_mask": true,
+    "compact_localization_entries": true,
+    "compact_cursor_data": true,
+    "compact_separator_table": true,
+    "compact_utf8_tables": true,
+    "compact_color_format_tables": true,
+    "compact_glyph_deltas": true,
+    "compact_nav_key_ranges": true,
+    "compact_nav_overlay_selectable": true,
+    "compact_cff_stack_guards": true,
+    "compact_static_const_arrays": true,
+    "compact_zero_constructors": [
+      "ImDrawList::ImDrawList",
+      "ImDrawListSharedData::ImDrawListSharedData",
+      "ImFontAtlas::ImFontAtlas",
+      "ImFontAtlasBuilder::ImFontAtlasBuilder",
+      "ImFontConfig::ImFontConfig",
+      "ImGuiContext::ImGuiContext",
+      "ImGuiIO::ImGuiIO",
+      "ImGuiInputTextState::ImGuiInputTextState",
+      "ImGuiKeyRoutingData::ImGuiKeyRoutingData",
+      "ImGuiMultiSelectState::ImGuiMultiSelectState",
+      "ImGuiNextItemData::ImGuiNextItemData",
+      "ImGuiPopupData::ImGuiPopupData",
+      "ImGuiTabBar::ImGuiTabBar",
+      "ImGuiTabItem::ImGuiTabItem",
+      "ImGuiTableColumn::ImGuiTableColumn",
+      "ImGuiTableInstanceData::ImGuiTableInstanceData",
+      "ImGuiViewportP::ImGuiViewportP",
+      "ImGuiWindow::ImGuiWindow",
+      "ImTextureData::ImTextureData"
+    ],
+    "pack_four_character_globals": [
+      "FONT_ATLAS_DEFAULT_TEX_DATA_PIXELS"
+    ],
+    "compress_string_pointer_globals": [
+      "GKeyNames"
+    ],
+    "handwritten_functions": {
+      "ImGui::TableGetColumnCount": {
+        "parameter_types": [], "body_sha256": "e0fe678e46e6dca20d5176c2254eba41bc7133ccd366ea5c8bcf65e4bbcc91ee",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_count"
+      },
+      "ImGui::TableGetColumnName": [
+        {
+          "parameter_types": ["int"], "body_sha256": "86eedcfc03b7ce68b8bac68cbf7b0560e762a2bdcd114afbe46d906041846122",
+          "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_name_current",
+          "functions": {"@TABLE_GET_COLUMN_NAME@": {"qualified_name": "ImGui::TableGetColumnName", "parameter_types": ["const ImGuiTable *", "int"]}}
+        },
+        {
+          "parameter_types": ["const ImGuiTable *", "int"], "body_sha256": "c15ef81afde949c4e437535481fd9d56aaa066617cdd24b5ae1982f8d28d2dbe",
+          "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_name_table"
+        }
+      ],
+      "ImGui::TableGetColumnFlags": {
+        "parameter_types": ["int"], "body_sha256": "6f724da8aa4a4cf67f138620e2501fc2ad14272ca0fe5d2d53d03372231668d9",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_flags",
+        "constants": {"@COLUMN_NONE@": "ImGuiTableColumnFlags_None", "@COLUMN_HOVERED@": "ImGuiTableColumnFlags_IsHovered"}
+      },
+      "ImGui::TableGetCellBgRect": {
+        "parameter_types": ["const ImGuiTable *", "int"], "body_sha256": "2f9adfe8593d9cbab7d8be87391e9df42ea0f0a41fb4d4dfd5318a3f6de69c2f",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_cell_bg_rect"
+      },
+      "ImGui::TableGetColumnResizeID": {
+        "parameter_types": ["ImGuiTable *", "int", "int"],
+        "body_sha256": ["613e2243973034d576e6fefd8fe66e36caf33bed5a473fa7d04af3e4d4bc204a", "adbfd79b7a60f99ee62084cedb835e01c311b13fd59afc0c38f758c596f5ca0e"],
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_resize_id"
+      },
+      "ImGui::TableGetHoveredColumn": {
+        "parameter_types": [], "body_sha256": "986ccd587e1e2c977a0eabb6a07df586c86df40a7db7c471993d6a3ffd1eae6b",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_hovered_column"
+      },
+      "ImGui::TableGetHoveredRow": {
+        "parameter_types": [], "body_sha256": "52f15817bff81a5352f5e8a80e3651b24e837c4c0384114b3080dbda23db83f1",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_hovered_row"
+      },
+      "ImGui::TableGetRowIndex": {
+        "parameter_types": [], "body_sha256": "66c585dff9e562096b4858b202022aca20fd22107b10eb8d55bc83fca58deaf0",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_row_index"
+      },
+      "ImGui::TableGetColumnIndex": {
+        "parameter_types": [], "body_sha256": "6b98d7e3659150765aa11dadf97f4793ecbfe0a3edf03f429390e5e903a666ed",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_index"
+      },
+      "ImGui::TableCalcMaxColumnWidth": {
+        "parameter_types": ["const ImGuiTable *", "int"], "body_sha256": "c6e059515b0d227d5e397378c071e345cd45e3cae941c75f35c073969e81cace",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_calc_max_column_width",
+        "constants": {"@TABLE_SCROLL_X@": "ImGuiTableFlags_ScrollX", "@TABLE_NO_KEEP_VISIBLE@": "ImGuiTableFlags_NoKeepColumnsVisible"}
+      },
+      "ImGui::TableGetColumnWidthAuto": {
+        "parameter_types": ["ImGuiTable *", "ImGuiTableColumn *"], "body_sha256": "40145b4d7a0abccecf9d7c913bdd0ac25f46f1d343f5016ce7fae0aefc27ae46",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_width_auto",
+        "constants": {"@COLUMN_NO_HEADER_WIDTH@": "ImGuiTableColumnFlags_NoHeaderWidth", "@COLUMN_WIDTH_FIXED@": "ImGuiTableColumnFlags_WidthFixed", "@TABLE_RESIZABLE@": "ImGuiTableFlags_Resizable", "@COLUMN_NO_RESIZE@": "ImGuiTableColumnFlags_NoResize"}
+      },
+      "TableGetColumnAvailSortDirection": {
+        "parameter_types": ["ImGuiTableColumn *", "int"],
+        "body_sha256": ["91fc67478652192fe0573b73f770b2bcddb63be09bcdaa820438cacf63670892", "f1ff2e376fc7ef590203b6f1cf5e90af7e0d93aa715059bbd1202c8b4d4ee3d5"],
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_avail_sort_direction"
+      },
+      "ImGui::TableGetColumnNextSortDirection": {
+        "parameter_types": ["ImGuiTableColumn *"],
+        "body_sha256": ["8b26a57e80334ba0c27f3819576db8e778aacf5948aa87a7d2db24c532248945", "c686e926c2b7a62d3790040edb38f2b375a34ba95ae8ee6296a5911ac0a648e0"],
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_next_sort_direction",
+        "functions": {"@GET_AVAIL_DIRECTION@": {"qualified_name": "TableGetColumnAvailSortDirection", "parameter_types": ["ImGuiTableColumn *", "int"]}},
+        "constants": {"@SORT_NONE@": "ImGuiSortDirection_None"}
+      },
+      "ImGui::TableGetHeaderRowHeight": {
+        "parameter_types": [], "body_sha256": "cd265d0cd1e69e809e206a788140b535ceb12f48f08cddf3a760b26948d7687b",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_header_row_height",
+        "functions": {"@CALC_TEXT_SIZE@": {"qualified_name": "ImGui::CalcTextSize", "parameter_types": ["const char *", "const char *", "bool", "float"]}, "@TABLE_GET_COLUMN_NAME@": {"qualified_name": "ImGui::TableGetColumnName", "parameter_types": ["const ImGuiTable *", "int"]}},
+        "constants": {"@COLUMN_NO_HEADER_LABEL@": "ImGuiTableColumnFlags_NoHeaderLabel"}
+      },
+      "ImGui::TableGetHeaderAngledMaxLabelWidth": {
+        "parameter_types": [], "body_sha256": "610f617e902100b8820a330fdd8d8568734df377d7e2032989e9f3a31d52448f",
+        "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_header_angled_max_label_width",
+        "functions": {"@CALC_TEXT_SIZE@": {"qualified_name": "ImGui::CalcTextSize", "parameter_types": ["const char *", "const char *", "bool", "float"]}, "@TABLE_GET_COLUMN_NAME@": {"qualified_name": "ImGui::TableGetColumnName", "parameter_types": ["const ImGuiTable *", "int"]}},
+        "constants": {"@COLUMN_ANGLED_HEADER@": "ImGuiTableColumnFlags_AngledHeader"}
+      },
+      "TableSettingsCalcChunkSize": {
+        "parameter_types": ["int"], "body_sha256": "8abeeacabecb952649e366bd835f51eb4de2817d0a0b963527be667fb1582d4f",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_calc_chunk_size"
+      },
+      "TableSettingsInit": {
+        "parameter_types": ["ImGuiTableSettings *", "ImGuiID", "int", "int"], "body_sha256": "fbb26755754e84fffba890c34b1450758b48b19b46bee3ff27aa877f2784b4bb",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_init",
+        "functions": {"@CALC_SIZE@": {"qualified_name": "TableSettingsCalcChunkSize", "parameter_types": ["int"]}}
+      },
+      "ImGui::TableSettingsFindByID": {
+        "parameter_types": ["ImGuiID"], "body_sha256": "962d6d71197fb49049272cb46860b63971d688c29863d2e6dd9aff09da0f4e20",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_find_by_id",
+        "functions": {
+          "@CHUNK_BEGIN@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::begin", "parameter_types": []},
+          "@CHUNK_NEXT@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::next_chunk", "parameter_types": ["ImGuiTableSettings *"]}
+        }
+      },
+      "ImGui::TableSettingsCreate": {
+        "parameter_types": ["ImGuiID", "int"], "body_sha256": "1506540a827efe8b04a41724aefb827a10a57e4806bca87c3d6205bc5cfa08e9",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_create",
+        "functions": {
+          "@FIND_BY_ID@": {"qualified_name": "ImGui::TableSettingsFindByID", "parameter_types": ["ImGuiID"]},
+          "@SETTINGS_INIT@": {"qualified_name": "TableSettingsInit", "parameter_types": ["ImGuiTableSettings *", "ImGuiID", "int", "int"]},
+          "@CHUNK_ALLOC@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::alloc_chunk", "parameter_types": ["size_t"]},
+          "@CALC_SIZE@": {"qualified_name": "TableSettingsCalcChunkSize", "parameter_types": ["int"]}
+        }
+      },
+      "ImGui::TableGetBoundSettings": {
+        "parameter_types": ["ImGuiTable *"], "body_sha256": ["d22cba6d88d485b1f744e944f05fa9de30e59b86a3da905e81664a06cdb07ccb", "d599f78bbfdc1dcba36961c770cd0b0cb801f82d387a3238cadaa51380ce31d7"],
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_get_bound_settings",
+        "functions": {"@CHUNK_PTR@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::ptr_from_offset", "parameter_types": ["int"]}}
+      },
+      "ImGui::TableResetSettings": {
+        "parameter_types": ["ImGuiTable *"], "body_sha256": "877f6dd8d7c4118ef4e8d84ee1f1c1c16d8cb216710fca03bb9afcbcad973adf",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_reset_settings",
+        "constants": {"@TABLE_NONE@": "ImGuiTableFlags_None"}
+      },
+      "ImGui::TableLoadSettings": {
+        "parameter_types": ["ImGuiTable *"], "body_sha256": "712a3f415538a21fe33ed68ee80497a06960ec13188492c6dab30513be73a10b",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_load_settings",
+        "functions": {
+          "@FIND_BY_ID@": {"qualified_name": "ImGui::TableSettingsFindByID", "parameter_types": ["ImGuiID"]},
+          "@CHUNK_OFFSET@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::offset_from_ptr", "parameter_types": ["const ImGuiTableSettings *"]},
+          "@GET_BOUND@": {"qualified_name": "ImGui::TableGetBoundSettings", "parameter_types": ["ImGuiTable *"]}
+        },
+        "constants": {"@NO_SAVED_SETTINGS@": "ImGuiTableFlags_NoSavedSettings"}
+      },
+      "ImGui::TableLoadSettingsForColumn": {
+        "parameter_types": ["ImGuiTableColumn *", "ImGuiTableColumnSettings *", "ImGuiTableFlags"], "body_sha256": "c5352f219e8246cdaad80ebb85e0762d5f5536b7597b868d86f0b3f3ec39859b",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_load_settings_for_column",
+        "constants": {"@RESIZABLE@": "ImGuiTableFlags_Resizable", "@REORDERABLE@": "ImGuiTableFlags_Reorderable", "@HIDEABLE@": "ImGuiTableFlags_Hideable"}
+      },
+      "ImGui::TableSaveSettings": {
+        "parameter_types": ["ImGuiTable *"], "body_sha256": ["28f95eecc44aa0e665f43f675887767a52f039e75da26a6bdd21958840fccbb9", "eb43dd1692ac70eaa2e6e65efab1a24b9f9370a915ea8e02280d9ff72c2e1ea9"],
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_save_settings",
+        "functions": {
+          "@GET_BOUND@": {"qualified_name": "ImGui::TableGetBoundSettings", "parameter_types": ["ImGuiTable *"]},
+          "@CREATE@": {"qualified_name": "ImGui::TableSettingsCreate", "parameter_types": ["ImGuiID", "int"]},
+          "@CHUNK_OFFSET@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::offset_from_ptr", "parameter_types": ["const ImGuiTableSettings *"]},
+          "@MARK_DIRTY@": {"qualified_name": "ImGui::MarkIniSettingsDirty", "parameter_types": []}
+        },
+        "constants": {
+          "@NO_SAVED_SETTINGS@": "ImGuiTableFlags_NoSavedSettings", "@TABLE_NONE@": "ImGuiTableFlags_None",
+          "@WIDTH_STRETCH@": "ImGuiTableColumnFlags_WidthStretch", "@DEFAULT_HIDE@": "ImGuiTableColumnFlags_DefaultHide",
+          "@RESIZABLE@": "ImGuiTableFlags_Resizable", "@REORDERABLE@": "ImGuiTableFlags_Reorderable",
+          "@SORTABLE@": "ImGuiTableFlags_Sortable", "@HIDEABLE@": "ImGuiTableFlags_Hideable"
+        }
+      },
+      "ImGui::TableLoadSettingsForColumns": {
+        "parameter_types": ["ImGuiTable *"], "body_sha256": "a601abf939664ba16cc08ad07655864d0931ababb22e0e14057948e7df752180",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_load_settings_for_columns",
+        "functions": {
+          "@GET_BOUND@": {"qualified_name": "ImGui::TableGetBoundSettings", "parameter_types": ["ImGuiTable *"]},
+          "@LOAD_ONE@": {"qualified_name": "ImGui::TableLoadSettingsForColumn", "parameter_types": ["ImGuiTableColumn *", "ImGuiTableColumnSettings *", "ImGuiTableFlags"]}
+        },
+        "constants": {"@REORDERABLE@": "ImGuiTableFlags_Reorderable"}
+      },
+      "TableFixDisplayOrderComparer": {
+        "parameter_types": ["const void *", "const void *"], "body_sha256": "85ed1c542b68eb9a76b17e5af29cf2088b1c7b757d93fb09ba398044090933c6",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_fix_display_order_comparer"
+      },
+      "ImGui::TableFixDisplayOrder": {
+        "parameter_types": ["ImGuiTable *"], "body_sha256": "2a97d1492808e5ec1f2f9d9f1b511b226d05fc2a1a1bdb56149a8b691c607ea0",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_fix_display_order",
+        "functions": {
+          "@BYTE_RESERVE@": {"qualified_name": "ImVector<char>::reserve", "parameter_types": ["int"]},
+          "@QSORT@": {"qualified_name": "ImQsort", "parameter_types": ["void *", "size_t", "size_t", "int (*)(const void *, const void *)"]},
+          "@COMPARE@": {"qualified_name": "TableFixDisplayOrderComparer", "parameter_types": ["const void *", "const void *"]}
+        }
+      },
+      "TableSettingsHandler_ClearAll": {
+        "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *"], "body_sha256": "65b77be9d05b3c01093acea729888495d5e65390dae3a63f6aa5a44ff7535d22",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_handler_clear_all",
+        "functions": {
+          "@POOL_MAP_SIZE@": {"qualified_name": "ImPool<ImGuiTable>::GetMapSize", "parameter_types": []},
+          "@POOL_TRY_GET@": {"qualified_name": "ImPool<ImGuiTable>::TryGetMapData", "parameter_types": ["ImPoolIdx"]},
+          "@CHUNK_CLEAR@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::clear", "parameter_types": []}
+        }
+      },
+      "TableSettingsHandler_Cleanup": {
+        "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *", "ImGuiSettingsCleanupArgs *"], "body_sha256": "959a86b2a78f2533cab17968e174b1e5ebbb8ce8e69b5bce1c5adf62a413344c",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_handler_cleanup",
+        "functions": {
+          "@POOL_MAP_SIZE@": {"qualified_name": "ImPool<ImGuiTable>::GetMapSize", "parameter_types": []},
+          "@POOL_TRY_GET@": {"qualified_name": "ImPool<ImGuiTable>::TryGetMapData", "parameter_types": ["ImPoolIdx"]},
+          "@CHUNK_BEGIN@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::begin", "parameter_types": []},
+          "@CHUNK_NEXT@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::next_chunk", "parameter_types": ["ImGuiTableSettings *"]},
+          "@DATE_VALID@": {"qualified_name": "ImGuiPackedDate::IsValid", "parameter_types": []},
+          "@DATE_UNPACK@": {"qualified_name": "ImGuiPackedDate::Unpack", "parameter_types": []}
+        }
+      },
+      "TableSettingsHandler_ApplyAll": {
+        "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *"], "body_sha256": "e81a20e469835477b7205d82ac1a8a628b496d1ed2d40b6c0b6da16556c5d7b9",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_handler_apply_all",
+        "functions": {
+          "@POOL_MAP_SIZE@": {"qualified_name": "ImPool<ImGuiTable>::GetMapSize", "parameter_types": []},
+          "@POOL_TRY_GET@": {"qualified_name": "ImPool<ImGuiTable>::TryGetMapData", "parameter_types": ["ImPoolIdx"]}
+        }
+      },
+      "TableSettingsHandler_ReadOpen": {
+        "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *", "const char *"], "body_sha256": "13871355c4327274637663f30a24ac55f541f2ec033f957978c0ab5f38c5a843",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_handler_read_open",
+        "functions": {"@CREATE@": {"qualified_name": "ImGui::TableSettingsCreate", "parameter_types": ["ImGuiID", "int"]}}
+      },
+      "TableSettingsHandler_ReadLine": {
+        "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *", "void *", "const char *"], "body_sha256": "d056ef4d60c07786951c1e6129743a055ea2b721f2466ae094621ef818f0d34c",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_handler_read_line",
+        "functions": {"@SKIP_BLANK@": {"qualified_name": "ImStrSkipBlank", "parameter_types": ["const char *"]}},
+        "constants": {
+          "@RESIZABLE@": "ImGuiTableFlags_Resizable", "@HIDEABLE@": "ImGuiTableFlags_Hideable",
+          "@REORDERABLE@": "ImGuiTableFlags_Reorderable", "@SORTABLE@": "ImGuiTableFlags_Sortable",
+          "@SORT_DESC@": "ImGuiSortDirection_Descending", "@SORT_ASC@": "ImGuiSortDirection_Ascending"
+        }
+      },
+      "TableSettingsHandler_WriteAll": {
+        "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *", "ImGuiTextBuffer *"], "body_sha256": "2b92bef2668047d835b5204f596d4e9c07312309c06e6509acee88221682704b",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_handler_write_all",
+        "functions": {
+          "@CHUNK_BEGIN@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::begin", "parameter_types": []},
+          "@CHUNK_NEXT@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::next_chunk", "parameter_types": ["ImGuiTableSettings *"]},
+          "@TEXT_RESERVE@": {"qualified_name": "ImGuiTextBuffer::reserve", "parameter_types": ["int"]},
+          "@TEXT_SIZE@": {"qualified_name": "ImGuiTextBuffer::size", "parameter_types": []},
+          "@TEXT_APPENDF@": {"qualified_name": "ImGuiTextBuffer::appendf", "parameter_types": ["const char *"]},
+          "@TEXT_APPEND@": {"qualified_name": "ImGuiTextBuffer::append", "parameter_types": ["const char *", "const char *"]},
+          "@DATE_UNPACK@": {"qualified_name": "ImGuiPackedDate::Unpack", "parameter_types": []}
+        },
+        "constants": {
+          "@RESIZABLE@": "ImGuiTableFlags_Resizable", "@HIDEABLE@": "ImGuiTableFlags_Hideable",
+          "@REORDERABLE@": "ImGuiTableFlags_Reorderable", "@SORTABLE@": "ImGuiTableFlags_Sortable",
+          "@SORT_ASC@": "ImGuiSortDirection_Ascending"
+        }
+      },
+      "ImGui::TableSettingsAddSettingsHandler": {
+        "parameter_types": [], "body_sha256": "c75adb964a733eb448315ccfec394098d8f96437e9c22577b305afca5309e94e",
+        "template": "handwritten/tables_settings_batch.c.in", "fragment": "table_settings_add_handler",
+        "functions": {
+          "@HASH_STR@": {"qualified_name": "ImHashStr", "parameter_types": ["const char *", "size_t", "ImGuiID"]},
+          "@CLEAR_ALL@": {"qualified_name": "TableSettingsHandler_ClearAll", "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *"]},
+          "@CLEANUP@": {"qualified_name": "TableSettingsHandler_Cleanup", "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *", "ImGuiSettingsCleanupArgs *"]},
+          "@READ_OPEN@": {"qualified_name": "TableSettingsHandler_ReadOpen", "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *", "const char *"]},
+          "@READ_LINE@": {"qualified_name": "TableSettingsHandler_ReadLine", "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *", "void *", "const char *"]},
+          "@APPLY_ALL@": {"qualified_name": "TableSettingsHandler_ApplyAll", "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *"]},
+          "@WRITE_ALL@": {"qualified_name": "TableSettingsHandler_WriteAll", "parameter_types": ["ImGuiContext *", "ImGuiSettingsHandler *", "ImGuiTextBuffer *"]},
+          "@ADD_HANDLER@": {"qualified_name": "ImGui::AddSettingsHandler", "parameter_types": ["const ImGuiSettingsHandler *"]}
+        }
+      },
+      "ImGui::TableRemove": {
+        "parameter_types": ["ImGuiTable *"], "body_sha256": "b8d32f43fcd950e177467c0c05658e21dadff908d4b5e8b61fe49a0d291b5e66",
+        "template": "handwritten/tables_gc_batch.c.in", "fragment": "table_remove",
+        "functions": {
+          "@POOL_INDEX@": {"qualified_name": "ImPool<ImGuiTable>::GetIndex", "parameter_types": ["const ImGuiTable *"]},
+          "@POOL_REMOVE@": {"qualified_name": "ImPool<ImGuiTable>::Remove", "parameter_types": ["ImGuiID", "const ImGuiTable *"]}
+        }
+      },
+      "ImGui::TableGcCompactTransientBuffers": [
+        {
+          "parameter_types": ["ImGuiTable *"], "body_sha256": ["7890bce9b452b108433764b995b2b2c4bf9138ec8f90077317742241b0899e3d", "b018b2394281c623a79450d20af19629f62994d354bafe68b0b3eac9d305a1e2"],
+          "template": "handwritten/tables_gc_batch.c.in", "fragment": "table_gc_compact_table",
+          "functions": {
+            "@SORT_CLEAR@": {"qualified_name": "ImVector<ImGuiTableColumnSortSpecs>::clear", "parameter_types": []},
+            "@TEXT_CLEAR@": {"qualified_name": "ImGuiTextBuffer::clear", "parameter_types": []},
+            "@COLUMN_AT@": {"qualified_name": "ImSpan<ImGuiTableColumn>::operator[]", "parameter_types": ["int"], "method_const": false},
+            "@POOL_INDEX@": {"qualified_name": "ImPool<ImGuiTable>::GetIndex", "parameter_types": ["const ImGuiTable *"]}
+          }
+        },
+        {
+          "parameter_types": ["ImGuiTableTempData *"], "body_sha256": "2eb1e62dd85361ba5c45702a9c17ebef86023c3129872b1fdc38551c307f2407",
+          "template": "handwritten/tables_gc_batch.c.in", "fragment": "table_gc_compact_temp_data",
+          "functions": {
+            "@HEADER_CLEAR@": {"qualified_name": "ImVector<ImGuiTableHeaderData>::clear", "parameter_types": []},
+            "@SPLITTER_CLEAR@": {"qualified_name": "ImDrawListSplitter::ClearFreeMemory", "parameter_types": []}
+          }
+        }
+      ],
+      "ImGui::TableGcCompactSettings": {
+        "parameter_types": [], "body_sha256": "2ebe73593e53d52b6e0023f5ce5ba7cbf6d495f7a88b7f6206463ea6bde6e5b9",
+        "template": "handwritten/tables_gc_batch.c.in", "fragment": "table_gc_compact_settings",
+        "functions": {
+          "@CHUNK_BEGIN@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::begin", "parameter_types": []},
+          "@CHUNK_NEXT@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::next_chunk", "parameter_types": ["ImGuiTableSettings *"]},
+          "@CALC_SIZE@": {"qualified_name": "TableSettingsCalcChunkSize", "parameter_types": ["int"]},
+          "@BYTE_RESERVE@": {"qualified_name": "ImVector<char>::reserve", "parameter_types": ["int"]},
+          "@CHUNK_ALLOC@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::alloc_chunk", "parameter_types": ["size_t"]},
+          "@CHUNK_SWAP@": {"qualified_name": "ImChunkStream<ImGuiTableSettings>::swap", "parameter_types": ["ImChunkStream<ImGuiTableSettings> &"]},
+          "@POOL_MAP_SIZE@": {"qualified_name": "ImPool<ImGuiTable>::GetMapSize", "parameter_types": []},
+          "@POOL_TRY_GET@": {"qualified_name": "ImPool<ImGuiTable>::TryGetMapData", "parameter_types": ["ImPoolIdx"]},
+          "@BYTE_DESTROY@": {"qualified_name": "ImVector<char>::~ImVector", "parameter_types": []}
+        }
+      },
+      "ImGui::TableGetSortSpecs": {
+        "parameter_types": [], "body_sha256": "4f523bc3c730096cf58b3e803b5d31f5f5eeb6f213b8ef5475d0f02b20bcabd0",
+        "template": "handwritten/tables_sort_batch.c.in", "fragment": "table_get_sort_specs",
+        "functions": {
+          "@UPDATE_LAYOUT@": {"qualified_name": "ImGui::TableUpdateLayout", "parameter_types": ["ImGuiTable *"]},
+          "@BUILD_SPECS@": {"qualified_name": "ImGui::TableSortSpecsBuild", "parameter_types": ["ImGuiTable *"]}
+        },
+        "constants": {"@SORTABLE@": "ImGuiTableFlags_Sortable"}
+      },
+      "ImGui::TableFixColumnSortDirection": {
+        "parameter_types": ["ImGuiTable *", "ImGuiTableColumn *"], "body_sha256": "1240ded650719c1f8da7e0c25e3e1028f840315fd4df18fab17d95d6a96d04ca",
+        "template": "handwritten/tables_sort_batch.c.in", "fragment": "table_fix_column_sort_direction",
+        "functions": {"@GET_AVAIL_DIRECTION@": {"qualified_name": "TableGetColumnAvailSortDirection", "parameter_types": ["ImGuiTableColumn *", "int"]}}
+      },
+      "ImGui::TableSetColumnSortDirection": {
+        "parameter_types": ["int", "ImGuiSortDirection", "bool"],
+        "body_sha256": ["e7625d66cee0b558f868fcc326eabd78fab73dbc6514493df510b4f2f30b1ede", "77aafddd4717b93b7007d2659acd18a2f167131489d3b460a4e08cca823d961b"],
+        "template": "handwritten/tables_sort_batch.c.in", "fragment": "table_set_column_sort_direction",
+        "functions": {"@FIX_DIRECTION@": {"qualified_name": "ImGui::TableFixColumnSortDirection", "parameter_types": ["ImGuiTable *", "ImGuiTableColumn *"]}},
+        "constants": {"@SORT_MULTI@": "ImGuiTableFlags_SortMulti", "@SORT_NONE@": "ImGuiSortDirection_None"}
+      },
+      "ImGui::TableSortSpecsSanitize": {
+        "parameter_types": ["ImGuiTable *"],
+        "body_sha256": ["d4a1734c851ee2d4cab90a198390006798b1924fdea1c5caf43a2666e815ee22", "e4327156f9025ac6b47cb847ffa39dd599a05c355eea302ec09b9b05e7e1bbe2"],
+        "template": "handwritten/tables_sort_batch.c.in", "fragment": "table_sort_specs_sanitize",
+        "functions": {"@GET_AVAIL_DIRECTION@": {"qualified_name": "TableGetColumnAvailSortDirection", "parameter_types": ["ImGuiTableColumn *", "int"]}},
+        "constants": {
+          "@SORT_MULTI@": "ImGuiTableFlags_SortMulti", "@SORT_TRISTATE@": "ImGuiTableFlags_SortTristate",
+          "@NO_SORT@": "ImGuiTableColumnFlags_NoSort"
+        }
+      },
+      "ImGui::TableSortSpecsBuild": {
+        "parameter_types": ["ImGuiTable *"],
+        "body_sha256": ["fa0451d0c206f41524c61fbfc1d7860fe2ee10eb23d702d952c0e2607eb53bf3", "19811d2b4be33af8b6634202b5776a855ae2f88471cec09b43f408eb95629dc4"],
+        "template": "handwritten/tables_sort_batch.c.in", "fragment": "table_sort_specs_build",
+        "functions": {
+          "@SANITIZE@": {"qualified_name": "ImGui::TableSortSpecsSanitize", "parameter_types": ["ImGuiTable *"]},
+          "@SPECS_RESIZE@": {"qualified_name": "ImVector<ImGuiTableColumnSortSpecs>::resize", "parameter_types": ["int"]}
+        }
+      },
+      "ImGui::TablePushBackgroundChannel": {
+        "parameter_types": [], "body_sha256": "a62eab1bbabdaeaf9180cf2732440ee2f016c1b7a3aba5b82df4ea117fb4b8d3",
+        "template": "handwritten/tables_draw_channels_batch.c.in", "fragment": "table_push_background_channel",
+        "functions": {
+          "@SET_CLIP@": {"qualified_name": "ImGui::SetWindowClipRectBeforeSetChannel", "parameter_types": ["ImGuiWindow *", "const ImRect &"]},
+          "@SET_CHANNEL@": {"qualified_name": "ImDrawListSplitter::SetCurrentChannel", "parameter_types": ["ImDrawList *", "int"]}
+        }
+      },
+      "ImGui::TablePopBackgroundChannel": {
+        "parameter_types": [], "body_sha256": "74f5c8c937e7881015aac1001d2d674b45a9653daf77e78583989d4166c1ad83",
+        "template": "handwritten/tables_draw_channels_batch.c.in", "fragment": "table_pop_background_channel",
+        "functions": {
+          "@SET_CLIP@": {"qualified_name": "ImGui::SetWindowClipRectBeforeSetChannel", "parameter_types": ["ImGuiWindow *", "const ImRect &"]},
+          "@SET_CHANNEL@": {"qualified_name": "ImDrawListSplitter::SetCurrentChannel", "parameter_types": ["ImDrawList *", "int"]}
+        }
+      },
+      "ImGui::TablePushColumnChannel": {
+        "parameter_types": ["int"], "body_sha256": "15fa927583a73350acc6d0de6654d48cbfd09ed9e6b1da586953e5ecc617e4d6",
+        "template": "handwritten/tables_draw_channels_batch.c.in", "fragment": "table_push_column_channel",
+        "functions": {
+          "@SET_CLIP@": {"qualified_name": "ImGui::SetWindowClipRectBeforeSetChannel", "parameter_types": ["ImGuiWindow *", "const ImRect &"]},
+          "@SET_CHANNEL@": {"qualified_name": "ImDrawListSplitter::SetCurrentChannel", "parameter_types": ["ImDrawList *", "int"]}
+        },
+        "constants": {"@NO_CLIP@": "ImGuiTableFlags_NoClip"}
+      },
+      "ImGui::TablePopColumnChannel": {
+        "parameter_types": [], "body_sha256": "e95d54f6716e17091c5b149ad4ad166e65cd2fed4a5394be6423b3ba57322538",
+        "template": "handwritten/tables_draw_channels_batch.c.in", "fragment": "table_pop_column_channel",
+        "functions": {
+          "@SET_CLIP@": {"qualified_name": "ImGui::SetWindowClipRectBeforeSetChannel", "parameter_types": ["ImGuiWindow *", "const ImRect &"]},
+          "@SET_CHANNEL@": {"qualified_name": "ImDrawListSplitter::SetCurrentChannel", "parameter_types": ["ImDrawList *", "int"]}
+        },
+        "constants": {"@NO_CLIP@": "ImGuiTableFlags_NoClip"}
+      },
+      "ImGui::TableSetupDrawChannels": {
+        "parameter_types": ["ImGuiTable *"],
+        "body_sha256": ["1208b01dbaf2a74b67777cb70b5a45c453814cf63fd157b933c45771b487780c", "9f364cad50174ba05a9314afeebe4363629b245683e368e725b159a171a73a5c"],
+        "template": "handwritten/tables_draw_channels_batch.c.in", "fragment": "table_setup_draw_channels",
+        "functions": {
+          "@BIT_STORAGE_BYTES@": {"qualified_name": "ImBitArrayGetStorageSizeInBytes", "parameter_types": ["int"]},
+          "@SPLIT@": {"qualified_name": "ImDrawListSplitter::Split", "parameter_types": ["ImDrawList *", "int"]}
+        },
+        "constants": {"@NO_CLIP@": "ImGuiTableFlags_NoClip"}
+      },
+      "ImGui::TableSetColumnWidth": {
+        "parameter_types": ["int", "float"],
+        "body_sha256": ["163021ff7bd0ac578c32dc900ab1305056a3d7673606e98d1f3ff90b956c7730", "d65064552d487d4efff32bc6e4e60ea955c830121c7f63d755efac9a8a687d96"],
+        "template": "handwritten/tables_width_batch.c.in", "fragment": "table_set_column_width",
+        "functions": {"@UPDATE_WEIGHTS@": {"qualified_name": "ImGui::TableUpdateColumnsWeightFromWidth", "parameter_types": ["ImGuiTable *"]}},
+        "constants": {"@WIDTH_FIXED@": "ImGuiTableColumnFlags_WidthFixed", "@WIDTH_STRETCH@": "ImGuiTableColumnFlags_WidthStretch"}
+      },
+      "ImGui::TableSetColumnWidthAutoSingle": {
+        "parameter_types": ["ImGuiTable *", "int"], "body_sha256": "61848c3a189f769ef30c7226ffeaae023b2db2c457107f84e4a92eb3c781971d",
+        "template": "handwritten/tables_width_batch.c.in", "fragment": "table_set_column_width_auto_single"
+      },
+      "ImGui::TableSetColumnWidthAutoAll": {
+        "parameter_types": ["ImGuiTable *"], "body_sha256": "991943603f0c5503e013341eaac96ea13a8b292447ed78a3082b8e257295b5fd",
+        "template": "handwritten/tables_width_batch.c.in", "fragment": "table_set_column_width_auto_all",
+        "constants": {"@WIDTH_STRETCH@": "ImGuiTableColumnFlags_WidthStretch"}
+      },
+      "ImGui::TableUpdateColumnsWeightFromWidth": {
+        "parameter_types": ["ImGuiTable *"],
+        "body_sha256": ["b53604bfcb9209b0e156e540b6afbf3bcba6f8bd9b38e22c36a5500e8a594f36", "6dac11863442eed95cf453dfbe0f1d0712a50b29730aad0a9347246686d4d860"],
+        "template": "handwritten/tables_width_batch.c.in", "fragment": "table_update_columns_weight_from_width",
+        "constants": {"@WIDTH_STRETCH@": "ImGuiTableColumnFlags_WidthStretch"}
+      },
+      "ImGui::TableInitColumnDefaults": {
+        "parameter_types": ["ImGuiTable *", "ImGuiTableColumn *", "ImGuiTableColumnFlags"], "body_sha256": "a2ab412f3f1bde0f2af16f335b32d29079b91c40392a472a3e5aa01d20a1fd40",
+        "template": "handwritten/tables_column_setup_batch.c.in", "fragment": "table_init_column_defaults",
+        "constants": {"@RESIZABLE@":"ImGuiTableFlags_Resizable","@REORDERABLE@":"ImGuiTableFlags_Reorderable","@HIDEABLE@":"ImGuiTableFlags_Hideable","@SORTABLE@":"ImGuiTableFlags_Sortable","@WIDTH_FIXED@":"ImGuiTableColumnFlags_WidthFixed","@WIDTH_STRETCH@":"ImGuiTableColumnFlags_WidthStretch","@DEFAULT_HIDE@":"ImGuiTableColumnFlags_DefaultHide","@DEFAULT_SORT@":"ImGuiTableColumnFlags_DefaultSort","@PREFER_DESC@":"ImGuiTableColumnFlags_PreferSortDescending","@SORT_DESC@":"ImGuiSortDirection_Descending","@SORT_ASC@":"ImGuiSortDirection_Ascending","@SORT_NONE@":"ImGuiSortDirection_None"}
+      },
+      "TableSetupColumnApply": {
+        "parameter_types": ["ImGuiTable *","int","ImGuiID","ImS16","ImGuiTableColumnFlags","float","ImGuiID"], "body_sha256": ["f01428c5bc0e8accc881d266883ed427a4a390574987d5bf9799cc6c66bf08dd","0111001fe9caed502472c91f51c9b923221429b5ba15a6250b404921b2d6aa9d"],
+        "template": "handwritten/tables_column_setup_batch.c.in", "fragment": "table_setup_column_apply",
+        "functions": {"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]},"@SETUP_FLAGS@":{"qualified_name":"TableSetupColumnFlags","parameter_types":["ImGuiTable *","ImGuiTableColumn *","ImGuiTableColumnFlags"]}},
+        "constants": {"@WIDTH_MASK@":"ImGuiTableColumnFlags_WidthMask_","@SCROLL_X@":"ImGuiTableFlags_ScrollX","@SIZING_MASK@":"ImGuiTableFlags_SizingMask_","@SIZING_FIXED_FIT@":"ImGuiTableFlags_SizingFixedFit","@SIZING_FIXED_SAME@":"ImGuiTableFlags_SizingFixedSame","@WIDTH_FIXED@":"ImGuiTableColumnFlags_WidthFixed","@ANGLED_HEADER@":"ImGuiTableColumnFlags_AngledHeader","@NO_HEADER_LABEL@":"ImGuiTableColumnFlags_NoHeaderLabel"}
+      },
+      "ImGui::TableSetupColumn": {
+        "parameter_types": ["const char *","ImGuiTableColumnFlags","float","ImGuiID"], "body_sha256": ["41a677b1e36e8bc020153975b8ceac6c1e75f1e0811a364a7c0b9ddc2d4fb5eb","2807490a1bac0ca47e3b38c3577316a64f979e5395bebfd4d76cd8b43007a107"],
+        "template": "handwritten/tables_column_setup_batch.c.in", "fragment": "table_setup_column",
+        "functions": {"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]},"@TEXT_SIZE@":{"qualified_name":"ImGuiTextBuffer::size","parameter_types":[]},"@TEXT_APPEND@":{"qualified_name":"ImGuiTextBuffer::append","parameter_types":["const char *","const char *"]},"@HASH_STR@":{"qualified_name":"ImHashStr","parameter_types":["const char *","size_t","ImGuiID"]},"@REQUEST_RESERVE@":{"qualified_name":"ImVector<ImGuiTableReconcileColumnData>::reserve","parameter_types":["int"]},"@APPLY@":{"qualified_name":"TableSetupColumnApply","parameter_types":["ImGuiTable *","int","ImGuiID","ImS16","ImGuiTableColumnFlags","float","ImGuiID"]},"@COLUMN_INIT@":{"qualified_name":"ImGuiTableColumn::ImGuiTableColumn","parameter_types":[]},"@REQUEST_PUSH@":{"qualified_name":"ImVector<ImGuiTableReconcileColumnData>::push_back","parameter_types":["const ImGuiTableReconcileColumnData &"]}}
+      },
+      "ImGui::TableSetupScrollFreeze": {
+        "parameter_types": ["int","int"], "body_sha256": ["9b143464c53458a76e7c3d55c173be6fbeb7f668d9772ad18acb8bf307cb2d8b","8699dade040ff615d8140ea8e8cd447835f2efdb9dfa8be8918839c82f5710f9"],
+        "template": "handwritten/tables_column_setup_batch.c.in", "fragment": "table_setup_scroll_freeze",
+        "functions": {"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]}},
+        "constants": {"@SCROLL_X@":"ImGuiTableFlags_ScrollX","@SCROLL_Y@":"ImGuiTableFlags_ScrollY"}
+      },
+      "ImGui::TableSetColumnEnabled": {
+        "parameter_types":["int","bool"], "body_sha256":["931cf93c800d741462a7fbd78ff115eb50d87385d48c80c8d1c9d42c4be0fc37","cdcbb71864da560d13b8fabb77247e0ccc2be04ddc534308513f1ed0c2c6e35e"],
+        "template":"handwritten/tables_public_state_batch.c.in","fragment":"table_set_column_enabled",
+        "functions":{"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]}}
+      },
+      "ImGui::TableSetBgColor": {
+        "parameter_types":["ImGuiTableBgTarget","ImU32","int"], "body_sha256":["bcfadbf829b210d17c40abcab52a463874fdcfd8e542a73d8a4a3125b6ce6811","aacfe3326b7aa01bd7fe664212759e17d3cc2087778dcf77f2f5544957e3f11a"],
+        "template":"handwritten/tables_public_state_batch.c.in","fragment":"table_set_bg_color",
+        "functions":{"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]}},
+        "constants":{"@CELL_BG@":"ImGuiTableBgTarget_CellBg","@ROW_BG0@":"ImGuiTableBgTarget_RowBg0","@ROW_BG1@":"ImGuiTableBgTarget_RowBg1"}
+      },
+      "ImGui::TableOpenContextMenu": {
+        "parameter_types":["int"], "body_sha256":["253780dca203796acbb9d5f6184785fd62dd5699c865b0549c3f187be7be17c0","3c4710df95c838a58be0ebce935c72a06f6fc86a11ccaf208fcd5de422be5a92"],
+        "template":"handwritten/tables_public_state_batch.c.in","fragment":"table_open_context_menu",
+        "functions":{"@HASH_STR@":{"qualified_name":"ImHashStr","parameter_types":["const char *","size_t","ImGuiID"]},"@OPEN_POPUP@":{"qualified_name":"ImGui::OpenPopupEx","parameter_types":["ImGuiID","ImGuiPopupFlags"]}},
+        "constants":{"@RESIZABLE@":"ImGuiTableFlags_Resizable","@REORDERABLE@":"ImGuiTableFlags_Reorderable","@HIDEABLE@":"ImGuiTableFlags_Hideable","@POPUP_NONE@":"ImGuiPopupFlags_None"}
+      },
+      "ImGui::TableBeginContextMenuPopup": {
+        "parameter_types":["ImGuiTable *"], "body_sha256":"5fb94c974072b5c620be4217e7dd1391e6073193ff4bc1ec14c26fab5742f29e",
+        "template":"handwritten/tables_public_state_batch.c.in","fragment":"table_begin_context_menu_popup",
+        "functions":{"@HASH_STR@":{"qualified_name":"ImHashStr","parameter_types":["const char *","size_t","ImGuiID"]},"@BEGIN_POPUP@":{"qualified_name":"ImGui::BeginPopupEx","parameter_types":["ImGuiID","ImGuiWindowFlags"]}},
+        "constants":{"@ALWAYS_AUTO_RESIZE@":"ImGuiWindowFlags_AlwaysAutoResize","@NO_TITLE_BAR@":"ImGuiWindowFlags_NoTitleBar","@NO_SAVED_SETTINGS@":"ImGuiWindowFlags_NoSavedSettings"}
+      },
+      "ImGui::TableNextRow": {
+        "parameter_types":["ImGuiTableRowFlags","float"], "body_sha256":"9fbea17960f8c5e82eb576d98d1c2476a0694b26f8ed80bf36d000ef217de71b",
+        "template":"handwritten/tables_row_cell_batch.c.in","fragment":"table_next_row",
+        "functions":{"@UPDATE_LAYOUT@":{"qualified_name":"ImGui::TableUpdateLayout","parameter_types":["ImGuiTable *"]},"@END_ROW@":{"qualified_name":"ImGui::TableEndRow","parameter_types":["ImGuiTable *"]},"@BEGIN_ROW@":{"qualified_name":"ImGui::TableBeginRow","parameter_types":["ImGuiTable *"]}}
+      },
+      "ImGui::TableBeginRow": {
+        "parameter_types":["ImGuiTable *"], "body_sha256":["32cd7f62e40b84d3b96de7e93b00d6e1e28860b3cbb7b309b68d2487b849bc85","dc6beb7f5b1642951dcc5d617d6622d7c3add30ededeb22692e365cdc60cbddb"],
+        "template":"handwritten/tables_row_cell_batch.c.in","fragment":"table_begin_row",
+        "functions":{"@SET_BG_COLOR@":{"qualified_name":"ImGui::TableSetBgColor","parameter_types":["ImGuiTableBgTarget","ImU32","int"]},"@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]}},
+        "constants":{"@HEADERS@":"ImGuiTableRowFlags_Headers","@ROW_BG0@":"ImGuiTableBgTarget_RowBg0","@TABLE_HEADER_BG@":"ImGuiCol_TableHeaderBg"}
+      },
+      "ImGui::TableSetColumnIndex": {
+        "parameter_types":["int"], "body_sha256":["1458146a82cf23839aa7156a2a6bf8d2ba975f53f50b8b80a077dc0455ccce34","b63670353fb29c740a86d0bca722cf48bb87f8205cf3613468f11180e7ba7ce2"],
+        "template":"handwritten/tables_row_cell_batch.c.in","fragment":"table_set_column_index",
+        "functions":{"@END_CELL@":{"qualified_name":"ImGui::TableEndCell","parameter_types":["ImGuiTable *"]},"@BEGIN_CELL@":{"qualified_name":"ImGui::TableBeginCell","parameter_types":["ImGuiTable *","int"]},"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]}}
+      },
+      "ImGui::TableNextColumn": {
+        "parameter_types":[], "body_sha256":"9adc98f18df468d26bcc18e8ca1d28993624728860449c3bcfbacb7add93076e",
+        "template":"handwritten/tables_row_cell_batch.c.in","fragment":"table_next_column",
+        "functions":{"@END_CELL@":{"qualified_name":"ImGui::TableEndCell","parameter_types":["ImGuiTable *"]},"@BEGIN_CELL@":{"qualified_name":"ImGui::TableBeginCell","parameter_types":["ImGuiTable *","int"]},"@NEXT_ROW@":{"qualified_name":"ImGui::TableNextRow","parameter_types":["ImGuiTableRowFlags","float"]}}
+      },
+      "ImGui::TableBeginCell": {
+        "parameter_types":["ImGuiTable *","int"], "body_sha256":"46a14b69e9cc783393ba3f18d92cc58955fdbd83722ecc6500e08f10039e367c",
+        "template":"handwritten/tables_row_cell_batch.c.in","fragment":"table_begin_cell",
+        "functions":{"@SET_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]},"@SET_CLIP@":{"qualified_name":"ImGui::SetWindowClipRectBeforeSetChannel","parameter_types":["ImGuiWindow *","const ImRect &"]},"@LOG_TEXT@":{"qualified_name":"ImGui::LogRenderedText","parameter_types":["const ImVec2 *","const char *","const char *"]}},
+        "constants":{"@INDENT_ENABLE@":"ImGuiTableColumnFlags_IndentEnable","@NO_CLIP@":"ImGuiTableFlags_NoClip"}
+      },
+      "ImGui::TableEndCell": {
+        "parameter_types":["ImGuiTable *"], "body_sha256":"31bf435332295b4c2d0e200a18b85564f93916cc82dc0a65a45c905f151b0d86",
+        "template":"handwritten/tables_row_cell_batch.c.in","fragment":"table_end_cell",
+        "functions":{"@CHECK_SET_CURSOR@":{"qualified_name":"ImGui::ErrorCheckUsingSetCursorPosToExtendParentBoundaries","parameter_types":[]}},
+        "constants":{"@HEADERS@":"ImGuiTableRowFlags_Headers"}
+      },
+      "ImGui::TableEndRow": {
+        "parameter_types":["ImGuiTable *"], "body_sha256":["7aef9d6486bc7b288adcabddec4775e37f52aa29adc9a043239247b38fae7edf","c17d67aeb2b1c53a8088dec27d4cb1a75126d912ded7e6283687cfecd524c022"],
+        "template":"handwritten/tables_end_row.c.in","fragment":"table_end_row",
+        "functions":{"@END_CELL@":{"qualified_name":"ImGui::TableEndCell","parameter_types":["ImGuiTable *"]},"@LOG_TEXT@":{"qualified_name":"ImGui::LogRenderedText","parameter_types":["const ImVec2 *","const char *","const char *"]},"@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},"@SET_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]},"@ADD_RECT@":{"qualified_name":"ImDrawList::AddRectFilled","parameter_types":["const ImVec2 &","const ImVec2 &","ImU32","float","ImDrawFlags"]},"@ADD_LINE_H@":{"qualified_name":"ImDrawList::AddLineH","parameter_types":["float","float","float","ImU32","float"]},"@SET_CLIP@":{"qualified_name":"ImGui::SetWindowClipRectBeforeSetChannel","parameter_types":["ImGuiWindow *","const ImRect &"]}},
+        "constants":{"@HEADERS@":"ImGuiTableRowFlags_Headers","@ROW_BG@":"ImGuiTableFlags_RowBg","@BORDERS_INNER_H@":"ImGuiTableFlags_BordersInnerH","@NO_CLIP@":"ImGuiTableFlags_NoClip","@ROW_BG_COLOR@":"ImGuiCol_TableRowBg","@ROW_BG_ALT_COLOR@":"ImGuiCol_TableRowBgAlt"}
+      },
+      "TableGetColumnBorderCol": {
+        "parameter_types":["ImGuiTable *","int","int"], "body_sha256":"d0df0f482abca20886f5a2435107b2e71c54738ebe6122a17e9a2ab843ffc09b",
+        "template":"handwritten/tables_borders.c.in","fragment":"table_get_column_border_col",
+        "functions":{"@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]}},
+        "constants":{"@SEPARATOR_ACTIVE@":"ImGuiCol_SeparatorActive","@SEPARATOR_HOVERED@":"ImGuiCol_SeparatorHovered","@NO_BORDERS_BODY@":"ImGuiTableFlags_NoBordersInBody","@NO_BORDERS_BODY_RESIZE@":"ImGuiTableFlags_NoBordersInBodyUntilResize"}
+      },
+      "ImGui::TableDrawBorders": {
+        "parameter_types":["ImGuiTable *"], "body_sha256":"0808508fb3655b6d63cc8d3f4c2aee6df8ecf40e890a4e482bcb0a8ec6f14f6f",
+        "template":"handwritten/tables_borders.c.in","fragment":"table_draw_borders",
+        "functions":{"@SET_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]},"@PUSH_CLIP@":{"qualified_name":"ImDrawList::PushClipRect","parameter_types":["const ImVec2 &","const ImVec2 &","bool"]},"@ADD_LINE_V@":{"qualified_name":"ImDrawList::AddLineV","parameter_types":["float","float","float","ImU32","float"]},"@BORDER_COLOR@":{"qualified_name":"TableGetColumnBorderCol","parameter_types":["ImGuiTable *","int","int"]},"@ADD_RECT@":{"qualified_name":"ImDrawList::AddRect","parameter_types":["const ImVec2 &","const ImVec2 &","ImU32","float","float","ImDrawFlags"]},"@ADD_LINE_H@":{"qualified_name":"ImDrawList::AddLineH","parameter_types":["float","float","float","ImU32","float"]},"@POP_CLIP@":{"qualified_name":"ImDrawList::PopClipRect","parameter_types":[]}},
+        "constants":{"@BORDERS_OUTER_H@":"ImGuiTableFlags_BordersOuterH","@BORDERS_INNER_V@":"ImGuiTableFlags_BordersInnerV","@NO_RESIZE@":"ImGuiTableColumnFlags_NoResize","@NO_DIRECT_RESIZE@":"ImGuiTableColumnFlags_NoDirectResize_","@SIZING_MASK@":"ImGuiTableFlags_SizingMask_","@SIZING_FIXED_SAME@":"ImGuiTableFlags_SizingFixedSame","@NO_HOST_EXTEND_X@":"ImGuiTableFlags_NoHostExtendX","@NO_BORDERS_BODY@":"ImGuiTableFlags_NoBordersInBody","@NO_BORDERS_BODY_RESIZE@":"ImGuiTableFlags_NoBordersInBodyUntilResize","@BORDERS_OUTER@":"ImGuiTableFlags_BordersOuter","@BORDERS_OUTER_V@":"ImGuiTableFlags_BordersOuterV","@BORDERS_INNER_H@":"ImGuiTableFlags_BordersInnerH"}
+      },
+      "ImGui::TableMergeDrawChannels": {
+        "parameter_types":["ImGuiTable *"], "body_sha256":["b858c38797b8ab7e359c476badb0addb8be2ee19ea5178d9d70a367a6def58f3","779e5365de5aa42693f84b9bde50065a611164aca1de443503423fd1680c20a2"],
+        "template":"handwritten/tables_merge_draw_channels.c.in","fragment":"table_merge_draw_channels",
+        "functions":{"@TEMP_RESERVE@":{"qualified_name":"ImVector<char>::reserve","parameter_types":["int"]},"@CHANNELS_RESIZE@":{"qualified_name":"ImVector<ImDrawChannel>::resize","parameter_types":["int"]}},
+        "constants":{"@NO_CLIP@":"ImGuiTableColumnFlags_NoClip","@NO_HOST_EXTEND_Y@":"ImGuiTableFlags_NoHostExtendY"}
+      },
+      "ImGui::TableHeadersRow": {
+        "parameter_types":[], "body_sha256":["55ffbe9529a49099d2a38d1fd635704f19bddc0041189db0d93a3169612e933f","a52bbaec80ada5247bb5fc2126e952fab1823793ba3dcc0a362e23318a957840"],
+        "template":"handwritten/tables_headers_row.c.in","fragment":"table_headers_row",
+        "functions":{"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]},"@UPDATE_LAYOUT@":{"qualified_name":"ImGui::TableUpdateLayout","parameter_types":["ImGuiTable *"]},"@GET_HEIGHT@":{"qualified_name":"ImGui::TableGetHeaderRowHeight","parameter_types":[]},"@NEXT_ROW@":{"qualified_name":"ImGui::TableNextRow","parameter_types":["ImGuiTableRowFlags","float"]},"@SET_COLUMN@":{"qualified_name":"ImGui::TableSetColumnIndex","parameter_types":["int"]},"@PUSH_ID@":{"qualified_name":"ImGui::PushID","parameter_types":["int"]},"@HEADER@":{"qualified_name":"ImGui::TableHeader","parameter_types":["const char *"]},"@POP_ID@":{"qualified_name":"ImGui::PopID","parameter_types":[]},"@MOUSE_RELEASED@":{"qualified_name":"ImGui::IsMouseReleased","parameter_types":["ImGuiMouseButton"]},"@OPEN_CONTEXT@":{"qualified_name":"ImGui::TableOpenContextMenu","parameter_types":["int"]}},
+        "constants":{"@HEADERS@":"ImGuiTableRowFlags_Headers","@NO_HEADER_LABEL@":"ImGuiTableColumnFlags_NoHeaderLabel"}
+      },
+      "ImGui::TableAngledHeadersRow": {
+        "parameter_types":[], "body_sha256":"42fc0a97a4e13b02b0e01c75a8c5fed06cfe0696fcb3ff3fb8424d49738ec43d",
+        "template":"handwritten/tables_angled_headers_public.c.in","fragment":"table_angled_headers_row",
+        "functions":{"@RESERVE@":{"qualified_name":"ImVector<ImGuiTableHeaderData>::reserve","parameter_types":["int"]},"@GET_ID@":{"qualified_name":"ImGuiWindow::GetID","parameter_types":["const char *","const char *"]},"@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},"@PUSH@":{"qualified_name":"ImVector<ImGuiTableHeaderData>::push_back","parameter_types":["const ImGuiTableHeaderData &"]},"@ROW_EX@":{"qualified_name":"ImGui::TableAngledHeadersRowEx","parameter_types":["ImGuiID","float","float","const ImGuiTableHeaderData *","int"]}},
+        "constants":{"@TABLE_HEADER_BG@":"ImGuiCol_TableHeaderBg","@TEXT_COLOR@":"ImGuiCol_Text","@HEADER_COLOR@":"ImGuiCol_Header","@ANGLED_HEADER@":"ImGuiTableColumnFlags_AngledHeader"}
+      },
+      "ImGui::SetWindowClipRectBeforeSetChannel": {
+        "parameter_types":["ImGuiWindow *","const ImRect &"], "body_sha256":"da04af50266f61dc48800d76beb1e4a59cf393e63fdfe1f265df2bcab8e955a9",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_set_window_clip"
+      },
+      "ImGui::GetColumnIndex": {
+        "parameter_types":[], "body_sha256":"bfe16414e471ef0cd9035ba9d4a7ac0d50e70e371bf64577cad6026210a63b9d",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_get_index"
+      },
+      "ImGui::GetColumnsCount": {
+        "parameter_types":[], "body_sha256":"fd7836f6bbfc4cca4e13027dd9b0b7739740fb8045dc1531a71a2491f4dc4f0e",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_get_count"
+      },
+      "ImGui::GetColumnOffsetFromNorm": {
+        "parameter_types":["const ImGuiOldColumns *","float"], "body_sha256":"45abdaf7a20925ad875ec6c667d25c40c6b895a7e58c658b339467a07efa4346",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_offset_from_norm"
+      },
+      "ImGui::GetColumnNormFromOffset": {
+        "parameter_types":["const ImGuiOldColumns *","float"], "body_sha256":"c4c84c0fe23494736281b38314c0c15a9eca70b97c376e8c393f8a3e1806de39",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_norm_from_offset"
+      },
+      "GetDraggedColumnOffset": {
+        "parameter_types":["ImGuiOldColumns *","int"], "body_sha256":["8490dd0396730ff29709b5cd0d729a418303796d35a146916aa0959f31ac3a70","aba7e40eec31cd7c68861750f2eedf20fda544ed37081cb79dfee433eca2f83e"],
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_dragged_offset",
+        "functions":{"@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},"@GET_OFFSET@":{"qualified_name":"ImGui::GetColumnOffset","parameter_types":["int"]}},
+        "constants":{"@NO_PRESERVE_WIDTHS@":"ImGuiOldColumnFlags_NoPreserveWidths"}
+      },
+      "ImGui::GetColumnOffset": {
+        "parameter_types":["int"], "body_sha256":["fb8ac69759cf8c46fec9da9c85fe550c452e93ac15a346e4720c79eb9b3b3d55","47b4dc4545cf22f3c5bc5eef5fba60e787d9e65d797d1e111874160196af6dc1"],
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_get_offset"
+      },
+      "GetColumnWidthEx": {
+        "parameter_types":["ImGuiOldColumns *","int","bool"], "body_sha256":"1ae660480920a85cd3a63db0f8ba4dd3594e12cb1c819769b378f771a14ed26a",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_get_width_ex",
+        "functions":{"@OFFSET_FROM_NORM@":{"qualified_name":"ImGui::GetColumnOffsetFromNorm","parameter_types":["const ImGuiOldColumns *","float"]}}
+      },
+      "ImGui::GetColumnWidth": {
+        "parameter_types":["int"], "body_sha256":"b0761e5405828b0f084e55754813c45b022d7a87586ac1964fffbffb9f0f213b",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_get_width",
+        "functions":{"@CONTENT_AVAIL@":{"qualified_name":"ImGui::GetContentRegionAvail","parameter_types":[]},"@OFFSET_FROM_NORM@":{"qualified_name":"ImGui::GetColumnOffsetFromNorm","parameter_types":["const ImGuiOldColumns *","float"]}}
+      },
+      "ImGui::SetColumnOffset": {
+        "parameter_types":["int","float"], "body_sha256":["6152672f8c17402c4b322788c4c167f2f115dfe342f037ddf67c460cd0b7a461","4ea69d0659e11fdea5a6b99d13cde383437c7ab72cee3133ec471394554e2f7d"],
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_set_offset",
+        "functions":{"@GET_WIDTH_EX@":{"qualified_name":"GetColumnWidthEx","parameter_types":["ImGuiOldColumns *","int","bool"]},"@NORM_FROM_OFFSET@":{"qualified_name":"ImGui::GetColumnNormFromOffset","parameter_types":["const ImGuiOldColumns *","float"]},"@SET_OFFSET@":{"qualified_name":"ImGui::SetColumnOffset","parameter_types":["int","float"]}},
+        "constants":{"@NO_PRESERVE_WIDTHS@":"ImGuiOldColumnFlags_NoPreserveWidths","@NO_FORCE_WITHIN_WINDOW@":"ImGuiOldColumnFlags_NoForceWithinWindow"}
+      },
+      "ImGui::SetColumnWidth": {
+        "parameter_types":["int","float"], "body_sha256":["9fb20a4830db61502c2b534bf2dff975a04ad4871de79b74f306a4b29fbf74bb","adddd613e35d1cc445c5b5b2e5c0c487233d841e83ab0227552b8a9ad34a4a9c"],
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_set_width",
+        "functions":{"@GET_OFFSET@":{"qualified_name":"ImGui::GetColumnOffset","parameter_types":["int"]},"@SET_OFFSET@":{"qualified_name":"ImGui::SetColumnOffset","parameter_types":["int","float"]}}
+      },
+      "ImGui::PushColumnClipRect": {
+        "parameter_types":["int"], "body_sha256":"1008e1aaeadfc0dcdec2887cec4dd064d38642e560831f41b4e877ce04886ae9",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_push_clip",
+        "functions":{"@PUSH_CLIP@":{"qualified_name":"ImGui::PushClipRect","parameter_types":["const ImVec2 &","const ImVec2 &","bool"]}}
+      },
+      "ImGui::PushColumnsBackground": {
+        "parameter_types":[], "body_sha256":"9ac22407651de226dfa723ac06ebc0d4b09f457313b5e1bb31401e8ebb5a44aa",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_push_background",
+        "functions":{"@SET_WINDOW_CLIP@":{"qualified_name":"ImGui::SetWindowClipRectBeforeSetChannel","parameter_types":["ImGuiWindow *","const ImRect &"]},"@SET_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]}}
+      },
+      "ImGui::PopColumnsBackground": {
+        "parameter_types":[], "body_sha256":"252fb047700bb16234cebbce9f072040e100f733d126db5a86bba143106de38d",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_pop_background",
+        "functions":{"@SET_WINDOW_CLIP@":{"qualified_name":"ImGui::SetWindowClipRectBeforeSetChannel","parameter_types":["ImGuiWindow *","const ImRect &"]},"@SET_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]}}
+      },
+      "ImGui::FindOrCreateColumns": {
+        "parameter_types":["ImGuiWindow *","ImGuiID"], "body_sha256":"b3522cb23c2f9090208caac2259a3fc1c02880945276e9fcaa2e120fa6a05603",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_find_or_create"
+      },
+      "ImGui::GetColumnsID": {
+        "parameter_types":["const char *","int"], "body_sha256":"421d3fa90558b4c08ff00e0d35865d1ac2180353dd2f763f8872c61a4af95b6d",
+        "template":"handwritten/tables_columns_leaf.c.in","fragment":"columns_get_id",
+        "functions":{"@GET_WINDOW@":{"qualified_name":"ImGui::GetCurrentWindow","parameter_types":[]},"@PUSH_ID@":{"qualified_name":"ImGui::PushID","parameter_types":["int"]},"@WINDOW_GET_ID@":{"qualified_name":"ImGuiWindow::GetID","parameter_types":["const char *","const char *"]},"@POP_ID@":{"qualified_name":"ImGui::PopID","parameter_types":[]}}
+      },
+      "ImGui::BeginColumns": {
+        "parameter_types":["const char *","int","ImGuiOldColumnFlags"], "body_sha256":["0de2962c1febfd0007f8b182e5b052c0d46e010ea63c538bf2a0469b3f45bd53","963455b9db3f955cf278019a8890453f7ff0ffc6b42a8315e19b23d4e674838c"],
+        "template":"handwritten/tables_columns_lifecycle.c.in","fragment":"begin_columns",
+        "functions":{"@GET_WINDOW@":{"qualified_name":"ImGui::GetCurrentWindow","parameter_types":[]},"@GET_COLUMNS_ID@":{"qualified_name":"ImGui::GetColumnsID","parameter_types":["const char *","int"]},"@FIND_COLUMNS@":{"qualified_name":"ImGui::FindOrCreateColumns","parameter_types":["ImGuiWindow *","ImGuiID"]},"@MAX@":{"qualified_name":"ImMax","parameter_types":["float","float"]},"@MIN@":{"qualified_name":"ImMin","parameter_types":["float","float"]},"@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},"@GET_OFFSET@":{"qualified_name":"ImGui::GetColumnOffset","parameter_types":["int"]},"@CLIP_FULL@":{"qualified_name":"ImRect::ClipWithFull","parameter_types":["const ImRect &"]},"@SPLIT@":{"qualified_name":"ImDrawListSplitter::Split","parameter_types":["ImDrawList *","int"]},"@SET_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]},"@PUSH_COLUMN_CLIP@":{"qualified_name":"ImGui::PushColumnClipRect","parameter_types":["int"]},"@PUSH_WIDTH@":{"qualified_name":"ImGui::PushItemWidth","parameter_types":["float"]}}
+      },
+      "ImGui::NextColumn": {
+        "parameter_types":[], "body_sha256":["1495ae2ae00466942d425ef1a984b4c7aa7d97bd8df718afd77b35c8a682396a","96164b94717352d69edb88d94d47cec0ff789fe7bd5efe6586b1b0f41f3a9cf5"],
+        "template":"handwritten/tables_columns_lifecycle.c.in","fragment":"next_column",
+        "functions":{"@GET_WINDOW@":{"qualified_name":"ImGui::GetCurrentWindow","parameter_types":[]},"@POP_WIDTH@":{"qualified_name":"ImGui::PopItemWidth","parameter_types":[]},"@SET_WINDOW_CLIP@":{"qualified_name":"ImGui::SetWindowClipRectBeforeSetChannel","parameter_types":["ImGuiWindow *","const ImRect &"]},"@SET_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]},"@MAX@":{"qualified_name":"ImMax","parameter_types":["float","float"]},"@GET_OFFSET@":{"qualified_name":"ImGui::GetColumnOffset","parameter_types":["int"]},"@PUSH_WIDTH@":{"qualified_name":"ImGui::PushItemWidth","parameter_types":["float"]}}
+      },
+      "ImGui::EndColumns": {
+        "parameter_types":[], "body_sha256":["1f05dcfe2425a88128ceb6969251b9e91c5f2a3856068237235c318863433e32","14e8415169a8a0e9377c1435e1127599cb4c703cff5c769a12c4296c7a3be43d"],
+        "template":"handwritten/tables_columns_lifecycle.c.in","fragment":"end_columns",
+        "functions":{"@GET_WINDOW@":{"qualified_name":"ImGui::GetCurrentWindow","parameter_types":[]},"@POP_WIDTH@":{"qualified_name":"ImGui::PopItemWidth","parameter_types":[]},"@POP_CLIP@":{"qualified_name":"ImGui::PopClipRect","parameter_types":[]},"@MERGE@":{"qualified_name":"ImDrawListSplitter::Merge","parameter_types":["ImDrawList *"]},"@MAX@":{"qualified_name":"ImMax","parameter_types":["float","float"]},"@MIN@":{"qualified_name":"ImMin","parameter_types":["float","float"]},"@GET_OFFSET@":{"qualified_name":"ImGui::GetColumnOffset","parameter_types":["int"]},"@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},"@ITEM_ADD@":{"qualified_name":"ImGui::ItemAdd","parameter_types":["const ImRect &","ImGuiID","const ImRect *","ImGuiItemFlags"]},"@BUTTON@":{"qualified_name":"ImGui::ButtonBehavior","parameter_types":["const ImRect &","ImGuiID","bool *","bool *","ImGuiButtonFlags"]},"@SET_CURSOR@":{"qualified_name":"ImGui::SetMouseCursor","parameter_types":["ImGuiMouseCursor"]},"@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},"@ADD_LINE_V@":{"qualified_name":"ImDrawList::AddLineV","parameter_types":["float","float","float","ImU32","float"]},"@DRAGGED_OFFSET@":{"qualified_name":"GetDraggedColumnOffset","parameter_types":["ImGuiOldColumns *","int"]},"@SET_OFFSET@":{"qualified_name":"ImGui::SetColumnOffset","parameter_types":["int","float"]},"@NAV_UPDATE@":{"qualified_name":"ImGui::NavUpdateCurrentWindowIsScrollPushableX","parameter_types":[]}},
+        "constants":{"@GROW_PARENT@":"ImGuiOldColumnFlags_GrowParentContentsSize","@NO_BORDER@":"ImGuiOldColumnFlags_NoBorder","@NO_RESIZE@":"ImGuiOldColumnFlags_NoResize","@NO_NAV@":"ImGuiItemFlags_NoNav","@RESIZE_EW@":"ImGuiMouseCursor_ResizeEW","@SEPARATOR_ACTIVE@":"ImGuiCol_SeparatorActive","@SEPARATOR_HOVERED@":"ImGuiCol_SeparatorHovered","@SEPARATOR@":"ImGuiCol_Separator"}
+      },
+      "ImGui::Columns": {
+        "parameter_types":["int","const char *","bool"], "body_sha256":["6c7993cb343f64b764c83f4c780012bae6068c2e01b598122a2bd00e33c0421d","311fe1abfdb4407056d7066c15d0c63f5aa7deccf592e2b8b567a76bd1b568ce"],
+        "template":"handwritten/tables_columns_lifecycle.c.in","fragment":"columns_wrapper",
+        "functions":{"@GET_WINDOW@":{"qualified_name":"ImGui::GetCurrentWindow","parameter_types":[]},"@END_COLUMNS@":{"qualified_name":"ImGui::EndColumns","parameter_types":[]},"@BEGIN_COLUMNS@":{"qualified_name":"ImGui::BeginColumns","parameter_types":["const char *","int","ImGuiOldColumnFlags"]}},
+        "constants":{"@NO_BORDER@":"ImGuiOldColumnFlags_NoBorder"}
+      },
+      "TableFixFlags": {
+        "parameter_types":["ImGuiTableFlags","ImGuiWindow *"], "body_sha256":"1bd531feffe442ae5155e77c9e7426d64184d294cdc7f470aadd710ecb30732c",
+        "template":"handwritten/tables_remaining_leaf.c.in","fragment":"table_fix_flags",
+        "constants":{"@SIZING_MASK@":"ImGuiTableFlags_SizingMask_","@SCROLL_X@":"ImGuiTableFlags_ScrollX","@SCROLL_Y@":"ImGuiTableFlags_ScrollY","@ALWAYS_AUTO_RESIZE@":"ImGuiWindowFlags_AlwaysAutoResize","@SIZING_FIXED_FIT@":"ImGuiTableFlags_SizingFixedFit","@SIZING_FIXED_SAME@":"ImGuiTableFlags_SizingFixedSame","@SIZING_STRETCH_SAME@":"ImGuiTableFlags_SizingStretchSame","@NO_KEEP_VISIBLE@":"ImGuiTableFlags_NoKeepColumnsVisible","@RESIZABLE@":"ImGuiTableFlags_Resizable","@BORDERS_INNER_V@":"ImGuiTableFlags_BordersInnerV","@NO_HOST_EXTEND_X@":"ImGuiTableFlags_NoHostExtendX","@NO_HOST_EXTEND_Y@":"ImGuiTableFlags_NoHostExtendY","@NO_BORDERS_BODY_RESIZE@":"ImGuiTableFlags_NoBordersInBodyUntilResize","@NO_BORDERS_BODY@":"ImGuiTableFlags_NoBordersInBody","@HIDEABLE@":"ImGuiTableFlags_Hideable","@REORDERABLE@":"ImGuiTableFlags_Reorderable","@SORTABLE@":"ImGuiTableFlags_Sortable","@NO_SAVED_SETTINGS@":"ImGuiTableFlags_NoSavedSettings","@WINDOW_NO_SAVED_SETTINGS@":"ImGuiWindowFlags_NoSavedSettings"}
+      },
+      "ImGui::TableFindByID": {
+        "parameter_types":["ImGuiID"], "body_sha256":"b0a2702947d455e59ea2201bfa0fef51ab081a38f29b0db5926e7b5f0c134646",
+        "template":"handwritten/tables_remaining_leaf.c.in","fragment":"table_find_by_id",
+        "functions":{"@POOL_GET_BY_KEY@":{"qualified_name":"ImPool<ImGuiTable>::GetByKey","parameter_types":["ImGuiID"]}}
+      },
+      "ImGui::TableSetColumnDisplayOrder": {
+        "parameter_types":["ImGuiTable *","int","int"], "body_sha256":["954648c8043800ae3acdb75367e17f54251a84c9d3322945376dac4fd139a143","f787cb38e67ca5b3afe510bddbbc502d24d76e4b7492afd24281940f19720ba8"],
+        "template":"handwritten/tables_remaining_leaf.c.in","fragment":"table_set_display_order"
+      },
+      "TableGetMaxDisplayOrderAllowed": {
+        "parameter_types":["ImGuiTable *","int","int"], "body_sha256":"f3353df8a46e4ee75ab632ecb66e9bb7273676fcc9d5b26e4a63cba07c653c22",
+        "template":"handwritten/tables_remaining_leaf.c.in","fragment":"table_max_display_order",
+        "constants":{"@NO_REORDER@":"ImGuiTableColumnFlags_NoReorder"}
+      },
+      "ImGui::TableQueueSetColumnDisplayOrder": {
+        "parameter_types":["ImGuiTable *","int","int"], "body_sha256":"2e21a8e771204428a3c10f328d25051aa30b2f1ed399ac9f7b682219f4035905",
+        "template":"handwritten/tables_remaining_leaf.c.in","fragment":"table_queue_display_order",
+        "functions":{"@MAX_ORDER@":{"qualified_name":"TableGetMaxDisplayOrderAllowed","parameter_types":["ImGuiTable *","int","int"]}}
+      },
+      "ImGui::TableApplyExternalUnclipRect": {
+        "parameter_types":["ImGuiTable *","ImRect &"], "body_sha256":"3afc7827fc6fced9e27a19c87257bc9d4f428fbc249a4aeaf432ffa1a467d353",
+        "template":"handwritten/tables_remaining_leaf.c.in","fragment":"table_apply_external_unclip"
+      },
+      "DebugNodeTableGetSizingPolicyDesc": {
+        "parameter_types":["ImGuiTableFlags"], "body_sha256":"3409f7eb3d5f033ee1869c98d6382506e3728fd507f695e06fb438eb2bbddd45",
+        "template":"handwritten/tables_remaining_leaf.c.in","fragment":"table_sizing_desc",
+        "constants":{"@SIZING_MASK@":"ImGuiTableFlags_SizingMask_","@SIZING_FIXED_FIT@":"ImGuiTableFlags_SizingFixedFit","@SIZING_FIXED_SAME@":"ImGuiTableFlags_SizingFixedSame","@SIZING_STRETCH_PROP@":"ImGuiTableFlags_SizingStretchProp","@SIZING_STRETCH_SAME@":"ImGuiTableFlags_SizingStretchSame"}
+      },
+      "ImGui::TableApplyQueuedRequests": {
+        "parameter_types":["ImGuiTable *"],
+        "body_sha256":"6f78cc9cc2a812898db35e02eede5d4fc692149a9d6ad76ebe726cd0bc621f4a",
+        "template":"handwritten/tables_next_mechanics.c.in",
+        "fragment":"table_apply_queued_requests",
+        "functions":{
+          "@SET_COLUMN_WIDTH@":{"qualified_name":"ImGui::TableSetColumnWidth","parameter_types":["int","float"]},
+          "@SET_DISPLAY_ORDER@":{"qualified_name":"ImGui::TableSetColumnDisplayOrder","parameter_types":["ImGuiTable *","int","int"]}
+        },
+        "constants":{"@DEFAULT_HIDE@":"ImGuiTableColumnFlags_DefaultHide"}
+      },
+      "TableSetupColumnFlags": {
+        "parameter_types":["ImGuiTable *","ImGuiTableColumn *","ImGuiTableColumnFlags"],
+        "body_sha256":["2889f5bda52c97e25932d8cdae2e406b2705a5a3c5ede92cada49f24630a6f48","b3ab7e6d4534d68d6bcc3ac6ced116f4eaeb7a8346d5a72f97a0052f175484e6"],
+        "template":"handwritten/tables_next_mechanics.c.in",
+        "fragment":"table_setup_column_flags",
+        "functions":{
+          "@FIX_SORT_DIRECTION@":{"qualified_name":"ImGui::TableFixColumnSortDirection","parameter_types":["ImGuiTable *","ImGuiTableColumn *"]}
+        },
+        "constants":{
+          "@WIDTH_MASK@":"ImGuiTableColumnFlags_WidthMask_",
+          "@SIZING_MASK@":"ImGuiTableFlags_SizingMask_",
+          "@SIZING_FIXED_FIT@":"ImGuiTableFlags_SizingFixedFit",
+          "@SIZING_FIXED_SAME@":"ImGuiTableFlags_SizingFixedSame",
+          "@WIDTH_FIXED@":"ImGuiTableColumnFlags_WidthFixed",
+          "@WIDTH_STRETCH@":"ImGuiTableColumnFlags_WidthStretch",
+          "@RESIZABLE@":"ImGuiTableFlags_Resizable",
+          "@NO_RESIZE@":"ImGuiTableColumnFlags_NoResize",
+          "@NO_SORT_ASCENDING@":"ImGuiTableColumnFlags_NoSortAscending",
+          "@NO_SORT_DESCENDING@":"ImGuiTableColumnFlags_NoSortDescending",
+          "@NO_SORT@":"ImGuiTableColumnFlags_NoSort",
+          "@INDENT_MASK@":"ImGuiTableColumnFlags_IndentMask_",
+          "@INDENT_ENABLE@":"ImGuiTableColumnFlags_IndentEnable",
+          "@INDENT_DISABLE@":"ImGuiTableColumnFlags_IndentDisable",
+          "@STATUS_MASK@":"ImGuiTableColumnFlags_StatusMask_",
+          "@SORTABLE@":"ImGuiTableFlags_Sortable",
+          "@PREFER_SORT_ASCENDING@":"ImGuiTableColumnFlags_PreferSortAscending",
+          "@PREFER_SORT_DESCENDING@":"ImGuiTableColumnFlags_PreferSortDescending",
+          "@SORT_ASCENDING@":"ImGuiSortDirection_Ascending",
+          "@SORT_DESCENDING@":"ImGuiSortDirection_Descending",
+          "@SORT_NONE@":"ImGuiSortDirection_None",
+          "@SORT_TRISTATE@":"ImGuiTableFlags_SortTristate"
+        }
+      },
+      "ImGui::TableUpdateBorders": {
+        "parameter_types":["ImGuiTable *"],
+        "body_sha256":["bacf2fbd3ddfb17a0265b7a5b595029a27dfad31354e93d296f1e3ffc90fbbda","2ec10784d8257a347e26176e8b3e2c0e79379f4e1959e7f8d6c951b65091f9e2"],
+        "template":"handwritten/tables_next_mechanics.c.in",
+        "fragment":"table_update_borders",
+        "functions":{
+          "@GET_INSTANCE@":{"qualified_name":"ImGui::TableGetInstanceData","parameter_types":["ImGuiTable *","int"]},
+          "@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},
+          "@MAX@":{"qualified_name":"ImMax","parameter_types":["float","float"]},
+          "@GET_RESIZE_ID@":{"qualified_name":"ImGui::TableGetColumnResizeID","parameter_types":["ImGuiTable *","int","int"]},
+          "@ITEM_ADD@":{"qualified_name":"ImGui::ItemAdd","parameter_types":["const ImRect &","ImGuiID","const ImRect *","ImGuiItemFlags"]},
+          "@BUTTON@":{"qualified_name":"ImGui::ButtonBehavior","parameter_types":["const ImRect &","ImGuiID","bool *","bool *","ImGuiButtonFlags"]},
+          "@IS_DOUBLE_CLICKED@":{"qualified_name":"ImGui::IsMouseDoubleClicked","parameter_types":["ImGuiMouseButton"]},
+          "@SET_WIDTH_AUTO@":{"qualified_name":"ImGui::TableSetColumnWidthAutoSingle","parameter_types":["ImGuiTable *","int"]},
+          "@CLEAR_ACTIVE_ID@":{"qualified_name":"ImGui::ClearActiveID","parameter_types":[]},
+          "@SET_MOUSE_CURSOR@":{"qualified_name":"ImGui::SetMouseCursor","parameter_types":["ImGuiMouseCursor"]}
+        },
+        "constants":{
+          "@NO_RESIZE@":"ImGuiTableColumnFlags_NoResize",
+          "@NO_DIRECT_RESIZE@":"ImGuiTableColumnFlags_NoDirectResize_",
+          "@NO_BORDERS_BODY@":"ImGuiTableFlags_NoBordersInBody",
+          "@NO_NAV@":"ImGuiItemFlags_NoNav",
+          "@FLATTEN_CHILDREN@":"ImGuiButtonFlags_FlattenChildren",
+          "@PRESSED_ON_CLICK@":"ImGuiButtonFlags_PressedOnClick",
+          "@PRESSED_ON_DOUBLE_CLICK@":"ImGuiButtonFlags_PressedOnDoubleClick",
+          "@NO_NAV_FOCUS@":"ImGuiButtonFlags_NoNavFocus",
+          "@RESIZE_EW@":"ImGuiMouseCursor_ResizeEW"
+        }
+      },
+      "ImGui::BeginTable": {
+        "parameter_types":["const char *","int","ImGuiTableFlags","const ImVec2 &","float"],
+        "body_sha256":"e0cb4c700d08a307ceb86997daa0635122c6db6d6e3a810d9e718c75cb5320e2",
+        "template":"handwritten/tables_begin_init.c.in",
+        "fragment":"begin_table_wrapper",
+        "functions":{
+          "@GET_ID@":{"qualified_name":"ImGui::GetID","parameter_types":["const char *"]},
+          "@BEGIN_TABLE_EX@":{"qualified_name":"ImGui::BeginTableEx","parameter_types":["const char *","ImGuiID","int","ImGuiTableFlags","const ImVec2 &","float"]}
+        }
+      },
+      "ImGui::TableBeginInitMemory": {
+        "parameter_types":["ImGuiTable *","int"],
+        "body_sha256":"8bb808884c957ea9ff671336a0e3a9c96a33ebf9abd928d2e5d32112b1d2a7da",
+        "template":"handwritten/tables_begin_init.c.in",
+        "fragment":"table_begin_init_memory",
+        "functions":{
+          "@ALLOC@":{"qualified_name":"ImGui::MemAlloc","parameter_types":["size_t"]}
+        }
+      },
+      "MenuItemForColumnReorder": [{
+        "parameter_types":["const char *","bool","bool"],
+        "body_sha256":"d3d5f3361d18ae8b32c68898a74f479f82f122a933de4d7e59f7eee02bb77d59",
+        "template":"handwritten/tables_menu_context.c.in",
+        "fragment":"menu_item_for_column_reorder",
+        "snippets":{"@TEST_ENGINE_ITEM_INFO@":""},
+        "functions":{
+          "@CALC_TEXT_SIZE@":{"qualified_name":"ImGui::CalcTextSize","parameter_types":["const char *","const char *","bool","float"]},
+          "@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},
+          "@DECL_COLUMNS@":{"qualified_name":"ImGuiMenuColumns::DeclColumns","parameter_types":["float","float","float","float"]},
+          "@MAX@":{"qualified_name":"ImMax","parameter_types":["float","float"]},
+          "@CONTENT_AVAIL@":{"qualified_name":"ImGui::GetContentRegionAvail","parameter_types":[]},
+          "@GET_ID@":{"qualified_name":"ImGui::GetID","parameter_types":["const char *"]},
+          "@BEGIN_DISABLED@":{"qualified_name":"ImGui::BeginDisabled","parameter_types":["bool"]},
+          "@SELECTABLE@":{"qualified_name":"ImGui::Selectable","parameter_types":["const char *","bool","ImGuiSelectableFlags","const ImVec2 &"]},
+          "@RENDER_CHECK@":{"qualified_name":"ImGui::RenderCheckMark","parameter_types":["ImDrawList *","ImVec2","ImU32","float"]},
+          "@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},
+          "@END_DISABLED@":{"qualified_name":"ImGui::EndDisabled","parameter_types":[]}
+        },
+        "constants":{
+          "@SELECT_ON_RELEASE@":"ImGuiSelectableFlags_SelectOnRelease",
+          "@SPAN_AVAIL_WIDTH@":"ImGuiSelectableFlags_SpanAvailWidth",
+          "@HIGHLIGHT@":"ImGuiSelectableFlags_Highlight",
+          "@VISIBLE@":"ImGuiItemStatusFlags_Visible",
+          "@TEXT_COLOR@":"ImGuiCol_Text"
+        }
+      },{
+        "parameter_types":["const char *","bool","bool"],
+        "body_sha256":"2a363e9053db66ba6ca00aaf299fdd379ca76f6dc8ea3e072a4c557ae72e3078",
+        "template":"handwritten/tables_menu_context.c.in",
+        "fragment":"menu_item_for_column_reorder",
+        "snippets":{"@TEST_ENGINE_ITEM_INFO@":"if (imgui_c89_ctx->TestEngineHookItems)\n    @ITEM_INFO@(imgui_c89_ctx, imgui_c89_ctx->LastItemData.ID, label,\n        imgui_c89_ctx->LastItemData.StatusFlags | @CHECKABLE@ |\n        (selected ? @CHECKED@ : 0));"},
+        "functions":{
+          "@CALC_TEXT_SIZE@":{"qualified_name":"ImGui::CalcTextSize","parameter_types":["const char *","const char *","bool","float"]},
+          "@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},
+          "@DECL_COLUMNS@":{"qualified_name":"ImGuiMenuColumns::DeclColumns","parameter_types":["float","float","float","float"]},
+          "@MAX@":{"qualified_name":"ImMax","parameter_types":["float","float"]},
+          "@CONTENT_AVAIL@":{"qualified_name":"ImGui::GetContentRegionAvail","parameter_types":[]},
+          "@GET_ID@":{"qualified_name":"ImGui::GetID","parameter_types":["const char *"]},
+          "@BEGIN_DISABLED@":{"qualified_name":"ImGui::BeginDisabled","parameter_types":["bool"]},
+          "@SELECTABLE@":{"qualified_name":"ImGui::Selectable","parameter_types":["const char *","bool","ImGuiSelectableFlags","const ImVec2 &"]},
+          "@RENDER_CHECK@":{"qualified_name":"ImGui::RenderCheckMark","parameter_types":["ImDrawList *","ImVec2","ImU32","float"]},
+          "@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},
+          "@END_DISABLED@":{"qualified_name":"ImGui::EndDisabled","parameter_types":[]},
+          "@ITEM_INFO@":{"qualified_name":"ImGuiTestEngineHook_ItemInfo","parameter_types":["ImGuiContext *","ImGuiID","const char *","ImGuiItemStatusFlags"]}
+        },
+        "constants":{
+          "@SELECT_ON_RELEASE@":"ImGuiSelectableFlags_SelectOnRelease",
+          "@SPAN_AVAIL_WIDTH@":"ImGuiSelectableFlags_SpanAvailWidth",
+          "@HIGHLIGHT@":"ImGuiSelectableFlags_Highlight",
+          "@VISIBLE@":"ImGuiItemStatusFlags_Visible",
+          "@TEXT_COLOR@":"ImGuiCol_Text",
+          "@CHECKABLE@":"ImGuiItemStatusFlags_Checkable",
+          "@CHECKED@":"ImGuiItemStatusFlags_Checked"
+        }
+      }],
+      "ImGui::TableDrawDefaultContextMenu": {
+        "parameter_types":["ImGuiTable *","ImGuiTableFlags"],
+        "body_sha256":"3abf95a73fa053e2645cf295438ac57a761d821339f7150734168d2870ca9002",
+        "template":"handwritten/tables_menu_context.c.in",
+        "fragment":"table_context_menu",
+        "functions":{
+          "@LOCALIZE@":{"qualified_name":"ImGui::LocalizeGetMsg","parameter_types":["ImGuiLocKey"]},
+          "@MENU_ITEM@":{"qualified_name":"ImGui::MenuItem","parameter_types":["const char *","const char *","bool","bool"]},
+          "@SET_WIDTH_AUTO_ONE@":{"qualified_name":"ImGui::TableSetColumnWidthAutoSingle","parameter_types":["ImGuiTable *","int"]},
+          "@SET_WIDTH_AUTO_ALL@":{"qualified_name":"ImGui::TableSetColumnWidthAutoAll","parameter_types":["ImGuiTable *"]},
+          "@BEGIN_MENU@":{"qualified_name":"ImGui::BeginMenu","parameter_types":["const char *","bool"]},
+          "@END_MENU@":{"qualified_name":"ImGui::EndMenu","parameter_types":[]},
+          "@SEPARATOR@":{"qualified_name":"ImGui::Separator","parameter_types":[]},
+          "@MAX_ORDER@":{"qualified_name":"TableGetMaxDisplayOrderAllowed","parameter_types":["ImGuiTable *","int","int"]},
+          "@PUSH_ITEM_FLAG@":{"qualified_name":"ImGui::PushItemFlag","parameter_types":["ImGuiItemFlags","bool"]},
+          "@GET_COLUMN_NAME@":{"qualified_name":"ImGui::TableGetColumnName","parameter_types":["const ImGuiTable *","int"]},
+          "@REORDER_MENU_ITEM@":{"qualified_name":"MenuItemForColumnReorder","parameter_types":["const char *","bool","bool"]},
+          "@IS_ITEM_ACTIVE@":{"qualified_name":"ImGui::IsItemActive","parameter_types":[]},
+          "@IS_MOUSE_DRAGGING@":{"qualified_name":"ImGui::IsMouseDragging","parameter_types":["ImGuiMouseButton","float"]},
+          "@IS_ITEM_HOVERED@":{"qualified_name":"ImGui::IsItemHovered","parameter_types":["ImGuiHoveredFlags"]},
+          "@QUEUE_ORDER@":{"qualified_name":"ImGui::TableQueueSetColumnDisplayOrder","parameter_types":["ImGuiTable *","int","int"]},
+          "@POP_ITEM_FLAG@":{"qualified_name":"ImGui::PopItemFlag","parameter_types":[]}
+        },
+        "constants":{
+          "@RESIZABLE@":"ImGuiTableFlags_Resizable",
+          "@NO_RESIZE@":"ImGuiTableColumnFlags_NoResize",
+          "@SIZING_MASK@":"ImGuiTableFlags_SizingMask_",
+          "@SIZING_FIXED_SAME@":"ImGuiTableFlags_SizingFixedSame",
+          "@REORDERABLE@":"ImGuiTableFlags_Reorderable",
+          "@HIDEABLE@":"ImGuiTableFlags_Hideable",
+          "@SIZE_ONE@":"ImGuiLocKey_TableSizeOne",
+          "@SIZE_ALL_FIT@":"ImGuiLocKey_TableSizeAllFit",
+          "@SIZE_ALL_DEFAULT@":"ImGuiLocKey_TableSizeAllDefault",
+          "@RESET@":"ImGuiLocKey_TableReset",
+          "@RESET_ORDER@":"ImGuiLocKey_TableResetOrder",
+          "@RESET_VISIBILITY@":"ImGuiLocKey_TableResetVisibility",
+          "@AUTO_CLOSE_POPUPS@":"ImGuiItemFlags_AutoClosePopups",
+          "@DISABLED@":"ImGuiTableColumnFlags_Disabled",
+          "@NO_HIDE@":"ImGuiTableColumnFlags_NoHide",
+          "@MOUSE_SOURCE@":"ImGuiInputSource_Mouse"
+        }
+      },
+      "ImGui::TableHeader": {
+        "parameter_types":["const char *"],
+        "body_sha256":["00169d15d4cebabbd1ff096b9fcceecad586158fdbdf4e72bb45765aa2bc4fc1","0e06965599e5a7a6d0c11303d5f238dc93872d282e878381e166ffb2cb71b5eb"],
+        "template":"handwritten/tables_header.c.in",
+        "fragment":"table_header",
+        "snippets_by_body_sha256":{
+          "00169d15d4cebabbd1ff096b9fcceecad586158fdbdf4e72bb45765aa2bc4fc1":{"@TEST_ENGINE_ITEM_INFO@":""},
+          "0e06965599e5a7a6d0c11303d5f238dc93872d282e878381e166ffb2cb71b5eb":{"@TEST_ENGINE_ITEM_INFO@":"if (ctx->TestEngineHookItems)\n        @ITEM_INFO@(ctx, id, label, ctx->LastItemData.StatusFlags);"}
+        },
+        "functions":{
+          "@FIND_RENDERED_TEXT_END@":{"qualified_name":"ImGui::FindRenderedTextEnd","parameter_types":["const char *","const char *"]},
+          "@CALC_TEXT_SIZE@":{"qualified_name":"ImGui::CalcTextSize","parameter_types":["const char *","const char *","bool","float"]},
+          "@TABLE_GET_CELL_BG_RECT@":{"qualified_name":"ImGui::TableGetCellBgRect","parameter_types":["const ImGuiTable *","int"]},
+          "@MAX_FLOAT@":{"qualified_name":"ImMax","parameter_types":["float","float"]},
+          "@MIN_FLOAT@":{"qualified_name":"ImMin","parameter_types":["float","float"]},
+          "@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},
+          "@FORMAT_STRING@":{"qualified_name":"ImFormatString","parameter_types":["char *","size_t","const char *"]},
+          "@WINDOW_GET_ID@":{"qualified_name":"ImGuiWindow::GetID","parameter_types":["const char *","const char *"]},
+          "@ITEM_SIZE@":{"qualified_name":"ImGui::ItemSize","parameter_types":["const ImVec2 &","float"]},
+          "@ITEM_ADD@":{"qualified_name":"ImGui::ItemAdd","parameter_types":["const ImRect &","ImGuiID","const ImRect *","ImGuiItemFlags"]},
+          "@BUTTON_BEHAVIOR@":{"qualified_name":"ImGui::ButtonBehavior","parameter_types":["const ImRect &","ImGuiID","bool *","bool *","ImGuiButtonFlags"]},
+          "@GET_COLOR_U32@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},
+          "@TABLE_SET_BG_COLOR@":{"qualified_name":"ImGui::TableSetBgColor","parameter_types":["ImGuiTableBgTarget","ImU32","int"]},
+          "@RENDER_NAV_CURSOR@":{"qualified_name":"ImGui::RenderNavCursor","parameter_types":["const ImRect &","ImGuiID","ImGuiNavRenderCursorFlags","float"]},
+          "@IS_MOUSE_DRAGGING@":{"qualified_name":"ImGui::IsMouseDragging","parameter_types":["ImGuiMouseButton","float"]},
+          "@TABLE_QUEUE_SET_COLUMN_DISPLAY_ORDER@":{"qualified_name":"ImGui::TableQueueSetColumnDisplayOrder","parameter_types":["ImGuiTable *","int","int"]},
+          "@PUSH_STYLE_COLOR@":{"qualified_name":"ImGui::PushStyleColor","parameter_types":["ImGuiCol","ImU32"]},
+          "@RENDER_TEXT@":{"qualified_name":"ImGui::RenderText","parameter_types":["ImVec2","const char *","const char *","bool"]},
+          "@POP_STYLE_COLOR@":{"qualified_name":"ImGui::PopStyleColor","parameter_types":["int"]},
+          "@RENDER_ARROW@":{"qualified_name":"ImGui::RenderArrow","parameter_types":["ImDrawList *","ImVec2","ImU32","ImGuiDir","float"]},
+          "@TABLE_GET_COLUMN_NEXT_SORT_DIRECTION@":{"qualified_name":"ImGui::TableGetColumnNextSortDirection","parameter_types":["ImGuiTableColumn *"]},
+          "@TABLE_SET_COLUMN_SORT_DIRECTION@":{"qualified_name":"ImGui::TableSetColumnSortDirection","parameter_types":["int","ImGuiSortDirection","bool"]},
+          "@RENDER_TEXT_ELLIPSIS@":{"qualified_name":"ImGui::RenderTextEllipsis","parameter_types":["ImDrawList *","const ImVec2 &","const ImVec2 &","float","const char *","const char *","const ImVec2 *"]},
+          "@SET_ITEM_TOOLTIP@":{"qualified_name":"ImGui::SetItemTooltip","parameter_types":["const char *"]},
+          "@IS_POPUP_OPEN_REQUEST_FOR_ITEM@":{"qualified_name":"ImGui::IsPopupOpenRequestForItem","parameter_types":["ImGuiPopupFlags","ImGuiID"]},
+          "@TABLE_OPEN_CONTEXT_MENU@":{"qualified_name":"ImGui::TableOpenContextMenu","parameter_types":["int"]},
+          "@ITEM_INFO@":{"qualified_name":"ImGuiTestEngineHook_ItemInfo","parameter_types":["ImGuiContext *","ImGuiID","const char *","ImGuiItemStatusFlags"]}
+        },
+        "constants":{
+          "@SORTABLE@":"ImGuiTableFlags_Sortable",
+          "@NO_SORT@":"ImGuiTableColumnFlags_NoSort",
+          "@ALLOW_OVERLAP@":"ImGuiButtonFlags_AllowOverlap",
+          "@HEADER_ACTIVE@":"ImGuiCol_HeaderActive",
+          "@HEADER_HOVERED@":"ImGuiCol_HeaderHovered",
+          "@HEADER@":"ImGuiCol_Header",
+          "@CELL_BG@":"ImGuiTableBgTarget_CellBg",
+          "@HEADERS@":"ImGuiTableRowFlags_Headers",
+          "@TABLE_HEADER_BG@":"ImGuiCol_TableHeaderBg",
+          "@COMPACT@":"ImGuiNavRenderCursorFlags_Compact",
+          "@REORDERABLE@":"ImGuiTableFlags_Reorderable",
+          "@TEXT_COLOR@":"ImGuiCol_Text",
+          "@SORT_ASCENDING@":"ImGuiSortDirection_Ascending",
+          "@DIRECTION_UP@":"ImGuiDir_Up",
+          "@DIRECTION_DOWN@":"ImGuiDir_Down",
+          "@POPUP_NONE@":"ImGuiPopupFlags_None"
+        }
+      },
+      "ImGui::TableAngledHeadersRowEx": {
+        "parameter_types":["ImGuiID","float","float","const ImGuiTableHeaderData *","int"],
+        "body_sha256":["268e774cf67cea89fdb5f6a470702b9664c4b9beb890fc29481df550db6d2e90","d117f0a40e5dc29e4b7af47928d17805ae8ddfb2d6014cbff866684466b82390"],
+        "template":"handwritten/tables_angled_headers_ex.c.in",
+        "fragment":"table_angled_headers_ex",
+        "functions":{
+          "@TABLE_GET_HEADER_ANGLED_MAX_LABEL_WIDTH@":{"qualified_name":"ImGui::TableGetHeaderAngledMaxLabelWidth","parameter_types":[]},
+          "@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},
+          "@ABS_FLOAT@":{"qualified_name":"ImAbs","parameter_types":["float"]},
+          "@TABLE_NEXT_ROW@":{"qualified_name":"ImGui::TableNextRow","parameter_types":["ImGuiTableRowFlags","float"]},
+          "@TABLE_NEXT_COLUMN@":{"qualified_name":"ImGui::TableNextColumn","parameter_types":[]},
+          "@DRAW_SPLITTER_SET_CURRENT_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]},
+          "@TABLE_SET_BG_COLOR@":{"qualified_name":"ImGui::TableSetBgColor","parameter_types":["ImGuiTableBgTarget","ImU32","int"]},
+          "@PUSH_CLIP_RECT@":{"qualified_name":"ImGui::PushClipRect","parameter_types":["const ImVec2 &","const ImVec2 &","bool"]},
+          "@GET_COLOR_U32@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},
+          "@DRAW_LIST_ADD_RECT_FILLED@":{"qualified_name":"ImDrawList::AddRectFilled","parameter_types":["const ImVec2 &","const ImVec2 &","ImU32","float","ImDrawFlags"]},
+          "@BUTTON_BEHAVIOR@":{"qualified_name":"ImGui::ButtonBehavior","parameter_types":["const ImRect &","ImGuiID","bool *","bool *","ImGuiButtonFlags"]},
+          "@KEEP_ALIVE_ID@":{"qualified_name":"ImGui::KeepAliveID","parameter_types":["ImGuiID"]},
+          "@DRAW_LIST_ADD_QUAD_FILLED@":{"qualified_name":"ImDrawList::AddQuadFilled","parameter_types":["const ImVec2 &","const ImVec2 &","const ImVec2 &","const ImVec2 &","ImU32"]},
+          "@TABLE_GET_COLUMN_NAME@":{"qualified_name":"ImGui::TableGetColumnName","parameter_types":["const ImGuiTable *","int"]},
+          "@FIND_RENDERED_TEXT_END@":{"qualified_name":"ImGui::FindRenderedTextEnd","parameter_types":["const char *","const char *"]},
+          "@TEXT_COUNT_LINES@":{"qualified_name":"ImTextCountLines","parameter_types":["const char *","const char *"]},
+          "@FLOOR@":{"qualified_name":"ImFloor","parameter_types":["float"]},
+          "@CALC_TEXT_SIZE@":{"qualified_name":"ImGui::CalcTextSize","parameter_types":["const char *","const char *","bool","float"]},
+          "@PUSH_STYLE_COLOR_U32@":{"qualified_name":"ImGui::PushStyleColor","parameter_types":["ImGuiCol","ImU32"]},
+          "@RENDER_TEXT_ELLIPSIS@":{"qualified_name":"ImGui::RenderTextEllipsis","parameter_types":["ImDrawList *","const ImVec2 &","const ImVec2 &","float","const char *","const char *","const ImVec2 *"]},
+          "@POP_STYLE_COLOR@":{"qualified_name":"ImGui::PopStyleColor","parameter_types":["int"]},
+          "@SHADE_VERTS_TRANSFORM_POS@":{"qualified_name":"ImGui::ShadeVertsTransformPos","parameter_types":["ImDrawList *","int","int","const ImVec2 &","float","float","const ImVec2 &"]},
+          "@TABLE_GET_COLUMN_BORDER_COL@":{"qualified_name":"TableGetColumnBorderCol","parameter_types":["ImGuiTable *","int","int"]},
+          "@DRAW_LIST_ADD_LINE@":{"qualified_name":"ImDrawList::AddLine","parameter_types":["const ImVec2 &","const ImVec2 &","ImU32","float"]},
+          "@POP_CLIP_RECT@":{"qualified_name":"ImGui::PopClipRect","parameter_types":[]}
+        },
+        "constants":{
+          "@TABLE_ROW_FLAGS_HEADERS@":"ImGuiTableRowFlags_Headers",
+          "@TABLE_BG_TARGET_ROW_BG0@":"ImGuiTableBgTarget_RowBg0",
+          "@COLOR_TABLE_HEADER_BG@":"ImGuiCol_TableHeaderBg",
+          "@COLOR_TEXT@":"ImGuiCol_Text"
+        }
+      },
+      "ImGui::DebugNodeTable": {
+        "parameter_types":["ImGuiTable *"],
+        "body_sha256":"d6bcfd547c9926286edff7bada1e9fa7cbbad036ae63be97e595ba0b765d4c93",
+        "template":"handwritten/tables_debug_nodes.c.in",
+        "fragment":"debug_node_table",
+        "functions":{
+          "@GET_STYLE_COLOR_VEC4@":{"qualified_name":"ImGui::GetStyleColorVec4","parameter_types":["ImGuiCol"]},
+          "@PUSH_STYLE_COLOR_VEC4@":{"qualified_name":"ImGui::PushStyleColor","parameter_types":["ImGuiCol","const ImVec4 &"]},
+          "@TREE_NODE_POINTER@":{"qualified_name":"ImGui::TreeNode","parameter_types":["const void *","const char *"]},
+          "@POP_STYLE_COLOR@":{"qualified_name":"ImGui::PopStyleColor","parameter_types":["int"]},
+          "@IS_ITEM_HOVERED@":{"qualified_name":"ImGui::IsItemHovered","parameter_types":["ImGuiHoveredFlags"]},
+          "@GET_FOREGROUND_DRAW_LIST@":{"qualified_name":"ImGui::GetForegroundDrawList","parameter_types":["ImGuiWindow *"]},
+          "@DRAW_LIST_ADD_RECT@":{"qualified_name":"ImDrawList::AddRect","parameter_types":["const ImVec2 &","const ImVec2 &","ImU32","float","float","ImDrawFlags"]},
+          "@IS_ITEM_VISIBLE@":{"qualified_name":"ImGui::IsItemVisible","parameter_types":[]},
+          "@TEXT@":{"qualified_name":"ImGui::Text","parameter_types":["const char *"]},
+          "@DEBUG_BREAK_BUTTON@":{"qualified_name":"ImGui::DebugBreakButton","parameter_types":["const char *","const char *"]},
+          "@SAME_LINE@":{"qualified_name":"ImGui::SameLine","parameter_types":["float","float"]},
+          "@SMALL_BUTTON@":{"qualified_name":"ImGui::SmallButton","parameter_types":["const char *"]},
+          "@TABLE_GET_SIZING_POLICY_DESC@":{"qualified_name":"DebugNodeTableGetSizingPolicyDesc","parameter_types":["ImGuiTableFlags"]},
+          "@BULLET_TEXT@":{"qualified_name":"ImGui::BulletText","parameter_types":["const char *"]},
+          "@TABLE_GET_INSTANCE_DATA@":{"qualified_name":"ImGui::TableGetInstanceData","parameter_types":["ImGuiTable *","int"]},
+          "@TABLE_GET_COLUMN_NAME@":{"qualified_name":"ImGui::TableGetColumnName","parameter_types":["const ImGuiTable *","int"]},
+          "@IM_FORMAT_STRING@":{"qualified_name":"ImFormatString","parameter_types":["char *","size_t","const char *"]},
+          "@BULLET@":{"qualified_name":"ImGui::Bullet","parameter_types":[]},
+          "@SELECTABLE@":{"qualified_name":"ImGui::Selectable","parameter_types":["const char *","bool","ImGuiSelectableFlags","const ImVec2 &"]},
+          "@TABLE_GET_BOUND_SETTINGS@":{"qualified_name":"ImGui::TableGetBoundSettings","parameter_types":["ImGuiTable *"]},
+          "@DEBUG_NODE_TABLE_SETTINGS@":{"qualified_name":"ImGui::DebugNodeTableSettings","parameter_types":["ImGuiTableSettings *","ImGuiTable *"]},
+          "@TREE_POP@":{"qualified_name":"ImGui::TreePop","parameter_types":[]}
+        },
+        "constants":{
+          "@IMGUI_COL_TEXT_DISABLED@":"ImGuiCol_TextDisabled",
+          "@IMGUI_COL_TEXT@":"ImGuiCol_Text"
+        }
+      },
+      "ImGui::DebugNodeTableSettings": {
+        "parameter_types":["ImGuiTableSettings *","ImGuiTable *"],
+        "body_sha256":"63d286ae5d3a13c42f5d5756d9bb43ef3bf348fac5b84e5b7775efd130e0c117",
+        "template":"handwritten/tables_debug_nodes.c.in",
+        "fragment":"debug_node_table_settings",
+        "functions":{
+          "@PUSH_ID_POINTER@":{"qualified_name":"ImGui::PushID","parameter_types":["const void *"]},
+          "@TREE_NODE_POINTER@":{"qualified_name":"ImGui::TreeNode","parameter_types":["const void *","const char *"]},
+          "@IS_ITEM_HOVERED@":{"qualified_name":"ImGui::IsItemHovered","parameter_types":["ImGuiHoveredFlags"]},
+          "@TABLE_FIND_BY_ID@":{"qualified_name":"ImGui::TableFindByID","parameter_types":["ImGuiID"]},
+          "@GET_FOREGROUND_DRAW_LIST@":{"qualified_name":"ImGui::GetForegroundDrawList","parameter_types":["ImGuiWindow *"]},
+          "@DRAW_LIST_ADD_RECT@":{"qualified_name":"ImDrawList::AddRect","parameter_types":["const ImVec2 &","const ImVec2 &","ImU32","float","float","ImDrawFlags"]},
+          "@BULLET_TEXT@":{"qualified_name":"ImGui::BulletText","parameter_types":["const char *"]},
+          "@TREE_POP@":{"qualified_name":"ImGui::TreePop","parameter_types":[]},
+          "@POP_ID@":{"qualified_name":"ImGui::PopID","parameter_types":[]}
+        }
+      },
+      "ImGui::EndTable": {
+        "parameter_types":[],
+        "body_sha256":["966f87accd400693b0d414222aa2f72151774a03d3efa26b86cfa7968fbb45c4","ff2b352d2bad9dbfab0839d6a8f9503eafeb5aff6b6cdf0ea3068c6508b03d13"],
+        "template":"handwritten/tables_end.c.in",
+        "fragment":"end_table",
+        "functions":{
+          "@TABLE_GET_INSTANCE_DATA@":{"qualified_name":"ImGui::TableGetInstanceData","parameter_types":["ImGuiTable *","int"]},
+          "@TABLE_POOL_GET_BY_INDEX@":{"qualified_name":"ImPool<ImGuiTable>::GetByIndex","parameter_types":["ImPoolIdx"]},
+          "@TABLE_POOL_GET_INDEX@":{"qualified_name":"ImPool<ImGuiTable>::GetIndex","parameter_types":["const ImGuiTable *"]},
+          "@IM_MAX_FLOAT@":{"qualified_name":"ImMax","parameter_types":["float","float"]},
+          "@IM_MIN_FLOAT@":{"qualified_name":"ImMin","parameter_types":["float","float"]},
+          "@IM_TRUNC_FLOAT@":{"qualified_name":"ImTrunc","parameter_types":["float"]},
+          "@DRAW_LIST_POP_CLIP_RECT@":{"qualified_name":"ImDrawList::PopClipRect","parameter_types":[]},
+          "@DRAW_LIST_SPLITTER_SET_CURRENT_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]},
+          "@DRAW_LIST_SPLITTER_MERGE@":{"qualified_name":"ImDrawListSplitter::Merge","parameter_types":["ImDrawList *"]}
+        },
+        "snippets":{
+          "@IM_CEIL_FLOAT@":"ceilf",
+          "@TABLE_BORDER_SIZE@":"1.0f",
+          "@TABLE_RESIZE_SEPARATOR_HALF_THICKNESS@":"4.0f"
+        }
+      },
+      "ImGui::BeginTableEx": {
+        "parameter_types":["const char *","ImGuiID","int","ImGuiTableFlags","const ImVec2 &","float"],
+        "body_sha256":["b477610e1618cb1a72c2ca6b92445279dc0a1bf60138390b2a92f2ce1b2d1aa4","ed91e1fa58267e683ab6a969dfe8fecb4bc54872e24ddc580b5e56ff60720523"],
+        "template":"handwritten/tables_begin_ex.c.in",
+        "fragment":"begin_table_ex",
+        "functions":{
+          "@BEGIN_CHILD_EX@":{"qualified_name":"ImGui::BeginChildEx","parameter_types":["const char *","ImGuiID","const ImVec2 &","ImGuiChildFlags","ImGuiWindowFlags"]},
+          "@CALC_ITEM_SIZE@":{"qualified_name":"ImGui::CalcItemSize","parameter_types":["ImVec2","float","float"]},
+          "@CLEAR_NEXT_WINDOW_FLAGS@":{"qualified_name":"ImGuiNextWindowData::ClearFlags","parameter_types":[]},
+          "@COLUMN_SPAN_SIZE@":{"qualified_name":"ImSpan<ImGuiTableColumn>::size","parameter_types":[]},
+          "@DEBUG_LOG@":{"qualified_name":"ImGui::DebugLog","parameter_types":["const char *"]},
+          "@DRAW_SPLITTER_CLEAR@":{"qualified_name":"ImDrawListSplitter::Clear","parameter_types":[]},
+          "@FLOAT_VECTOR_RESIZE@":{"qualified_name":"ImVector<float>::resize","parameter_types":["int","const float &"]},
+          "@GET_COLOR_U32@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},
+          "@GET_CONTENT_REGION_AVAIL@":{"qualified_name":"ImGui::GetContentRegionAvail","parameter_types":[]},
+          "@GET_CURRENT_WINDOW@":{"qualified_name":"ImGui::GetCurrentWindow","parameter_types":[]},
+          "@GET_ID_WITH_SEED_INT@":{"qualified_name":"ImGui::GetIDWithSeed","parameter_types":["int","ImGuiID"]},
+          "@GET_ID_WITH_SEED_STRING@":{"qualified_name":"ImGui::GetIDWithSeed","parameter_types":["const char *","const char *","ImGuiID"]},
+          "@INSTANCE_DATA_INIT@":{"qualified_name":"ImGuiTableInstanceData::ImGuiTableInstanceData","parameter_types":[]},
+          "@INSTANCE_DATA_PUSH_BACK@":{"qualified_name":"ImVector<ImGuiTableInstanceData>::push_back","parameter_types":["const ImGuiTableInstanceData &"]},
+          "@IS_CLIPPED_EX@":{"qualified_name":"ImGui::IsClippedEx","parameter_types":["const ImRect &","ImGuiID"]},
+          "@ITEM_ADD@":{"qualified_name":"ImGui::ItemAdd","parameter_types":["const ImRect &","ImGuiID","const ImRect *","ImGuiItemFlags"]},
+          "@ITEM_SIZE@":{"qualified_name":"ImGui::ItemSize","parameter_types":["const ImRect &","float"]},
+          "@MAX_FLOAT@":{"qualified_name":"ImMax","parameter_types":["float","float"]},
+          "@MIN_FLOAT@":{"qualified_name":"ImMin","parameter_types":["float","float"]},
+          "@PUSH_OVERRIDE_ID@":{"qualified_name":"ImGui::PushOverrideID","parameter_types":["ImGuiID"]},
+          "@RECT_CLIP_WITH@":{"qualified_name":"ImRect::ClipWith","parameter_types":["const ImRect &"]},
+          "@RECT_CLIP_WITH_FULL@":{"qualified_name":"ImRect::ClipWithFull","parameter_types":["const ImRect &"]},
+          "@SET_NEXT_WINDOW_CONTENT_SIZE@":{"qualified_name":"ImGui::SetNextWindowContentSize","parameter_types":["const ImVec2 &"]},
+          "@SET_NEXT_WINDOW_SCROLL@":{"qualified_name":"ImGui::SetNextWindowScroll","parameter_types":["const ImVec2 &"]},
+          "@TABLE_BEGIN_INIT_MEMORY@":{"qualified_name":"ImGui::TableBeginInitMemory","parameter_types":["ImGuiTable *","int"]},
+          "@TABLE_COLUMN_INIT@":{"qualified_name":"ImGuiTableColumn::ImGuiTableColumn","parameter_types":[]},
+          "@TABLE_FIX_FLAGS@":{"qualified_name":"TableFixFlags","parameter_types":["ImGuiTableFlags","ImGuiWindow *"]},
+          "@TABLE_GET_INSTANCE_DATA@":{"qualified_name":"ImGui::TableGetInstanceData","parameter_types":["ImGuiTable *","int"]},
+          "@TABLE_LOAD_SETTINGS@":{"qualified_name":"ImGui::TableLoadSettings","parameter_types":["ImGuiTable *"]},
+          "@TABLE_POOL_GET_INDEX@":{"qualified_name":"ImPool<ImGuiTable>::GetIndex","parameter_types":["const ImGuiTable *"]},
+          "@TABLE_POOL_GET_OR_ADD@":{"qualified_name":"ImPool<ImGuiTable>::GetOrAddByKey","parameter_types":["ImGuiID"]},
+          "@TABLE_RESET_SETTINGS@":{"qualified_name":"ImGui::TableResetSettings","parameter_types":["ImGuiTable *"]},
+          "@TEMP_DATA_INIT@":{"qualified_name":"ImGuiTableTempData::ImGuiTableTempData","parameter_types":[]},
+          "@TEMP_DATA_RESIZE@":{"qualified_name":"ImVector<ImGuiTableTempData>::resize","parameter_types":["int","const ImGuiTableTempData &"]},
+          "@TRUNC_VEC2@":{"qualified_name":"ImTrunc","parameter_types":["const ImVec2 &"]},
+          "@WINDOW_RECT@":{"qualified_name":"ImGuiWindow::Rect","parameter_types":[]}
+        },
+        "constants":{
+          "@BORDERS_INNER_V@":"ImGuiTableFlags_BordersInnerV","@BORDERS_OUTER_H@":"ImGuiTableFlags_BordersOuterH","@BORDERS_OUTER_V@":"ImGuiTableFlags_BordersOuterV","@CHILD_FLAGS_NONE@":"ImGuiChildFlags_None","@DEBUG_EVENT_TABLE@":"ImGuiDebugLogFlags_EventTable","@HORIZONTAL_SCROLLBAR@":"ImGuiWindowFlags_HorizontalScrollbar","@ITEM_FLAGS_NONE@":"ImGuiItemFlags_None","@NEXT_WINDOW_HAS_CHILD_FLAGS@":"ImGuiNextWindowDataFlags_HasChildFlags","@NEXT_WINDOW_HAS_SCROLL@":"ImGuiNextWindowDataFlags_HasScroll","@NEXT_WINDOW_HAS_WINDOW_FLAGS@":"ImGuiNextWindowDataFlags_HasWindowFlags","@NO_HOST_EXTEND_Y@":"ImGuiTableFlags_NoHostExtendY","@NO_PAD_INNER_X@":"ImGuiTableFlags_NoPadInnerX","@NO_PAD_OUTER_X@":"ImGuiTableFlags_NoPadOuterX","@PAD_OUTER_X@":"ImGuiTableFlags_PadOuterX","@REORDERABLE@":"ImGuiTableFlags_Reorderable","@ROW_FLAGS_NONE@":"ImGuiTableRowFlags_None","@SCROLL_X@":"ImGuiTableFlags_ScrollX","@SCROLL_Y@":"ImGuiTableFlags_ScrollY","@SIZING_MASK@":"ImGuiTableFlags_SizingMask_","@TABLE_BORDER_LIGHT_COLOR@":"ImGuiCol_TableBorderLight","@TABLE_BORDER_STRONG_COLOR@":"ImGuiCol_TableBorderStrong","@WINDOW_FLAGS_NONE@":"ImGuiWindowFlags_None"
+        },
+        "snippets":{"@FLOAT_MAX@":"3.40282347E+38f","@FLOAT_MIN@":"1.17549435E-38f","@TABLE_BORDER_SIZE@":"1.0f","@TABLE_MAX_COLUMNS@":"512","@WINDOW_HARD_MIN_SIZE@":"4.0f"}
+      },
+      "ImGui::TableUpdateLayout": {
+        "parameter_types":["ImGuiTable *"],
+        "body_sha256":["8e05e8c17b3aac8fea0de449913597aea5b0c3a790c04b0861dae72b02af11e3","68db56872d00d0ce013985e21cc7d5fd0758da136985166544ea55741f333171"],
+        "template":"handwritten/tables_update_layout.c.in",
+        "fragment":"table_update_layout",
+        "types":{"@IMGUI_CONTEXT@":"ImGuiContext","@IMGUI_TABLE_TEMP_DATA@":"ImGuiTableTempData","@IMGUI_TABLE_COLUMN@":"ImGuiTableColumn","@IMGUI_TABLE_INSTANCE_DATA@":"ImGuiTableInstanceData","@IMGUI_WINDOW@":"ImGuiWindow","@IMGUI_BOX_SELECT_STATE@":"ImGuiBoxSelectState","@IMRECT@":"ImRect","@IMGUI_TABLE_FLAGS@":"ImGuiTableFlags","@IMGUI_ID@":"ImGuiID","@IMGUI_TABLE_COLUMN_IDX@":"ImGuiTableColumnIdx","@IMS8@":"ImS8"},
+        "functions":{
+          "@TABLE_RECONCILE_COLUMNS@":{"qualified_name":"ImGui::TableReconcileColumns","parameter_types":["ImGuiTable *"]},
+          "@MEM_FREE@":{"qualified_name":"ImGui::MemFree","parameter_types":["void *"]},
+          "@TABLE_LOAD_SETTINGS_FOR_COLUMNS@":{"qualified_name":"ImGui::TableLoadSettingsForColumns","parameter_types":["ImGuiTable *"]},
+          "@TABLE_INIT_COLUMN_DEFAULTS@":{"qualified_name":"ImGui::TableInitColumnDefaults","parameter_types":["ImGuiTable *","ImGuiTableColumn *","ImGuiTableColumnFlags"]},
+          "@TABLE_FIX_DISPLAY_ORDER@":{"qualified_name":"ImGui::TableFixDisplayOrder","parameter_types":["ImGuiTable *"]},
+          "@TABLE_APPLY_QUEUED_REQUESTS@":{"qualified_name":"ImGui::TableApplyQueuedRequests","parameter_types":["ImGuiTable *"]},
+          "@TABLE_SETUP_COLUMN_FLAGS@":{"qualified_name":"TableSetupColumnFlags","parameter_types":["ImGuiTable *","ImGuiTableColumn *","ImGuiTableColumnFlags"]},
+          "@TABLE_GET_COLUMN_WIDTH_AUTO@":{"qualified_name":"ImGui::TableGetColumnWidthAuto","parameter_types":["ImGuiTable *","ImGuiTableColumn *"]},
+          "@TABLE_GET_INSTANCE_DATA@":{"qualified_name":"ImGui::TableGetInstanceData","parameter_types":["ImGuiTable *","int"]},
+          "@ITEM_HOVERABLE@":{"qualified_name":"ImGui::ItemHoverable","parameter_types":["const ImRect &","ImGuiID","ImGuiItemFlags"]},
+          "@TABLE_CALC_MAX_COLUMN_WIDTH@":{"qualified_name":"ImGui::TableCalcMaxColumnWidth","parameter_types":["const ImGuiTable *","int"]},
+          "@RECT_CLIP_WITH_FULL@":{"qualified_name":"ImRect::ClipWithFull","parameter_types":["const ImRect &"]},
+          "@TABLE_SETUP_DRAW_CHANNELS@":{"qualified_name":"ImGui::TableSetupDrawChannels","parameter_types":["ImGuiTable *"]},
+          "@TABLE_UPDATE_BORDERS@":{"qualified_name":"ImGui::TableUpdateBorders","parameter_types":["ImGuiTable *"]},
+          "@TABLE_BEGIN_CONTEXT_MENU_POPUP@":{"qualified_name":"ImGui::TableBeginContextMenuPopup","parameter_types":["ImGuiTable *"]},
+          "@TABLE_DRAW_DEFAULT_CONTEXT_MENU@":{"qualified_name":"ImGui::TableDrawDefaultContextMenu","parameter_types":["ImGuiTable *","ImGuiTableFlags"]},
+          "@END_POPUP@":{"qualified_name":"ImGui::EndPopup","parameter_types":[]},
+          "@TABLE_SORT_SPECS_BUILD@":{"qualified_name":"ImGui::TableSortSpecsBuild","parameter_types":["ImGuiTable *"]},
+          "@TABLE_APPLY_EXTERNAL_UNCLIP_RECT@":{"qualified_name":"ImGui::TableApplyExternalUnclipRect","parameter_types":["ImGuiTable *","ImRect &"]},
+          "@DRAW_SPLITTER_SET_CURRENT_CHANNEL@":{"qualified_name":"ImDrawListSplitter::SetCurrentChannel","parameter_types":["ImDrawList *","int"]},
+          "@DRAW_LIST_PUSH_CLIP_RECT@":{"qualified_name":"ImDrawList::PushClipRect","parameter_types":["const ImVec2 &","const ImVec2 &","bool"]},
+          "@MAX_FLOAT@":{"qualified_name":"ImMax","parameter_types":["float","float"]},
+          "@MIN_FLOAT@":{"qualified_name":"ImMin","parameter_types":["float","float"]},
+          "@CLAMP_FLOAT@":{"qualified_name":"ImClamp","parameter_types":["float","float","float"]},
+          "@TRUNC_FLOAT@":{"qualified_name":"ImTrunc","parameter_types":["float"]},
+          "@BIT_ARRAY_CLEAR_ALL@":{"qualified_name":"ImBitArrayClearAllBits","parameter_types":["ImU32 *","int"]},
+          "@BIT_ARRAY_SET@":{"qualified_name":"ImBitArraySetBit","parameter_types":["ImU32 *","int"]}
+        },
+        "constants":{"@SIZING_MASK@":"ImGuiTableFlags_SizingMask_","@COLUMN_NONE@":"ImGuiTableColumnFlags_None","@HIDEABLE@":"ImGuiTableFlags_Hideable","@NO_HIDE@":"ImGuiTableColumnFlags_NoHide","@DISABLED@":"ImGuiTableColumnFlags_Disabled","@DEFAULT_HIDE@":"ImGuiTableColumnFlags_DefaultHide","@SORT_MULTI@":"ImGuiTableFlags_SortMulti","@WIDTH_FIXED@":"ImGuiTableColumnFlags_WidthFixed","@NO_RESIZE@":"ImGuiTableColumnFlags_NoResize","@WIDTH_STRETCH@":"ImGuiTableColumnFlags_WidthStretch","@SORTABLE@":"ImGuiTableFlags_Sortable","@SORT_TRISTATE@":"ImGuiTableFlags_SortTristate","@SIZING_FIXED_SAME@":"ImGuiTableFlags_SizingFixedSame","@SIZING_STRETCH_PROP@":"ImGuiTableFlags_SizingStretchProp","@SCROLL_X@":"ImGuiTableFlags_ScrollX","@NO_DIRECT_RESIZE@":"ImGuiTableColumnFlags_NoDirectResize_","@PRECISE_WIDTHS@":"ImGuiTableFlags_PreciseWidths","@ITEM_NONE@":"ImGuiItemFlags_None","@NAV_LAYER_MENU@":"ImGuiNavLayer_Menu","@STATUS_MASK@":"ImGuiTableColumnFlags_StatusMask_","@IS_ENABLED@":"ImGuiTableColumnFlags_IsEnabled","@IS_VISIBLE@":"ImGuiTableColumnFlags_IsVisible","@IS_SORTED@":"ImGuiTableColumnFlags_IsSorted","@IS_HOVERED@":"ImGuiTableColumnFlags_IsHovered","@RESIZABLE@":"ImGuiTableFlags_Resizable","@NO_HOST_EXTEND_X@":"ImGuiTableFlags_NoHostExtendX","@NO_HOST_EXTEND_Y@":"ImGuiTableFlags_NoHostExtendY","@SCROLL_Y@":"ImGuiTableFlags_ScrollY","@HIGHLIGHT_HOVERED_COLUMN@":"ImGuiTableFlags_HighlightHoveredColumn","@NO_CLIP@":"ImGuiTableFlags_NoClip"},
+        "snippets":{"@FLOAT_MAX@":"3.40282347E+38f","@TABLE_BORDER_SIZE@":"1.0f","@TABLE_DRAW_CHANNEL_NOCLIP@":"2"}
+      },
+      "ImGui::DataTypeApplyOp": {
+        "parameter_types": [
+          "ImGuiDataType", "int", "void *", "const void *", "const void *"
+        ],
+        "body_sha256": [
+          "879a389bdd00b2b2ce60f88e7e81a58048c60eeb925783a553183cecbcef0cba",
+          "7d2262e335f5014e6097624a9b4fbb4106948dd11e46f8ee856029476a534331"
+        ],
+        "template": "handwritten/data_type_apply_op_body.c.in",
+        "constants": {
+          "@DT_S8@": "ImGuiDataType_S8",
+          "@DT_U8@": "ImGuiDataType_U8",
+          "@DT_S16@": "ImGuiDataType_S16",
+          "@DT_U16@": "ImGuiDataType_U16",
+          "@DT_S32@": "ImGuiDataType_S32",
+          "@DT_U32@": "ImGuiDataType_U32",
+          "@DT_S64@": "ImGuiDataType_S64",
+          "@DT_U64@": "ImGuiDataType_U64",
+          "@DT_FLOAT@": "ImGuiDataType_Float",
+          "@DT_DOUBLE@": "ImGuiDataType_Double"
+        }
+      },
+      "ImGui::RenderRectFilledInRangeH": {
+        "parameter_types": [
+          "ImDrawList *", "const ImRect &", "ImU32", "float", "float", "float"
+        ],
+        "body_sha256": "c7b9c84a3e066ab3ff7b67184215a8e9461de9df5566080242a5637b12065087",
+        "template": "handwritten/render_rect_filled_range_h_body.c.in",
+        "functions": {
+          "@ADD_RECT_FILLED@": {
+            "qualified_name": "ImDrawList::AddRectFilled",
+            "parameter_types": [
+              "const ImVec2 &", "const ImVec2 &", "ImU32", "float", "ImDrawFlags"
+            ]
+          },
+          "@PATH_LINE_TO@": {
+            "qualified_name": "ImDrawList::PathLineTo",
+            "parameter_types": ["const ImVec2 &"]
+          },
+          "@PATH_ARC_TO_FAST@": {
+            "qualified_name": "ImDrawList::PathArcToFast",
+            "parameter_types": ["const ImVec2 &", "float", "int", "int"]
+          },
+          "@PATH_ARC_TO@": {
+            "qualified_name": "ImDrawList::PathArcTo",
+            "parameter_types": [
+              "const ImVec2 &", "float", "float", "float", "int"
+            ]
+          },
+          "@PATH_FILL_CONVEX@": {
+            "qualified_name": "ImDrawList::PathFillConvex",
+            "parameter_types": ["ImU32"]
+          },
+          "@ACOS01@": {
+            "qualified_name": "ImAcos01",
+            "parameter_types": ["float"]
+          }
+        }
+      },
+      "ImGui::TableReconcileColumns": {
+        "parameter_types": ["ImGuiTable *"],
+        "body_sha256": [
+          "e83478984c838db2ef99c01fbeaaf861e1f4c30a2e6ba4322eab9b7384f3b9d1",
+          "8532e1d49c9abd3d077995e57114e845c00edc96934670f5ba319a4b075fa3a2"
+        ],
+        "template": "handwritten/table_reconcile_columns_body.c.in",
+        "functions": {
+          "@SETUP_COLUMN_APPLY@": {
+            "qualified_name": "TableSetupColumnApply",
+            "parameter_types": [
+              "ImGuiTable *", "int", "ImGuiID", "ImS16",
+              "ImGuiTableColumnFlags", "float", "ImGuiID"
+            ]
+          },
+          "@FIX_DISPLAY_ORDER@": {
+            "qualified_name": "ImGui::TableFixDisplayOrder",
+            "parameter_types": ["ImGuiTable *"]
+          },
+          "@DEBUG_LOG@": {
+            "qualified_name": "ImGui::DebugLog",
+            "parameter_types": ["const char *"]
+          },
+          "@TABLE_GET_COLUMN_NAME@": {
+            "qualified_name": "ImGui::TableGetColumnName",
+            "parameter_types": ["const ImGuiTable *", "int"]
+          }
+        },
+        "constants": {
+          "@EVENT_TABLE@": "ImGuiDebugLogFlags_EventTable"
+        }
+      },
+      "ImDrawList::AddPolyline": {
+        "parameter_types": [
+          "const ImVec2 *", "const int", "ImU32", "float", "ImDrawFlags"
+        ],
+        "body_sha256": [
+          "e3cac7b4e15902c3a982006af47b5a549a1b322f2d6471175ca14769d273a1ba",
+          "d4bf477ef4f4a74b05a84f40c075cac1fcd6d91b7099f4eeb22c44bf1ddb1a9b"
+        ],
+        "template": "handwritten/add_polyline_body.c.in",
+        "functions": {
+          "@PRIM_RESERVE@": {
+            "qualified_name": "ImDrawList::PrimReserve",
+            "parameter_types": ["int", "int"]
+          },
+          "@TEMP_RESERVE@": {
+            "qualified_name": "ImVector<ImVec2>::reserve_discard",
+            "parameter_types": ["int"]
+          },
+          "@RSQRT@": {
+            "qualified_name": "ImRsqrt",
+            "parameter_types": ["float"]
+          },
+          "@ERROR_LOG@": {
+            "qualified_name": "ImGui::ErrorLog",
+            "parameter_types": ["const char *"]
+          }
+        },
+        "types": {
+          "@TEMP_VECTOR_TYPE@": "ImVector<ImVec2>"
+        },
+        "constants": {
+          "@CLOSED@": "ImDrawFlags_Closed",
+          "@INVALID_MASK@": "ImDrawFlags_InvalidMask_",
+          "@AA_LINES@": "ImDrawListFlags_AntiAliasedLines",
+          "@AA_LINES_USE_TEX@": "ImDrawListFlags_AntiAliasedLinesUseTex"
+        }
+      },
+      "ImGui::PlotEx": {
+        "parameter_types": [
+          "ImGuiPlotType", "const char *", "float (*)(void *, int)",
+          "void *", "int", "int", "const char *", "float", "float",
+          "const ImVec2 &"
+        ],
+        "body_sha256": [
+          "948000f84f7668ddb4f27c13f7eda3bca62e2c9ffedd827138905c9b465d4f79",
+          "8933734885815390014f448d01f1355696d9ca248277928e63dadeb6685f910b"
+        ],
+        "template": "handwritten/plot_ex_body.c.in",
+        "functions": {
+          "@GET_CURRENT_WINDOW@": {
+            "qualified_name": "ImGui::GetCurrentWindow",
+            "parameter_types": []
+          },
+          "@GET_ID@": {
+            "qualified_name": "ImGuiWindow::GetID",
+            "parameter_types": ["const char *", "const char *"]
+          },
+          "@FIND_TEXT_END@": {
+            "qualified_name": "ImGui::FindRenderedTextEnd",
+            "parameter_types": ["const char *", "const char *"]
+          },
+          "@CALC_TEXT_SIZE@": {
+            "qualified_name": "ImGui::CalcTextSize",
+            "parameter_types": ["const char *", "const char *", "bool", "float"]
+          },
+          "@CALC_ITEM_SIZE@": {
+            "qualified_name": "ImGui::CalcItemSize",
+            "parameter_types": ["ImVec2", "float", "float"]
+          },
+          "@CALC_ITEM_WIDTH@": {
+            "qualified_name": "ImGui::CalcItemWidth",
+            "parameter_types": []
+          },
+          "@ITEM_SIZE@": {
+            "qualified_name": "ImGui::ItemSize",
+            "parameter_types": ["const ImRect &", "float"]
+          },
+          "@ITEM_ADD@": {
+            "qualified_name": "ImGui::ItemAdd",
+            "parameter_types": [
+              "const ImRect &", "ImGuiID", "const ImRect *", "ImGuiItemFlags"
+            ]
+          },
+          "@BUTTON_BEHAVIOR@": {
+            "qualified_name": "ImGui::ButtonBehavior",
+            "parameter_types": [
+              "const ImRect &", "ImGuiID", "bool *", "bool *", "ImGuiButtonFlags"
+            ]
+          },
+          "@RENDER_FRAME@": {
+            "qualified_name": "ImGui::RenderFrame",
+            "parameter_types": ["ImVec2", "ImVec2", "ImU32", "bool", "float"]
+          },
+          "@GET_COLOR@": {
+            "qualified_name": "ImGui::GetColorU32",
+            "parameter_types": ["ImGuiCol", "float"]
+          },
+          "@CLAMP@": {
+            "qualified_name": "ImClamp",
+            "parameter_types": ["float", "float", "float"]
+          },
+          "@LERP@": {
+            "qualified_name": "ImLerp",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &"]
+          },
+          "@ADD_LINE@": {
+            "qualified_name": "ImDrawList::AddLine",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32", "float"]
+          },
+          "@ADD_RECT_FILLED@": {
+            "qualified_name": "ImDrawList::AddRectFilled",
+            "parameter_types": [
+              "const ImVec2 &", "const ImVec2 &", "ImU32", "float", "ImDrawFlags"
+            ]
+          },
+          "@SET_TOOLTIP@": {
+            "qualified_name": "ImGui::SetTooltip",
+            "parameter_types": ["const char *"]
+          },
+          "@RENDER_TEXT_CLIPPED@": {
+            "qualified_name": "ImGui::RenderTextClipped",
+            "parameter_types": [
+              "const ImVec2 &", "const ImVec2 &", "const char *",
+              "const char *", "const ImVec2 *", "const ImVec2 &",
+              "const ImRect *"
+            ]
+          },
+          "@RENDER_TEXT@": {
+            "qualified_name": "ImGui::RenderText",
+            "parameter_types": ["ImVec2", "const char *", "const char *", "bool"]
+          }
+        },
+        "value_functions": {
+          "@VEC2@": {
+            "qualified_name": "ImVec2::ImVec2",
+            "parameter_types": ["float", "float"]
+          }
+        },
+        "constants": {
+          "@PLOT_LINES@": "ImGuiPlotType_Lines",
+          "@ITEM_NO_NAV@": "ImGuiItemFlags_NoNav",
+          "@COLOR_FRAME_BG@": "ImGuiCol_FrameBg",
+          "@COLOR_PLOT_LINES@": "ImGuiCol_PlotLines",
+          "@COLOR_PLOT_LINES_HOVERED@": "ImGuiCol_PlotLinesHovered",
+          "@COLOR_PLOT_HISTOGRAM@": "ImGuiCol_PlotHistogram",
+          "@COLOR_PLOT_HISTOGRAM_HOVERED@": "ImGuiCol_PlotHistogramHovered"
+        }
+      }
+    },
+    "omit_calls": []
+  }
+}

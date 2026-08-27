@@ -1,0 +1,21 @@
+{
+  "name": "idiomatic_c89_differential",
+  "upstream_revision": "latest_release",
+  "language": "c++11",
+  "facade_language": "c++11",
+  "defines": [],
+  "undefines": [],
+  "translator_patch": "../patches/idiomatic_c89.json",
+  "core_translation_units": [
+    "imgui.cpp",
+    "imgui_draw.cpp",
+    "imgui_tables.cpp",
+    "imgui_widgets.cpp"
+  ],
+  "compatibility_translation_units": [
+    "imgui_demo.cpp"
+  ],
+  "backend_translation_units": [],
+  "c_includes": [],
+  "pkg_config_packages": []
+}

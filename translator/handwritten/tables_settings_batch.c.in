@@ -1,0 +1,440 @@
+/* Handwritten C89 table-settings cluster.  Bodies are selected by fragment. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_calc_chunk_size */
+return sizeof(ImGuiTableSettings) + (size_t)columns_count * sizeof(ImGuiTableColumnSettings);
+/* IMGUI_C89_FUNCTION_END table_settings_calc_chunk_size */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_init */
+ImGuiTableColumnSettings *column;
+int n;
+memset(settings, 0, @CALC_SIZE@(columns_count_max));
+settings->ID = id;
+settings->ColumnsCount = (ImGuiTableColumnIdx)columns_count;
+settings->ColumnsCountMax = (ImGuiTableColumnIdx)columns_count_max;
+settings->WantApply = 1;
+column = (ImGuiTableColumnSettings *)(settings + 1);
+for (n = 0; n < columns_count_max; n++, column++)
+{
+    column->Index = -1;
+    column->DisplayOrder = -1;
+    column->SortOrder = -1;
+    column->IsEnabled = -1;
+}
+/* IMGUI_C89_FUNCTION_END table_settings_init */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_find_by_id */
+ImGuiTableSettings *settings;
+settings = @CHUNK_BEGIN@(&imgui_c89_ctx->SettingsTables);
+while (settings)
+{
+    if (settings->ID == id)
+        return settings;
+    settings = @CHUNK_NEXT@(&imgui_c89_ctx->SettingsTables, settings);
+}
+return 0;
+/* IMGUI_C89_FUNCTION_END table_settings_find_by_id */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_create */
+ImGuiTableSettings *settings;
+int capacity;
+settings = @FIND_BY_ID@(imgui_c89_ctx, id);
+if (settings)
+{
+    capacity = settings->ColumnsCountMax;
+    if (capacity >= columns_count)
+    {
+        @SETTINGS_INIT@(settings, id, columns_count, capacity);
+        return settings;
+    }
+    settings->ID = 0;
+}
+settings = @CHUNK_ALLOC@(imgui_c89_ctx, &imgui_c89_ctx->SettingsTables, @CALC_SIZE@(columns_count));
+@SETTINGS_INIT@(settings, id, columns_count, columns_count);
+return settings;
+/* IMGUI_C89_FUNCTION_END table_settings_create */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_get_bound_settings */
+ImGuiTableSettings *settings;
+if (table->SettingsOffset == -1)
+    return 0;
+settings = @CHUNK_PTR@(&imgui_c89_ctx->SettingsTables, table->SettingsOffset);
+return settings;
+/* IMGUI_C89_FUNCTION_END table_get_bound_settings */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_reset_settings */
+table->IsInitializing = table->IsSettingsDirty = 1;
+table->IsResetAllRequest = 0;
+table->IsSettingsRequestLoad = 0;
+table->SettingsLoadedFlags = @TABLE_NONE@;
+/* IMGUI_C89_FUNCTION_END table_reset_settings */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_load_settings */
+ImGuiTableSettings *settings;
+if (table->Flags & @NO_SAVED_SETTINGS@)
+{
+    table->IsSettingsRequestLoad = 0;
+    return;
+}
+if (table->SettingsOffset == -1)
+{
+    settings = @FIND_BY_ID@(imgui_c89_ctx, table->ID);
+    if (!settings)
+        return;
+    if (settings->ColumnsCount != table->ColumnsCount)
+        table->IsSettingsDirty = 1;
+    table->SettingsOffset = @CHUNK_OFFSET@(&imgui_c89_ctx->SettingsTables, settings);
+}
+else
+    settings = @GET_BOUND@(imgui_c89_ctx, table);
+table->SettingsLoadedFlags = settings->SaveFlags;
+table->RefScale = settings->RefScale;
+settings->LastUsedDate = imgui_c89_ctx->SessionDate;
+/* IMGUI_C89_FUNCTION_END table_load_settings */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_load_settings_for_column */
+column->IsLoadedSettings = 1;
+column_settings->IsLoaded = 1;
+if (load_flags & @RESIZABLE@)
+{
+    if (column_settings->IsStretch)
+        column->StretchWeight = column_settings->WidthOrWeight;
+    else
+        column->WidthRequest = column_settings->WidthOrWeight;
+    column->AutoFitQueue = 0;
+}
+column->DisplayOrder = (load_flags & @REORDERABLE@) ? column_settings->DisplayOrder : column_settings->Index;
+if ((load_flags & @HIDEABLE@) && column_settings->IsEnabled != -1)
+    column->IsUserEnabled = column->IsUserEnabledNextFrame = column_settings->IsEnabled == 1;
+column->SortOrder = column_settings->SortOrder;
+column->SortDirection = column_settings->SortDirection;
+/* IMGUI_C89_FUNCTION_END table_load_settings_for_column */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_save_settings */
+ImGuiTableSettings *settings;
+ImGuiTableColumnSettings *saved;
+ImGuiTableColumn *column;
+float width;
+int save_ref_scale;
+int n;
+table->IsSettingsDirty = 0;
+if (table->Flags & @NO_SAVED_SETTINGS@)
+    return;
+settings = @GET_BOUND@(imgui_c89_ctx, table);
+if (settings && settings->ColumnsCountMax < table->ColumnsCount)
+{
+    settings->ID = 0;
+    settings = 0;
+}
+if (!settings)
+{
+    settings = @CREATE@(imgui_c89_ctx, table->ID, table->ColumnsCount);
+    table->SettingsOffset = @CHUNK_OFFSET@(&imgui_c89_ctx->SettingsTables, settings);
+}
+settings->ColumnsCount = (ImGuiTableColumnIdx)table->ColumnsCount;
+settings->LastUsedDate = imgui_c89_ctx->SessionDate;
+saved = (ImGuiTableColumnSettings *)(settings + 1);
+column = table->Columns.Data;
+save_ref_scale = 0;
+settings->SaveFlags = @TABLE_NONE@;
+for (n = 0; n < table->ColumnsCount; n++, column++, saved++)
+{
+    width = (column->Flags & @WIDTH_STRETCH@) ? column->StretchWeight : column->WidthRequest;
+    saved->ID = column->ID;
+    saved->WidthOrWeight = width;
+    saved->Index = (ImGuiTableColumnIdx)n;
+    saved->DisplayOrder = column->DisplayOrder;
+    saved->SortOrder = column->SortOrder;
+    saved->SortDirection = column->SortDirection;
+    saved->IsEnabled = column->IsUserEnabled;
+    saved->IsStretch = (column->Flags & @WIDTH_STRETCH@) != 0;
+    save_ref_scale |= !saved->IsStretch;
+    if (width != column->InitStretchWeightOrWidth)
+        settings->SaveFlags |= @RESIZABLE@;
+    if (column->DisplayOrder != n)
+        settings->SaveFlags |= @REORDERABLE@;
+    if (column->SortOrder != -1)
+        settings->SaveFlags |= @SORTABLE@;
+    if (column->IsUserEnabled != !(column->Flags & @DEFAULT_HIDE@))
+        settings->SaveFlags |= @HIDEABLE@;
+}
+settings->SaveFlags &= table->Flags;
+settings->RefScale = save_ref_scale ? table->RefScale : 0.0f;
+@MARK_DIRTY@(imgui_c89_ctx);
+/* IMGUI_C89_FUNCTION_END table_save_settings */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_load_settings_for_columns */
+ImGuiTableSettings *settings;
+ImGuiTableColumnSettings *saved;
+ImGuiTableColumn *column;
+int matches;
+int n;
+int column_n;
+int dst;
+for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+    table->Columns.Data[column_n].IsLoadedSettings = 0;
+settings = @GET_BOUND@(imgui_c89_ctx, table);
+if (!settings)
+    return;
+table->SettingsLoadedFlags |= @REORDERABLE@;
+saved = (ImGuiTableColumnSettings *)(settings + 1);
+matches = 0;
+while (matches < table->ColumnsCount && matches < settings->ColumnsCount && saved[matches].ID == table->Columns.Data[matches].ID)
+{
+    @LOAD_ONE@(&table->Columns.Data[matches], &saved[matches], settings->SaveFlags);
+    matches++;
+}
+if (matches == settings->ColumnsCount)
+    return;
+for (n = matches; n < settings->ColumnsCount; n++)
+    saved[n].IsLoaded = 0;
+for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+{
+    column = &table->Columns.Data[column_n];
+    if (!column->ID || column->IsLoadedSettings)
+        continue;
+    for (n = matches; n < settings->ColumnsCount; n++)
+        if (!saved[n].IsLoaded && saved[n].ID == column->ID)
+        {
+            @LOAD_ONE@(column, &saved[n], settings->SaveFlags);
+            break;
+        }
+}
+dst = 0;
+for (n = matches; n < settings->ColumnsCount; n++)
+    if (!saved[n].IsLoaded)
+    {
+        while (dst < table->ColumnsCount && table->Columns.Data[dst].IsLoadedSettings)
+            dst++;
+        if (dst == table->ColumnsCount)
+            break;
+        @LOAD_ONE@(&table->Columns.Data[dst++], &saved[n], settings->SaveFlags);
+    }
+/* IMGUI_C89_FUNCTION_END table_load_settings_for_columns */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_fix_display_order_comparer */
+const ImGuiTableFixDisplayOrderColumnData *a;
+const ImGuiTableFixDisplayOrderColumnData *b;
+unsigned short ao;
+unsigned short bo;
+a = (const ImGuiTableFixDisplayOrderColumnData *)lhs;
+b = (const ImGuiTableFixDisplayOrderColumnData *)rhs;
+ao = (unsigned short)a->Table->Columns.Data[a->Idx].DisplayOrder;
+bo = (unsigned short)b->Table->Columns.Data[b->Idx].DisplayOrder;
+if (ao != bo)
+    return ao < bo ? -1 : 1;
+return a->Idx < b->Idx ? -1 : 1;
+/* IMGUI_C89_FUNCTION_END table_fix_display_order_comparer */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_fix_display_order */
+ImGuiTableFixDisplayOrderColumnData *order;
+int n;
+int index;
+@BYTE_RESERVE@(imgui_c89_ctx, &imgui_c89_ctx->TempBuffer, (int)(sizeof(*order) * table->ColumnsCount));
+order = (ImGuiTableFixDisplayOrderColumnData *)(void *)imgui_c89_ctx->TempBuffer.Data;
+for (n = 0; n < table->ColumnsCount; n++)
+{
+    order[n].Idx = (ImGuiTableColumnIdx)n;
+    order[n].Table = table;
+}
+@QSORT@(order, (size_t)table->ColumnsCount, sizeof(*order), @COMPARE@);
+for (n = 0; n < table->ColumnsCount; n++)
+    table->Columns.Data[order[n].Idx].DisplayOrder = (ImGuiTableColumnIdx)n;
+for (index = 0; index < table->ColumnsCount; index++)
+    table->DisplayOrderToIndex.Data[table->Columns.Data[index].DisplayOrder] = (ImGuiTableColumnIdx)index;
+/* IMGUI_C89_FUNCTION_END table_fix_display_order */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_handler_clear_all */
+ImGuiTable *table;
+int i;
+for (i = 0; i < @POOL_MAP_SIZE@(&ctx->Tables); i++)
+{
+    table = @POOL_TRY_GET@(&ctx->Tables, i);
+    if (table)
+        table->SettingsOffset = -1;
+}
+@CHUNK_CLEAR@(ctx, &ctx->SettingsTables);
+/* IMGUI_C89_FUNCTION_END table_settings_handler_clear_all */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_handler_cleanup */
+ImGuiTableSettings *settings;
+ImGuiTable *table;
+int valid;
+int i;
+for (i = 0; i < @POOL_MAP_SIZE@(&ctx->Tables); i++)
+{
+    table = @POOL_TRY_GET@(&ctx->Tables, i);
+    if (table)
+        table->SettingsOffset = -1;
+}
+settings = @CHUNK_BEGIN@(&ctx->SettingsTables);
+while (settings)
+{
+    valid = @DATE_VALID@(&settings->LastUsedDate);
+    if (args->_DiscardOlderThanDate && @DATE_UNPACK@(&settings->LastUsedDate) < args->_DiscardOlderThanDate)
+        settings->ID = 0;
+    else if (args->DiscardWhenMissingDate && !valid)
+        settings->ID = 0;
+    else if (args->SetCurrentSessionDateToAll || (args->SetCurrentSessionDateWhenMissingDate && !valid))
+        settings->LastUsedDate = ctx->SessionDate;
+    settings = @CHUNK_NEXT@(&ctx->SettingsTables, settings);
+}
+/* IMGUI_C89_FUNCTION_END table_settings_handler_cleanup */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_handler_apply_all */
+ImGuiTable *table;
+int i;
+for (i = 0; i < @POOL_MAP_SIZE@(&ctx->Tables); i++)
+{
+    table = @POOL_TRY_GET@(&ctx->Tables, i);
+    if (table)
+    {
+        table->IsSettingsRequestLoad = 1;
+        table->SettingsOffset = -1;
+    }
+}
+/* IMGUI_C89_FUNCTION_END table_settings_handler_apply_all */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_handler_read_open */
+ImGuiID id;
+int count;
+id = 0;
+count = 0;
+if (sscanf(name, "0x%08X,%d", &id, &count) < 2 || count <= 0 || count >= 512)
+    return 0;
+return @CREATE@(arg_0, id, count);
+/* IMGUI_C89_FUNCTION_END table_settings_handler_read_open */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_handler_read_line */
+ImGuiTableSettings *settings;
+ImGuiTableColumnSettings *column;
+float f;
+int column_n;
+int r;
+int n;
+char c;
+settings = (ImGuiTableSettings *)entry;
+f = 0.0f;
+column_n = r = n = 0;
+if (sscanf(line, "RefScale=%f", &f) == 1)
+{
+    settings->RefScale = f;
+    return;
+}
+if (sscanf(line, "LastUsed=%d", &n) == 1)
+{
+    settings->LastUsedDate.Year = (ImU16)(n / 10000 - 2000);
+    settings->LastUsedDate.Month = (ImU16)((n / 100) % 100);
+    settings->LastUsedDate.Day = (ImU16)(n % 100);
+    return;
+}
+if (sscanf(line, "Column %d%n", &column_n, &r) != 1 || column_n < 0 || column_n >= settings->ColumnsCount)
+    return;
+line = @SKIP_BLANK@(line + r);
+c = 0;
+column = (ImGuiTableColumnSettings *)(settings + 1) + column_n;
+column->Index = (ImGuiTableColumnIdx)column_n;
+if (sscanf(line, "UserID=0x%08X%n", (ImU32 *)&n, &r) == 1)
+    line = @SKIP_BLANK@(line + r);
+if (sscanf(line, "Width=%d%n", &n, &r) == 1)
+{
+    line = @SKIP_BLANK@(line + r);
+    column->WidthOrWeight = (float)n;
+    column->IsStretch = 0;
+    settings->SaveFlags |= @RESIZABLE@;
+}
+if (sscanf(line, "Weight=%f%n", &f, &r) == 1)
+{
+    line = @SKIP_BLANK@(line + r);
+    column->WidthOrWeight = f;
+    column->IsStretch = 1;
+    settings->SaveFlags |= @RESIZABLE@;
+}
+if (sscanf(line, "Visible=%d%n", &n, &r) == 1)
+{
+    line = @SKIP_BLANK@(line + r);
+    column->IsEnabled = (ImU8)n;
+    settings->SaveFlags |= @HIDEABLE@;
+}
+if (sscanf(line, "Order=%d%n", &n, &r) == 1)
+{
+    line = @SKIP_BLANK@(line + r);
+    column->DisplayOrder = (ImGuiTableColumnIdx)n;
+    settings->SaveFlags |= @REORDERABLE@;
+}
+if (sscanf(line, "Sort=%d%c%n", &n, &c, &r) == 2)
+{
+    line = @SKIP_BLANK@(line + r);
+    column->SortOrder = (ImGuiTableColumnIdx)n;
+    column->SortDirection = c == '^' ? @SORT_DESC@ : @SORT_ASC@;
+    settings->SaveFlags |= @SORTABLE@;
+}
+if (sscanf(line, "ID=0x%08X%n", (ImU32 *)&n, &r) == 1)
+    column->ID = (ImGuiID)n;
+/* IMGUI_C89_FUNCTION_END table_settings_handler_read_line */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_handler_write_all */
+ImGuiTableSettings *settings;
+ImGuiTableColumnSettings *column;
+int flags;
+int column_n;
+int last_used;
+settings = @CHUNK_BEGIN@(&ctx->SettingsTables);
+while (settings)
+{
+    if (!settings->ID)
+    {
+        settings = @CHUNK_NEXT@(&ctx->SettingsTables, settings);
+        continue;
+    }
+    flags = settings->SaveFlags;
+    @TEXT_RESERVE@(ctx, buf, @TEXT_SIZE@(buf) + 30 + settings->ColumnsCount * 50);
+    @TEXT_APPENDF@(ctx, buf, "[%s][0x%08X,%d]\n", handler->TypeName, settings->ID, settings->ColumnsCount);
+    if (settings->RefScale != 0.0f)
+        @TEXT_APPENDF@(ctx, buf, "RefScale=%g\n", settings->RefScale);
+    column = (ImGuiTableColumnSettings *)(settings + 1);
+    for (column_n = 0; column_n < settings->ColumnsCount; column_n++, column++)
+    {
+        if (!(flags & (@RESIZABLE@ | @HIDEABLE@ | @REORDERABLE@)) && (!(flags & @SORTABLE@) || column->SortOrder == -1))
+            continue;
+        @TEXT_APPENDF@(ctx, buf, "Column %-2d", column_n);
+        if (flags & @RESIZABLE@)
+        {
+            if (column->IsStretch)
+                @TEXT_APPENDF@(ctx, buf, " Weight=%.4f", column->WidthOrWeight);
+            else
+                @TEXT_APPENDF@(ctx, buf, " Width=%d", (int)column->WidthOrWeight);
+        }
+        if (flags & @HIDEABLE@)
+            @TEXT_APPENDF@(ctx, buf, " Visible=%d", column->IsEnabled);
+        if (flags & @REORDERABLE@)
+            @TEXT_APPENDF@(ctx, buf, " Order=%d", column->DisplayOrder);
+        if ((flags & @SORTABLE@) && column->SortOrder != -1)
+            @TEXT_APPENDF@(ctx, buf, " Sort=%d%c", column->SortOrder, column->SortDirection == @SORT_ASC@ ? 'v' : '^');
+        if (column->ID)
+            @TEXT_APPENDF@(ctx, buf, " ID=0x%08X", column->ID);
+        @TEXT_APPEND@(ctx, buf, "\n", 0);
+    }
+    if (ctx->IO.ConfigIniSettingsSaveLastUsedDate)
+    {
+        last_used = @DATE_UNPACK@(&settings->LastUsedDate);
+        if (last_used)
+            @TEXT_APPENDF@(ctx, buf, "LastUsed=%08d\n", last_used);
+    }
+    @TEXT_APPEND@(ctx, buf, "\n", 0);
+    settings = @CHUNK_NEXT@(&ctx->SettingsTables, settings);
+}
+/* IMGUI_C89_FUNCTION_END table_settings_handler_write_all */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_settings_add_handler */
+ImGuiSettingsHandler handler;
+memset(&handler, 0, sizeof(handler));
+handler.TypeName = "Table";
+handler.TypeHash = @HASH_STR@("Table", 0, 0);
+handler.ClearAllFn = @CLEAR_ALL@;
+handler.CleanupFn = @CLEANUP@;
+handler.ReadOpenFn = @READ_OPEN@;
+handler.ReadLineFn = @READ_LINE@;
+handler.ApplyAllFn = @APPLY_ALL@;
+handler.WriteAllFn = @WRITE_ALL@;
+@ADD_HANDLER@(imgui_c89_ctx, &handler);
+/* IMGUI_C89_FUNCTION_END table_settings_add_handler */

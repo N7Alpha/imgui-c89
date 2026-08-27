@@ -1,0 +1,78 @@
+/* Handwritten C89 public table state requests and context popup. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_set_column_enabled */
+ImGuiTable *table;
+table = imgui_c89_ctx->CurrentTable;
+if (!table)
+{
+    @ERROR_LOG@(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
+    return;
+}
+if (column_n < 0)
+    column_n = table->CurrentColumn;
+table->Columns.Data[column_n].IsUserEnabledNextFrame = enabled;
+/* IMGUI_C89_FUNCTION_END table_set_column_enabled */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_set_bg_color */
+ImGuiTableCellData *cell;
+ImGuiTable *table;
+table = imgui_c89_ctx->CurrentTable;
+if (!table)
+{
+    @ERROR_LOG@(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
+    return;
+}
+if (color == ((ImU32)1 << 24))
+    color = 0;
+if (target == @CELL_BG@)
+{
+    if (table->RowPosY1 > table->InnerClipRect.Max.y)
+        return;
+    if (column_n == -1)
+        column_n = table->CurrentColumn;
+    if (!(table->VisibleMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))))
+        return;
+    if (table->RowCellDataCurrent < 0 ||
+        table->RowCellData.Data[table->RowCellDataCurrent].Column != column_n)
+        table->RowCellDataCurrent++;
+    cell = &table->RowCellData.Data[table->RowCellDataCurrent];
+    cell->BgColor = color;
+    cell->Column = (ImGuiTableColumnIdx)column_n;
+}
+else if (target == @ROW_BG0@ || target == @ROW_BG1@)
+{
+    if (table->RowPosY1 > table->InnerClipRect.Max.y)
+        return;
+    table->RowBgColor[target == @ROW_BG1@] = color;
+}
+/* IMGUI_C89_FUNCTION_END table_set_bg_color */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_open_context_menu */
+ImGuiTable *table;
+ImGuiID id;
+table = imgui_c89_ctx->CurrentTable;
+if (column_n == -1 && table->CurrentColumn != -1)
+    column_n = table->CurrentColumn;
+if (column_n == table->ColumnsCount)
+    column_n = -1;
+if (table->Flags & (@RESIZABLE@ | @REORDERABLE@ | @HIDEABLE@))
+{
+    table->IsContextPopupOpen = 1;
+    table->ContextPopupColumn = (ImGuiTableColumnIdx)column_n;
+    table->InstanceInteracted = table->InstanceCurrent;
+    id = @HASH_STR@("##ContextMenu", 0, table->ID);
+    @OPEN_POPUP@(imgui_c89_ctx, id, @POPUP_NONE@);
+}
+/* IMGUI_C89_FUNCTION_END table_open_context_menu */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_begin_context_menu_popup */
+ImGuiID id;
+if (!table->IsContextPopupOpen || table->InstanceCurrent != table->InstanceInteracted)
+    return 0;
+id = @HASH_STR@("##ContextMenu", 0, table->ID);
+if (@BEGIN_POPUP@(imgui_c89_ctx, id,
+    @ALWAYS_AUTO_RESIZE@ | @NO_TITLE_BAR@ | @NO_SAVED_SETTINGS@))
+    return 1;
+table->IsContextPopupOpen = 0;
+return 0;
+/* IMGUI_C89_FUNCTION_END table_begin_context_menu_popup */

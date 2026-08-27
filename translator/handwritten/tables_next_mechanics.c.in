@@ -1,0 +1,189 @@
+/* Table request, column policy, and resize-border mechanics in direct C89. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_apply_queued_requests */
+ImGuiTableColumn *column;
+int n;
+if (table->InstanceCurrent == 0)
+{
+    if (table->ResizedColumn != -1 &&
+        table->ResizedColumnNextWidth != 3.402823466e38f)
+        @SET_COLUMN_WIDTH@(imgui_c89_ctx, table->ResizedColumn,
+            table->ResizedColumnNextWidth);
+    table->LastResizedColumn = table->ResizedColumn;
+    table->ResizedColumnNextWidth = 3.402823466e38f;
+    table->ResizedColumn = -1;
+    if (table->AutoFitSingleColumn != -1)
+    {
+        n = table->AutoFitSingleColumn;
+        @SET_COLUMN_WIDTH@(imgui_c89_ctx, n,
+            table->Columns.Data[n].WidthAuto);
+        table->AutoFitSingleColumn = -1;
+    }
+}
+if (table->InstanceCurrent == 0)
+{
+    table->LastHeldHeaderColumn = table->HeldHeaderColumn;
+    table->HeldHeaderColumn = -1;
+    if (table->ReorderColumn != -1 && table->ReorderColumnDstOrder != -1)
+    {
+        @SET_DISPLAY_ORDER@(table, table->ReorderColumn,
+            table->ReorderColumnDstOrder);
+        table->ReorderColumnDstOrder = -1;
+    }
+    if (!imgui_c89_ctx->ActiveId)
+        table->ReorderColumn = -1;
+}
+if (table->IsResetDisplayOrderRequest)
+{
+    for (n = 0; n < table->ColumnsCount; n++)
+        table->DisplayOrderToIndex.Data[n] =
+            table->Columns.Data[n].DisplayOrder = (ImGuiTableColumnIdx)n;
+    table->IsResetDisplayOrderRequest = 0;
+    table->IsSettingsDirty = 1;
+}
+if (table->IsResetVisibilityRequest)
+{
+    for (n = 0; n < table->ColumnsCount; n++)
+    {
+        column = &table->Columns.Data[n];
+        column->IsUserEnabled = column->IsUserEnabledNextFrame =
+            (column->Flags & @DEFAULT_HIDE@) ? 0 : 1;
+    }
+    table->IsResetVisibilityRequest = 0;
+    table->IsSettingsDirty = 1;
+}
+/* IMGUI_C89_FUNCTION_END table_apply_queued_requests */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_setup_column_flags */
+ImGuiTableColumnFlags flags;
+ImGuiTableFlags sizing;
+int count;
+int mask;
+int list;
+flags = flags_in;
+if (!(flags & @WIDTH_MASK@))
+{
+    sizing = table->Flags & @SIZING_MASK@;
+    flags |= sizing == @SIZING_FIXED_FIT@ ||
+        sizing == @SIZING_FIXED_SAME@ ? @WIDTH_FIXED@ : @WIDTH_STRETCH@;
+}
+if (!(table->Flags & @RESIZABLE@))
+    flags |= @NO_RESIZE@;
+if ((flags & (@NO_SORT_ASCENDING@ | @NO_SORT_DESCENDING@)) ==
+    (@NO_SORT_ASCENDING@ | @NO_SORT_DESCENDING@))
+    flags |= @NO_SORT@;
+if (!(flags & @INDENT_MASK@))
+    flags |= column == table->Columns.Data ?
+        @INDENT_ENABLE@ : @INDENT_DISABLE@;
+column->Flags = flags | (column->Flags & @STATUS_MASK@);
+column->SortDirectionsAvailCount = 0;
+column->SortDirectionsAvailMask = 0;
+column->SortDirectionsAvailList = 0;
+if (table->Flags & @SORTABLE@)
+{
+    count = mask = list = 0;
+    if ((flags & @PREFER_SORT_ASCENDING@) &&
+        !(flags & @NO_SORT_ASCENDING@))
+    {
+        mask |= 1 << @SORT_ASCENDING@;
+        list |= @SORT_ASCENDING@ << (count++ << 1);
+    }
+    if ((flags & @PREFER_SORT_DESCENDING@) &&
+        !(flags & @NO_SORT_DESCENDING@))
+    {
+        mask |= 1 << @SORT_DESCENDING@;
+        list |= @SORT_DESCENDING@ << (count++ << 1);
+    }
+    if (!(flags & (@PREFER_SORT_ASCENDING@ | @NO_SORT_ASCENDING@)))
+    {
+        mask |= 1 << @SORT_ASCENDING@;
+        list |= @SORT_ASCENDING@ << (count++ << 1);
+    }
+    if (!(flags & (@PREFER_SORT_DESCENDING@ | @NO_SORT_DESCENDING@)))
+    {
+        mask |= 1 << @SORT_DESCENDING@;
+        list |= @SORT_DESCENDING@ << (count++ << 1);
+    }
+    if ((table->Flags & @SORT_TRISTATE@) || !count)
+    {
+        mask |= 1 << @SORT_NONE@;
+        count++;
+    }
+    column->SortDirectionsAvailList = (ImU8)list;
+    column->SortDirectionsAvailMask = (ImU8)mask;
+    column->SortDirectionsAvailCount = (ImU8)count;
+    @FIX_SORT_DIRECTION@(table, column);
+}
+/* IMGUI_C89_FUNCTION_END table_setup_column_flags */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_update_borders */
+ImGuiTableInstanceData *instance;
+ImGuiTableColumn *column;
+ImRect hit_rect;
+ImGuiID column_id;
+unsigned char hovered;
+unsigned char held;
+unsigned char pressed;
+int order_n;
+int column_n;
+float half_width;
+float y1;
+float y2_body;
+float y2_head;
+float y2;
+instance = @GET_INSTANCE@(table, table->InstanceCurrent);
+half_width = @TRUNC@(4.0f *
+    imgui_c89_ctx->CurrentDpiScale);
+y1 = (table->FreezeRowsCount >= 1 ? table->OuterRect.Min.y :
+    table->WorkRect.Min.y) + table->AngledHeadersHeight;
+y2_body = @MAX@(table->OuterRect.Max.y,
+    y1 + instance->LastOuterHeight - table->AngledHeadersHeight);
+y2_head = y1 + instance->LastTopHeadersRowHeight;
+for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+{
+    if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
+        ((ImU32)1 << (order_n & 31))))
+        continue;
+    column_n = table->DisplayOrderToIndex.Data[order_n];
+    column = &table->Columns.Data[column_n];
+    if (column->Flags & (@NO_RESIZE@ | @NO_DIRECT_RESIZE@))
+        continue;
+    y2 = table->Flags & @NO_BORDERS_BODY@ ? y2_head : y2_body;
+    if ((table->Flags & @NO_BORDERS_BODY@) && !table->IsUsingHeaders)
+        continue;
+    if (!column->IsVisibleX && table->LastResizedColumn != column_n)
+        continue;
+    column_id = @GET_RESIZE_ID@(table, column_n, table->InstanceCurrent);
+    hit_rect.Min.x = column->MaxX - half_width;
+    hit_rect.Min.y = y1;
+    hit_rect.Max.x = column->MaxX + half_width;
+    hit_rect.Max.y = y2;
+    @ITEM_ADD@(imgui_c89_ctx, &hit_rect, column_id, 0, @NO_NAV@);
+    hovered = held = 0;
+    pressed = @BUTTON@(imgui_c89_ctx, &hit_rect, column_id,
+        &hovered, &held, @FLATTEN_CHILDREN@ | @PRESSED_ON_CLICK@ |
+        @PRESSED_ON_DOUBLE_CLICK@ | @NO_NAV_FOCUS@);
+    if (pressed && @IS_DOUBLE_CLICKED@(imgui_c89_ctx, 0))
+    {
+        @SET_WIDTH_AUTO@(table, column_n);
+        @CLEAR_ACTIVE_ID@(imgui_c89_ctx);
+        held = 0;
+    }
+    if (held)
+    {
+        if (table->LastResizedColumn == -1)
+            table->ResizeLockMinContentsX2 =
+                table->RightMostEnabledColumn != -1 ?
+                table->Columns.Data[table->RightMostEnabledColumn].MaxX :
+                -3.402823466e38f;
+        table->ResizedColumn = (ImGuiTableColumnIdx)column_n;
+        table->InstanceInteracted = table->InstanceCurrent;
+    }
+    if ((hovered && imgui_c89_ctx->HoveredIdTimer >
+        0.06f) || held)
+    {
+        table->HoveredColumnBorder = (ImGuiTableColumnIdx)column_n;
+        @SET_MOUSE_CURSOR@(imgui_c89_ctx, @RESIZE_EW@);
+    }
+}
+/* IMGUI_C89_FUNCTION_END table_update_borders */

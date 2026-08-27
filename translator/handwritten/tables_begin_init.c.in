@@ -1,0 +1,46 @@
+/* Public table entry wrapper and direct packed arena initialization. */
+
+/* IMGUI_C89_FUNCTION_BEGIN begin_table_wrapper */
+ImGuiID id;
+id = @GET_ID@(imgui_c89_ctx, str_id);
+return @BEGIN_TABLE_EX@(imgui_c89_ctx, str_id, id, columns_count, flags,
+    outer_size, inner_width);
+/* IMGUI_C89_FUNCTION_END begin_table_wrapper */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_begin_init_memory */
+char *arena;
+size_t columns_bytes;
+size_t order_bytes;
+size_t cells_bytes;
+size_t bits_bytes;
+size_t order_off;
+size_t cells_off;
+size_t bits0_off;
+size_t bits1_off;
+size_t bits2_off;
+size_t total;
+columns_bytes = (size_t)columns_count * sizeof(ImGuiTableColumn);
+order_bytes = (size_t)columns_count * sizeof(ImGuiTableColumnIdx);
+cells_bytes = (size_t)columns_count * sizeof(ImGuiTableCellData);
+bits_bytes = (size_t)((columns_count + 31) >> 5) * sizeof(ImU32);
+order_off = (columns_bytes + 3) & ~(size_t)3;
+cells_off = (order_off + order_bytes + 3) & ~(size_t)3;
+bits0_off = (cells_off + cells_bytes + 3) & ~(size_t)3;
+bits1_off = bits0_off + bits_bytes;
+bits2_off = bits1_off + bits_bytes;
+total = bits2_off + bits_bytes;
+arena = (char *)@ALLOC@(imgui_c89_ctx, total);
+table->RawData = arena;
+memset(arena, 0, total);
+table->Columns.Data = (ImGuiTableColumn *)arena;
+table->Columns.DataEnd = table->Columns.Data + columns_count;
+table->DisplayOrderToIndex.Data =
+    (ImGuiTableColumnIdx *)(arena + order_off);
+table->DisplayOrderToIndex.DataEnd =
+    table->DisplayOrderToIndex.Data + columns_count;
+table->RowCellData.Data = (ImGuiTableCellData *)(arena + cells_off);
+table->RowCellData.DataEnd = table->RowCellData.Data + columns_count;
+table->EnabledMaskByDisplayOrder = (ImU32 *)(arena + bits0_off);
+table->EnabledMaskByIndex = (ImU32 *)(arena + bits1_off);
+table->VisibleMaskByIndex = (ImU32 *)(arena + bits2_off);
+/* IMGUI_C89_FUNCTION_END table_begin_init_memory */

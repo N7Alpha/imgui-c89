@@ -1,0 +1,152 @@
+/* Handwritten C89 table sorting cluster. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_get_sort_specs */
+ImGuiTable *table;
+table = imgui_c89_ctx->CurrentTable;
+if (!table || !(table->Flags & @SORTABLE@))
+    return 0;
+if (!table->IsLayoutLocked)
+    @UPDATE_LAYOUT@(imgui_c89_ctx, table);
+@BUILD_SPECS@(imgui_c89_ctx, table);
+return &table->SortSpecs;
+/* IMGUI_C89_FUNCTION_END table_get_sort_specs */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_fix_column_sort_direction */
+if (column->SortOrder == -1 ||
+    (column->SortDirectionsAvailMask & (1 << column->SortDirection)))
+    return;
+column->SortDirection = (ImU8)@GET_AVAIL_DIRECTION@(column, 0);
+table->IsSortSpecsDirty = 1;
+/* IMGUI_C89_FUNCTION_END table_fix_column_sort_direction */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_set_column_sort_direction */
+ImGuiTable *table;
+ImGuiTableColumn *column;
+ImGuiTableColumn *other;
+ImGuiTableColumnIdx max_order;
+int n;
+table = imgui_c89_ctx->CurrentTable;
+if (!(table->Flags & @SORT_MULTI@))
+    append_to_sort_specs = 0;
+max_order = 0;
+if (append_to_sort_specs)
+    for (n = 0; n < table->ColumnsCount; n++)
+        if (max_order < table->Columns.Data[n].SortOrder)
+            max_order = table->Columns.Data[n].SortOrder;
+column = &table->Columns.Data[column_n];
+column->SortDirection = (ImU8)sort_direction;
+if (sort_direction == @SORT_NONE@)
+    column->SortOrder = -1;
+else if (column->SortOrder == -1 || !append_to_sort_specs)
+    column->SortOrder = append_to_sort_specs ? (ImGuiTableColumnIdx)(max_order + 1) : 0;
+for (n = 0; n < table->ColumnsCount; n++)
+{
+    other = &table->Columns.Data[n];
+    if (other != column && !append_to_sort_specs)
+        other->SortOrder = -1;
+    @FIX_DIRECTION@(table, other);
+}
+table->IsSettingsDirty = 1;
+table->IsSortSpecsDirty = 1;
+/* IMGUI_C89_FUNCTION_END table_set_column_sort_direction */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_sort_specs_sanitize */
+ImGuiTableColumn *column;
+ImU64 order_mask;
+ImU64 fixed_mask;
+int order_count;
+int fix_linear;
+int fix_single;
+int smallest;
+int sort_n;
+int n;
+order_count = 0;
+order_mask = 0;
+for (n = 0; n < table->ColumnsCount; n++)
+{
+    column = &table->Columns.Data[n];
+    if (column->SortOrder != -1 && !column->IsEnabled)
+        column->SortOrder = -1;
+    if (column->SortOrder != -1)
+    {
+        order_count++;
+        order_mask |= (ImU64)1 << column->SortOrder;
+    }
+}
+fix_linear = ((ImU64)1 << order_count) != order_mask + 1;
+fix_single = order_count > 1 && !(table->Flags & @SORT_MULTI@);
+if (fix_linear || fix_single)
+{
+    fixed_mask = 0;
+    for (sort_n = 0; sort_n < order_count; sort_n++)
+    {
+        smallest = -1;
+        for (n = 0; n < table->ColumnsCount; n++)
+            if (!(fixed_mask & ((ImU64)1 << n)) &&
+                table->Columns.Data[n].SortOrder != -1 &&
+                (smallest == -1 || table->Columns.Data[n].SortOrder < table->Columns.Data[smallest].SortOrder))
+                smallest = n;
+        fixed_mask |= (ImU64)1 << smallest;
+        table->Columns.Data[smallest].SortOrder = (ImGuiTableColumnIdx)sort_n;
+        if (fix_single)
+        {
+            order_count = 1;
+            for (n = 0; n < table->ColumnsCount; n++)
+                if (n != smallest)
+                    table->Columns.Data[n].SortOrder = -1;
+            break;
+        }
+    }
+}
+if (!order_count && !(table->Flags & @SORT_TRISTATE@))
+    for (n = 0; n < table->ColumnsCount; n++)
+    {
+        column = &table->Columns.Data[n];
+        if (column->IsEnabled && !(column->Flags & @NO_SORT@))
+        {
+            order_count = 1;
+            column->SortOrder = 0;
+            column->SortDirection = (ImU8)@GET_AVAIL_DIRECTION@(column, 0);
+            break;
+        }
+    }
+table->SortSpecsCount = (ImGuiTableColumnIdx)order_count;
+/* IMGUI_C89_FUNCTION_END table_sort_specs_sanitize */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_sort_specs_build */
+ImGuiTableColumnSortSpecs *specs;
+ImGuiTableColumnSortSpecs *spec;
+ImGuiTableColumn *column;
+unsigned char dirty;
+int n;
+dirty = table->IsSortSpecsDirty;
+if (dirty)
+{
+    @SANITIZE@(table);
+    @SPECS_RESIZE@(imgui_c89_ctx, &table->SortSpecsMulti,
+                   table->SortSpecsCount > 1 ? table->SortSpecsCount : 0);
+    table->SortSpecs.SpecsDirty = 1;
+    table->IsSortSpecsDirty = 0;
+}
+if (!table->SortSpecsCount)
+    specs = 0;
+else if (table->SortSpecsCount == 1)
+    specs = &table->SortSpecsSingle;
+else
+    specs = table->SortSpecsMulti.Data;
+if (dirty && specs)
+    for (n = 0; n < table->ColumnsCount; n++)
+    {
+        column = &table->Columns.Data[n];
+        if (column->SortOrder != -1)
+        {
+            spec = &specs[column->SortOrder];
+            spec->ColumnUserID = column->UserData;
+            spec->ColumnIndex = (ImGuiTableColumnIdx)n;
+            spec->SortOrder = column->SortOrder;
+            spec->SortDirection = (ImGuiSortDirection)column->SortDirection;
+        }
+    }
+table->SortSpecs.Specs = specs;
+table->SortSpecs.SpecsCount = table->SortSpecsCount;
+/* IMGUI_C89_FUNCTION_END table_sort_specs_build */

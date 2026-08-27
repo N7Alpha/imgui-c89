@@ -1,0 +1,122 @@
+/* Small remaining table mechanics, maintained as direct C89. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_fix_flags */
+if (!(flags & @SIZING_MASK@))
+    flags |= (flags & @SCROLL_X@) ||
+        (outer_window->Flags & @ALWAYS_AUTO_RESIZE@) ?
+        @SIZING_FIXED_FIT@ : @SIZING_STRETCH_SAME@;
+if ((flags & @SIZING_MASK@) == @SIZING_FIXED_SAME@)
+    flags |= @NO_KEEP_VISIBLE@;
+if (flags & @RESIZABLE@)
+    flags |= @BORDERS_INNER_V@;
+if (flags & (@SCROLL_X@ | @SCROLL_Y@))
+    flags &= ~(@NO_HOST_EXTEND_X@ | @NO_HOST_EXTEND_Y@);
+if (flags & @NO_BORDERS_BODY_RESIZE@)
+    flags &= ~@NO_BORDERS_BODY@;
+if (!(flags & (@RESIZABLE@ | @HIDEABLE@ | @REORDERABLE@ | @SORTABLE@)))
+    flags |= @NO_SAVED_SETTINGS@;
+if (outer_window->RootWindow->Flags & @WINDOW_NO_SAVED_SETTINGS@)
+    flags |= @NO_SAVED_SETTINGS@;
+return flags;
+/* IMGUI_C89_FUNCTION_END table_fix_flags */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_find_by_id */
+return @POOL_GET_BY_KEY@(&imgui_c89_ctx->Tables, id);
+/* IMGUI_C89_FUNCTION_END table_find_by_id */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_set_display_order */
+ImGuiTableColumn *column;
+int src_order;
+int direction;
+int order;
+int n;
+column = &table->Columns.Data[column_n];
+src_order = column->DisplayOrder;
+if (src_order == dst_order)
+    return;
+direction = dst_order < src_order ? -1 : 1;
+column->DisplayOrder = (ImGuiTableColumnIdx)dst_order;
+for (order = src_order + direction; order != dst_order + direction;
+     order += direction)
+    table->Columns.Data[table->DisplayOrderToIndex.Data[order]].DisplayOrder -=
+        (ImGuiTableColumnIdx)direction;
+for (n = 0; n < table->ColumnsCount; n++)
+{
+    column = &table->Columns.Data[n];
+    table->DisplayOrderToIndex.Data[column->DisplayOrder] =
+        (ImGuiTableColumnIdx)n;
+}
+table->IsSettingsDirty = 1;
+/* IMGUI_C89_FUNCTION_END table_set_display_order */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_max_display_order */
+int direction;
+int order;
+if (dst_order < 0)
+    dst_order = 0;
+else if (dst_order >= table->ColumnsCount)
+    dst_order = table->ColumnsCount - 1;
+if (src_order == dst_order)
+    return dst_order;
+if (table->FreezeColumnsRequest > 0)
+{
+    if (src_order < table->FreezeColumnsRequest)
+    {
+        if (dst_order >= table->FreezeColumnsRequest)
+            dst_order = table->FreezeColumnsRequest - 1;
+    }
+    else if (dst_order < table->FreezeColumnsRequest)
+        dst_order = table->FreezeColumnsRequest;
+}
+direction = src_order < dst_order ? 1 : -1;
+for (order = src_order;
+     direction > 0 ? order <= dst_order : order >= dst_order;
+     order += direction)
+    if (table->Columns.Data[table->DisplayOrderToIndex.Data[order]].Flags &
+        @NO_REORDER@)
+    {
+        dst_order = order == src_order ? src_order : order - direction;
+        break;
+    }
+return dst_order;
+/* IMGUI_C89_FUNCTION_END table_max_display_order */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_queue_display_order */
+int src_order;
+src_order = table->Columns.Data[column_n].DisplayOrder;
+table->ReorderColumn = (ImGuiTableColumnIdx)column_n;
+table->ReorderColumnDstOrder = (ImGuiTableColumnIdx)-1;
+dst_order = @MAX_ORDER@(table, src_order, dst_order);
+if (table->IsLayoutLocked && dst_order == src_order)
+    return;
+table->ReorderColumnDstOrder = (ImGuiTableColumnIdx)dst_order;
+/* IMGUI_C89_FUNCTION_END table_queue_display_order */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_apply_external_unclip */
+ImGuiTableColumn *column;
+int column_n;
+if (rect->Max.x < rect->Min.x || rect->Max.y < rect->Min.y)
+    return;
+for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+{
+    column = &table->Columns.Data[column_n];
+    if (!column->IsRequestOutput &&
+        column->MinX < rect->Max.x && column->MaxX > rect->Min.x &&
+        table->WorkRect.Min.y < rect->Max.y &&
+        3.402823466e38f > rect->Min.y)
+        column->IsRequestOutput = 1;
+}
+/* IMGUI_C89_FUNCTION_END table_apply_external_unclip */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_sizing_desc */
+sizing_policy &= @SIZING_MASK@;
+if (sizing_policy == @SIZING_FIXED_FIT@)
+    return "FixedFit";
+if (sizing_policy == @SIZING_FIXED_SAME@)
+    return "FixedSame";
+if (sizing_policy == @SIZING_STRETCH_PROP@)
+    return "StretchProp";
+if (sizing_policy == @SIZING_STRETCH_SAME@)
+    return "StretchSame";
+return "N/A";
+/* IMGUI_C89_FUNCTION_END table_sizing_desc */

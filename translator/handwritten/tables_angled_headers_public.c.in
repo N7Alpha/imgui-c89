@@ -1,0 +1,52 @@
+/* Handwritten C89 public angled-header request builder. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_angled_headers_row */
+ImGuiTable *table;
+ImGuiTableTempData *temp;
+ImGuiTableInstanceData *instance;
+ImGuiTableColumn *column;
+ImGuiTableHeaderData request;
+ImGuiID row_id;
+ImU32 header_bg;
+ImU32 text_color;
+int highlight;
+int order_n;
+int column_n;
+table = imgui_c89_ctx->CurrentTable;
+temp = table->TempData;
+temp->AngledHeadersRequests.Size = 0;
+@RESERVE@(imgui_c89_ctx, &temp->AngledHeadersRequests,
+    table->ColumnsEnabledCount);
+row_id = @GET_ID@(imgui_c89_ctx, imgui_c89_ctx->CurrentWindow,
+    "##AngledHeaders", 0);
+instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
+    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
+highlight = table->LastHeldHeaderColumn != -1 ?
+    table->LastHeldHeaderColumn : table->HighlightColumnHeader;
+if (highlight == -1 && table->HoveredColumnBody != -1 &&
+    instance->HoveredRowLast == 0 && table->HoveredColumnBorder == -1 &&
+    (imgui_c89_ctx->ActiveId == 0 || imgui_c89_ctx->ActiveId == row_id ||
+     table->IsActiveIdInTable || imgui_c89_ctx->DragDropActive))
+    highlight = table->HoveredColumnBody;
+header_bg = @GET_COLOR@(imgui_c89_ctx, @TABLE_HEADER_BG@, 1.0f);
+text_color = @GET_COLOR@(imgui_c89_ctx, @TEXT_COLOR@, 1.0f);
+for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+{
+    if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
+          ((ImU32)1 << (order_n & 31))))
+        continue;
+    column_n = table->DisplayOrderToIndex.Data[order_n];
+    column = &table->Columns.Data[column_n];
+    if (!(column->Flags & @ANGLED_HEADER@))
+        continue;
+    request.Index = (ImGuiTableColumnIdx)column_n;
+    request.TextColor = text_color;
+    request.BgColor0 = header_bg;
+    request.BgColor1 = column_n == highlight ?
+        @GET_COLOR@(imgui_c89_ctx, @HEADER_COLOR@, 1.0f) : 0;
+    @PUSH@(imgui_c89_ctx, &temp->AngledHeadersRequests, &request);
+}
+@ROW_EX@(imgui_c89_ctx, row_id, imgui_c89_ctx->Style.TableAngledHeadersAngle,
+    0.0f, temp->AngledHeadersRequests.Data,
+    temp->AngledHeadersRequests.Size);
+/* IMGUI_C89_FUNCTION_END table_angled_headers_row */

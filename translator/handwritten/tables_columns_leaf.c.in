@@ -1,0 +1,190 @@
+/* Handwritten C89 legacy Columns access, geometry, clipping and storage. */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_set_window_clip */
+ImVec4 v;
+v.x = clip_rect->Min.x;
+v.y = clip_rect->Min.y;
+v.z = clip_rect->Max.x;
+v.w = clip_rect->Max.y;
+window->ClipRect = *clip_rect;
+window->DrawList->_CmdHeader.ClipRect = v;
+window->DrawList->_ClipRectStack.Data[window->DrawList->_ClipRectStack.Size - 1] = v;
+/* IMGUI_C89_FUNCTION_END columns_set_window_clip */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_get_index */
+ImGuiOldColumns *columns;
+columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+return columns ? columns->Current : 0;
+/* IMGUI_C89_FUNCTION_END columns_get_index */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_get_count */
+ImGuiOldColumns *columns;
+columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+return columns ? columns->Count : 1;
+/* IMGUI_C89_FUNCTION_END columns_get_count */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_offset_from_norm */
+return offset_norm * (columns->OffMaxX - columns->OffMinX);
+/* IMGUI_C89_FUNCTION_END columns_offset_from_norm */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_norm_from_offset */
+return offset / (columns->OffMaxX - columns->OffMinX);
+/* IMGUI_C89_FUNCTION_END columns_norm_from_offset */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_dragged_offset */
+float x;
+float bound;
+x = imgui_c89_ctx->IO.MousePos.x - imgui_c89_ctx->ActiveIdClickOffset.x +
+    @TRUNC@(4.0f * imgui_c89_ctx->CurrentDpiScale) -
+    imgui_c89_ctx->CurrentWindow->Pos.x;
+bound = @GET_OFFSET@(imgui_c89_ctx, column_index - 1) +
+    imgui_c89_ctx->Style.ColumnsMinSpacing;
+x = x >= bound ? x : bound;
+if (columns->Flags & @NO_PRESERVE_WIDTHS@)
+{
+    bound = @GET_OFFSET@(imgui_c89_ctx, column_index + 1) -
+        imgui_c89_ctx->Style.ColumnsMinSpacing;
+    x = x <= bound ? x : bound;
+}
+return x;
+/* IMGUI_C89_FUNCTION_END columns_dragged_offset */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_get_offset */
+ImGuiOldColumns *columns;
+float t;
+columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+if (!columns)
+    return 0.0f;
+if (column_index < 0)
+    column_index = columns->Current;
+t = columns->Columns.Data[column_index].OffsetNorm;
+return columns->OffMinX + (columns->OffMaxX - columns->OffMinX) * t;
+/* IMGUI_C89_FUNCTION_END columns_get_offset */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_get_width_ex */
+float a;
+float b;
+if (column_index < 0)
+    column_index = columns->Current;
+if (before_resize)
+{
+    a = columns->Columns.Data[column_index].OffsetNormBeforeResize;
+    b = columns->Columns.Data[column_index + 1].OffsetNormBeforeResize;
+}
+else
+{
+    a = columns->Columns.Data[column_index].OffsetNorm;
+    b = columns->Columns.Data[column_index + 1].OffsetNorm;
+}
+return @OFFSET_FROM_NORM@(columns, b - a);
+/* IMGUI_C89_FUNCTION_END columns_get_width_ex */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_get_width */
+ImGuiOldColumns *columns;
+columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+if (!columns)
+    return @CONTENT_AVAIL@(imgui_c89_ctx).x;
+if (column_index < 0)
+    column_index = columns->Current;
+return @OFFSET_FROM_NORM@(columns,
+    columns->Columns.Data[column_index + 1].OffsetNorm -
+    columns->Columns.Data[column_index].OffsetNorm);
+/* IMGUI_C89_FUNCTION_END columns_get_width */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_set_offset */
+ImGuiOldColumns *columns;
+float spacing;
+float width;
+float limit;
+int preserve;
+columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+if (column_index < 0)
+    column_index = columns->Current;
+preserve = !(columns->Flags & @NO_PRESERVE_WIDTHS@) &&
+    column_index < columns->Count - 1;
+width = preserve ? @GET_WIDTH_EX@(columns, column_index,
+    columns->IsBeingResized) : 0.0f;
+spacing = imgui_c89_ctx->Style.ColumnsMinSpacing;
+if (!(columns->Flags & @NO_FORCE_WITHIN_WINDOW@))
+{
+    limit = columns->OffMaxX - spacing * (columns->Count - column_index);
+    offset = offset <= limit ? offset : limit;
+}
+columns->Columns.Data[column_index].OffsetNorm =
+    @NORM_FROM_OFFSET@(columns, offset - columns->OffMinX);
+if (preserve)
+    @SET_OFFSET@(imgui_c89_ctx, column_index + 1,
+        offset + (spacing >= width ? spacing : width));
+/* IMGUI_C89_FUNCTION_END columns_set_offset */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_set_width */
+ImGuiOldColumns *columns;
+columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+if (column_index < 0)
+    column_index = columns->Current;
+@SET_OFFSET@(imgui_c89_ctx, column_index + 1,
+    @GET_OFFSET@(imgui_c89_ctx, column_index) + width);
+/* IMGUI_C89_FUNCTION_END columns_set_width */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_push_clip */
+ImGuiOldColumns *columns;
+ImRect *rect;
+columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+if (column_index < 0)
+    column_index = columns->Current;
+rect = &columns->Columns.Data[column_index].ClipRect;
+@PUSH_CLIP@(imgui_c89_ctx, &rect->Min, &rect->Max, 0);
+/* IMGUI_C89_FUNCTION_END columns_push_clip */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_push_background */
+ImGuiWindow *window;
+ImGuiOldColumns *columns;
+window = imgui_c89_ctx->CurrentWindow;
+columns = window->DC.CurrentColumns;
+if (columns->Count == 1)
+    return;
+columns->HostBackupClipRect = window->ClipRect;
+@SET_WINDOW_CLIP@(window, &columns->HostInitialClipRect);
+@SET_CHANNEL@(imgui_c89_ctx, &columns->Splitter, window->DrawList, 0);
+/* IMGUI_C89_FUNCTION_END columns_push_background */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_pop_background */
+ImGuiWindow *window;
+ImGuiOldColumns *columns;
+window = imgui_c89_ctx->CurrentWindow;
+columns = window->DC.CurrentColumns;
+if (columns->Count == 1)
+    return;
+@SET_WINDOW_CLIP@(window, &columns->HostBackupClipRect);
+@SET_CHANNEL@(imgui_c89_ctx, &columns->Splitter, window->DrawList,
+    columns->Current + 1);
+/* IMGUI_C89_FUNCTION_END columns_pop_background */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_find_or_create */
+ImGuiOldColumns value;
+ImGuiOldColumns *columns;
+int n;
+for (n = 0; n < window->ColumnsStorage.Size; n++)
+{
+    columns = &window->ColumnsStorage.Data[n];
+    if (columns->ID == id)
+        return columns;
+}
+memset(&value, 0, sizeof(value));
+window->ColumnsStorage.Data = imgui_c89_vector_push_back(imgui_c89_ctx,
+    window->ColumnsStorage.Data, &window->ColumnsStorage.Size,
+    &window->ColumnsStorage.Capacity, sizeof(value), &value);
+columns = &window->ColumnsStorage.Data[window->ColumnsStorage.Size - 1];
+columns->ID = id;
+return columns;
+/* IMGUI_C89_FUNCTION_END columns_find_or_create */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_get_id */
+ImGuiWindow *window;
+ImGuiID id;
+window = @GET_WINDOW@(imgui_c89_ctx);
+@PUSH_ID@(imgui_c89_ctx, 0x11223347 + (str_id ? 0 : columns_count));
+id = @WINDOW_GET_ID@(imgui_c89_ctx, window, str_id ? str_id : "columns", 0);
+@POP_ID@(imgui_c89_ctx);
+return id;
+/* IMGUI_C89_FUNCTION_END columns_get_id */

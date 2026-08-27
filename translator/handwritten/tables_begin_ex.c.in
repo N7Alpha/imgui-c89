@@ -1,0 +1,413 @@
+/* Maintained strict-C89 implementation of ImGui::BeginTableEx(). */
+
+/* IMGUI_C89_FUNCTION_BEGIN begin_table_ex */
+ImGuiContext *g;
+ImGuiWindow *outer_window;
+ImGuiWindow *inner_window;
+ImGuiTable *table;
+ImGuiTableTempData *temp_data;
+ImGuiTableInstanceData *table_instance;
+ImGuiTableColumn *column;
+ImGuiTableColumn *src_column;
+ImVec2 avail_size;
+ImVec2 calculated_outer_size;
+ImVec2 actual_outer_size;
+ImVec2 override_content_size;
+ImVec2 next_content_size;
+ImVec2 zero_scroll;
+ImRect outer_rect;
+ImGuiTableTempData temp_data_value;
+ImGuiTableInstanceData instance_data_value;
+ImGuiID instance_id;
+ImGuiID instances_seed;
+ImGuiChildFlags child_flags;
+ImGuiWindowFlags child_window_flags;
+ImGuiTableFlags previous_flags;
+int table_idx;
+int previous_frame_active;
+int instance_no;
+int old_columns_count;
+int n;
+float border_size;
+float inner_spacing_for_border;
+float inner_spacing_explicit;
+float inner_padding_explicit;
+float outer_padding_for_border;
+float outer_padding_explicit;
+float width_auto;
+float inactive_time;
+unsigned char use_child_window;
+unsigned char outer_window_is_measuring_size;
+unsigned char is_new_table;
+unsigned char pad_outer_x;
+unsigned char pad_inner_x;
+
+g = imgui_c89_ctx;
+outer_window = @GET_CURRENT_WINDOW@(imgui_c89_ctx);
+if (outer_window->SkipItems)
+    return 0;
+
+if (!(columns_count > 0 && columns_count < @TABLE_MAX_COLUMNS@))
+    imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex", "imgui_tables.cpp",
+                         329, "columns_count > 0 && columns_count < IMGUI_TABLE_MAX_COLUMNS");
+if ((flags & @SCROLL_X@) && !(inner_width >= 0.0f))
+    imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex", "imgui_tables.cpp",
+                         331, "inner_width >= 0.0f");
+
+use_child_window = (unsigned char)
+    ((flags & (@SCROLL_X@ | @SCROLL_Y@)) != 0);
+avail_size = @GET_CONTENT_REGION_AVAIL@(imgui_c89_ctx);
+calculated_outer_size = @CALC_ITEM_SIZE@(
+    imgui_c89_ctx, *outer_size,
+    @MAX_FLOAT@(avail_size.x, @WINDOW_HARD_MIN_SIZE@),
+    use_child_window
+        ? @MAX_FLOAT@(avail_size.y, @WINDOW_HARD_MIN_SIZE@)
+        : 0.0f);
+actual_outer_size = @TRUNC_VEC2@(&calculated_outer_size);
+outer_rect.Min = outer_window->DC.CursorPos;
+outer_rect.Max.x = outer_rect.Min.x + actual_outer_size.x;
+outer_rect.Max.y = outer_rect.Min.y + actual_outer_size.y;
+outer_window_is_measuring_size = (unsigned char)
+    (outer_window->AutoFitFramesX > 0 || outer_window->AutoFitFramesY > 0);
+if (use_child_window &&
+    @IS_CLIPPED_EX@(imgui_c89_ctx, &outer_rect, 0) &&
+    !outer_window_is_measuring_size)
+{
+    @ITEM_SIZE@(imgui_c89_ctx, &outer_rect, -1.0f);
+    @ITEM_ADD@(imgui_c89_ctx, &outer_rect, id, 0, @ITEM_FLAGS_NONE@);
+    @CLEAR_NEXT_WINDOW_FLAGS@(&g->NextWindowData);
+    return 0;
+}
+
+if (g->DebugBreakInTable == id)
+    imgui_c89_debugtrap();
+
+table = @TABLE_POOL_GET_OR_ADD@(imgui_c89_ctx, &g->Tables, id);
+table_idx = @TABLE_POOL_GET_INDEX@(&g->Tables, table);
+g->TablesTempDataStacked++;
+if (g->TablesTempDataStacked > g->TablesTempData.Size)
+{
+    @TEMP_DATA_INIT@(&temp_data_value);
+    @TEMP_DATA_RESIZE@(imgui_c89_ctx, &g->TablesTempData,
+                       g->TablesTempDataStacked, &temp_data_value);
+}
+temp_data = &g->TablesTempData.Data[g->TablesTempDataStacked - 1];
+table->TempData = temp_data;
+temp_data->TableIndex = table_idx;
+temp_data->ReconcileColumnsRequests.Size = 0;
+table->DrawSplitter = &temp_data->DrawSplitter;
+@DRAW_SPLITTER_CLEAR@(table->DrawSplitter);
+
+table->IsDefaultSizingPolicy = (unsigned char)
+    ((flags & @SIZING_MASK@) == 0);
+flags = @TABLE_FIX_FLAGS@(flags, outer_window);
+
+previous_frame_active = table->LastFrameActive;
+instance_no = previous_frame_active != g->FrameCount
+    ? 0 : table->InstanceCurrent + 1;
+previous_flags = table->Flags;
+is_new_table = (unsigned char)(previous_frame_active == -1);
+table->ID = id;
+table->Flags = flags;
+table->LastFrameActive = g->FrameCount;
+table->OuterWindow = outer_window;
+table->InnerWindow = outer_window;
+table->ColumnsCount = columns_count;
+table->IsLayoutLocked = 0;
+table->InnerWidth = inner_width;
+table->NavLayer = (ImS8)outer_window->DC.NavLayerCurrent;
+temp_data->UserOuterSize = *outer_size;
+
+table->InstanceCurrent = (ImS16)instance_no;
+if (instance_no > 0)
+{
+    if (!(table->ColumnsCount == columns_count))
+        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
+                             "imgui_tables.cpp", 394,
+                             "BeginTable(): Cannot change columns count mid-frame while preserving same ID");
+    if (table->InstanceDataExtra.Size < instance_no)
+    {
+        @INSTANCE_DATA_INIT@(&instance_data_value);
+        @INSTANCE_DATA_PUSH_BACK@(imgui_c89_ctx,
+                                  &table->InstanceDataExtra,
+                                  &instance_data_value);
+    }
+    instances_seed = @GET_ID_WITH_SEED_STRING@(
+        imgui_c89_ctx, "##Instances", 0, id);
+    instance_id = @GET_ID_WITH_SEED_INT@(
+        imgui_c89_ctx, instance_no, instances_seed);
+}
+else
+{
+    instance_id = id;
+}
+table_instance = @TABLE_GET_INSTANCE_DATA@(table, table->InstanceCurrent);
+table_instance->TableInstanceID = instance_id;
+
+if (use_child_window)
+{
+    override_content_size.x = @FLOAT_MAX@;
+    override_content_size.y = @FLOAT_MAX@;
+    if ((flags & @SCROLL_X@) && !(flags & @SCROLL_Y@))
+        override_content_size.y = @FLOAT_MIN@;
+    if ((flags & @SCROLL_X@) && inner_width > 0.0f)
+        override_content_size.x = inner_width;
+    if (override_content_size.x != @FLOAT_MAX@ ||
+        override_content_size.y != @FLOAT_MAX@)
+    {
+        next_content_size.x = override_content_size.x != @FLOAT_MAX@
+            ? override_content_size.x : 0.0f;
+        next_content_size.y = override_content_size.y != @FLOAT_MAX@
+            ? override_content_size.y : 0.0f;
+        @SET_NEXT_WINDOW_CONTENT_SIZE@(imgui_c89_ctx, &next_content_size);
+    }
+    if ((previous_flags & (@SCROLL_X@ | @SCROLL_Y@)) == 0 &&
+        (g->NextWindowData.HasFlags & @NEXT_WINDOW_HAS_SCROLL@) == 0)
+    {
+        zero_scroll.x = 0.0f;
+        zero_scroll.y = 0.0f;
+        @SET_NEXT_WINDOW_SCROLL@(imgui_c89_ctx, &zero_scroll);
+    }
+    child_flags = (g->NextWindowData.HasFlags & @NEXT_WINDOW_HAS_CHILD_FLAGS@)
+        ? g->NextWindowData.ChildFlags : @CHILD_FLAGS_NONE@;
+    child_window_flags =
+        (g->NextWindowData.HasFlags & @NEXT_WINDOW_HAS_WINDOW_FLAGS@)
+        ? g->NextWindowData.WindowFlags : @WINDOW_FLAGS_NONE@;
+    if (flags & @SCROLL_X@)
+        child_window_flags |= @HORIZONTAL_SCROLLBAR@;
+    @BEGIN_CHILD_EX@(imgui_c89_ctx, name, instance_id,
+                     &actual_outer_size, child_flags, child_window_flags);
+    table->InnerWindow = g->CurrentWindow;
+    table->WorkRect = table->InnerWindow->WorkRect;
+    table->OuterRect = @WINDOW_RECT@(table->InnerWindow);
+    table->InnerRect = table->InnerWindow->InnerRect;
+    if (!(table->InnerWindow->WindowPadding.x == 0.0f &&
+          table->InnerWindow->WindowPadding.y == 0.0f &&
+          table->InnerWindow->WindowBorderSize == 0.0f))
+        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
+                             "imgui_tables.cpp", 440,
+                             "table inner window must have zero padding and border");
+    if (table->InnerWindow->SkipItems && outer_window_is_measuring_size)
+        table->InnerWindow->SkipItems = 0;
+    if (instance_no == 0)
+    {
+        table->HasScrollbarYPrev = table->HasScrollbarYCurr;
+        table->HasScrollbarYCurr = 0;
+    }
+    table->HasScrollbarYCurr = (unsigned char)
+        (table->HasScrollbarYCurr | table->InnerWindow->ScrollbarY);
+}
+else
+{
+    table->WorkRect = outer_rect;
+    table->OuterRect = outer_rect;
+    table->InnerRect = outer_rect;
+    table->HasScrollbarYPrev = 0;
+    table->HasScrollbarYCurr = 0;
+    table->InnerWindow->DC.TreeDepth++;
+}
+
+@PUSH_OVERRIDE_ID@(imgui_c89_ctx, id);
+if (instance_no > 0)
+    @PUSH_OVERRIDE_ID@(imgui_c89_ctx, instance_id);
+
+inner_window = table->InnerWindow;
+table->HostIndentX = inner_window->DC.Indent.x;
+table->HostClipRect = inner_window->ClipRect;
+table->HostSkipItems = inner_window->SkipItems;
+temp_data->WindowID = inner_window->ID;
+temp_data->HostBackupWorkRect = inner_window->WorkRect;
+temp_data->HostBackupParentWorkRect = inner_window->ParentWorkRect;
+temp_data->HostBackupColumnsOffset = outer_window->DC.ColumnsOffset;
+temp_data->HostBackupPrevLineSize = inner_window->DC.PrevLineSize;
+temp_data->HostBackupCurrLineSize = inner_window->DC.CurrLineSize;
+temp_data->HostBackupCursorMaxPos = inner_window->DC.CursorMaxPos;
+temp_data->HostBackupItemWidth = outer_window->DC.ItemWidth;
+temp_data->HostBackupItemWidthStackSize =
+    outer_window->DC.ItemWidthStack.Size;
+inner_window->DC.PrevLineSize.x = 0.0f;
+inner_window->DC.PrevLineSize.y = 0.0f;
+inner_window->DC.CurrLineSize.x = 0.0f;
+inner_window->DC.CurrLineSize.y = 0.0f;
+
+if (inner_window != outer_window)
+{
+    border_size = @TABLE_BORDER_SIZE@;
+    if (flags & @BORDERS_OUTER_V@)
+    {
+        table->HostClipRect.Min.x = @MIN_FLOAT@(
+            table->HostClipRect.Min.x + border_size,
+            table->HostClipRect.Max.x);
+        if (inner_window->DecoOuterSizeX2 == 0.0f)
+            table->HostClipRect.Max.x = @MAX_FLOAT@(
+                table->HostClipRect.Max.x - border_size,
+                table->HostClipRect.Min.x);
+    }
+    if (flags & @BORDERS_OUTER_H@)
+    {
+        table->HostClipRect.Min.y = @MIN_FLOAT@(
+            table->HostClipRect.Min.y + border_size,
+            table->HostClipRect.Max.y);
+        if (inner_window->DecoOuterSizeY2 == 0.0f)
+            table->HostClipRect.Max.y = @MAX_FLOAT@(
+                table->HostClipRect.Max.y - border_size,
+                table->HostClipRect.Min.y);
+    }
+}
+
+pad_outer_x = (unsigned char)
+    ((flags & @NO_PAD_OUTER_X@) ? 0 :
+     (flags & @PAD_OUTER_X@) ? 1 :
+     (flags & @BORDERS_OUTER_V@) != 0);
+pad_inner_x = (unsigned char)((flags & @NO_PAD_INNER_X@) ? 0 : 1);
+inner_spacing_for_border = (flags & @BORDERS_INNER_V@)
+    ? @TABLE_BORDER_SIZE@ : 0.0f;
+inner_spacing_explicit =
+    pad_inner_x && (flags & @BORDERS_INNER_V@) == 0
+    ? g->Style.CellPadding.x : 0.0f;
+inner_padding_explicit =
+    pad_inner_x && (flags & @BORDERS_INNER_V@) != 0
+    ? g->Style.CellPadding.x : 0.0f;
+table->CellSpacingX1 = inner_spacing_explicit + inner_spacing_for_border;
+table->CellSpacingX2 = inner_spacing_explicit;
+table->CellPaddingX = inner_padding_explicit;
+outer_padding_for_border = (flags & @BORDERS_OUTER_V@)
+    ? @TABLE_BORDER_SIZE@ : 0.0f;
+outer_padding_explicit = pad_outer_x ? g->Style.CellPadding.x : 0.0f;
+table->OuterPaddingX = outer_padding_for_border + outer_padding_explicit
+    - table->CellPaddingX;
+
+table->CurrentColumn = -1;
+table->CurrentRow = -1;
+table->RowBgColorCounter = 0;
+table->LastRowFlags = @ROW_FLAGS_NONE@;
+table->InnerClipRect = inner_window == outer_window
+    ? table->WorkRect : inner_window->ClipRect;
+@RECT_CLIP_WITH@(&table->InnerClipRect, &table->WorkRect);
+@RECT_CLIP_WITH_FULL@(&table->InnerClipRect, &table->HostClipRect);
+table->InnerClipRect.Max.y = (flags & @NO_HOST_EXTEND_Y@)
+    ? @MIN_FLOAT@(table->InnerClipRect.Max.y,
+                   inner_window->WorkRect.Max.y)
+    : table->HostClipRect.Max.y;
+table->RowPosY1 = table->WorkRect.Min.y;
+table->RowPosY2 = table->WorkRect.Min.y;
+table->RowTextBaseline = 0.0f;
+table->RowCellPaddingY = 0.0f;
+table->FreezeRowsRequest = 0;
+table->FreezeRowsCount = 0;
+table->FreezeColumnsRequest = 0;
+table->FreezeColumnsCount = 0;
+table->IsUnfrozenRows = 1;
+table->DeclColumnsCount = 0;
+table->AngledHeadersCount = 0;
+if (previous_frame_active + 1 < g->FrameCount)
+    table->IsActiveIdInTable = 0;
+table->AngledHeadersHeight = 0.0f;
+temp_data->AngledHeadersExtraWidth = 0.0f;
+
+table->BorderColorStrong = @GET_COLOR_U32@(
+    imgui_c89_ctx, @TABLE_BORDER_STRONG_COLOR@, 1.0f);
+table->BorderColorLight = @GET_COLOR_U32@(
+    imgui_c89_ctx, @TABLE_BORDER_LIGHT_COLOR@, 1.0f);
+
+g->CurrentTable = table;
+inner_window->DC.NavIsScrollPushableX = 0;
+outer_window->DC.CurrentTableIdx = table_idx;
+if (inner_window != outer_window)
+    inner_window->DC.CurrentTableIdx = table_idx;
+
+if ((previous_flags & @REORDERABLE@) &&
+    (flags & @REORDERABLE@) == 0)
+    table->IsResetDisplayOrderRequest = 1;
+
+if (table_idx >= g->TablesLastTimeActive.Size)
+{
+    inactive_time = -1.0f;
+    @FLOAT_VECTOR_RESIZE@(imgui_c89_ctx, &g->TablesLastTimeActive,
+                           table_idx + 1, &inactive_time);
+}
+g->TablesLastTimeActive.Data[table_idx] = (float)g->Time;
+temp_data->LastTimeActive = (float)g->Time;
+table->MemoryCompacted = 0;
+
+old_columns_count = @COLUMN_SPAN_SIZE@(&table->Columns);
+if (old_columns_count != 0 && old_columns_count != columns_count)
+{
+    if (g->DebugLogFlags & @DEBUG_EVENT_TABLE@)
+        @DEBUG_LOG@(imgui_c89_ctx,
+            "[table] Table 0x%08X column count %d -> %d, recreating storage.\n",
+            table->ID, old_columns_count, columns_count);
+    if (!(temp_data->OldColumnsRawData == 0))
+        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
+                             "imgui_tables.cpp", 574,
+                             "temp_data->OldColumnsRawData == NULL");
+    temp_data->OldColumnsRawData = table->RawData;
+    temp_data->OldColumnsData = table->Columns;
+    src_column = temp_data->OldColumnsData.Data;
+    while (src_column != temp_data->OldColumnsData.DataEnd)
+    {
+        src_column->IsNeedReconcileSrc = 1;
+        src_column++;
+    }
+    table->RawData = 0;
+}
+if (table->RawData == 0)
+{
+    @TABLE_BEGIN_INIT_MEMORY@(imgui_c89_ctx, table, columns_count);
+    table->IsInitializing = 1;
+}
+if (table->IsResetAllRequest)
+    @TABLE_RESET_SETTINGS@(table);
+if (table->IsInitializing)
+{
+    if (is_new_table)
+    {
+        table->SettingsOffset = -1;
+        table->IsSettingsRequestLoad = 1;
+    }
+    table->IsSortSpecsDirty = 1;
+    table->IsSettingsDirty = 1;
+    table->IsReconcileMode = 0;
+    table->InstanceInteracted = -1;
+    table->ContextPopupColumn = -1;
+    table->ReorderColumn = -1;
+    table->ReorderColumnDstOrder = -1;
+    table->ResizedColumn = -1;
+    table->LastResizedColumn = -1;
+    table->AutoFitSingleColumn = -1;
+    table->HoveredColumnBody = -1;
+    table->HoveredColumnBorder = -1;
+    n = 0;
+    while (n < columns_count)
+    {
+        column = &table->Columns.Data[n];
+        if (temp_data->OldColumnsData.Data != 0 &&
+            n < (int)(temp_data->OldColumnsData.DataEnd -
+                      temp_data->OldColumnsData.Data))
+        {
+            *column = temp_data->OldColumnsData.Data[n];
+        }
+        else
+        {
+            width_auto = column->WidthAuto;
+            @TABLE_COLUMN_INIT@(column);
+            column->WidthAuto = width_auto;
+            column->IsPreserveWidthAuto = 1;
+            column->IsEnabled = 1;
+            column->IsUserEnabled = 1;
+            column->IsUserEnabledNextFrame = 1;
+            column->DisplayOrder = (ImGuiTableColumnIdx)n;
+        }
+        table->DisplayOrderToIndex.Data[n] = column->DisplayOrder;
+        n++;
+    }
+}
+
+if (table->IsSettingsRequestLoad)
+    @TABLE_LOAD_SETTINGS@(imgui_c89_ctx, table);
+
+inner_window->SkipItems = 1;
+if (table->ColumnsNames.Buf.Size > 0)
+    table->ColumnsNames.Buf.Size = 0;
+return 1;
+/* IMGUI_C89_FUNCTION_END begin_table_ex */

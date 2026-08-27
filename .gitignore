@@ -1,0 +1,24 @@
+.DS_Store
+**/.DS_Store
+__pycache__/
+*.py[cod]
+
+# Disposable translator, compiler, test, and analysis output.
+/build/
+/output/
+/sources/
+/imgui.ini
+/AGENTS.md
+
+# One-off blind-port working drafts; accepted fragments live one level up.
+/translator/handwritten/drafts/
+
+# Local compiler products outside build/.
+*.o
+*.a
+*.dSYM/
+compile_commands.json
+
+# The checked-in distribution is source-only.
+/dist/imgui-c89/build/
+/dist/imgui-c89/lib/

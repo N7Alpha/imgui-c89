@@ -1,0 +1,33 @@
+{
+  "repository": "https://github.com/ocornut/imgui.git",
+  "latest_release": {
+    "commit": "f1cc2ae15e53a861a874c3034aae6798fde194ab",
+    "tag": "v1.92.9b",
+    "description": "Latest Dear ImGui release verified 2026-08-26"
+  },
+  "baseline": {
+    "commit": "9b7699f32597e7c7a799f22b1860ac586c2857b9",
+    "description": "post-1.92.9 master baseline recorded by UPSTREAM.md"
+  },
+  "docking": {
+    "commit": "b48d1afbe8ee8b238e2961dc363a949dd7304e23",
+    "description": "Dear ImGui docking branch pinned 2026-08-03"
+  },
+  "test_engine": {
+    "repository": "https://github.com/ocornut/imgui_test_engine.git",
+    "commit": "71d29895426566c2fca058399572edb720d2b466",
+    "description": "Dear ImGui Test Engine main pinned 2026-08-03"
+  },
+  "compatibility_matrix": [
+    {"family": "1.83", "tag": "v1.83", "commit": "ad5d1a8429ea219d3d34e6a36a48918650402697"},
+    {"family": "1.84", "tag": "v1.84.2", "commit": "e3e1fbcf025cf83413815751f7c33500e1314d57"},
+    {"family": "1.85", "tag": "v1.85", "commit": "55d35d8387c15bf0cfd71861df67af8cfbda7456"},
+    {"family": "1.86", "tag": "v1.86", "commit": "512c54bbc062c41c74f8a8bd8ff1fd6bebd1e6d0"},
+    {"family": "1.87", "tag": "v1.87", "commit": "c71a50deb5ddf1ea386b91e60fa2e4a26d080074"},
+    {"family": "1.88", "tag": "v1.88", "commit": "9aae45eb4a05a5a1f96be1ef37eb503a12ceb889"},
+    {"family": "1.89", "tag": "v1.89.9", "commit": "c6e0284ac58b3f205c95365478888f7b53b077e2"},
+    {"family": "1.90", "tag": "v1.90.9", "commit": "cb16be3a3fc1f9cd146ae24d52b615f8a05fa93d"},
+    {"family": "1.91", "tag": "v1.91.9b", "commit": "f5befd2d29e66809cd1110a152e375a7f1981f06"},
+    {"family": "1.92", "tag": "v1.92.9b", "commit": "f1cc2ae15e53a861a874c3034aae6798fde194ab"}
+  ]
+}

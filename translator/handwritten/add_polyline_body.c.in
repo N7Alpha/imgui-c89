@@ -1,0 +1,348 @@
+    int closed;
+    int segment_count;
+    int thick_line;
+    float aa_size;
+    ImU32 transparent_color;
+    ImVec2 white_uv;
+    int integer_thickness;
+    float fractional_thickness;
+    int use_texture;
+    int vertex_stride;
+    int index_count;
+    int vertex_count;
+    ImVec2 *normals;
+    ImVec2 *expanded;
+    int scratch_count;
+    int i1;
+    int i2;
+    int p;
+    float dx;
+    float dy;
+    float d2;
+    float inv;
+    float half_width;
+    float half_inner;
+    float inner_x;
+    float inner_y;
+    float outer_x;
+    float outer_y;
+    unsigned int idx1;
+    unsigned int idx2;
+    unsigned int base;
+    ImVec4 tex_uv;
+    ImVec2 uv0;
+    ImVec2 uv1;
+
+    if (points_count < 2 || (col & 0xff000000u) == 0)
+        return;
+
+    if (flags & @INVALID_MASK@) {
+        @ERROR_LOG@(imgui_c89_ctx, "Incorrect parameter. Did you swap 'thickness' and 'flags'?");
+        return;
+    }
+
+    closed = (flags & @CLOSED@) != 0;
+    segment_count = closed ? points_count : points_count - 1;
+    white_uv = self->_Data->TexUvWhitePixel;
+
+    if ((self->Flags & @AA_LINES@) != 0) {
+        aa_size = self->_FringeScale;
+        transparent_color = col & ~0xff000000u;
+        thick_line = thickness > aa_size;
+        if (thickness < 1.0f)
+            thickness = 1.0f;
+
+        integer_thickness = (int)thickness;
+        fractional_thickness = thickness - (float)integer_thickness;
+        use_texture =
+            (self->Flags & @AA_LINES_USE_TEX@) != 0 &&
+            integer_thickness >= 0 &&
+            integer_thickness < 32 &&
+            fractional_thickness <= 0.00001f &&
+            aa_size == 1.0f;
+
+        vertex_stride = use_texture ? 2 : (thick_line ? 4 : 3);
+        index_count = segment_count *
+                      (use_texture ? 6 : (thick_line ? 18 : 12));
+        vertex_count = points_count * vertex_stride;
+        @PRIM_RESERVE@(imgui_c89_ctx, self, index_count, vertex_count);
+
+        scratch_count = points_count *
+                        (1 + (thick_line && !use_texture ? 4 : 2));
+        @TEMP_RESERVE@(imgui_c89_ctx,
+                      (@TEMP_VECTOR_TYPE@ *)&self->_Data->TempBuffer,
+                      scratch_count);
+        normals = self->_Data->TempBuffer.Data;
+        expanded = normals + points_count;
+
+        for (i1 = 0; i1 < segment_count; ++i1) {
+            i2 = i1 + 1;
+            if (i2 == points_count)
+                i2 = 0;
+            dx = points[i2].x - points[i1].x;
+            dy = points[i2].y - points[i1].y;
+            d2 = dx * dx + dy * dy;
+            if (d2 > 0.0f) {
+                inv = @RSQRT@(d2);
+                dx *= inv;
+                dy *= inv;
+            }
+            normals[i1].x = dy;
+            normals[i1].y = -dx;
+        }
+
+        if (!closed)
+            normals[points_count - 1] = normals[points_count - 2];
+
+        if (use_texture || !thick_line) {
+            half_width = use_texture
+                       ? thickness * 0.5f + 1.0f
+                       : aa_size;
+
+            if (!closed) {
+                dx = normals[0].x * half_width;
+                dy = normals[0].y * half_width;
+                expanded[0].x = points[0].x + dx;
+                expanded[0].y = points[0].y + dy;
+                expanded[1].x = points[0].x - dx;
+                expanded[1].y = points[0].y - dy;
+
+                i1 = points_count - 1;
+                dx = normals[i1].x * half_width;
+                dy = normals[i1].y * half_width;
+                expanded[i1 * 2].x = points[i1].x + dx;
+                expanded[i1 * 2].y = points[i1].y + dy;
+                expanded[i1 * 2 + 1].x = points[i1].x - dx;
+                expanded[i1 * 2 + 1].y = points[i1].y - dy;
+            }
+
+            idx1 = self->_VtxCurrentIdx;
+            for (i1 = 0; i1 < segment_count; ++i1) {
+                i2 = i1 + 1;
+                if (i2 == points_count)
+                    i2 = 0;
+
+                dx = (normals[i1].x + normals[i2].x) * 0.5f;
+                dy = (normals[i1].y + normals[i2].y) * 0.5f;
+                d2 = dx * dx + dy * dy;
+                if (d2 > 0.000001f) {
+                    inv = 1.0f / d2;
+                    if (inv > 100.0f)
+                        inv = 100.0f;
+                    dx *= inv;
+                    dy *= inv;
+                }
+                dx *= half_width;
+                dy *= half_width;
+
+                expanded[i2 * 2].x = points[i2].x + dx;
+                expanded[i2 * 2].y = points[i2].y + dy;
+                expanded[i2 * 2 + 1].x = points[i2].x - dx;
+                expanded[i2 * 2 + 1].y = points[i2].y - dy;
+                idx2 = self->_VtxCurrentIdx +
+                       (unsigned int)(i2 * vertex_stride);
+
+                if (use_texture) {
+                    self->_IdxWritePtr[0] = (ImDrawIdx)idx2;
+                    self->_IdxWritePtr[1] = (ImDrawIdx)idx1;
+                    self->_IdxWritePtr[2] = (ImDrawIdx)(idx1 + 1);
+                    self->_IdxWritePtr[3] = (ImDrawIdx)(idx2 + 1);
+                    self->_IdxWritePtr[4] = (ImDrawIdx)(idx1 + 1);
+                    self->_IdxWritePtr[5] = (ImDrawIdx)idx2;
+                    self->_IdxWritePtr += 6;
+                } else {
+                    self->_IdxWritePtr[0] = (ImDrawIdx)idx2;
+                    self->_IdxWritePtr[1] = (ImDrawIdx)idx1;
+                    self->_IdxWritePtr[2] = (ImDrawIdx)(idx1 + 2);
+                    self->_IdxWritePtr[3] = (ImDrawIdx)(idx1 + 2);
+                    self->_IdxWritePtr[4] = (ImDrawIdx)(idx2 + 2);
+                    self->_IdxWritePtr[5] = (ImDrawIdx)idx2;
+                    self->_IdxWritePtr[6] = (ImDrawIdx)(idx2 + 1);
+                    self->_IdxWritePtr[7] = (ImDrawIdx)(idx1 + 1);
+                    self->_IdxWritePtr[8] = (ImDrawIdx)idx1;
+                    self->_IdxWritePtr[9] = (ImDrawIdx)idx1;
+                    self->_IdxWritePtr[10] = (ImDrawIdx)idx2;
+                    self->_IdxWritePtr[11] = (ImDrawIdx)(idx2 + 1);
+                    self->_IdxWritePtr += 12;
+                }
+                idx1 = idx2;
+            }
+
+            if (use_texture) {
+                tex_uv = self->_Data->TexUvLines[integer_thickness];
+                uv0.x = tex_uv.x;
+                uv0.y = tex_uv.y;
+                uv1.x = tex_uv.z;
+                uv1.y = tex_uv.w;
+                for (i1 = 0; i1 < points_count; ++i1) {
+                    self->_VtxWritePtr[0].pos.x = expanded[i1 * 2].x;
+                    self->_VtxWritePtr[0].pos.y = expanded[i1 * 2].y;
+                    self->_VtxWritePtr[0].uv = uv0;
+                    self->_VtxWritePtr[0].col = col;
+                    self->_VtxWritePtr[1].pos.x = expanded[i1 * 2 + 1].x;
+                    self->_VtxWritePtr[1].pos.y = expanded[i1 * 2 + 1].y;
+                    self->_VtxWritePtr[1].uv = uv1;
+                    self->_VtxWritePtr[1].col = col;
+                    self->_VtxWritePtr += 2;
+                }
+            } else {
+                for (i1 = 0; i1 < points_count; ++i1) {
+                    self->_VtxWritePtr[0].pos = points[i1];
+                    self->_VtxWritePtr[0].uv = white_uv;
+                    self->_VtxWritePtr[0].col = col;
+                    self->_VtxWritePtr[1].pos.x = expanded[i1 * 2].x;
+                    self->_VtxWritePtr[1].pos.y = expanded[i1 * 2].y;
+                    self->_VtxWritePtr[1].uv = white_uv;
+                    self->_VtxWritePtr[1].col = transparent_color;
+                    self->_VtxWritePtr[2].pos.x = expanded[i1 * 2 + 1].x;
+                    self->_VtxWritePtr[2].pos.y = expanded[i1 * 2 + 1].y;
+                    self->_VtxWritePtr[2].uv = white_uv;
+                    self->_VtxWritePtr[2].col = transparent_color;
+                    self->_VtxWritePtr += 3;
+                }
+            }
+        } else {
+            half_inner = (thickness - aa_size) * 0.5f;
+
+            if (!closed) {
+                for (i1 = 0; i1 < 2; ++i1) {
+                    p = i1 == 0 ? 0 : points_count - 1;
+                    outer_x = normals[p].x * (half_inner + aa_size);
+                    outer_y = normals[p].y * (half_inner + aa_size);
+                    inner_x = normals[p].x * half_inner;
+                    inner_y = normals[p].y * half_inner;
+                    expanded[p * 4].x = points[p].x + outer_x;
+                    expanded[p * 4].y = points[p].y + outer_y;
+                    expanded[p * 4 + 1].x = points[p].x + inner_x;
+                    expanded[p * 4 + 1].y = points[p].y + inner_y;
+                    expanded[p * 4 + 2].x = points[p].x - inner_x;
+                    expanded[p * 4 + 2].y = points[p].y - inner_y;
+                    expanded[p * 4 + 3].x = points[p].x - outer_x;
+                    expanded[p * 4 + 3].y = points[p].y - outer_y;
+                }
+            }
+
+            idx1 = self->_VtxCurrentIdx;
+            for (i1 = 0; i1 < segment_count; ++i1) {
+                i2 = i1 + 1;
+                if (i2 == points_count)
+                    i2 = 0;
+
+                dx = (normals[i1].x + normals[i2].x) * 0.5f;
+                dy = (normals[i1].y + normals[i2].y) * 0.5f;
+                d2 = dx * dx + dy * dy;
+                if (d2 > 0.000001f) {
+                    inv = 1.0f / d2;
+                    if (inv > 100.0f)
+                        inv = 100.0f;
+                    dx *= inv;
+                    dy *= inv;
+                }
+
+                inner_x = dx * half_inner;
+                inner_y = dy * half_inner;
+                outer_x = dx * (half_inner + aa_size);
+                outer_y = dy * (half_inner + aa_size);
+                expanded[i2 * 4].x = points[i2].x + outer_x;
+                expanded[i2 * 4].y = points[i2].y + outer_y;
+                expanded[i2 * 4 + 1].x = points[i2].x + inner_x;
+                expanded[i2 * 4 + 1].y = points[i2].y + inner_y;
+                expanded[i2 * 4 + 2].x = points[i2].x - inner_x;
+                expanded[i2 * 4 + 2].y = points[i2].y - inner_y;
+                expanded[i2 * 4 + 3].x = points[i2].x - outer_x;
+                expanded[i2 * 4 + 3].y = points[i2].y - outer_y;
+                idx2 = self->_VtxCurrentIdx + (unsigned int)(i2 * 4);
+
+                self->_IdxWritePtr[0] = (ImDrawIdx)(idx2 + 1);
+                self->_IdxWritePtr[1] = (ImDrawIdx)(idx1 + 1);
+                self->_IdxWritePtr[2] = (ImDrawIdx)(idx1 + 2);
+                self->_IdxWritePtr[3] = (ImDrawIdx)(idx1 + 2);
+                self->_IdxWritePtr[4] = (ImDrawIdx)(idx2 + 2);
+                self->_IdxWritePtr[5] = (ImDrawIdx)(idx2 + 1);
+                self->_IdxWritePtr[6] = (ImDrawIdx)idx2;
+                self->_IdxWritePtr[7] = (ImDrawIdx)idx1;
+                self->_IdxWritePtr[8] = (ImDrawIdx)(idx1 + 1);
+                self->_IdxWritePtr[9] = (ImDrawIdx)(idx1 + 1);
+                self->_IdxWritePtr[10] = (ImDrawIdx)(idx2 + 1);
+                self->_IdxWritePtr[11] = (ImDrawIdx)idx2;
+                self->_IdxWritePtr[12] = (ImDrawIdx)(idx2 + 2);
+                self->_IdxWritePtr[13] = (ImDrawIdx)(idx1 + 2);
+                self->_IdxWritePtr[14] = (ImDrawIdx)(idx1 + 3);
+                self->_IdxWritePtr[15] = (ImDrawIdx)(idx1 + 3);
+                self->_IdxWritePtr[16] = (ImDrawIdx)(idx2 + 3);
+                self->_IdxWritePtr[17] = (ImDrawIdx)(idx2 + 2);
+                self->_IdxWritePtr += 18;
+                idx1 = idx2;
+            }
+
+            for (i1 = 0; i1 < points_count; ++i1) {
+                self->_VtxWritePtr[0].pos.x = expanded[i1 * 4].x;
+                self->_VtxWritePtr[0].pos.y = expanded[i1 * 4].y;
+                self->_VtxWritePtr[0].uv = white_uv;
+                self->_VtxWritePtr[0].col = transparent_color;
+                self->_VtxWritePtr[1].pos.x = expanded[i1 * 4 + 1].x;
+                self->_VtxWritePtr[1].pos.y = expanded[i1 * 4 + 1].y;
+                self->_VtxWritePtr[1].uv = white_uv;
+                self->_VtxWritePtr[1].col = col;
+                self->_VtxWritePtr[2].pos.x = expanded[i1 * 4 + 2].x;
+                self->_VtxWritePtr[2].pos.y = expanded[i1 * 4 + 2].y;
+                self->_VtxWritePtr[2].uv = white_uv;
+                self->_VtxWritePtr[2].col = col;
+                self->_VtxWritePtr[3].pos.x = expanded[i1 * 4 + 3].x;
+                self->_VtxWritePtr[3].pos.y = expanded[i1 * 4 + 3].y;
+                self->_VtxWritePtr[3].uv = white_uv;
+                self->_VtxWritePtr[3].col = transparent_color;
+                self->_VtxWritePtr += 4;
+            }
+        }
+
+        self->_VtxCurrentIdx += (unsigned int)vertex_count;
+    } else {
+        @PRIM_RESERVE@(imgui_c89_ctx, self,
+                      segment_count * 6, segment_count * 4);
+        half_width = thickness * 0.5f;
+
+        for (i1 = 0; i1 < segment_count; ++i1) {
+            i2 = i1 + 1;
+            if (i2 == points_count)
+                i2 = 0;
+            dx = points[i2].x - points[i1].x;
+            dy = points[i2].y - points[i1].y;
+            d2 = dx * dx + dy * dy;
+            if (d2 > 0.0f) {
+                inv = @RSQRT@(d2);
+                dx *= inv;
+                dy *= inv;
+            }
+            dx *= half_width;
+            dy *= half_width;
+            base = self->_VtxCurrentIdx;
+
+            self->_IdxWritePtr[0] = (ImDrawIdx)base;
+            self->_IdxWritePtr[1] = (ImDrawIdx)(base + 1);
+            self->_IdxWritePtr[2] = (ImDrawIdx)(base + 2);
+            self->_IdxWritePtr[3] = (ImDrawIdx)base;
+            self->_IdxWritePtr[4] = (ImDrawIdx)(base + 2);
+            self->_IdxWritePtr[5] = (ImDrawIdx)(base + 3);
+            self->_IdxWritePtr += 6;
+
+            self->_VtxWritePtr[0].pos.x = points[i1].x + dy;
+            self->_VtxWritePtr[0].pos.y = points[i1].y - dx;
+            self->_VtxWritePtr[0].uv = white_uv;
+            self->_VtxWritePtr[0].col = col;
+            self->_VtxWritePtr[1].pos.x = points[i2].x + dy;
+            self->_VtxWritePtr[1].pos.y = points[i2].y - dx;
+            self->_VtxWritePtr[1].uv = white_uv;
+            self->_VtxWritePtr[1].col = col;
+            self->_VtxWritePtr[2].pos.x = points[i2].x - dy;
+            self->_VtxWritePtr[2].pos.y = points[i2].y + dx;
+            self->_VtxWritePtr[2].uv = white_uv;
+            self->_VtxWritePtr[2].col = col;
+            self->_VtxWritePtr[3].pos.x = points[i1].x - dy;
+            self->_VtxWritePtr[3].pos.y = points[i1].y + dx;
+            self->_VtxWritePtr[3].uv = white_uv;
+            self->_VtxWritePtr[3].col = col;
+            self->_VtxWritePtr += 4;
+            self->_VtxCurrentIdx += 4;
+        }
+    }

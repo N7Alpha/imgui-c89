@@ -1,0 +1,31 @@
+{
+  "name": "test_engine_docking",
+  "upstream_revision": "docking",
+  "needs_test_engine": true,
+  "test_viewports": true,
+  "language": "c++14",
+  "facade_language": "c++14",
+  "defines": [
+    "IMGUI_TEST_ENGINE_ENABLE_IMPLOT=0",
+    "IMGUI_USER_CONFIG=\"imgui_test_suite/imgui_test_suite_imconfig.h\""
+  ],
+  "undefines": [],
+  "include_directories": [
+    "{test_engine}",
+    "{test_engine}/imgui_test_engine",
+    "{test_engine}/imgui_test_suite",
+    "{test_engine}/shared"
+  ],
+  "core_translation_units": [
+    "imgui.cpp",
+    "imgui_draw.cpp",
+    "imgui_tables.cpp",
+    "imgui_widgets.cpp"
+  ],
+  "compatibility_translation_units": [
+    "imgui_demo.cpp"
+  ],
+  "backend_translation_units": [],
+  "c_includes": [],
+  "pkg_config_packages": []
+}

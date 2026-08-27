@@ -1,0 +1,81 @@
+ImGuiTableTempData *temp_data;
+ImGuiTableColumn *src_begin;
+ImGuiTableColumn *src_end;
+ImGuiTableColumn *src;
+ImGuiTableColumn *dst;
+ImGuiTableReconcileColumnData *requests;
+ImGuiTableReconcileColumnData *request;
+int request_count;
+int request_n;
+int named_match_count;
+int dst_request_n;
+
+temp_data = table->TempData;
+if (temp_data->OldColumnsData.Data != temp_data->OldColumnsData.DataEnd)
+{
+    src_begin = temp_data->OldColumnsData.Data;
+    src_end = temp_data->OldColumnsData.DataEnd;
+}
+else
+{
+    src_begin = table->Columns.Data;
+    src_end = table->Columns.DataEnd;
+}
+
+requests = temp_data->ReconcileColumnsRequests.Data;
+request_count = temp_data->ReconcileColumnsRequests.Size;
+named_match_count = 0;
+for (request_n = 0; request_n < request_count; request_n++)
+{
+    request = requests + request_n;
+    if (request->ID == 0)
+        continue;
+    for (src = src_begin; src != src_end; src++)
+    {
+        if (src->ID == request->ID && src->IsNeedReconcileSrc)
+        {
+            dst = table->Columns.Data + request->ColumnNewIdx;
+            src->IsNeedReconcileSrc = 0;
+            dst->IsNeedReconcileDst = 0;
+            request->ColumnOldIdx = (ImGuiTableColumnIdx)(src - src_begin);
+            request->ColumnOldData = *src;
+            named_match_count++;
+            break;
+        }
+    }
+}
+
+if (named_match_count != request_count)
+{
+    dst_request_n = 0;
+    for (src = src_begin; src != src_end; src++)
+    {
+        if (!src->IsNeedReconcileSrc)
+            continue;
+        while (dst_request_n < request_count &&
+               requests[dst_request_n].ColumnOldIdx != (ImGuiTableColumnIdx)-1)
+            dst_request_n++;
+        if (dst_request_n == request_count)
+            break;
+        request = requests + dst_request_n;
+        dst = table->Columns.Data + request->ColumnNewIdx;
+        src->IsNeedReconcileSrc = 0;
+        dst->IsNeedReconcileDst = 0;
+        request->ColumnOldIdx = (ImGuiTableColumnIdx)(src - src_begin);
+        request->ColumnOldData = *src;
+    }
+}
+
+for (request_n = 0; request_n < request_count; request_n++)
+{
+    request = requests + request_n;
+    table->Columns.Data[request->ColumnNewIdx] = request->ColumnOldData;
+    @SETUP_COLUMN_APPLY@(imgui_c89_ctx, table, request->ColumnNewIdx,
+                         request->ID, request->NameOffset, request->Flags,
+                         request->InitWidthOrWeight, request->UserData);
+}
+
+@FIX_DISPLAY_ORDER@(imgui_c89_ctx, table);
+table->IsSettingsDirty = 1;
+table->IsReconcileMode = 0;
+temp_data->ReconcileColumnsRequests.Size = 0;

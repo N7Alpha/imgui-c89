@@ -1,0 +1,121 @@
+/* Handwritten C89 table border color selection and rendering. */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_get_column_border_col */
+int resized;
+resized = table->ResizedColumn == column_n &&
+    table->InstanceInteracted == table->InstanceCurrent;
+if (resized || table->HoveredColumnBorder == column_n)
+    return @GET_COLOR@(imgui_c89_ctx,
+        resized ? @SEPARATOR_ACTIVE@ : @SEPARATOR_HOVERED@, 1.0f);
+if (table->FreezeColumnsCount == order_n + 1 ||
+    (table->Flags & (@NO_BORDERS_BODY@ | @NO_BORDERS_BODY_RESIZE@)))
+    return table->BorderColorStrong;
+return table->BorderColorLight;
+/* IMGUI_C89_FUNCTION_END table_get_column_border_col */
+
+/* IMGUI_C89_FUNCTION_BEGIN table_draw_borders */
+ImGuiWindow *window;
+ImDrawList *draw_list;
+ImGuiTableInstanceData *instance;
+ImGuiTableColumn *column;
+float base_y;
+float draw_y1;
+float draw_y2;
+float body_y2;
+float header_y2;
+float border_y;
+int order_n;
+int column_n;
+int resized;
+int hovered;
+int resizable;
+window = table->InnerWindow;
+if (table->OuterWindow->ClipRect.Min.x >= table->OuterRect.Max.x ||
+    table->OuterWindow->ClipRect.Max.x <= table->OuterRect.Min.x ||
+    table->OuterWindow->ClipRect.Min.y >= table->OuterRect.Max.y ||
+    table->OuterWindow->ClipRect.Max.y <= table->OuterRect.Min.y)
+    return;
+draw_list = window->DrawList;
+@SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, draw_list, 0);
+@PUSH_CLIP@(imgui_c89_ctx, draw_list, &table->Bg0ClipRectForDrawCmd.Min,
+    &table->Bg0ClipRectForDrawCmd.Max, 0);
+instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
+    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
+base_y = table->FreezeRowsCount >= 1 ?
+    table->InnerRect.Min.y : table->WorkRect.Min.y;
+draw_y1 = base_y + table->AngledHeadersHeight;
+if (draw_y1 < table->InnerRect.Min.y)
+    draw_y1 = table->InnerRect.Min.y;
+if (table->Flags & @BORDERS_OUTER_H@)
+    draw_y1 += 1.0f;
+body_y2 = table->InnerRect.Max.y;
+header_y2 = draw_y1;
+if (table->IsUsingHeaders)
+{
+    header_y2 = base_y + instance->LastTopHeadersRowHeight;
+    if (header_y2 > table->InnerRect.Max.y)
+        header_y2 = table->InnerRect.Max.y;
+}
+if (table->Flags & @BORDERS_INNER_V@)
+    for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+    {
+        if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
+              ((ImU32)1 << (order_n & 31))))
+            continue;
+        column_n = table->DisplayOrderToIndex.Data[order_n];
+        column = &table->Columns.Data[column_n];
+        resized = table->ResizedColumn == column_n &&
+            table->InstanceInteracted == table->InstanceCurrent;
+        hovered = table->HoveredColumnBorder == column_n;
+        resizable = !(column->Flags & (@NO_RESIZE@ | @NO_DIRECT_RESIZE@));
+        if (column->MaxX > table->InnerClipRect.Max.x && !resized)
+            continue;
+        if (column->NextEnabledColumn == -1 && !resizable &&
+            ((table->Flags & @SIZING_MASK@) != @SIZING_FIXED_SAME@ ||
+             (table->Flags & @NO_HOST_EXTEND_X@)))
+            continue;
+        if (column->MaxX <= column->ClipRect.Min.x)
+            continue;
+        draw_y2 = header_y2;
+        if (table->FreezeColumnsCount == order_n + 1 ||
+            ((table->Flags & @NO_BORDERS_BODY_RESIZE@) &&
+             (hovered || resized)) ||
+            !(table->Flags & (@NO_BORDERS_BODY_RESIZE@ | @NO_BORDERS_BODY@)))
+            draw_y2 = body_y2;
+        if (draw_y2 > draw_y1)
+            @ADD_LINE_V@(imgui_c89_ctx, draw_list, column->MaxX,
+                draw_y1, draw_y2,
+                @BORDER_COLOR@(imgui_c89_ctx, table, order_n, column_n), 1.0f);
+    }
+if (table->Flags & @BORDERS_OUTER@)
+{
+    if ((table->Flags & @BORDERS_OUTER@) == @BORDERS_OUTER@)
+        @ADD_RECT@(imgui_c89_ctx, draw_list, &table->OuterRect.Min,
+            &table->OuterRect.Max, table->BorderColorStrong, 0.0f, 1.0f, 0);
+    else if (table->Flags & @BORDERS_OUTER_V@)
+    {
+        @ADD_LINE_V@(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
+            table->OuterRect.Min.y, table->OuterRect.Max.y,
+            table->BorderColorStrong, 1.0f);
+        @ADD_LINE_V@(imgui_c89_ctx, draw_list, table->OuterRect.Max.x,
+            table->OuterRect.Min.y, table->OuterRect.Max.y,
+            table->BorderColorStrong, 1.0f);
+    }
+    else
+    {
+        @ADD_LINE_H@(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
+            table->OuterRect.Max.x, table->OuterRect.Min.y,
+            table->BorderColorStrong, 1.0f);
+        @ADD_LINE_H@(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
+            table->OuterRect.Max.x, table->OuterRect.Max.y - 1.0f,
+            table->BorderColorStrong, 1.0f);
+    }
+}
+border_y = table->RowPosY2;
+if ((table->Flags & @BORDERS_INNER_H@) &&
+    border_y < table->OuterRect.Max.y &&
+    border_y >= table->BgClipRect.Min.y && border_y < table->BgClipRect.Max.y)
+    @ADD_LINE_H@(imgui_c89_ctx, draw_list, table->BorderX1,
+        table->BorderX2, border_y, table->BorderColorLight, 1.0f);
+@POP_CLIP@(imgui_c89_ctx, draw_list);
+/* IMGUI_C89_FUNCTION_END table_draw_borders */

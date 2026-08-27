@@ -1,0 +1,354 @@
+/* Maintained strict-C89 implementations of the table debug nodes. */
+
+/* IMGUI_C89_FUNCTION_BEGIN debug_node_table */
+    ImGuiTableColumn *column;
+    ImGuiTableInstanceData *instance_data;
+    ImGuiTableSettings *settings;
+    ImDrawList *foreground_draw_list;
+    ImRect highlight_rect;
+    ImVec2 zero_size;
+    const ImVec4 *disabled_color;
+    const char *column_name;
+    const char *inactive_suffix;
+    const char *frozen_suffix;
+    const char *sort_suffix;
+    const char *width_stretch_suffix;
+    const char *width_fixed_suffix;
+    const char *no_resize_suffix;
+    const char *inner_width_suffix;
+    const char *sizing_name;
+    unsigned char active;
+    unsigned char open;
+    unsigned char clear_settings;
+    float outer_width;
+    float outer_height;
+    float stretch_weight_sum;
+    float stretch_weight_percent;
+    int instance_n;
+    int column_n;
+    char buf[512];
+
+    active = (unsigned char)(
+        table->LastFrameActive >= imgui_c89_ctx->FrameCount - 2);
+    inactive_suffix = active ? "" : " *Inactive*";
+    if (!active)
+    {
+        disabled_color = @GET_STYLE_COLOR_VEC4@(
+            imgui_c89_ctx, @IMGUI_COL_TEXT_DISABLED@);
+        @PUSH_STYLE_COLOR_VEC4@(
+            imgui_c89_ctx,
+            @IMGUI_COL_TEXT@,
+            disabled_color);
+    }
+    open = @TREE_NODE_POINTER@(
+        imgui_c89_ctx,
+        table,
+        "Table 0x%08X (%d columns, in '%s')%s",
+        (unsigned int)table->ID,
+        table->ColumnsCount,
+        table->OuterWindow->Name,
+        inactive_suffix);
+    if (!active)
+        @POP_STYLE_COLOR@(imgui_c89_ctx, 1);
+
+    if (@IS_ITEM_HOVERED@(imgui_c89_ctx, 0))
+    {
+        foreground_draw_list = @GET_FOREGROUND_DRAW_LIST@(
+            imgui_c89_ctx, table->OuterWindow);
+        @DRAW_LIST_ADD_RECT@(
+            imgui_c89_ctx, foreground_draw_list,
+            &table->OuterRect.Min,
+            &table->OuterRect.Max,
+            (ImU32)0xFF00FFFFu, 0.0f, 1.0f, 0);
+    }
+    if (@IS_ITEM_VISIBLE@(imgui_c89_ctx) &&
+        table->HoveredColumnBody != (ImGuiTableColumnIdx)-1)
+    {
+        foreground_draw_list = @GET_FOREGROUND_DRAW_LIST@(
+            imgui_c89_ctx, table->OuterWindow);
+        @DRAW_LIST_ADD_RECT@(
+            imgui_c89_ctx, foreground_draw_list,
+            &imgui_c89_ctx->LastItemData.Rect.Min,
+            &imgui_c89_ctx->LastItemData.Rect.Max,
+            (ImU32)0xFF00FFFFu, 0.0f, 1.0f, 0);
+    }
+    if (!open)
+        return;
+
+    if (table->InstanceCurrent > 0)
+    {
+        @TEXT@(
+            imgui_c89_ctx,
+            "** %d instances of same table! Some data below will refer to last instance.",
+            (int)table->InstanceCurrent + 1);
+    }
+
+    if (imgui_c89_ctx->IO.ConfigDebugIsDebuggerPresent)
+    {
+        if (@DEBUG_BREAK_BUTTON@(
+                imgui_c89_ctx,
+                "**DebugBreak**",
+                "in BeginTable()"))
+        {
+            imgui_c89_ctx->DebugBreakInTable = table->ID;
+        }
+        @SAME_LINE@(imgui_c89_ctx, 0.0f, -1.0f);
+    }
+    clear_settings = @SMALL_BUTTON@(imgui_c89_ctx, "Clear settings");
+
+    outer_width = table->OuterRect.Max.x - table->OuterRect.Min.x;
+    outer_height = table->OuterRect.Max.y - table->OuterRect.Min.y;
+    sizing_name = @TABLE_GET_SIZING_POLICY_DESC@(table->Flags);
+    @BULLET_TEXT@(
+        imgui_c89_ctx,
+        "OuterRect: Pos: (%.1f,%.1f) Size: (%.1f,%.1f) Sizing: '%s'",
+        table->OuterRect.Min.x,
+        table->OuterRect.Min.y,
+        outer_width,
+        outer_height,
+        sizing_name);
+    inner_width_suffix = (table->InnerWidth == 0.0f) ? " (auto)" : "";
+    @BULLET_TEXT@(
+        imgui_c89_ctx,
+        "ColumnsGivenWidth: %.1f, ColumnsAutoFitWidth: %.1f, InnerWidth: %.1f%s",
+        table->ColumnsGivenWidth,
+        table->ColumnsAutoFitWidth,
+        table->InnerWidth,
+        inner_width_suffix);
+    @BULLET_TEXT@(
+        imgui_c89_ctx,
+        "CellPaddingX: %.1f, CellSpacingX: %.1f/%.1f, OuterPaddingX: %.1f",
+        table->CellPaddingX,
+        table->CellSpacingX1,
+        table->CellSpacingX2,
+        table->OuterPaddingX);
+    @BULLET_TEXT@(
+        imgui_c89_ctx,
+        "HoveredColumnBody: %d, HoveredColumnBorder: %d",
+        (int)table->HoveredColumnBody,
+        (int)table->HoveredColumnBorder);
+    @BULLET_TEXT@(
+        imgui_c89_ctx,
+        "ResizedColumn: %d, HeldHeaderColumn: %d, ReorderColumn: %d",
+        (int)table->LastResizedColumn,
+        (int)table->LastHeldHeaderColumn,
+        (int)table->ReorderColumn);
+
+    for (instance_n = 0;
+         instance_n <= (int)table->InstanceCurrent;
+         instance_n++)
+    {
+        instance_data = @TABLE_GET_INSTANCE_DATA@(table, instance_n);
+        @BULLET_TEXT@(
+            imgui_c89_ctx,
+            "Instance %d: HoveredRow: %d, LastOuterHeight: %.2f",
+            instance_n,
+            instance_data->HoveredRowLast,
+            instance_data->LastOuterHeight);
+    }
+
+    stretch_weight_sum = 0.0f;
+    zero_size.x = 0.0f;
+    zero_size.y = 0.0f;
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+    {
+        column = &table->Columns.Data[column_n];
+        if ((column->Flags & ImGuiTableColumnFlags_WidthStretch) != 0)
+            stretch_weight_sum += column->StretchWeight;
+    }
+
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+    {
+        column = &table->Columns.Data[column_n];
+        column_name = @TABLE_GET_COLUMN_NAME@(table, column_n);
+        frozen_suffix =
+            (column_n < (int)table->FreezeColumnsRequest) ?
+            " (Frozen)" : "";
+        if (column->StretchWeight > 0.0f)
+        {
+            stretch_weight_percent =
+                column->StretchWeight / stretch_weight_sum * 100.0f;
+        }
+        else
+        {
+            stretch_weight_percent = 0.0f;
+        }
+        if (column->SortDirection == ImGuiSortDirection_Ascending)
+            sort_suffix = " (Asc)";
+        else if (column->SortDirection == ImGuiSortDirection_Descending)
+            sort_suffix = " (Des)";
+        else
+            sort_suffix = "";
+        width_stretch_suffix =
+            (column->Flags & ImGuiTableColumnFlags_WidthStretch) != 0 ?
+            "WidthStretch " : "";
+        width_fixed_suffix =
+            (column->Flags & ImGuiTableColumnFlags_WidthFixed) != 0 ?
+            "WidthFixed " : "";
+        no_resize_suffix =
+            (column->Flags & ImGuiTableColumnFlags_NoResize) != 0 ?
+            "NoResize " : "";
+
+        @IM_FORMAT_STRING@(
+            buf,
+            sizeof(buf),
+            "Column %d order %d '%s': offset %+.2f to %+.2f%s\n"
+            "Enabled: %d, VisibleX/Y: %d/%d, RequestOutput: %d, SkipItems: %d, DrawChannels: %d,%d\n"
+            "WidthGiven: %.1f, Request/Auto: %.1f/%.1f, StretchWeight: %.3f (%.1f%%)\n"
+            "MinX: %.1f, MaxX: %.1f (%+.1f), ClipRect: %.1f to %.1f (+%.1f)\n"
+            "ContentWidth: %.1f,%.1f, HeadersUsed/Ideal %.1f/%.1f\n"
+            "Sort: %d%s, UserData: 0x%08X, Flags: 0x%04X: %s%s%s..",
+            column_n,
+            (int)column->DisplayOrder,
+            column_name,
+            column->MinX - table->WorkRect.Min.x,
+            column->MaxX - table->WorkRect.Min.x,
+            frozen_suffix,
+            (int)column->IsEnabled,
+            (int)column->IsVisibleX,
+            (int)column->IsVisibleY,
+            (int)column->IsRequestOutput,
+            (int)column->IsSkipItems,
+            (int)column->DrawChannelFrozen,
+            (int)column->DrawChannelUnfrozen,
+            column->WidthGiven,
+            column->WidthRequest,
+            column->WidthAuto,
+            column->StretchWeight,
+            stretch_weight_percent,
+            column->MinX,
+            column->MaxX,
+            column->MaxX - column->MinX,
+            column->ClipRect.Min.x,
+            column->ClipRect.Max.x,
+            column->ClipRect.Max.x - column->ClipRect.Min.x,
+            column->ContentMaxXFrozen - column->WorkMinX,
+            column->ContentMaxXUnfrozen - column->WorkMinX,
+            column->ContentMaxXHeadersUsed - column->WorkMinX,
+            column->ContentMaxXHeadersIdeal - column->WorkMinX,
+            (int)column->SortOrder,
+            sort_suffix,
+            (unsigned int)column->UserData,
+            (unsigned int)column->Flags,
+            width_stretch_suffix,
+            width_fixed_suffix,
+            no_resize_suffix);
+        @BULLET@(imgui_c89_ctx);
+        @SELECTABLE@(
+            imgui_c89_ctx,
+            buf,
+            0,
+            0,
+            &zero_size);
+        if (@IS_ITEM_HOVERED@(imgui_c89_ctx, 0))
+        {
+            highlight_rect.Min.x = column->MinX;
+            highlight_rect.Min.y = table->OuterRect.Min.y;
+            highlight_rect.Max.x = column->MaxX;
+            highlight_rect.Max.y = table->OuterRect.Max.y;
+            foreground_draw_list = @GET_FOREGROUND_DRAW_LIST@(
+                imgui_c89_ctx, table->OuterWindow);
+            @DRAW_LIST_ADD_RECT@(
+                imgui_c89_ctx, foreground_draw_list,
+                &highlight_rect.Min,
+                &highlight_rect.Max,
+                (ImU32)0xFF00FFFFu, 0.0f, 1.0f, 0);
+        }
+    }
+
+    settings = @TABLE_GET_BOUND_SETTINGS@(imgui_c89_ctx, table);
+    if (settings != (ImGuiTableSettings *)0)
+    {
+        @DEBUG_NODE_TABLE_SETTINGS@(
+            imgui_c89_ctx, settings, table);
+    }
+    if (clear_settings)
+        table->IsResetAllRequest = 1;
+    @TREE_POP@(imgui_c89_ctx);
+/* IMGUI_C89_FUNCTION_END debug_node_table */
+
+/* IMGUI_C89_FUNCTION_BEGIN debug_node_table_settings */
+    ImGuiTableColumnSettings *column_settings;
+    ImGuiTableColumnSettings *column;
+    ImDrawList *foreground_draw_list;
+    ImGuiSortDirection sort_direction;
+    const char *sort_direction_name;
+    const char *width_or_weight_name;
+    unsigned char open;
+    unsigned char hovered;
+    int column_n;
+
+    if (settings->ID == 0)
+        @PUSH_ID_POINTER@(imgui_c89_ctx, settings);
+    open = @TREE_NODE_POINTER@(
+        imgui_c89_ctx,
+        (void *)(size_t)settings->ID,
+        "Settings 0x%08X (%d columns)",
+        (unsigned int)settings->ID,
+        (int)settings->ColumnsCount);
+    hovered = @IS_ITEM_HOVERED@(imgui_c89_ctx, 0);
+    if (hovered && table == (ImGuiTable *)0 && settings->ID != 0)
+    {
+        table = @TABLE_FIND_BY_ID@(imgui_c89_ctx, settings->ID);
+    }
+    if (hovered && table != (ImGuiTable *)0)
+    {
+        foreground_draw_list = @GET_FOREGROUND_DRAW_LIST@(
+            imgui_c89_ctx, table->OuterWindow);
+        @DRAW_LIST_ADD_RECT@(
+            imgui_c89_ctx, foreground_draw_list,
+            &table->OuterRect.Min,
+            &table->OuterRect.Max,
+            (ImU32)0xFF00FFFFu, 0.0f, 1.0f, 0);
+    }
+
+    if (open)
+    {
+        @BULLET_TEXT@(
+            imgui_c89_ctx,
+            "SaveFlags: 0x%08X",
+            (unsigned int)settings->SaveFlags);
+        @BULLET_TEXT@(
+            imgui_c89_ctx,
+            "ColumnsCount: %d (max %d)",
+            (int)settings->ColumnsCount,
+            (int)settings->ColumnsCountMax);
+        column_settings = (ImGuiTableColumnSettings *)(settings + 1);
+        for (column_n = 0;
+             column_n < (int)settings->ColumnsCount;
+             column_n++)
+        {
+            column = &column_settings[column_n];
+            if (column->SortOrder == (ImGuiTableColumnIdx)-1)
+            {
+                sort_direction = ImGuiSortDirection_None;
+            }
+            else
+            {
+                sort_direction =
+                    (ImGuiSortDirection)column->SortDirection;
+            }
+            if (sort_direction == ImGuiSortDirection_Ascending)
+                sort_direction_name = "Asc";
+            else if (sort_direction == ImGuiSortDirection_Descending)
+                sort_direction_name = "Des";
+            else
+                sort_direction_name = "---";
+            width_or_weight_name = column->IsStretch ? "Weight" : "Width ";
+            @BULLET_TEXT@(
+                imgui_c89_ctx,
+                "Column %d Order %d SortOrder %2d %s Vis %d %s %7.3f ID 0x%08X",
+                column_n,
+                (int)column->DisplayOrder,
+                (int)column->SortOrder,
+                sort_direction_name,
+                (int)column->IsEnabled,
+                width_or_weight_name,
+                column->WidthOrWeight,
+                (unsigned int)column->ID);
+        }
+        @TREE_POP@(imgui_c89_ctx);
+    }
+    if (settings->ID == 0)
+        @POP_ID@(imgui_c89_ctx);
+/* IMGUI_C89_FUNCTION_END debug_node_table_settings */

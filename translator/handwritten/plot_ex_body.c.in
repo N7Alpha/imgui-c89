@@ -1,0 +1,211 @@
+    ImGuiWindow *window;
+    const ImGuiStyle *style;
+    const char *label_end;
+    ImVec2 label_size;
+    ImVec2 frame_size;
+    ImRect frame_bb;
+    ImRect inner_bb;
+    ImRect total_bb;
+    ImVec2 tp0;
+    ImVec2 tp1;
+    ImVec2 pos0;
+    ImVec2 pos1;
+    ImVec2 histogram_tp1;
+    ImVec2 overlay_min;
+    ImVec2 overlay_align;
+    ImVec2 label_pos;
+    ImGuiID id;
+    ImU32 color_base;
+    ImU32 color_hovered;
+    unsigned char hovered;
+    int hovered_index;
+    int is_lines;
+    int minimum_count;
+    int resolution;
+    int item_count;
+    int offset_norm;
+    int n;
+    int logical_index;
+    int sample_index;
+    float value;
+    float value0;
+    float value1;
+    float found_min;
+    float found_max;
+    float inverse_scale;
+    float histogram_zero;
+    float t;
+    float t0;
+    float t1;
+    float t_step;
+
+    window = @GET_CURRENT_WINDOW@(imgui_c89_ctx);
+    if (window->SkipItems)
+        return -1;
+
+    style = &imgui_c89_ctx->Style;
+    is_lines = plot_type == @PLOT_LINES@;
+    id = @GET_ID@(imgui_c89_ctx, window, label, 0);
+    label_end = @FIND_TEXT_END@(label, 0);
+    label_size = @CALC_TEXT_SIZE@(
+        imgui_c89_ctx, label, label_end, 0, -1.0f);
+    frame_size = @CALC_ITEM_SIZE@(
+        imgui_c89_ctx, *size_arg, @CALC_ITEM_WIDTH@(imgui_c89_ctx),
+        label_size.y + style->FramePadding.y * 2.0f);
+
+    frame_bb.Min = window->DC.CursorPos;
+    frame_bb.Max.x = frame_bb.Min.x + frame_size.x;
+    frame_bb.Max.y = frame_bb.Min.y + frame_size.y;
+    inner_bb.Min.x = frame_bb.Min.x + style->FramePadding.x;
+    inner_bb.Min.y = frame_bb.Min.y + style->FramePadding.y;
+    inner_bb.Max.x = frame_bb.Max.x - style->FramePadding.x;
+    inner_bb.Max.y = frame_bb.Max.y - style->FramePadding.y;
+    total_bb.Min = frame_bb.Min;
+    total_bb.Max = frame_bb.Max;
+    if (label_size.x > 0.0f)
+        total_bb.Max.x += style->ItemInnerSpacing.x + label_size.x;
+
+    @ITEM_SIZE@(imgui_c89_ctx, &total_bb, style->FramePadding.y);
+    if (!@ITEM_ADD@(imgui_c89_ctx, &total_bb, id, &frame_bb,
+                   @ITEM_NO_NAV@))
+        return -1;
+
+    @BUTTON_BEHAVIOR@(imgui_c89_ctx, &frame_bb, id, &hovered, 0, 0);
+    hovered_index = -1;
+
+    if (scale_min == 3.40282347E+38f || scale_max == 3.40282347E+38f) {
+        found_min = 3.40282347E+38f;
+        found_max = -3.40282347E+38f;
+        for (n = 0; n < values_count; ++n) {
+            value = values_getter(data, n);
+            if (value != value)
+                continue;
+            if (value < found_min)
+                found_min = value;
+            if (value > found_max)
+                found_max = value;
+        }
+        if (scale_min == 3.40282347E+38f)
+            scale_min = found_min;
+        if (scale_max == 3.40282347E+38f)
+            scale_max = found_max;
+    }
+
+    @RENDER_FRAME@(
+        imgui_c89_ctx, frame_bb.Min, frame_bb.Max,
+        @GET_COLOR@(imgui_c89_ctx, @COLOR_FRAME_BG@, 1.0f),
+        1, style->FrameRounding);
+
+    minimum_count = is_lines ? 2 : 1;
+    if (values_count >= minimum_count) {
+        resolution = (int)frame_size.x;
+        if (resolution > values_count)
+            resolution = values_count;
+        if (is_lines)
+            --resolution;
+        item_count = values_count - (is_lines ? 1 : 0);
+
+        if (resolution > 0) {
+            offset_norm = values_offset % values_count;
+            if (offset_norm < 0)
+                offset_norm += values_count;
+
+            if (hovered &&
+                imgui_c89_ctx->IO.MousePos.x >= inner_bb.Min.x &&
+                imgui_c89_ctx->IO.MousePos.y >= inner_bb.Min.y &&
+                imgui_c89_ctx->IO.MousePos.x < inner_bb.Max.x &&
+                imgui_c89_ctx->IO.MousePos.y < inner_bb.Max.y &&
+                inner_bb.Max.x > inner_bb.Min.x) {
+                t = (imgui_c89_ctx->IO.MousePos.x - inner_bb.Min.x) /
+                    (inner_bb.Max.x - inner_bb.Min.x);
+                t = @CLAMP@(t, 0.0f, 0.999f);
+                hovered_index = (int)(t * (float)item_count);
+                sample_index = (offset_norm + hovered_index) % values_count;
+                value0 = values_getter(data, sample_index);
+                sample_index =
+                    (offset_norm + hovered_index + 1) % values_count;
+                value1 = values_getter(data, sample_index);
+                if (is_lines)
+                    @SET_TOOLTIP@(imgui_c89_ctx,
+                        "%d: %8.4g\n%d: %8.4g", hovered_index, value0,
+                        hovered_index + 1, value1);
+                else
+                    @SET_TOOLTIP@(imgui_c89_ctx, "%d: %8.4g",
+                                   hovered_index, value0);
+            }
+
+            t_step = 1.0f / (float)resolution;
+            inverse_scale = scale_min == scale_max
+                          ? 0.0f : 1.0f / (scale_max - scale_min);
+            value0 = values_getter(data, offset_norm);
+            tp0 = @VEC2@(0.0f, 1.0f - @CLAMP@(
+                (value0 - scale_min) * inverse_scale, 0.0f, 1.0f));
+
+            if (scale_min * scale_max < 0.0f)
+                histogram_zero = 1.0f + scale_min * inverse_scale;
+            else if (scale_min < 0.0f)
+                histogram_zero = 0.0f;
+            else
+                histogram_zero = 1.0f;
+
+            color_base = @GET_COLOR@(
+                imgui_c89_ctx,
+                is_lines ? @COLOR_PLOT_LINES@ : @COLOR_PLOT_HISTOGRAM@,
+                1.0f);
+            color_hovered = @GET_COLOR@(
+                imgui_c89_ctx,
+                is_lines ? @COLOR_PLOT_LINES_HOVERED@
+                         : @COLOR_PLOT_HISTOGRAM_HOVERED@,
+                1.0f);
+
+            t0 = 0.0f;
+            for (n = 0; n < resolution; ++n) {
+                t1 = t0 + t_step;
+                logical_index = (int)(t0 * (float)item_count + 0.5f);
+                sample_index =
+                    (offset_norm + logical_index + 1) % values_count;
+                value1 = values_getter(data, sample_index);
+                tp1 = @VEC2@(t1, 1.0f - @CLAMP@(
+                    (value1 - scale_min) * inverse_scale, 0.0f, 1.0f));
+                pos0 = @LERP@(&inner_bb.Min, &inner_bb.Max, &tp0);
+
+                if (is_lines) {
+                    pos1 = @LERP@(&inner_bb.Min, &inner_bb.Max, &tp1);
+                    @ADD_LINE@(
+                        imgui_c89_ctx, window->DrawList, &pos0, &pos1,
+                        hovered_index == logical_index
+                            ? color_hovered : color_base,
+                        1.0f);
+                } else {
+                    histogram_tp1 = @VEC2@(t1, histogram_zero);
+                    pos1 = @LERP@(
+                        &inner_bb.Min, &inner_bb.Max, &histogram_tp1);
+                    if (pos1.x >= pos0.x + 2.0f)
+                        pos1.x -= 1.0f;
+                    @ADD_RECT_FILLED@(
+                        imgui_c89_ctx, window->DrawList, &pos0, &pos1,
+                        hovered_index == logical_index
+                            ? color_hovered : color_base,
+                        0.0f, 0);
+                }
+                t0 = t1;
+                tp0 = tp1;
+            }
+        }
+    }
+
+    if (overlay_text != 0) {
+        overlay_min = @VEC2@(
+            frame_bb.Min.x, frame_bb.Min.y + style->FramePadding.y);
+        overlay_align = @VEC2@(0.5f, 0.0f);
+        @RENDER_TEXT_CLIPPED@(
+            imgui_c89_ctx, &overlay_min, &frame_bb.Max, overlay_text,
+            0, 0, &overlay_align, 0);
+    }
+    if (label_size.x > 0.0f) {
+        label_pos = @VEC2@(
+            frame_bb.Max.x + style->ItemInnerSpacing.x, inner_bb.Min.y);
+        @RENDER_TEXT@(
+            imgui_c89_ctx, label_pos, label, label_end, 0);
+    }
+    return hovered_index;

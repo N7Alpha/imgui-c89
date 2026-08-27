@@ -1,0 +1,283 @@
+/* IMGUI_C89_FUNCTION_BEGIN table_angled_headers_ex */
+    ImGuiTable *table;
+    ImGuiWindow *window;
+    ImDrawList *draw_list;
+    const ImGuiTableHeaderData *request;
+    ImGuiTableColumn *column;
+    ImRect row_rect;
+    ImRect text_clip_rect;
+    ImVec2 unit_right;
+    ImVec2 rotated;
+    ImVec2 angled_vector;
+    ImVec2 points[4];
+    ImVec2 padding;
+    ImVec2 align;
+    ImVec2 text_size;
+    ImVec2 pivot_in;
+    ImVec2 pivot_out;
+    ImVec2 clip_min;
+    ImVec2 clip_max;
+    ImVec2 fill_min;
+    ImVec2 fill_max;
+    ImVec2 line_p1;
+    ImVec2 line_p2;
+    const char *label;
+    const char *label_end;
+    const char *line_end;
+    ImU32 header_bg_color;
+    ImU32 border_color;
+    int vertex_begin;
+    int vertex_end;
+    unsigned char flip;
+    int pass_n;
+    int request_order;
+    int column_n;
+    int frozen_column_n;
+    int line_count;
+    float cos_a;
+    float sin_a;
+    float label_cos_a;
+    float label_sin_a;
+    float header_height;
+    float row_height;
+    float rotate_x;
+    float rotate_y;
+    float clip_min_x;
+    float ascent_scaled;
+    float line_offset_for_ascent_x;
+    float line_step;
+    float current_line_offset;
+    float align_offset;
+    float align_space;
+    float clip_width;
+    float clip_height;
+    float available_width;
+    float vertical_offset;
+    float extra_width;
+    float max_x;
+
+    table = imgui_c89_ctx->CurrentTable;
+    window = imgui_c89_ctx->CurrentWindow;
+    draw_list = window->DrawList;
+    if (max_label_width == 0.0f)
+        max_label_width = @TABLE_GET_HEADER_ANGLED_MAX_LABEL_WIDTH@(
+            imgui_c89_ctx);
+
+    flip = angle < 0.0f;
+    angle -= 3.14159265358979323846f * 0.5f;
+    cos_a = cosf(angle);
+    sin_a = sinf(angle);
+    if (flip)
+    {
+        label_cos_a = cosf(angle + 3.14159265358979323846f);
+        label_sin_a = sinf(angle + 3.14159265358979323846f);
+    }
+    else
+    {
+        label_cos_a = cos_a;
+        label_sin_a = sin_a;
+    }
+    unit_right.x = cos_a;
+    unit_right.y = sin_a;
+
+    header_height = imgui_c89_ctx->FontSize +
+                    imgui_c89_ctx->Style.CellPadding.x * 2.0f;
+    rotate_x = max_label_width;
+    rotate_y = flip ? header_height : -header_height;
+    rotated.x = rotate_x * cos_a - rotate_y * sin_a;
+    rotated.y = rotate_x * sin_a + rotate_y * cos_a;
+    row_height = @TRUNC@(@ABS_FLOAT@(rotated.y));
+    table->AngledHeadersHeight = row_height;
+    table->AngledHeadersSlope = sin_a != 0.0f ? cos_a / sin_a : 0.0f;
+    angled_vector.x = unit_right.x * (row_height / -sin_a);
+    angled_vector.y = unit_right.y * (row_height / -sin_a);
+
+    @TABLE_NEXT_ROW@(imgui_c89_ctx, @TABLE_ROW_FLAGS_HEADERS@,
+                    row_height);
+    @TABLE_NEXT_COLUMN@(imgui_c89_ctx);
+    row_rect.Min.x = table->WorkRect.Min.x;
+    row_rect.Min.y = table->BgClipRect.Min.y;
+    row_rect.Max.x = table->WorkRect.Max.x;
+    row_rect.Max.y = table->RowPosY2;
+
+    @DRAW_SPLITTER_SET_CURRENT_CHANNEL@(
+        imgui_c89_ctx, table->DrawSplitter, draw_list,
+        0);
+    clip_min_x = table->BgClipRect.Min.x;
+    if (table->FreezeColumnsCount > 0)
+    {
+        frozen_column_n = table->DisplayOrderToIndex.Data[
+            table->FreezeColumnsCount - 1];
+        clip_min_x = clip_min_x >=
+                     table->Columns.Data[frozen_column_n].MaxX
+                   ? clip_min_x
+                   : table->Columns.Data[frozen_column_n].MaxX;
+    }
+    @TABLE_SET_BG_COLOR@(imgui_c89_ctx, @TABLE_BG_TARGET_ROW_BG0@,
+                        0, -1);
+
+    clip_min = table->BgClipRect.Min;
+    clip_max = table->BgClipRect.Max;
+    @PUSH_CLIP_RECT@(imgui_c89_ctx, &clip_min, &clip_max, 0);
+    header_bg_color = @GET_COLOR_U32@(
+        imgui_c89_ctx, @COLOR_TABLE_HEADER_BG@, 0.25f);
+    fill_min.x = table->BgClipRect.Min.x;
+    fill_min.y = row_rect.Min.y;
+    fill_max.x = table->BgClipRect.Max.x;
+    fill_max.y = row_rect.Max.y;
+    @DRAW_LIST_ADD_RECT_FILLED@(
+        imgui_c89_ctx, draw_list, &fill_min, &fill_max,
+        header_bg_color, 0.0f, 0);
+
+    clip_min.x = clip_min_x;
+    clip_min.y = table->BgClipRect.Min.y;
+    @PUSH_CLIP_RECT@(imgui_c89_ctx, &clip_min, &clip_max, 1);
+    @BUTTON_BEHAVIOR@(imgui_c89_ctx, &row_rect, row_id,
+                      NULL, NULL, 0);
+    @KEEP_ALIVE_ID@(imgui_c89_ctx, row_id);
+
+    ascent_scaled = imgui_c89_ctx->FontBaked->Ascent *
+                    imgui_c89_ctx->FontBakedScale;
+    line_offset_for_ascent_x =
+        (imgui_c89_ctx->FontSize - ascent_scaled) * 0.5f;
+    line_offset_for_ascent_x = line_offset_for_ascent_x >= 0.0f
+                             ? line_offset_for_ascent_x : 0.0f;
+    line_offset_for_ascent_x /= -sin_a;
+    line_offset_for_ascent_x *= flip ? -1.0f : 1.0f;
+    padding = imgui_c89_ctx->Style.CellPadding;
+    align = imgui_c89_ctx->Style.TableAngledHeadersTextAlign;
+    max_x = -3.402823466e38f;
+
+    for (pass_n = 0; pass_n < 2; ++pass_n)
+    {
+        for (request_order = 0;
+             request_order < data_count;
+             ++request_order)
+        {
+            request = &data[request_order];
+            column_n = request->Index;
+            column = &table->Columns.Data[column_n];
+
+            points[0].x = column->MaxX;
+            points[0].y = row_rect.Max.y;
+            points[1].x = column->MinX;
+            points[1].y = row_rect.Max.y;
+            points[2].x = points[1].x + angled_vector.x;
+            points[2].y = points[1].y + angled_vector.y;
+            points[3].x = points[0].x + angled_vector.x;
+            points[3].y = points[0].y + angled_vector.y;
+
+            if (pass_n == 0)
+            {
+                @DRAW_LIST_ADD_QUAD_FILLED@(
+                    imgui_c89_ctx, draw_list, &points[0], &points[1],
+                    &points[2], &points[3], request->BgColor0);
+                @DRAW_LIST_ADD_QUAD_FILLED@(
+                    imgui_c89_ctx, draw_list, &points[0], &points[1],
+                    &points[2], &points[3], request->BgColor1);
+                max_x = max_x >= points[3].x ? max_x : points[3].x;
+
+                label = @TABLE_GET_COLUMN_NAME@(table, column_n);
+                label_end = @FIND_RENDERED_TEXT_END@(label, NULL);
+                line_step = imgui_c89_ctx->FontSize / -sin_a;
+                line_count = @TEXT_COUNT_LINES@(label, label_end);
+                current_line_offset = flip
+                    ? (float)(line_count - 1) * line_step : 0.0f;
+                align_space =
+                    (column->MaxX - column->MinX) - padding.x * 2.0f -
+                    (float)line_count * line_step;
+                align_space = align_space >= 0.0f ? align_space : 0.0f;
+                align_offset = @FLOOR@(align_space * align.x);
+                current_line_offset +=
+                    align_offset - line_offset_for_ascent_x;
+                column->ContentMaxXHeadersUsed = column->WorkMinX +
+                    ceilf((float)line_count * line_step - align_offset);
+                column->ContentMaxXHeadersIdeal =
+                    column->ContentMaxXHeadersUsed;
+
+                while (label < label_end)
+                {
+                    line_end = strchr(label, '\n');
+                    if (line_end == NULL)
+                        line_end = label_end;
+                    text_size = @CALC_TEXT_SIZE@(
+                        imgui_c89_ctx, label, line_end, 0, -1.0f);
+                    clip_width = max_label_width - padding.y;
+                    clip_height = column->ClipRect.Max.x -
+                                  column->WorkMinX - current_line_offset;
+                    clip_height = text_size.y < clip_height
+                                ? text_size.y : clip_height;
+                    text_clip_rect.Min = window->ClipRect.Min;
+                    text_clip_rect.Max.x =
+                        text_clip_rect.Min.x + clip_width;
+                    text_clip_rect.Max.y =
+                        text_clip_rect.Min.y + clip_height;
+
+                    vertex_begin = draw_list->_VtxCurrentIdx;
+                    @PUSH_STYLE_COLOR_U32@(
+                        imgui_c89_ctx, @COLOR_TEXT@,
+                        request->TextColor);
+                    @RENDER_TEXT_ELLIPSIS@(
+                        imgui_c89_ctx, draw_list,
+                        &text_clip_rect.Min, &text_clip_rect.Max,
+                        text_clip_rect.Max.x, label, line_end,
+                        &text_size);
+                    @POP_STYLE_COLOR@(imgui_c89_ctx, 1);
+                    vertex_end = draw_list->_VtxCurrentIdx;
+
+                    available_width = clip_width - text_size.x +
+                        @ABS_FLOAT@(padding.x * cos_a) * 2.0f -
+                        @ABS_FLOAT@(padding.y * sin_a) * 2.0f;
+                    available_width = available_width >= 0.0f
+                                    ? available_width : 0.0f;
+                    vertical_offset = available_width * align.y *
+                                      (flip ? -1.0f : 1.0f);
+                    pivot_in.x =
+                        window->ClipRect.Min.x - vertical_offset;
+                    pivot_in.y = window->ClipRect.Min.y + text_size.y;
+                    pivot_out.x = column->WorkMinX;
+                    pivot_out.y = row_rect.Max.y;
+                    current_line_offset += flip ? -line_step : line_step;
+                    pivot_out.x += unit_right.x * padding.y;
+                    pivot_out.y += unit_right.y * padding.y;
+                    if (flip)
+                    {
+                        extra_width = clip_width -
+                            (clip_width - text_size.x > 0.0f ?
+                             clip_width - text_size.x : 0.0f);
+                        pivot_out.x += unit_right.x * extra_width;
+                        pivot_out.y += unit_right.y * extra_width;
+                    }
+                    pivot_out.x += flip
+                        ? current_line_offset + line_step
+                        : current_line_offset;
+                    @SHADE_VERTS_TRANSFORM_POS@(
+                        draw_list, vertex_begin, vertex_end, &pivot_in,
+                        label_cos_a, label_sin_a, &pivot_out);
+                    label = line_end + 1;
+                }
+            }
+            else
+            {
+                line_p1.x = points[0].x -
+                            1.0f * 0.5f;
+                line_p1.y = points[0].y;
+                line_p2.x = points[3].x -
+                            1.0f * 0.5f;
+                line_p2.y = points[3].y;
+                border_color = @TABLE_GET_COLUMN_BORDER_COL@(
+                    imgui_c89_ctx, table, request_order, column_n);
+                @DRAW_LIST_ADD_LINE@(
+                    imgui_c89_ctx, draw_list, &line_p1, &line_p2,
+                    border_color, 1.0f);
+            }
+        }
+    }
+
+    @POP_CLIP_RECT@(imgui_c89_ctx);
+    @POP_CLIP_RECT@(imgui_c89_ctx);
+    extra_width = max_x -
+        table->Columns.Data[table->RightMostEnabledColumn].MaxX;
+    extra_width = extra_width >= 0.0f ? extra_width : 0.0f;
+    table->TempData->AngledHeadersExtraWidth = extra_width;
+/* IMGUI_C89_FUNCTION_END table_angled_headers_ex */

@@ -1,0 +1,234 @@
+/* Handwritten C89 lifecycle for the legacy Columns API. */
+
+/* IMGUI_C89_FUNCTION_BEGIN begin_columns */
+ImGuiWindow *window;
+ImGuiOldColumns *columns;
+ImGuiOldColumnData *column;
+ImGuiID id;
+float padding;
+float padding_over_window;
+float half_clip_extend;
+float max_1;
+float max_2;
+float offset_0;
+float offset_1;
+float clip_x1;
+float clip_x2;
+int n;
+window = @GET_WINDOW@(imgui_c89_ctx);
+id = @GET_COLUMNS_ID@(imgui_c89_ctx, str_id, columns_count);
+columns = @FIND_COLUMNS@(imgui_c89_ctx, window, id);
+columns->Current = 0;
+columns->Count = columns_count;
+columns->Flags = flags;
+window->DC.CurrentColumns = columns;
+window->DC.NavIsScrollPushableX = 0;
+columns->HostCursorPosY = window->DC.CursorPos.y;
+columns->HostCursorMaxPosX = window->DC.CursorMaxPos.x;
+columns->HostInitialClipRect = window->ClipRect;
+columns->HostBackupParentWorkRect = window->ParentWorkRect;
+window->ParentWorkRect = window->WorkRect;
+padding = imgui_c89_ctx->Style.ItemSpacing.x;
+padding_over_window = @MAX@(padding - window->WindowPadding.x, 0.0f);
+half_clip_extend = @TRUNC@(@MAX@(window->WindowPadding.x * 0.5f,
+    window->WindowBorderSize));
+max_1 = window->WorkRect.Max.x + padding - padding_over_window;
+max_2 = window->WorkRect.Max.x + half_clip_extend;
+columns->OffMinX = window->DC.Indent.x - padding + padding_over_window;
+columns->OffMaxX = @MAX@(@MIN@(max_1, max_2) - window->Pos.x,
+    columns->OffMinX + 1.0f);
+columns->LineMinY = columns->LineMaxY = window->DC.CursorPos.y;
+if (columns->Columns.Size && columns->Columns.Size != columns_count + 1)
+    columns->Columns.Size = 0;
+columns->IsFirstFrame = columns->Columns.Size == 0;
+if (!columns->Columns.Size)
+{
+    columns->Columns.Data = imgui_c89_vector_reserve(imgui_c89_ctx,
+        columns->Columns.Data, 0, &columns->Columns.Capacity,
+        columns_count + 1, sizeof(*columns->Columns.Data), 0);
+    for (n = 0; n <= columns_count; n++)
+    {
+        column = &columns->Columns.Data[n];
+        memset(column, 0, sizeof(*column));
+        column->OffsetNorm = n / (float)columns_count;
+    }
+    columns->Columns.Size = columns_count + 1;
+}
+for (n = 0; n < columns_count; n++)
+{
+    column = &columns->Columns.Data[n];
+    clip_x1 = (float)(int)(window->Pos.x +
+        @GET_OFFSET@(imgui_c89_ctx, n) + 0.5f);
+    clip_x2 = (float)(int)(window->Pos.x +
+        @GET_OFFSET@(imgui_c89_ctx, n + 1) - 1.0f + 0.5f);
+    column->ClipRect.Min.x = clip_x1;
+    column->ClipRect.Min.y = -3.402823466e38f;
+    column->ClipRect.Max.x = clip_x2;
+    column->ClipRect.Max.y = 3.402823466e38f;
+    @CLIP_FULL@(&column->ClipRect, &window->ClipRect);
+}
+if (columns->Count > 1)
+{
+    @SPLIT@(imgui_c89_ctx, &columns->Splitter, window->DrawList,
+        1 + columns->Count);
+    @SET_CHANNEL@(imgui_c89_ctx, &columns->Splitter, window->DrawList, 1);
+    @PUSH_COLUMN_CLIP@(imgui_c89_ctx, 0);
+}
+offset_0 = @GET_OFFSET@(imgui_c89_ctx, columns->Current);
+offset_1 = @GET_OFFSET@(imgui_c89_ctx, columns->Current + 1);
+@PUSH_WIDTH@(imgui_c89_ctx, (offset_1 - offset_0) * 0.65f);
+window->DC.ColumnsOffset.x = padding_over_window;
+window->DC.CursorPos.x = (float)(int)(window->Pos.x +
+    window->DC.Indent.x + window->DC.ColumnsOffset.x);
+window->WorkRect.Max.x = window->Pos.x + offset_1 - padding;
+window->WorkRect.Max.y = window->ContentRegionRect.Max.y;
+/* IMGUI_C89_FUNCTION_END begin_columns */
+
+/* IMGUI_C89_FUNCTION_BEGIN next_column */
+ImGuiWindow *window;
+ImGuiOldColumns *columns;
+ImGuiOldColumnData *column;
+float padding;
+float offset_0;
+float offset_1;
+window = @GET_WINDOW@(imgui_c89_ctx);
+columns = window->DC.CurrentColumns;
+if (window->SkipItems || !columns)
+    return;
+if (columns->Count == 1)
+{
+    window->DC.CursorPos.x = (float)(int)(window->Pos.x +
+        window->DC.Indent.x + window->DC.ColumnsOffset.x);
+    return;
+}
+if (++columns->Current == columns->Count)
+    columns->Current = 0;
+@POP_WIDTH@(imgui_c89_ctx);
+column = &columns->Columns.Data[columns->Current];
+@SET_WINDOW_CLIP@(window, &column->ClipRect);
+@SET_CHANNEL@(imgui_c89_ctx, &columns->Splitter, window->DrawList,
+    columns->Current + 1);
+padding = imgui_c89_ctx->Style.ItemSpacing.x;
+columns->LineMaxY = @MAX@(columns->LineMaxY, window->DC.CursorPos.y);
+if (columns->Current)
+    window->DC.ColumnsOffset.x = @GET_OFFSET@(imgui_c89_ctx,
+        columns->Current) - window->DC.Indent.x + padding;
+else
+{
+    window->DC.ColumnsOffset.x = @MAX@(padding - window->WindowPadding.x,
+        0.0f);
+    window->DC.IsSameLine = 0;
+    columns->LineMinY = columns->LineMaxY;
+}
+window->DC.CursorPos.x = (float)(int)(window->Pos.x +
+    window->DC.Indent.x + window->DC.ColumnsOffset.x);
+window->DC.CursorPos.y = columns->LineMinY;
+window->DC.CurrLineSize.x = window->DC.CurrLineSize.y = 0.0f;
+window->DC.CurrLineTextBaseOffset = 0.0f;
+offset_0 = @GET_OFFSET@(imgui_c89_ctx, columns->Current);
+offset_1 = @GET_OFFSET@(imgui_c89_ctx, columns->Current + 1);
+@PUSH_WIDTH@(imgui_c89_ctx, (offset_1 - offset_0) * 0.65f);
+window->WorkRect.Max.x = window->Pos.x + offset_1 - padding;
+/* IMGUI_C89_FUNCTION_END next_column */
+
+/* IMGUI_C89_FUNCTION_BEGIN end_columns */
+ImGuiWindow *window;
+ImGuiOldColumns *columns;
+ImGuiOldColumnData *column;
+ImGuiOldColumnFlags flags;
+ImRect hit_rect;
+ImGuiID column_id;
+ImU32 color;
+float y1;
+float y2;
+float x;
+float half_width;
+int n;
+int dragging_column;
+int resizing;
+unsigned char hovered;
+unsigned char held;
+window = @GET_WINDOW@(imgui_c89_ctx);
+columns = window->DC.CurrentColumns;
+@POP_WIDTH@(imgui_c89_ctx);
+if (columns->Count > 1)
+{
+    @POP_CLIP@(imgui_c89_ctx);
+    @MERGE@(imgui_c89_ctx, &columns->Splitter, window->DrawList);
+}
+flags = columns->Flags;
+columns->LineMaxY = @MAX@(columns->LineMaxY, window->DC.CursorPos.y);
+window->DC.CursorPos.y = columns->LineMaxY;
+if (!(flags & @GROW_PARENT@))
+    window->DC.CursorMaxPos.x = columns->HostCursorMaxPosX;
+resizing = 0;
+if (!(flags & @NO_BORDER@) && !window->SkipItems)
+{
+    y1 = @MAX@(columns->HostCursorPosY, window->ClipRect.Min.y);
+    y2 = @MIN@(window->DC.CursorPos.y, window->ClipRect.Max.y);
+    dragging_column = -1;
+    for (n = 1; n < columns->Count; n++)
+    {
+        column = &columns->Columns.Data[n];
+        x = window->Pos.x + @GET_OFFSET@(imgui_c89_ctx, n);
+        column_id = columns->ID + (ImGuiID)n;
+        half_width = @TRUNC@(4.0f * imgui_c89_ctx->CurrentDpiScale);
+        hit_rect.Min.x = x - half_width;
+        hit_rect.Min.y = y1;
+        hit_rect.Max.x = x + half_width;
+        hit_rect.Max.y = y2;
+        if (!@ITEM_ADD@(imgui_c89_ctx, &hit_rect, column_id, 0,
+                @NO_NAV@))
+            continue;
+        hovered = held = 0;
+        if (!(flags & @NO_RESIZE@))
+        {
+            @BUTTON@(imgui_c89_ctx, &hit_rect, column_id,
+                &hovered, &held, 0);
+            if (hovered || held)
+                @SET_CURSOR@(imgui_c89_ctx, @RESIZE_EW@);
+            if (held && !(column->Flags & @NO_RESIZE@))
+                dragging_column = n;
+        }
+        color = @GET_COLOR@(imgui_c89_ctx,
+            held ? @SEPARATOR_ACTIVE@ :
+            (hovered ? @SEPARATOR_HOVERED@ : @SEPARATOR@), 1.0f);
+        @ADD_LINE_V@(imgui_c89_ctx, window->DrawList, (float)(int)x,
+            y1 + 1.0f, y2, color, 1.0f);
+    }
+    if (dragging_column != -1)
+    {
+        if (!columns->IsBeingResized)
+            for (n = 0; n <= columns->Count; n++)
+                columns->Columns.Data[n].OffsetNormBeforeResize =
+                    columns->Columns.Data[n].OffsetNorm;
+        resizing = 1;
+        columns->IsBeingResized = 1;
+        x = @DRAGGED_OFFSET@(imgui_c89_ctx, columns, dragging_column);
+        @SET_OFFSET@(imgui_c89_ctx, dragging_column, x);
+    }
+}
+columns->IsBeingResized = resizing;
+window->WorkRect = window->ParentWorkRect;
+window->ParentWorkRect = columns->HostBackupParentWorkRect;
+window->DC.CurrentColumns = 0;
+window->DC.ColumnsOffset.x = 0.0f;
+window->DC.CursorPos.x = (float)(int)(window->Pos.x +
+    window->DC.Indent.x + window->DC.ColumnsOffset.x);
+@NAV_UPDATE@(imgui_c89_ctx);
+/* IMGUI_C89_FUNCTION_END end_columns */
+
+/* IMGUI_C89_FUNCTION_BEGIN columns_wrapper */
+ImGuiWindow *window;
+ImGuiOldColumns *columns;
+ImGuiOldColumnFlags flags;
+window = @GET_WINDOW@(imgui_c89_ctx);
+flags = borders ? 0 : @NO_BORDER@;
+columns = window->DC.CurrentColumns;
+if (columns && columns->Count == columns_count && columns->Flags == flags)
+    return;
+if (columns)
+    @END_COLUMNS@(imgui_c89_ctx);
+if (columns_count != 1)
+    @BEGIN_COLUMNS@(imgui_c89_ctx, id, columns_count, flags);
+/* IMGUI_C89_FUNCTION_END columns_wrapper */
