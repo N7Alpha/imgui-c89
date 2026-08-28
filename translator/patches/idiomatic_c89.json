@@ -15,6 +15,9 @@
     "compact_imvector_capacity": true,
     "compact_imchunkstream": true,
     "compact_impool": true,
+    "flatten_table_pool": true,
+    "flatten_table_spans": true,
+    "flatten_table_vectors": true,
     "compact_checkbox_flags": true,
     "noinline_functions": [
       "ImFontAtlasBuilder::ImFontAtlasBuilder",
@@ -324,9 +327,7 @@
           "parameter_types": ["ImGuiTable *"], "body_sha256": ["7890bce9b452b108433764b995b2b2c4bf9138ec8f90077317742241b0899e3d", "b018b2394281c623a79450d20af19629f62994d354bafe68b0b3eac9d305a1e2"],
           "template": "handwritten/tables_gc_batch.c.in", "fragment": "table_gc_compact_table",
           "functions": {
-            "@SORT_CLEAR@": {"qualified_name": "ImVector<ImGuiTableColumnSortSpecs>::clear", "parameter_types": []},
             "@TEXT_CLEAR@": {"qualified_name": "ImGuiTextBuffer::clear", "parameter_types": []},
-            "@COLUMN_AT@": {"qualified_name": "ImSpan<ImGuiTableColumn>::operator[]", "parameter_types": ["int"], "method_const": false},
             "@POOL_INDEX@": {"qualified_name": "ImPool<ImGuiTable>::GetIndex", "parameter_types": ["const ImGuiTable *"]}
           }
         },
@@ -334,7 +335,6 @@
           "parameter_types": ["ImGuiTableTempData *"], "body_sha256": "2eb1e62dd85361ba5c45702a9c17ebef86023c3129872b1fdc38551c307f2407",
           "template": "handwritten/tables_gc_batch.c.in", "fragment": "table_gc_compact_temp_data",
           "functions": {
-            "@HEADER_CLEAR@": {"qualified_name": "ImVector<ImGuiTableHeaderData>::clear", "parameter_types": []},
             "@SPLITTER_CLEAR@": {"qualified_name": "ImDrawListSplitter::ClearFreeMemory", "parameter_types": []}
           }
         }
@@ -373,7 +373,7 @@
         "body_sha256": ["e7625d66cee0b558f868fcc326eabd78fab73dbc6514493df510b4f2f30b1ede", "77aafddd4717b93b7007d2659acd18a2f167131489d3b460a4e08cca823d961b"],
         "template": "handwritten/tables_sort_batch.c.in", "fragment": "table_set_column_sort_direction",
         "functions": {"@FIX_DIRECTION@": {"qualified_name": "ImGui::TableFixColumnSortDirection", "parameter_types": ["ImGuiTable *", "ImGuiTableColumn *"]}},
-        "constants": {"@SORT_MULTI@": "ImGuiTableFlags_SortMulti", "@SORT_NONE@": "ImGuiSortDirection_None"}
+        "constants": {"@SORT_MULTI@": "ImGuiTableFlags_SortMulti", "@SORT_TRISTATE@": "ImGuiTableFlags_SortTristate", "@SORT_NONE@": "ImGuiSortDirection_None"}
       },
       "ImGui::TableSortSpecsSanitize": {
         "parameter_types": ["ImGuiTable *"],
@@ -381,7 +381,7 @@
         "template": "handwritten/tables_sort_batch.c.in", "fragment": "table_sort_specs_sanitize",
         "functions": {"@GET_AVAIL_DIRECTION@": {"qualified_name": "TableGetColumnAvailSortDirection", "parameter_types": ["ImGuiTableColumn *", "int"]}},
         "constants": {
-          "@SORT_MULTI@": "ImGuiTableFlags_SortMulti", "@SORT_TRISTATE@": "ImGuiTableFlags_SortTristate",
+          "@SORTABLE@": "ImGuiTableFlags_Sortable", "@SORT_MULTI@": "ImGuiTableFlags_SortMulti", "@SORT_TRISTATE@": "ImGuiTableFlags_SortTristate",
           "@NO_SORT@": "ImGuiTableColumnFlags_NoSort"
         }
       },
@@ -390,8 +390,7 @@
         "body_sha256": ["fa0451d0c206f41524c61fbfc1d7860fe2ee10eb23d702d952c0e2607eb53bf3", "19811d2b4be33af8b6634202b5776a855ae2f88471cec09b43f408eb95629dc4"],
         "template": "handwritten/tables_sort_batch.c.in", "fragment": "table_sort_specs_build",
         "functions": {
-          "@SANITIZE@": {"qualified_name": "ImGui::TableSortSpecsSanitize", "parameter_types": ["ImGuiTable *"]},
-          "@SPECS_RESIZE@": {"qualified_name": "ImVector<ImGuiTableColumnSortSpecs>::resize", "parameter_types": ["int"]}
+          "@SANITIZE@": {"qualified_name": "ImGui::TableSortSpecsSanitize", "parameter_types": ["ImGuiTable *"]}
         }
       },
       "ImGui::TablePushBackgroundChannel": {
@@ -474,7 +473,7 @@
       "ImGui::TableSetupColumn": {
         "parameter_types": ["const char *","ImGuiTableColumnFlags","float","ImGuiID"], "body_sha256": ["41a677b1e36e8bc020153975b8ceac6c1e75f1e0811a364a7c0b9ddc2d4fb5eb","2807490a1bac0ca47e3b38c3577316a64f979e5395bebfd4d76cd8b43007a107"],
         "template": "handwritten/tables_column_setup_batch.c.in", "fragment": "table_setup_column",
-        "functions": {"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]},"@TEXT_SIZE@":{"qualified_name":"ImGuiTextBuffer::size","parameter_types":[]},"@TEXT_APPEND@":{"qualified_name":"ImGuiTextBuffer::append","parameter_types":["const char *","const char *"]},"@HASH_STR@":{"qualified_name":"ImHashStr","parameter_types":["const char *","size_t","ImGuiID"]},"@REQUEST_RESERVE@":{"qualified_name":"ImVector<ImGuiTableReconcileColumnData>::reserve","parameter_types":["int"]},"@APPLY@":{"qualified_name":"TableSetupColumnApply","parameter_types":["ImGuiTable *","int","ImGuiID","ImS16","ImGuiTableColumnFlags","float","ImGuiID"]},"@COLUMN_INIT@":{"qualified_name":"ImGuiTableColumn::ImGuiTableColumn","parameter_types":[]},"@REQUEST_PUSH@":{"qualified_name":"ImVector<ImGuiTableReconcileColumnData>::push_back","parameter_types":["const ImGuiTableReconcileColumnData &"]}}
+        "functions": {"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]},"@TEXT_SIZE@":{"qualified_name":"ImGuiTextBuffer::size","parameter_types":[]},"@TEXT_APPEND@":{"qualified_name":"ImGuiTextBuffer::append","parameter_types":["const char *","const char *"]},"@HASH_STR@":{"qualified_name":"ImHashStr","parameter_types":["const char *","size_t","ImGuiID"]},"@APPLY@":{"qualified_name":"TableSetupColumnApply","parameter_types":["ImGuiTable *","int","ImGuiID","ImS16","ImGuiTableColumnFlags","float","ImGuiID"]}}
       },
       "ImGui::TableSetupScrollFreeze": {
         "parameter_types": ["int","int"], "body_sha256": ["9b143464c53458a76e7c3d55c173be6fbeb7f668d9772ad18acb8bf307cb2d8b","8699dade040ff615d8140ea8e8cd447835f2efdb9dfa8be8918839c82f5710f9"],
@@ -485,13 +484,14 @@
       "ImGui::TableSetColumnEnabled": {
         "parameter_types":["int","bool"], "body_sha256":["931cf93c800d741462a7fbd78ff115eb50d87385d48c80c8d1c9d42c4be0fc37","cdcbb71864da560d13b8fabb77247e0ccc2be04ddc534308513f1ed0c2c6e35e"],
         "template":"handwritten/tables_public_state_batch.c.in","fragment":"table_set_column_enabled",
-        "functions":{"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]}}
+        "functions":{"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]}},
+        "constants":{"@HIDEABLE@":"ImGuiTableFlags_Hideable"}
       },
       "ImGui::TableSetBgColor": {
         "parameter_types":["ImGuiTableBgTarget","ImU32","int"], "body_sha256":["bcfadbf829b210d17c40abcab52a463874fdcfd8e542a73d8a4a3125b6ce6811","aacfe3326b7aa01bd7fe664212759e17d3cc2087778dcf77f2f5544957e3f11a"],
         "template":"handwritten/tables_public_state_batch.c.in","fragment":"table_set_bg_color",
         "functions":{"@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]}},
-        "constants":{"@CELL_BG@":"ImGuiTableBgTarget_CellBg","@ROW_BG0@":"ImGuiTableBgTarget_RowBg0","@ROW_BG1@":"ImGuiTableBgTarget_RowBg1"}
+        "constants":{"@BG_NONE@":"ImGuiTableBgTarget_None","@CELL_BG@":"ImGuiTableBgTarget_CellBg","@ROW_BG0@":"ImGuiTableBgTarget_RowBg0","@ROW_BG1@":"ImGuiTableBgTarget_RowBg1"}
       },
       "ImGui::TableOpenContextMenu": {
         "parameter_types":["int"], "body_sha256":["253780dca203796acbb9d5f6184785fd62dd5699c865b0549c3f187be7be17c0","3c4710df95c838a58be0ebce935c72a06f6fc86a11ccaf208fcd5de422be5a92"],
@@ -571,7 +571,7 @@
       "ImGui::TableAngledHeadersRow": {
         "parameter_types":[], "body_sha256":"42fc0a97a4e13b02b0e01c75a8c5fed06cfe0696fcb3ff3fb8424d49738ec43d",
         "template":"handwritten/tables_angled_headers_public.c.in","fragment":"table_angled_headers_row",
-        "functions":{"@RESERVE@":{"qualified_name":"ImVector<ImGuiTableHeaderData>::reserve","parameter_types":["int"]},"@GET_ID@":{"qualified_name":"ImGuiWindow::GetID","parameter_types":["const char *","const char *"]},"@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},"@PUSH@":{"qualified_name":"ImVector<ImGuiTableHeaderData>::push_back","parameter_types":["const ImGuiTableHeaderData &"]},"@ROW_EX@":{"qualified_name":"ImGui::TableAngledHeadersRowEx","parameter_types":["ImGuiID","float","float","const ImGuiTableHeaderData *","int"]}},
+        "functions":{"@GET_ID@":{"qualified_name":"ImGuiWindow::GetID","parameter_types":["const char *","const char *"]},"@GET_COLOR@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},"@ROW_EX@":{"qualified_name":"ImGui::TableAngledHeadersRowEx","parameter_types":["ImGuiID","float","float","const ImGuiTableHeaderData *","int"]}},
         "constants":{"@TABLE_HEADER_BG@":"ImGuiCol_TableHeaderBg","@TEXT_COLOR@":"ImGuiCol_Text","@HEADER_COLOR@":"ImGuiCol_Header","@ANGLED_HEADER@":"ImGuiTableColumnFlags_AngledHeader"}
       },
       "ImGui::SetWindowClipRectBeforeSetChannel": {
@@ -766,6 +766,7 @@
           "@SET_MOUSE_CURSOR@":{"qualified_name":"ImGui::SetMouseCursor","parameter_types":["ImGuiMouseCursor"]}
         },
         "constants":{
+          "@RESIZABLE@":"ImGuiTableFlags_Resizable",
           "@NO_RESIZE@":"ImGuiTableColumnFlags_NoResize",
           "@NO_DIRECT_RESIZE@":"ImGuiTableColumnFlags_NoDirectResize_",
           "@NO_BORDERS_BODY@":"ImGuiTableFlags_NoBordersInBody",
@@ -904,6 +905,7 @@
           "0e06965599e5a7a6d0c11303d5f238dc93872d282e878381e166ffb2cb71b5eb":{"@TEST_ENGINE_ITEM_INFO@":"if (ctx->TestEngineHookItems)\n        @ITEM_INFO@(ctx, id, label, ctx->LastItemData.StatusFlags);"}
         },
         "functions":{
+          "@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]},
           "@FIND_RENDERED_TEXT_END@":{"qualified_name":"ImGui::FindRenderedTextEnd","parameter_types":["const char *","const char *"]},
           "@CALC_TEXT_SIZE@":{"qualified_name":"ImGui::CalcTextSize","parameter_types":["const char *","const char *","bool","float"]},
           "@TABLE_GET_CELL_BG_RECT@":{"qualified_name":"ImGui::TableGetCellBgRect","parameter_types":["const ImGuiTable *","int"]},
@@ -957,6 +959,7 @@
         "template":"handwritten/tables_angled_headers_ex.c.in",
         "fragment":"table_angled_headers_ex",
         "functions":{
+          "@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]},
           "@TABLE_GET_HEADER_ANGLED_MAX_LABEL_WIDTH@":{"qualified_name":"ImGui::TableGetHeaderAngledMaxLabelWidth","parameter_types":[]},
           "@TRUNC@":{"qualified_name":"ImTrunc","parameter_types":["float"]},
           "@ABS_FLOAT@":{"qualified_name":"ImAbs","parameter_types":["float"]},
@@ -1047,6 +1050,18 @@
         "template":"handwritten/tables_end.c.in",
         "fragment":"end_table",
         "functions":{
+          "@ERROR_LOG@":{"qualified_name":"ImGui::ErrorLog","parameter_types":["const char *"]},
+          "@TABLE_UPDATE_LAYOUT@":{"qualified_name":"ImGui::TableUpdateLayout","parameter_types":["ImGuiTable *"]},
+          "@TABLE_END_ROW@":{"qualified_name":"ImGui::TableEndRow","parameter_types":["ImGuiTable *"]},
+          "@TABLE_OPEN_CONTEXT_MENU@":{"qualified_name":"ImGui::TableOpenContextMenu","parameter_types":["int"]},
+          "@TABLE_DRAW_BORDERS@":{"qualified_name":"ImGui::TableDrawBorders","parameter_types":["ImGuiTable *"]},
+          "@TABLE_MERGE_DRAW_CHANNELS@":{"qualified_name":"ImGui::TableMergeDrawChannels","parameter_types":["ImGuiTable *"]},
+          "@TABLE_GET_COLUMN_WIDTH_AUTO@":{"qualified_name":"ImGui::TableGetColumnWidthAuto","parameter_types":["ImGuiTable *","ImGuiTableColumn *"]},
+          "@SET_SCROLL_FROM_POS_X@":{"qualified_name":"ImGui::SetScrollFromPosX","parameter_types":["ImGuiWindow *","float","float"]},
+          "@ITEM_SIZE@":{"qualified_name":"ImGui::ItemSize","parameter_types":["const ImVec2 &","float"]},
+          "@ITEM_ADD@":{"qualified_name":"ImGui::ItemAdd","parameter_types":["const ImRect &","ImGuiID","const ImRect *","ImGuiItemFlags"]},
+          "@TABLE_SAVE_SETTINGS@":{"qualified_name":"ImGui::TableSaveSettings","parameter_types":["ImGuiTable *"]},
+          "@NAV_UPDATE_SCROLL_PUSHABLE_X@":{"qualified_name":"ImGui::NavUpdateCurrentWindowIsScrollPushableX","parameter_types":[]},
           "@TABLE_GET_INSTANCE_DATA@":{"qualified_name":"ImGui::TableGetInstanceData","parameter_types":["ImGuiTable *","int"]},
           "@TABLE_POOL_GET_BY_INDEX@":{"qualified_name":"ImPool<ImGuiTable>::GetByIndex","parameter_types":["ImPoolIdx"]},
           "@TABLE_POOL_GET_INDEX@":{"qualified_name":"ImPool<ImGuiTable>::GetIndex","parameter_types":["const ImGuiTable *"]},
@@ -1072,17 +1087,13 @@
           "@BEGIN_CHILD_EX@":{"qualified_name":"ImGui::BeginChildEx","parameter_types":["const char *","ImGuiID","const ImVec2 &","ImGuiChildFlags","ImGuiWindowFlags"]},
           "@CALC_ITEM_SIZE@":{"qualified_name":"ImGui::CalcItemSize","parameter_types":["ImVec2","float","float"]},
           "@CLEAR_NEXT_WINDOW_FLAGS@":{"qualified_name":"ImGuiNextWindowData::ClearFlags","parameter_types":[]},
-          "@COLUMN_SPAN_SIZE@":{"qualified_name":"ImSpan<ImGuiTableColumn>::size","parameter_types":[]},
           "@DEBUG_LOG@":{"qualified_name":"ImGui::DebugLog","parameter_types":["const char *"]},
           "@DRAW_SPLITTER_CLEAR@":{"qualified_name":"ImDrawListSplitter::Clear","parameter_types":[]},
-          "@FLOAT_VECTOR_RESIZE@":{"qualified_name":"ImVector<float>::resize","parameter_types":["int","const float &"]},
           "@GET_COLOR_U32@":{"qualified_name":"ImGui::GetColorU32","parameter_types":["ImGuiCol","float"]},
           "@GET_CONTENT_REGION_AVAIL@":{"qualified_name":"ImGui::GetContentRegionAvail","parameter_types":[]},
           "@GET_CURRENT_WINDOW@":{"qualified_name":"ImGui::GetCurrentWindow","parameter_types":[]},
           "@GET_ID_WITH_SEED_INT@":{"qualified_name":"ImGui::GetIDWithSeed","parameter_types":["int","ImGuiID"]},
           "@GET_ID_WITH_SEED_STRING@":{"qualified_name":"ImGui::GetIDWithSeed","parameter_types":["const char *","const char *","ImGuiID"]},
-          "@INSTANCE_DATA_INIT@":{"qualified_name":"ImGuiTableInstanceData::ImGuiTableInstanceData","parameter_types":[]},
-          "@INSTANCE_DATA_PUSH_BACK@":{"qualified_name":"ImVector<ImGuiTableInstanceData>::push_back","parameter_types":["const ImGuiTableInstanceData &"]},
           "@IS_CLIPPED_EX@":{"qualified_name":"ImGui::IsClippedEx","parameter_types":["const ImRect &","ImGuiID"]},
           "@ITEM_ADD@":{"qualified_name":"ImGui::ItemAdd","parameter_types":["const ImRect &","ImGuiID","const ImRect *","ImGuiItemFlags"]},
           "@ITEM_SIZE@":{"qualified_name":"ImGui::ItemSize","parameter_types":["const ImRect &","float"]},
@@ -1094,15 +1105,12 @@
           "@SET_NEXT_WINDOW_CONTENT_SIZE@":{"qualified_name":"ImGui::SetNextWindowContentSize","parameter_types":["const ImVec2 &"]},
           "@SET_NEXT_WINDOW_SCROLL@":{"qualified_name":"ImGui::SetNextWindowScroll","parameter_types":["const ImVec2 &"]},
           "@TABLE_BEGIN_INIT_MEMORY@":{"qualified_name":"ImGui::TableBeginInitMemory","parameter_types":["ImGuiTable *","int"]},
-          "@TABLE_COLUMN_INIT@":{"qualified_name":"ImGuiTableColumn::ImGuiTableColumn","parameter_types":[]},
           "@TABLE_FIX_FLAGS@":{"qualified_name":"TableFixFlags","parameter_types":["ImGuiTableFlags","ImGuiWindow *"]},
           "@TABLE_GET_INSTANCE_DATA@":{"qualified_name":"ImGui::TableGetInstanceData","parameter_types":["ImGuiTable *","int"]},
           "@TABLE_LOAD_SETTINGS@":{"qualified_name":"ImGui::TableLoadSettings","parameter_types":["ImGuiTable *"]},
           "@TABLE_POOL_GET_INDEX@":{"qualified_name":"ImPool<ImGuiTable>::GetIndex","parameter_types":["const ImGuiTable *"]},
           "@TABLE_POOL_GET_OR_ADD@":{"qualified_name":"ImPool<ImGuiTable>::GetOrAddByKey","parameter_types":["ImGuiID"]},
           "@TABLE_RESET_SETTINGS@":{"qualified_name":"ImGui::TableResetSettings","parameter_types":["ImGuiTable *"]},
-          "@TEMP_DATA_INIT@":{"qualified_name":"ImGuiTableTempData::ImGuiTableTempData","parameter_types":[]},
-          "@TEMP_DATA_RESIZE@":{"qualified_name":"ImVector<ImGuiTableTempData>::resize","parameter_types":["int","const ImGuiTableTempData &"]},
           "@TRUNC_VEC2@":{"qualified_name":"ImTrunc","parameter_types":["const ImVec2 &"]},
           "@WINDOW_RECT@":{"qualified_name":"ImGuiWindow::Rect","parameter_types":[]}
         },
@@ -1239,6 +1247,552 @@
         "constants": {
           "@EVENT_TABLE@": "ImGuiDebugLogFlags_EventTable"
         }
+      },
+      "ImDrawList::AddRect": {
+        "parameter_types": [
+          "const ImVec2 &", "const ImVec2 &", "ImU32", "float", "float", "ImDrawFlags"
+        ],
+        "body_sha256": [
+          "79a4d81597e456f74263bf34714b2733424375c5de6318bf9ee80ca92f413bae",
+          "63bc30e35acffb40927d74005ce151ff1262941261eeb7fbe23ca5391bae8c50"
+        ],
+        "template": "handwritten/draw_rect_outline.c.in",
+        "functions": {
+          "@ERROR_LOG@": {"qualified_name": "ImGui::ErrorLog", "parameter_types": ["const char *"]},
+          "@PATH_RECT@": {"qualified_name": "ImDrawList::PathRect", "parameter_types": ["const ImVec2 &", "const ImVec2 &", "float", "ImDrawFlags"]},
+          "@PATH_STROKE@": {"qualified_name": "ImDrawList::PathStroke", "parameter_types": ["ImU32", "float", "ImDrawFlags"]}
+        },
+        "constants": {
+          "@INVALID_MASK@": "ImDrawFlags_InvalidMask_",
+          "@ANTI_ALIASED_LINES@": "ImDrawListFlags_AntiAliasedLines",
+          "@CLOSED@": "ImDrawFlags_Closed"
+        }
+      },
+      "ImDrawList::AddRectFilledMultiColor": {
+        "parameter_types": [
+          "const ImVec2 &", "const ImVec2 &", "ImU32", "ImU32", "ImU32", "ImU32"
+        ],
+        "body_sha256": "daaf46ac7dbfaa6908878ad8b37576a7f115e20f8ef5aa9a83e8e662967876b8",
+        "template": "handwritten/draw_multicolor_rect.c.in",
+        "functions": {
+          "@PRIM_RESERVE@": {"qualified_name": "ImDrawList::PrimReserve", "parameter_types": ["int", "int"]}
+        }
+      },
+      "ImDrawList::AddConcavePolyFilled": {
+        "parameter_types": ["const ImVec2 *", "const int", "ImU32"],
+        "body_sha256": "069e5ab9bb346e77d5fcdb0d1d85a89cb2e480dded5520bee3697a92800b9ea8",
+        "template": "handwritten/draw_geometry_batch.c.in",
+        "fragment": "add_concave_poly_filled",
+        "functions": {
+          "@PRIM_RESERVE@": {"qualified_name": "ImDrawList::PrimReserve", "parameter_types": ["int", "int"]},
+          "@TEMP_RESERVE@": {"qualified_name": "ImVector<ImVec2>::reserve_discard", "parameter_types": ["int"]},
+          "@RSQRT@": {"qualified_name": "ImRsqrt", "parameter_types": ["float"]},
+          "@TRI_SCRATCH_SIZE@": {"qualified_name": "ImTriangulator::EstimateScratchBufferSize", "parameter_types": ["int"]},
+          "@TRI_INIT@": {"qualified_name": "ImTriangulator::Init", "parameter_types": ["const ImVec2 *", "int", "void *"]},
+          "@TRI_NEXT@": {"qualified_name": "ImTriangulator::GetNextTriangle", "parameter_types": ["unsigned int *"]}
+        },
+        "types": {"@TEMP_VECTOR_TYPE@": "ImVector<ImVec2>"},
+        "constants": {"@ANTI_ALIASED_FILL@": "ImDrawListFlags_AntiAliasedFill"},
+        "snippets": {"@ALPHA_MASK@": "0xff000000u"}
+      },
+      "ImDrawList::AddConvexPolyFilled": {
+        "parameter_types": ["const ImVec2 *", "const int", "ImU32"],
+        "body_sha256": "017a361ec7b5bd3014a2e2147ad65e38a5c27a986339893d87db0a774fc95ab9",
+        "template": "handwritten/draw_geometry_batch.c.in",
+        "fragment": "add_convex_poly_filled",
+        "functions": {
+          "@PRIM_RESERVE@": {"qualified_name": "ImDrawList::PrimReserve", "parameter_types": ["int", "int"]},
+          "@TEMP_RESERVE@": {"qualified_name": "ImVector<ImVec2>::reserve_discard", "parameter_types": ["int"]},
+          "@RSQRT@": {"qualified_name": "ImRsqrt", "parameter_types": ["float"]}
+        },
+        "types": {"@TEMP_VECTOR_TYPE@": "ImVector<ImVec2>"},
+        "constants": {"@ANTI_ALIASED_FILL@": "ImDrawListFlags_AntiAliasedFill"},
+        "snippets": {"@ALPHA_MASK@": "0xff000000u"}
+      },
+      "ImDrawList::PathArcTo": {
+        "parameter_types": ["const ImVec2 &", "float", "float", "float", "int"],
+        "body_sha256": "db0db7f24a2c9891471a095f780ed15b19767ba32dd5a444c19e4da24114adab",
+        "template": "handwritten/draw_geometry_batch.c.in",
+        "fragment": "path_arc_to",
+        "functions": {
+          "@PATH_PUSH@": {"qualified_name": "ImVector<ImVec2>::push_back", "parameter_types": ["const ImVec2 &"]},
+          "@PATH_RESERVE@": {"qualified_name": "ImVector<ImVec2>::reserve", "parameter_types": ["int"]},
+          "@PATH_ARC_TO_N@": {"qualified_name": "ImDrawList::_PathArcToN", "parameter_types": ["const ImVec2 &", "float", "float", "float", "int"]},
+          "@PATH_ARC_TO_FAST_EX@": {"qualified_name": "ImDrawList::_PathArcToFastEx", "parameter_types": ["const ImVec2 &", "float", "int", "int", "int"]},
+          "@CALC_CIRCLE_SEGMENTS@": {"qualified_name": "ImDrawList::_CalcCircleAutoSegmentCount", "parameter_types": ["float"]},
+          "@FLOOR@": {"qualified_name": "ImFloor", "parameter_types": ["float"]},
+          "@ABS_FLOAT@": {"qualified_name": "ImAbs", "parameter_types": ["float"]},
+          "@MAX_INT@": {"qualified_name": "ImMax", "parameter_types": ["int", "int"]}
+        },
+        "types": {"@PATH_VECTOR_TYPE@": "ImVector<ImVec2>"},
+        "snippets": {
+          "@PI@": "3.14159274f", "@ARCFAST_SAMPLE_MAX@": "48",
+          "@CEIL@": "ceilf", "@COS@": "cosf", "@SIN@": "sinf"
+        }
+      },
+      "ImDrawList::_PathArcToFastEx": {
+        "parameter_types": ["const ImVec2 &", "float", "int", "int", "int"],
+        "body_sha256": "2ced7a13678cb9402f6163a68e663c8d22f87adc523205bb7347af26b0d12637",
+        "template": "handwritten/draw_geometry_batch.c.in",
+        "fragment": "path_arc_to_fast_ex",
+        "functions": {
+          "@PATH_PUSH@": {"qualified_name": "ImVector<ImVec2>::push_back", "parameter_types": ["const ImVec2 &"]},
+          "@PATH_RESIZE@": {"qualified_name": "ImVector<ImVec2>::resize", "parameter_types": ["int"]},
+          "@CALC_CIRCLE_SEGMENTS@": {"qualified_name": "ImDrawList::_CalcCircleAutoSegmentCount", "parameter_types": ["float"]},
+          "@ABS_INT@": {"qualified_name": "ImAbs", "parameter_types": ["int"]},
+          "@CLAMP_INT@": {"qualified_name": "ImClamp", "parameter_types": ["int", "int", "int"]}
+        },
+        "types": {"@PATH_VECTOR_TYPE@": "ImVector<ImVec2>"},
+        "snippets": {"@ARCFAST_SAMPLE_MAX@": "48", "@ARCFAST_TABLE_SIZE@": "48"}
+      },
+      "ImDrawList::_PopUnusedDrawCmd": {
+        "parameter_types": [],
+        "body_sha256": "308819f4939ddd4262dbdd14afbcf1e8939531fc4b4cfaa91056717d271f87ca",
+        "template": "handwritten/draw_commands_images_batch.c.in",
+        "fragment": "draw_list_pop_unused_draw_cmd"
+      },
+      "ImDrawList::AddCallback": {
+        "parameter_types": ["ImDrawCallback", "void *", "size_t"],
+        "body_sha256": [
+          "80c49bae6e7ade489de4295b529b6a66ab431c6f24be7739a8e0d8ecd8d21cd9",
+          "899ee0a7f8f4e7f73273c327b7a6b50a304374aef861b7a0758a46c8d098856c"
+        ],
+        "template": "handwritten/draw_commands_images_batch.c.in",
+        "fragment": "draw_list_add_callback",
+        "functions": {
+          "@ADD_DRAW_CMD@": {"qualified_name": "ImDrawList::AddDrawCmd", "parameter_types": []},
+          "@CALLBACK_DATA_RESIZE@": {"qualified_name": "ImVector<unsigned char>::resize", "parameter_types": ["int"]}
+        },
+        "snippets": {"@RESET_RENDER_STATE@": "((ImDrawCallback)(-8))"}
+      },
+      "ImGui::RenderCheckMark": {
+        "parameter_types": ["ImDrawList *", "ImVec2", "ImU32", "float"],
+        "body_sha256": "b4231bd25cd313570936ade2bafd4f4a2d450b6332c0e88df18e46c1dfe43597",
+        "template": "handwritten/draw_small_renderers.c.in",
+        "fragment": "render_check_mark",
+        "functions": {
+          "@MAX_FLOAT@": {"qualified_name": "ImMax", "parameter_types": ["float", "float"]},
+          "@PATH_LINE_TO@": {"qualified_name": "ImDrawList::PathLineTo", "parameter_types": ["const ImVec2 &"]},
+          "@PATH_STROKE@": {"qualified_name": "ImDrawList::PathStroke", "parameter_types": ["ImU32", "float", "ImDrawFlags"]}
+        }
+      },
+      "ImGui::RenderArrowPointingAt": {
+        "parameter_types": ["ImDrawList *", "ImVec2", "ImVec2", "ImGuiDir", "ImU32"],
+        "body_sha256": "1ff3a4b7c776b4a6e24702d97b2adb9e36a9569f19b97e219c2690fded9f2f98",
+        "template": "handwritten/draw_small_renderers.c.in",
+        "fragment": "render_arrow_pointing_at",
+        "functions": {
+          "@ADD_TRIANGLE_FILLED@": {"qualified_name": "ImDrawList::AddTriangleFilled", "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"]}
+        },
+        "constants": {
+          "@DIR_UP@": "ImGuiDir_Up", "@DIR_DOWN@": "ImGuiDir_Down",
+          "@DIR_LEFT@": "ImGuiDir_Left", "@DIR_RIGHT@": "ImGuiDir_Right"
+        }
+      },
+      "ImGui::RenderArrow": {
+        "parameter_types": ["ImDrawList *", "ImVec2", "ImU32", "ImGuiDir", "float"],
+        "body_sha256": [
+          "15c929c0aed813f9be3ddd915bf5b0062fbeba35dd4fa6d06aaa7a6c25c401e4",
+          "57346006eff67d0920ade1e38c1ff99016ff98584cccdfde503fcc79cb0279d5"
+        ],
+        "template": "handwritten/draw_render_arrow.c.in",
+        "functions": {
+          "@ADD_TRIANGLE_FILLED@": {
+            "qualified_name": "ImDrawList::AddTriangleFilled",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"]
+          }
+        },
+        "constants": {
+          "@DIR_UP@": "ImGuiDir_Up", "@DIR_DOWN@": "ImGuiDir_Down",
+          "@DIR_LEFT@": "ImGuiDir_Left", "@DIR_RIGHT@": "ImGuiDir_Right"
+        }
+      },
+      "ImGui::RenderRectFilledWithHole": {
+        "parameter_types": ["ImDrawList *", "const ImRect &", "const ImRect &", "ImU32", "float"],
+        "body_sha256": "b81b44c096b4afed0b123f5aa0d622e1cec344ddc6d14677ce1cdbd285e0cc2d",
+        "template": "handwritten/draw_rect_hole.c.in",
+        "functions": {
+          "@ADD_RECT_FILLED@": {
+            "qualified_name": "ImDrawList::AddRectFilled",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32", "float", "ImDrawFlags"]
+          }
+        },
+        "constants": {
+          "@ROUND_NONE@": "ImDrawFlags_RoundCornersNone",
+          "@ROUND_TOP_LEFT@": "ImDrawFlags_RoundCornersTopLeft",
+          "@ROUND_TOP_RIGHT@": "ImDrawFlags_RoundCornersTopRight",
+          "@ROUND_BOTTOM_LEFT@": "ImDrawFlags_RoundCornersBottomLeft",
+          "@ROUND_BOTTOM_RIGHT@": "ImDrawFlags_RoundCornersBottomRight"
+        }
+      },
+      "ImDrawList::PrimRect": {
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32"],
+        "body_sha256": "71720b04b0cd361c099b12650fc8d6f0e7bb0b8750f2042532f28989154e05e8",
+        "template": "handwritten/draw_path_helpers_batch.c.in",
+        "fragment": "draw_list_prim_rect"
+      },
+      "ImDrawList::PrimRectUV": {
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"],
+        "body_sha256": "da5b8b8a69d575fb6172d98f5bd33eec26cad1e7cdad8abec7e926e078a78c91",
+        "template": "handwritten/draw_path_helpers_batch.c.in",
+        "fragment": "draw_list_prim_rect_uv"
+      },
+      "ImDrawList::PrimQuadUV": {
+        "parameter_types": [
+          "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &",
+          "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"
+        ],
+        "body_sha256": "238c09486375f3e979197c88051e86994059e74af26dd5ab0a70a5ba1ca60c4b",
+        "template": "handwritten/draw_path_helpers_batch.c.in",
+        "fragment": "draw_list_prim_quad_uv"
+      },
+      "ImDrawList::PathRect": {
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "float", "ImDrawFlags"],
+        "body_sha256": "dc85e97987c628f704f78ccaeb6f4ac1d9ad681244ed613c4b5e83d74d55ff29",
+        "template": "handwritten/draw_path_helpers_batch.c.in",
+        "fragment": "draw_list_path_rect",
+        "functions": {
+          "@PATH_PUSH@": {"qualified_name": "ImVector<ImVec2>::push_back", "parameter_types": ["const ImVec2 &"]},
+          "@PATH_ARC_FAST@": {"qualified_name": "ImDrawList::PathArcToFast", "parameter_types": ["const ImVec2 &", "float", "int", "int"]},
+          "@MIN_FLOAT@": {"qualified_name": "ImMin", "parameter_types": ["float", "float"]}
+        },
+        "types": {"@PATH_VECTOR_TYPE@": "ImVector<ImVec2>"},
+        "constants": {
+          "@ROUND_CORNERS_MASK@": "ImDrawFlags_RoundCornersMask_",
+          "@ROUND_CORNERS_ALL@": "ImDrawFlags_RoundCornersAll",
+          "@ROUND_CORNERS_TOP@": "ImDrawFlags_RoundCornersTop",
+          "@ROUND_CORNERS_BOTTOM@": "ImDrawFlags_RoundCornersBottom",
+          "@ROUND_CORNERS_LEFT@": "ImDrawFlags_RoundCornersLeft",
+          "@ROUND_CORNERS_RIGHT@": "ImDrawFlags_RoundCornersRight",
+          "@ROUND_CORNERS_NONE@": "ImDrawFlags_RoundCornersNone",
+          "@ROUND_TOP_LEFT@": "ImDrawFlags_RoundCornersTopLeft",
+          "@ROUND_TOP_RIGHT@": "ImDrawFlags_RoundCornersTopRight",
+          "@ROUND_BOTTOM_RIGHT@": "ImDrawFlags_RoundCornersBottomRight",
+          "@ROUND_BOTTOM_LEFT@": "ImDrawFlags_RoundCornersBottomLeft"
+        },
+        "snippets": {"@FABS@": "fabsf"}
+      },
+      "ImGui::AddDrawListToDrawDataEx": {
+        "parameter_types": ["ImDrawData *", "ImVector<ImDrawList *> *", "ImDrawList *"],
+        "body_sha256": [
+          "d56697daf2b6f1eff6ca21751ebef8a910d2c1bac8ba5b52abd5ea7d4f131b94",
+          "668743b39c64fbb5aa561b583bc56024991732d12fe3eac1846562d4ff40a155"
+        ],
+        "template": "handwritten/draw_path_helpers_batch.c.in",
+        "fragment": "add_draw_list_to_draw_data_ex",
+        "functions": {
+          "@OUT_LIST_PUSH@": {"qualified_name": "ImVector<ImDrawList *>::push_back", "parameter_types": ["ImDrawList *const &"]}
+        },
+        "constants": {"@ALLOW_VTX_OFFSET@": "ImDrawListFlags_AllowVtxOffset"}
+      },
+      "ImFontCalcTextSizeEx": {
+        "parameter_types": [
+          "ImFont *", "float", "float", "float", "const char *", "const char *",
+          "const char *", "const char **", "ImVec2 *", "ImDrawTextFlags"
+        ],
+        "body_sha256": "d29fce968d71adfec3eb5196200c9b18f8993d04792781f441d370d0adbd5533",
+        "template": "handwritten/draw_font_metrics.c.in",
+        "fragment": "font_calc_text_size_ex",
+        "functions": {
+          "@GET_BAKED@": {"qualified_name": "ImFont::GetFontBaked", "parameter_types": ["float", "float"]},
+          "@TEXT_CHAR_FROM_UTF8@": {"qualified_name": "ImTextCharFromUtf8", "parameter_types": ["unsigned int *", "const char *", "const char *"]},
+          "@LOAD_ADVANCE@": {"qualified_name": "BuildLoadGlyphGetAdvanceOrFallback", "parameter_types": ["ImFontBaked *", "unsigned int"]},
+          "@CALC_WORD_WRAP@": {"qualified_name": "ImFontCalcWordWrapPositionEx", "parameter_types": ["ImFont *", "float", "const char *", "const char *", "float", "ImDrawTextFlags"]},
+          "@NEXT_LINE_START@": {"qualified_name": "ImTextCalcWordWrapNextLineStart", "parameter_types": ["const char *", "const char *", "ImDrawTextFlags"]}
+        },
+        "constants": {"@STOP_ON_NEW_LINE@": "ImDrawTextFlags_StopOnNewLine"}
+      },
+      "ImFont::RenderChar": {
+        "parameter_types": ["ImDrawList *", "float", "const ImVec2 &", "ImU32", "ImWchar", "const ImVec4 *"],
+        "body_sha256": "055ed68ffd0ca284f16ab14772bf44c89b0e60dad95745145a828b58b9750d4d",
+        "template": "handwritten/draw_font_metrics.c.in",
+        "fragment": "font_render_char",
+        "functions": {
+          "@GET_BAKED@": {"qualified_name": "ImFont::GetFontBaked", "parameter_types": ["float", "float"]},
+          "@FIND_GLYPH@": {"qualified_name": "ImFontBaked::FindGlyph", "parameter_types": ["ImWchar"]},
+          "@PRIM_RESERVE@": {"qualified_name": "ImDrawList::PrimReserve", "parameter_types": ["int", "int"]},
+          "@PRIM_RECT_UV@": {"qualified_name": "ImDrawList::PrimRectUV", "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"]}
+        },
+        "constants": {"@NO_PIXEL_SNAP@": "ImDrawListFlags_TextNoPixelSnap"}
+      },
+      "ImFont::RenderText": {
+        "parameter_types": [
+          "ImDrawList *", "float", "const ImVec2 &", "ImU32", "const ImVec4 &",
+          "const char *", "const char *", "float", "ImDrawTextFlags"
+        ],
+        "body_sha256": [
+          "580809272543251062f5faa8c8081cfe767761a0ff1a8225e3a4d164c778917a",
+          "c29c258ec153188208912f35bee9b2a9af08ebbc0efe6276e200e01d3a732f5b"
+        ],
+        "template": "handwritten/draw_render_text.c.in",
+        "fragment": "font_render_text",
+        "functions": {
+          "@GET_BAKED@": {"qualified_name": "ImFont::GetFontBaked", "parameter_types": ["float", "float"]},
+          "@CALC_WORD_WRAP@": {"qualified_name": "ImFontCalcWordWrapPositionEx", "parameter_types": ["ImFont *", "float", "const char *", "const char *", "float", "ImDrawTextFlags"]},
+          "@NEXT_LINE_START@": {"qualified_name": "ImTextCalcWordWrapNextLineStart", "parameter_types": ["const char *", "const char *", "ImDrawTextFlags"]},
+          "@TEXT_CHAR_FROM_UTF8@": {"qualified_name": "ImTextCharFromUtf8", "parameter_types": ["unsigned int *", "const char *", "const char *"]},
+          "@FIND_GLYPH@": {"qualified_name": "ImFontBaked::FindGlyph", "parameter_types": ["ImWchar"]},
+          "@PRIM_RESERVE@": {"qualified_name": "ImDrawList::PrimReserve", "parameter_types": ["int", "int"]},
+          "@CMD_POP_BACK@": {"qualified_name": "ImVector<ImDrawCmd>::pop_back", "parameter_types": []},
+          "@PRIM_UNRESERVE@": {"qualified_name": "ImDrawList::PrimUnreserve", "parameter_types": ["int", "int"]},
+          "@ADD_DRAW_CMD@": {"qualified_name": "ImDrawList::AddDrawCmd", "parameter_types": []}
+        },
+        "constants": {
+          "@NO_PIXEL_SNAP@": "ImDrawListFlags_TextNoPixelSnap",
+          "@CPU_FINE_CLIP@": "ImDrawTextFlags_CpuFineClip"
+        }
+      },
+      "ImDrawListSplitter::ClearFreeMemory": {
+        "parameter_types": [],
+        "body_sha256": "a36e2de13f3be0857b5e91e2dd963076d2f4c6f3d88078d22a191884cd18372c",
+        "template": "handwritten/draw_splitter_batch.c.in",
+        "fragment": "splitter_clear_free_memory",
+        "functions": {
+          "@CMD_CLEAR@": {"qualified_name": "ImVector<ImDrawCmd>::clear", "parameter_types": []},
+          "@IDX_CLEAR@": {"qualified_name": "ImVector<unsigned short>::clear", "parameter_types": []},
+          "@CHANNEL_CLEAR@": {"qualified_name": "ImVector<ImDrawChannel>::clear", "parameter_types": []}
+        }
+      },
+      "ImDrawListSplitter::Split": {
+        "parameter_types": ["ImDrawList *", "int"],
+        "body_sha256": [
+          "eab42bc79336d0d45277635b9fd0ac325fa9a1d1ae644d1f38374009bd2235ed",
+          "4dfe830de4b7a3d0b833f233d597426f1410026b614d8a9c997357d27bedc29e"
+        ],
+        "template": "handwritten/draw_splitter_batch.c.in",
+        "fragment": "splitter_split",
+        "functions": {
+          "@CHANNEL_RESERVE@": {"qualified_name": "ImVector<ImDrawChannel>::reserve", "parameter_types": ["int"]},
+          "@CHANNEL_RESIZE@": {"qualified_name": "ImVector<ImDrawChannel>::resize", "parameter_types": ["int"]}
+        }
+      },
+      "ImDrawListSplitter::Merge": {
+        "parameter_types": ["ImDrawList *"],
+        "body_sha256": "64e870563db26200f16e4ae2f8ea09a49d6dbc37176b0b5da1f40241220cc485",
+        "template": "handwritten/draw_splitter_batch.c.in",
+        "fragment": "splitter_merge",
+        "functions": {
+          "@SET_CHANNEL@": {"qualified_name": "ImDrawListSplitter::SetCurrentChannel", "parameter_types": ["ImDrawList *", "int"]},
+          "@POP_UNUSED@": {"qualified_name": "ImDrawList::_PopUnusedDrawCmd", "parameter_types": []},
+          "@CMD_RESIZE@": {"qualified_name": "ImVector<ImDrawCmd>::resize", "parameter_types": ["int"]},
+          "@IDX_RESIZE@": {"qualified_name": "ImVector<unsigned short>::resize", "parameter_types": ["int"]},
+          "@ADD_DRAW_CMD@": {"qualified_name": "ImDrawList::AddDrawCmd", "parameter_types": []}
+        }
+      },
+      "ImDrawListSplitter::SetCurrentChannel": {
+        "parameter_types": ["ImDrawList *", "int"],
+        "body_sha256": [
+          "3501a73124b061d883a8f030dcffbf22741706b313aceb682da85abdce241338",
+          "11bce597856efebece020bc75f52f4df0077493bae92edab1287ecf10a490dfc"
+        ],
+        "template": "handwritten/draw_splitter_batch.c.in",
+        "fragment": "splitter_set_current_channel",
+        "functions": {
+          "@ADD_DRAW_CMD@": {"qualified_name": "ImDrawList::AddDrawCmd", "parameter_types": []}
+        }
+      },
+      "ImTextureDataQueueUpload": {
+        "parameter_types": ["ImTextureData *", "int", "int", "int", "int"],
+        "body_sha256": [
+          "fa5991c3d46bf283f04cd45f9c850bdf45b4453bde0454d2cf1010dc909b6346",
+          "c8d6c906934ff7e3b911ad1532abf31e788d12a4c7dad91834fd0ac9aa8dd3f3"
+        ],
+        "template": "handwritten/draw_texture_queue.c.in",
+        "functions": {
+          "@UPDATES_PUSH@": {
+            "qualified_name": "ImVector<ImTextureRect>::push_back",
+            "parameter_types": ["const ImTextureRect &"]
+          }
+        },
+        "constants": {
+          "@WANT_DESTROY@": "ImTextureStatus_WantDestroy",
+          "@DESTROYED@": "ImTextureStatus_Destroyed",
+          "@STATUS_OK@": "ImTextureStatus_OK",
+          "@WANT_UPDATES@": "ImTextureStatus_WantUpdates"
+        }
+      },
+      "ImFontAtlasTextureBlockConvert": {
+        "parameter_types": [
+          "const unsigned char *", "ImTextureFormat", "int", "unsigned char *",
+          "ImTextureFormat", "int", "int", "int"
+        ],
+        "body_sha256": [
+          "b790cb1f20edbadb15124e72e2a95d7a4a5c9c2116c6c49d452ea3badf7b9eea",
+          "de93df458ff0ccb722c896785c153252576fb8e52d51b641a5991ea34a63d502"
+        ],
+        "template": "handwritten/draw_atlas_blocks.c.in",
+        "fragment": "atlas_block_convert",
+        "functions": {
+          "@GET_FORMAT_BPP@": {
+            "qualified_name": "ImTextureDataGetFormatBytesPerPixel",
+            "parameter_types": ["ImTextureFormat"]
+          }
+        },
+        "constants": {
+          "@FORMAT_ALPHA8@": "ImTextureFormat_Alpha8",
+          "@FORMAT_RGBA32@": "ImTextureFormat_RGBA32"
+        }
+      },
+      "ImFontAtlasTextureBlockPostProcessMultiply": {
+        "parameter_types": ["ImFontAtlasPostProcessData *", "float"],
+        "body_sha256": [
+          "a3ec05841885b5c8451dff1a761fa7a6928bc1c2c325a81790a82fb8a6e67139",
+          "ce74066ff83d21ad7074fbb6a79bb862554e46fbc4f35ca772395b648dad3be3"
+        ],
+        "template": "handwritten/draw_atlas_blocks.c.in",
+        "fragment": "atlas_block_multiply",
+        "constants": {
+          "@FORMAT_ALPHA8@": "ImTextureFormat_Alpha8",
+          "@FORMAT_RGBA32@": "ImTextureFormat_RGBA32"
+        }
+      },
+      "ImFontAtlasTextureBlockFill": {
+        "parameter_types": ["ImTextureData *", "int", "int", "int", "int", "ImU32"],
+        "body_sha256": "3f150db712edcae872018e540369c924044298af42322edfa930b5cb6e9b04ee",
+        "template": "handwritten/draw_atlas_blocks.c.in",
+        "fragment": "atlas_block_fill",
+        "functions": {
+          "@GET_PIXELS@": {
+            "qualified_name": "ImTextureData::GetPixelsAt",
+            "parameter_types": ["int", "int"]
+          }
+        },
+        "constants": {
+          "@FORMAT_ALPHA8@": "ImTextureFormat_Alpha8"
+        }
+      },
+      "ImFontAtlasTextureBlockCopy": {
+        "parameter_types": [
+          "ImTextureData *", "int", "int", "ImTextureData *", "int", "int", "int", "int"
+        ],
+        "body_sha256": [
+          "ebbfb8f43a59592d7133b5f4332bb103734746246751c2f94e4705e767bef60b",
+          "e6a1a4642b1bfc05f304062d5c3c00f1b6045fc33c3a9470b53df7e2c4fc6249"
+        ],
+        "template": "handwritten/draw_atlas_blocks.c.in",
+        "fragment": "atlas_block_copy",
+        "functions": {
+          "@GET_PIXELS@": {
+            "qualified_name": "ImTextureData::GetPixelsAt",
+            "parameter_types": ["int", "int"]
+          }
+        }
+      },
+      "ImFontAtlasPackAllocRectEntry": {
+        "parameter_types": ["ImFontAtlas *", "int"],
+        "body_sha256": [
+          "04b37c1e363f7748d3601757fcf1506f350b2f3326c22d97ebe3d4843a2318d8",
+          "e7f70d5b01766f3835966393f47e3f019be4722a4174494726df69149910a4ab"
+        ],
+        "template": "handwritten/draw_atlas_pack_batch.c.in",
+        "fragment": "atlas_pack_alloc_entry",
+        "functions": {
+          "@INDEX_RESIZE@": {"qualified_name": "ImVector<ImFontAtlasRectEntry>::resize", "parameter_types": ["int"]},
+          "@ID_MAKE@": {"qualified_name": "ImFontAtlasRectId_Make", "parameter_types": ["int", "int"]}
+        }
+      },
+      "ImFontAtlasPackReuseRectEntry": {
+        "parameter_types": ["ImFontAtlas *", "ImFontAtlasRectEntry *"],
+        "body_sha256": [
+          "fd3c8ef28dbbebf5d49437605d391eafd3f7f1257fff621c3a88258cbf0c3dc4",
+          "1e732d9d5207eb345969b415f388476177d1dd8e29d81cfcafef68e646cf604b"
+        ],
+        "template": "handwritten/draw_atlas_pack_batch.c.in",
+        "fragment": "atlas_pack_reuse_entry",
+        "functions": {
+          "@ID_MAKE@": {"qualified_name": "ImFontAtlasRectId_Make", "parameter_types": ["int", "int"]}
+        }
+      },
+      "ImFontAtlasPackAddRect": {
+        "parameter_types": ["ImFontAtlas *", "int", "int", "ImFontAtlasRectEntry *"],
+        "body_sha256": [
+          "55b7a259ef809df76771c8dca6a4996950748cbbb2beb6e87477838596c35cc3",
+          "46dbf601322e10cea27d94773900b2698348daa40398be11218a16f475b2759f"
+        ],
+        "template": "handwritten/draw_atlas_pack_batch.c.in",
+        "fragment": "atlas_pack_add_rect",
+        "functions": {
+          "@PACK_RECTS@": {"qualified_name": "stbrp_pack_rects", "parameter_types": ["stbrp_context *", "stbrp_rect *", "int"]},
+          "@DEBUG_LOG@": {"qualified_name": "ImGui::DebugLog", "parameter_types": ["const char *"]},
+          "@MAKE_SPACE@": {"qualified_name": "ImFontAtlasTextureMakeSpace", "parameter_types": ["ImFontAtlas *"]},
+          "@RECT_PUSH@": {"qualified_name": "ImVector<ImTextureRect>::push_back", "parameter_types": ["const ImTextureRect &"]},
+          "@REUSE_ENTRY@": {"qualified_name": "ImFontAtlasPackReuseRectEntry", "parameter_types": ["ImFontAtlas *", "ImFontAtlasRectEntry *"]},
+          "@ALLOC_ENTRY@": {"qualified_name": "ImFontAtlasPackAllocRectEntry", "parameter_types": ["ImFontAtlas *", "int"]}
+        },
+        "constants": {"@EVENT_FONT@": "ImGuiDebugLogFlags_EventFont"},
+        "snippets": {"@INVALID_ID@": "-1"}
+      },
+      "ImFontAtlasTextureRepack": {
+        "parameter_types": ["ImFontAtlas *", "int", "int"],
+        "body_sha256": [
+          "11c2f3cef7946612780970bcd1dcb18cef7bbdaffa00806a5edc38582ac31e22",
+          "05e55769bf1ae0f76ae516d52e642eca15fbff1fe1088ae8eadc01d0aef5e80d"
+        ],
+        "template": "handwritten/draw_atlas_pack_batch.c.in",
+        "fragment": "atlas_texture_repack",
+        "functions": {
+          "@TEXTURE_ADD@": {"qualified_name": "ImFontAtlasTextureAdd", "parameter_types": ["ImFontAtlas *", "int", "int"]},
+          "@DEBUG_LOG@": {"qualified_name": "ImGui::DebugLog", "parameter_types": ["const char *"]},
+          "@PACK_INIT@": {"qualified_name": "ImFontAtlasPackInit", "parameter_types": ["ImFontAtlas *"]},
+          "@INDEX_RESIZE@": {"qualified_name": "ImVector<ImFontAtlasRectEntry>::resize", "parameter_types": ["int"]},
+          "@ADD_RECT@": {"qualified_name": "ImFontAtlasPackAddRect", "parameter_types": ["ImFontAtlas *", "int", "int", "ImFontAtlasRectEntry *"]},
+          "@MEM_FREE@": {"qualified_name": "ImGui::MemFree", "parameter_types": ["void *"]},
+          "@SET_TEXTURE@": {"qualified_name": "ImFontAtlasBuildSetTexture", "parameter_types": ["ImFontAtlas *", "ImTextureData *"]},
+          "@TEXTURE_GROW@": {"qualified_name": "ImFontAtlasTextureGrow", "parameter_types": ["ImFontAtlas *", "int", "int"]},
+          "@ID_INDEX@": {"qualified_name": "ImFontAtlasRectId_GetIndex", "parameter_types": ["ImFontAtlasRectId"]},
+          "@GET_RECT@": {"qualified_name": "ImFontAtlasPackGetRect", "parameter_types": ["ImFontAtlas *", "ImFontAtlasRectId"]},
+          "@BLOCK_COPY@": {"qualified_name": "ImFontAtlasTextureBlockCopy", "parameter_types": ["ImTextureData *", "int", "int", "ImTextureData *", "int", "int", "int", "int"]},
+          "@UPDATE_TEX_DATA@": {"qualified_name": "ImFontAtlasBuildUpdateTexData", "parameter_types": ["ImFontAtlas *"]},
+          "@UPDATE_SHARED@": {"qualified_name": "ImFontAtlasUpdateDrawListsSharedData", "parameter_types": ["ImFontAtlas *"]}
+        },
+        "types": {
+          "@RECT_VECTOR_TYPE@": "ImVector<ImTextureRect>",
+          "@INDEX_VECTOR_TYPE@": "ImVector<ImFontAtlasRectEntry>"
+        },
+        "constants": {"@EVENT_FONT@": "ImGuiDebugLogFlags_EventFont"},
+        "snippets": {"@INVALID_ID@": "-1"}
+      },
+      "ImFontAtlasTextureGetSizeEstimate": {
+        "parameter_types": ["ImFontAtlas *"],
+        "body_sha256": [
+          "ff428498ed8b0724df693829a9c58205e13976dcbb58636e8e8072e832080e3d",
+          "9884210762ed77682095001cf1bcfa508035fbd782259857497622ad85c498d0"
+        ],
+        "template": "handwritten/draw_atlas_size_estimate.c.in",
+        "functions": {
+          "@UPPER_POWER_OF_TWO@": {"qualified_name": "ImUpperPowerOfTwo", "parameter_types": ["int"]},
+          "@IS_POWER_OF_TWO@": {"qualified_name": "ImIsPowerOfTwo", "parameter_types": ["int"]}
+        },
+        "constants": {
+          "@WANT_DESTROY@": "ImTextureStatus_WantDestroy",
+          "@NO_POWER_OF_TWO_HEIGHT@": "ImFontAtlasFlags_NoPowerOfTwoHeight"
+        }
+      },
+      "ImGui::ShadeVertsLinearColorGradientKeepAlpha": {
+        "parameter_types": [
+          "ImDrawList *", "int", "int", "ImVec2", "ImVec2", "ImU32", "ImU32"
+        ],
+        "body_sha256": "22cc4801746ce62bf368af18b1cbf468740730e9e206d621c8fee0b9a81ddbd9",
+        "template": "handwritten/draw_shade_verts.c.in",
+        "fragment": "shade_verts_linear_color"
+      },
+      "ImGui::ShadeVertsLinearUV": {
+        "parameter_types": [
+          "ImDrawList *", "int", "int", "const ImVec2 &", "const ImVec2 &",
+          "const ImVec2 &", "const ImVec2 &", "bool"
+        ],
+        "body_sha256": "c2c1d5fdd9c7730363374dd0b91d16f853c57473f7d90d624da5652da00b8015",
+        "template": "handwritten/draw_shade_verts.c.in",
+        "fragment": "shade_verts_linear_uv"
+      },
+      "ImGui::ShadeVertsTransformPos": {
+        "parameter_types": [
+          "ImDrawList *", "int", "int", "const ImVec2 &", "float", "float",
+          "const ImVec2 &"
+        ],
+        "body_sha256": "2c2c2bbb98a7fb2cd3cb098997ea0d4294df8353e66107d0e66a4058009eb8c9",
+        "template": "handwritten/draw_shade_verts.c.in",
+        "fragment": "shade_verts_transform_pos"
       },
       "ImDrawList::AddPolyline": {
         "parameter_types": [

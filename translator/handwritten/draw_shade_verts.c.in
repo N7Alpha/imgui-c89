@@ -1,0 +1,101 @@
+/* IMGUI_C89_FUNCTION_BEGIN shade_verts_linear_color */
+ImDrawVert *vertex;
+ImDrawVert *end;
+float dx;
+float dy;
+float inv_length_squared;
+int r0;
+int g0;
+int b0;
+int dr;
+int dg;
+int db;
+
+dx = gradient_p1.x - gradient_p0.x;
+dy = gradient_p1.y - gradient_p0.y;
+inv_length_squared = 1.0f / (dx * dx + dy * dy);
+r0 = (int)(col0 & 0xffu);
+g0 = (int)((col0 >> 8) & 0xffu);
+b0 = (int)((col0 >> 16) & 0xffu);
+dr = (int)(col1 & 0xffu) - r0;
+dg = (int)((col1 >> 8) & 0xffu) - g0;
+db = (int)((col1 >> 16) & 0xffu) - b0;
+
+vertex = draw_list->VtxBuffer.Data + vert_start_idx;
+end = draw_list->VtxBuffer.Data + vert_end_idx;
+for (; vertex < end; ++vertex) {
+    float t;
+    int r;
+    int g;
+    int b;
+
+    t = ((vertex->pos.x - gradient_p0.x) * dx +
+         (vertex->pos.y - gradient_p0.y) * dy) * inv_length_squared;
+    if (t < 0.0f)
+        t = 0.0f;
+    else if (t > 1.0f)
+        t = 1.0f;
+    r = (int)(r0 + dr * t);
+    g = (int)(g0 + dg * t);
+    b = (int)(b0 + db * t);
+    vertex->col = (ImU32)r | ((ImU32)g << 8) | ((ImU32)b << 16) |
+                  (vertex->col & 0xff000000u);
+}
+/* IMGUI_C89_FUNCTION_END shade_verts_linear_color */
+
+/* IMGUI_C89_FUNCTION_BEGIN shade_verts_linear_uv */
+ImDrawVert *vertex;
+ImDrawVert *end;
+float scale_x;
+float scale_y;
+float min_u;
+float min_v;
+float max_u;
+float max_v;
+
+scale_x = b->x != a->x ? (uv_b->x - uv_a->x) / (b->x - a->x) : 0.0f;
+scale_y = b->y != a->y ? (uv_b->y - uv_a->y) / (b->y - a->y) : 0.0f;
+min_u = uv_a->x < uv_b->x ? uv_a->x : uv_b->x;
+min_v = uv_a->y < uv_b->y ? uv_a->y : uv_b->y;
+max_u = uv_a->x > uv_b->x ? uv_a->x : uv_b->x;
+max_v = uv_a->y > uv_b->y ? uv_a->y : uv_b->y;
+
+vertex = draw_list->VtxBuffer.Data + vert_start_idx;
+end = draw_list->VtxBuffer.Data + vert_end_idx;
+for (; vertex < end; ++vertex) {
+    float u;
+    float v;
+
+    u = uv_a->x + (vertex->pos.x - a->x) * scale_x;
+    v = uv_a->y + (vertex->pos.y - a->y) * scale_y;
+    if (clamp) {
+        if (u < min_u)
+            u = min_u;
+        else if (u > max_u)
+            u = max_u;
+        if (v < min_v)
+            v = min_v;
+        else if (v > max_v)
+            v = max_v;
+    }
+    vertex->uv.x = u;
+    vertex->uv.y = v;
+}
+/* IMGUI_C89_FUNCTION_END shade_verts_linear_uv */
+
+/* IMGUI_C89_FUNCTION_BEGIN shade_verts_transform_pos */
+ImDrawVert *vertex;
+ImDrawVert *end;
+
+vertex = draw_list->VtxBuffer.Data + vert_start_idx;
+end = draw_list->VtxBuffer.Data + vert_end_idx;
+for (; vertex < end; ++vertex) {
+    float x;
+    float y;
+
+    x = vertex->pos.x - pivot_in->x;
+    y = vertex->pos.y - pivot_in->y;
+    vertex->pos.x = x * cos_a - y * sin_a + pivot_out->x;
+    vertex->pos.y = x * sin_a + y * cos_a + pivot_out->y;
+}
+/* IMGUI_C89_FUNCTION_END shade_verts_transform_pos */

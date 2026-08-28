@@ -28,12 +28,14 @@ int n;
 table = imgui_c89_ctx->CurrentTable;
 if (!(table->Flags & @SORT_MULTI@))
     append_to_sort_specs = 0;
+if (!(table->Flags & @SORT_TRISTATE@) && sort_direction == @SORT_NONE@)
+    @ASSERT_3115@;
 max_order = 0;
 if (append_to_sort_specs)
     for (n = 0; n < table->ColumnsCount; n++)
-        if (max_order < table->Columns.Data[n].SortOrder)
-            max_order = table->Columns.Data[n].SortOrder;
-column = &table->Columns.Data[column_n];
+        if (max_order < table->Columns[n].SortOrder)
+            max_order = table->Columns[n].SortOrder;
+column = &table->Columns[column_n];
 column->SortDirection = (ImU8)sort_direction;
 if (sort_direction == @SORT_NONE@)
     column->SortOrder = -1;
@@ -41,7 +43,7 @@ else if (column->SortOrder == -1 || !append_to_sort_specs)
     column->SortOrder = append_to_sort_specs ? (ImGuiTableColumnIdx)(max_order + 1) : 0;
 for (n = 0; n < table->ColumnsCount; n++)
 {
-    other = &table->Columns.Data[n];
+    other = &table->Columns[n];
     if (other != column && !append_to_sort_specs)
         other->SortOrder = -1;
     @FIX_DIRECTION@(table, other);
@@ -60,17 +62,21 @@ int fix_single;
 int smallest;
 int sort_n;
 int n;
+if (!(table->Flags & @SORTABLE@))
+    @ASSERT_3142@;
 order_count = 0;
 order_mask = 0;
 for (n = 0; n < table->ColumnsCount; n++)
 {
-    column = &table->Columns.Data[n];
+    column = &table->Columns[n];
     if (column->SortOrder != -1 && !column->IsEnabled)
         column->SortOrder = -1;
     if (column->SortOrder != -1)
     {
         order_count++;
         order_mask |= (ImU64)1 << column->SortOrder;
+        if (!(order_count < (int)sizeof(order_mask) * 8))
+            @ASSERT_3156@;
     }
 }
 fix_linear = ((ImU64)1 << order_count) != order_mask + 1;
@@ -83,17 +89,19 @@ if (fix_linear || fix_single)
         smallest = -1;
         for (n = 0; n < table->ColumnsCount; n++)
             if (!(fixed_mask & ((ImU64)1 << n)) &&
-                table->Columns.Data[n].SortOrder != -1 &&
-                (smallest == -1 || table->Columns.Data[n].SortOrder < table->Columns.Data[smallest].SortOrder))
+                table->Columns[n].SortOrder != -1 &&
+                (smallest == -1 || table->Columns[n].SortOrder < table->Columns[smallest].SortOrder))
                 smallest = n;
+        if (smallest == -1)
+            @ASSERT_3173@;
         fixed_mask |= (ImU64)1 << smallest;
-        table->Columns.Data[smallest].SortOrder = (ImGuiTableColumnIdx)sort_n;
+        table->Columns[smallest].SortOrder = (ImGuiTableColumnIdx)sort_n;
         if (fix_single)
         {
             order_count = 1;
             for (n = 0; n < table->ColumnsCount; n++)
                 if (n != smallest)
-                    table->Columns.Data[n].SortOrder = -1;
+                    table->Columns[n].SortOrder = -1;
             break;
         }
     }
@@ -101,7 +109,7 @@ if (fix_linear || fix_single)
 if (!order_count && !(table->Flags & @SORT_TRISTATE@))
     for (n = 0; n < table->ColumnsCount; n++)
     {
-        column = &table->Columns.Data[n];
+        column = &table->Columns[n];
         if (column->IsEnabled && !(column->Flags & @NO_SORT@))
         {
             order_count = 1;
@@ -123,8 +131,11 @@ dirty = table->IsSortSpecsDirty;
 if (dirty)
 {
     @SANITIZE@(table);
-    @SPECS_RESIZE@(imgui_c89_ctx, &table->SortSpecsMulti,
-                   table->SortSpecsCount > 1 ? table->SortSpecsCount : 0);
+    table->SortSpecsMulti = imgui_c89_vector_resize(
+        imgui_c89_ctx, table->SortSpecsMulti,
+        &table->SortSpecsMultiSize, &table->SortSpecsMultiCapacity,
+        table->SortSpecsCount > 1 ? table->SortSpecsCount : 0,
+        sizeof(*table->SortSpecsMulti));
     table->SortSpecs.SpecsDirty = 1;
     table->IsSortSpecsDirty = 0;
 }
@@ -133,13 +144,15 @@ if (!table->SortSpecsCount)
 else if (table->SortSpecsCount == 1)
     specs = &table->SortSpecsSingle;
 else
-    specs = table->SortSpecsMulti.Data;
+    specs = table->SortSpecsMulti;
 if (dirty && specs)
     for (n = 0; n < table->ColumnsCount; n++)
     {
-        column = &table->Columns.Data[n];
+        column = &table->Columns[n];
         if (column->SortOrder != -1)
         {
+            if (!(column->SortOrder < table->SortSpecsCount))
+                @ASSERT_3226@;
             spec = &specs[column->SortOrder];
             spec->ColumnUserID = column->UserData;
             spec->ColumnIndex = (ImGuiTableColumnIdx)n;

@@ -9,7 +9,8 @@ int main()
                    GlobalDouble(4) == 8 && ImGui::CleanupOrder() == 291 &&
                    return_value_preserved && return_cleanup_ran &&
                    ImGui::LoopCleanup() == 12 && ImGui::StackScratch(4) == 10 &&
-                   ImGui::DiscardedReference() == 9.0f
+                   ImGui::DiscardedReference() == 9.0f &&
+                   ImGui::TemporarySum() == 9.0f
                ? 0
                : 1;
 }

@@ -114,6 +114,11 @@ float ScaledSum(const Vec2& value, float scale = IMGUI_FIXTURE_DEFAULT_SCALE)
     return value.Sum() * scale;
 }
 
+float TemporarySum()
+{
+    return ScaledSum(Vec2(4.0f, 5.0f));
+}
+
 int SumTo(int count)
 {
     int result = 0;

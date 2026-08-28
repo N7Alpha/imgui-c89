@@ -9,18 +9,24 @@ imgui_c89_ctx->TablesLastTimeActive.Data[index] = -1.0f;
 
 /* IMGUI_C89_FUNCTION_BEGIN table_gc_compact_table */
 int n;
+if (table->MemoryCompacted)
+    @ASSERT_4289@;
 table->SortSpecs.Specs = 0;
-@SORT_CLEAR@(imgui_c89_ctx, &table->SortSpecsMulti);
+imgui_c89_vector_clear(imgui_c89_ctx, (void **)&table->SortSpecsMulti,
+    &table->SortSpecsMultiSize, &table->SortSpecsMultiCapacity);
 table->IsSortSpecsDirty = 1;
 @TEXT_CLEAR@(imgui_c89_ctx, &table->ColumnsNames);
 table->MemoryCompacted = 1;
 for (n = 0; n < table->ColumnsCount; n++)
-    @COLUMN_AT@(&table->Columns, n)->NameOffset = -1;
+    table->Columns[n].NameOffset = -1;
 imgui_c89_ctx->TablesLastTimeActive.Data[@POOL_INDEX@(&imgui_c89_ctx->Tables, table)] = -1.0f;
 /* IMGUI_C89_FUNCTION_END table_gc_compact_table */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_gc_compact_temp_data */
-@HEADER_CLEAR@(imgui_c89_ctx, &temp_data->AngledHeadersRequests);
+imgui_c89_vector_clear(imgui_c89_ctx,
+    (void **)&temp_data->AngledHeadersRequests,
+    &temp_data->AngledHeadersRequestsSize,
+    &temp_data->AngledHeadersRequestsCapacity);
 @SPLITTER_CLEAR@(imgui_c89_ctx, &temp_data->DrawSplitter);
 temp_data->LastTimeActive = -1.0f;
 /* IMGUI_C89_FUNCTION_END table_gc_compact_temp_data */

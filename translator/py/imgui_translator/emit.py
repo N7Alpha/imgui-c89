@@ -13,6 +13,7 @@ import functools
 import json
 import re
 import struct
+import textwrap
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -154,6 +155,207 @@ class Emitter:
         suffix = spelling.rsplit(">", 1)[-1] if ">" in spelling else spelling
         return "*" not in suffix and "&" not in suffix
 
+    def configure_flattened_table_spans(self) -> None:
+        """Replace table-owned two-pointer spans with ordinary C pointers."""
+        configurations = (
+            ("ImGuiTable", "Columns", "ImSpan<ImGuiTableColumn>",
+             "ImSpan<ImGuiTableColumn>",
+             "ImGuiTableColumn *", "ColumnsEnd"),
+            ("ImGuiTable", "DisplayOrderToIndex",
+             "ImSpan<ImGuiTableColumnIdx>", "ImSpan<short>",
+             "ImGuiTableColumnIdx *",
+             "DisplayOrderToIndexEnd"),
+            ("ImGuiTable", "RowCellData", "ImSpan<ImGuiTableCellData>",
+             "ImSpan<ImGuiTableCellData>",
+             "ImGuiTableCellData *", "RowCellDataEnd"),
+            ("ImGuiTableTempData", "OldColumnsData",
+             "ImSpan<ImGuiTableColumn>", "ImSpan<ImGuiTableColumn>",
+             "ImGuiTableColumn *",
+             "OldColumnsDataEnd"),
+        )
+        used_spans: set[str] = set()
+        for (owner_name, field_name, owner_field_type, span_name,
+             pointer_type, end_name) in configurations:
+            owner = self.records_by_spelling.get(owner_name)
+            span = self.records_by_spelling.get(span_name)
+            if owner is None or span is None:
+                raise TranslationError(
+                    f"flatten table spans missing {owner_name}.{field_name}"
+                )
+            fields = [
+                field for field in owner.get("fields", [])
+                if field.get("name") == field_name
+            ]
+            span_fields = span.get("fields", [])
+            expected_span_fields = [("Data", pointer_type), ("DataEnd", pointer_type)]
+            actual_span_fields = [
+                (field.get("name"), field.get("type"))
+                for field in span_fields
+            ]
+            if len(fields) != 1 or fields[0].get("type") != owner_field_type:
+                raise TranslationError(
+                    f"flatten table spans changed {owner_name}.{field_name}"
+                )
+            # ImGuiTableColumnIdx is a typedef of short in current upstream;
+            # accept either spelling while requiring identical pointer halves.
+            if len(span_fields) != 2 or span_fields[0].get("name") != "Data" \
+                    or span_fields[1].get("name") != "DataEnd" \
+                    or span_fields[0].get("type") != span_fields[1].get("type"):
+                raise TranslationError(
+                    f"flatten table span layout changed for {span_name}"
+                )
+            if span_name != "ImSpan<short>" \
+                    and actual_span_fields != expected_span_fields:
+                raise TranslationError(
+                    f"flatten table span pointer type changed for {span_name}"
+                )
+            field = fields[0]
+            self.flattened_table_span_fields[field["id"]] = (
+                pointer_type, end_name
+            )
+            synthetic_id = field["id"] + "#end"
+            self.field_names[synthetic_id] = end_name
+            used_spans.add(span["id"])
+        allocator = self.records_by_spelling.get("ImSpanAllocator<6>")
+        if allocator is None:
+            allocator = self.records_by_spelling.get("ImSpanAllocator_6")
+        if allocator is not None:
+            allocator_fields = [
+                (field.get("name"), field.get("type"))
+                for field in allocator.get("fields", [])
+            ]
+            expected = [
+                ("BasePtr", "char *"), ("CurrOff", "int"),
+                ("CurrIdx", "int"), ("Offsets", "int[6]"),
+                ("Sizes", "int[6]"),
+            ]
+            if allocator_fields != expected:
+                raise TranslationError("ImSpanAllocator<6> layout changed")
+            used_spans.add(allocator["id"])
+        self.omitted_record_ids.update(used_spans)
+
+    def configure_flattened_table_vectors(self) -> None:
+        """Expose selected table-owned ImVectors as their C storage fields."""
+        configurations = (
+            ("ImGuiTable", ((4736, 3584),), "InstanceDataExtra",
+             "ImVector<ImGuiTableInstanceData>",
+             "ImGuiTableInstanceData *"),
+            ("ImGuiTable", ((4736, 3840),), "SortSpecsMulti",
+             "ImVector<ImGuiTableColumnSortSpecs>",
+             "ImGuiTableColumnSortSpecs *"),
+            ("ImGuiTableTempData", ((1408, 128),), "AngledHeadersRequests",
+             "ImVector<ImGuiTableHeaderData>", "ImGuiTableHeaderData *"),
+            ("ImGuiTableTempData", ((1408, 256),), "ReconcileColumnsRequests",
+             "ImVector<ImGuiTableReconcileColumnData>",
+             "ImGuiTableReconcileColumnData *"),
+            ("ImGuiContext", ((88000, 72000), (87744, 71744)),
+             "TablesTempData",
+             "ImVector<ImGuiTableTempData>", "ImGuiTableTempData *"),
+        )
+        for (owner_name, owner_layouts, field_name,
+             vector_name, pointer_type) in configurations:
+            owner = self.records_by_spelling.get(owner_name)
+            vector = self.records_by_spelling.get(vector_name)
+            if (owner is None or owner.get("align_bits") != 64
+                    or vector is None):
+                raise TranslationError(
+                    f"flatten table vectors changed {owner_name}.{field_name}"
+                )
+            matches = [
+                field for field in owner.get("fields", [])
+                if field.get("name") == field_name
+            ]
+            expected_vector_fields = [
+                ("Size", "int", 0), ("Capacity", "int", 32),
+                ("Data", pointer_type, 64),
+            ]
+            actual_vector_fields = [
+                (field.get("name"), field.get("type"),
+                 field.get("offset_bits"))
+                for field in vector.get("fields", [])
+            ]
+            if (len(matches) != 1
+                    or matches[0].get("type") != vector_name
+                    or (owner.get("size_bits"),
+                        matches[0].get("offset_bits")) not in owner_layouts
+                    or vector.get("size_bits") != 128
+                    or vector.get("align_bits") != 64
+                    or actual_vector_fields != expected_vector_fields):
+                raise TranslationError(
+                    f"flatten table vector layout changed for "
+                    f"{owner_name}.{field_name}"
+                )
+            field = matches[0]
+            size_id = field["id"] + "#size"
+            capacity_id = field["id"] + "#capacity"
+            size_name = field_name + "Size"
+            capacity_name = field_name + "Capacity"
+            self.flattened_table_vector_fields[field["id"]] = (
+                pointer_type, size_name, capacity_name, vector_name
+            )
+            self.field_names[size_id] = size_name
+            self.field_names[capacity_id] = capacity_name
+            if field_name == "SortSpecsMulti":
+                self.field_names[field["id"] + "#padding"] = (
+                    "SortSpecsMultiPadding"
+                )
+            self.flattened_table_vector_record_ids.add(vector["id"])
+        self.omitted_record_ids.update(self.flattened_table_vector_record_ids)
+
+    def configure_flattened_table_pool(self) -> None:
+        """Expose ImPool<ImGuiTable> as an ordinary C storage record."""
+        pool = self.records_by_spelling.get("ImPool<ImGuiTable>")
+        vector = self.records_by_spelling.get("ImVector<ImGuiTable>")
+        if (pool is None or pool.get("size_bits") != 320
+                or pool.get("align_bits") != 64 or vector is None
+                or vector.get("size_bits") != 128
+                or vector.get("align_bits") != 64):
+            raise TranslationError("flatten table pool layout changed")
+        expected_pool = [
+            ("Buf", "ImVector<ImGuiTable>", 0),
+            ("Map", "ImGuiStorage", 128),
+            ("FreeIdx", "ImPoolIdx", 256),
+            ("AliveCount", "ImPoolIdx", 288),
+        ]
+        expected_vector = [
+            ("Size", "int", 0), ("Capacity", "int", 32),
+            ("Data", "ImGuiTable *", 64),
+        ]
+        actual_pool = [
+            (field.get("name"), field.get("type"), field.get("offset_bits"))
+            for field in pool.get("fields", [])
+        ]
+        actual_vector = [
+            (field.get("name"), field.get("type"), field.get("offset_bits"))
+            for field in vector.get("fields", [])
+        ]
+        if actual_pool != expected_pool or actual_vector != expected_vector:
+            raise TranslationError("flatten table pool fields changed")
+        field = pool["fields"][0]
+        self.flattened_table_vector_fields[field["id"]] = (
+            "ImGuiTable *", "Size", "Capacity", "ImVector<ImGuiTable>"
+        )
+        self.field_names[field["id"]] = "Data"
+        self.field_names[field["id"] + "#size"] = "Size"
+        self.field_names[field["id"] + "#capacity"] = "Capacity"
+        self.flattened_table_vector_record_ids.add(vector["id"])
+        self.omitted_record_ids.add(vector["id"])
+        pair = self.records_by_spelling.get("ImGuiStoragePair")
+        pair_fields = pair.get("fields", []) if pair is not None else []
+        if len(pair_fields) != 2 or pair_fields[1].get("name"):
+            raise TranslationError("flatten table pool storage pair changed")
+        value_union = self.records.get(
+            pair_fields[1].get("record_dependency", "")
+        )
+        value_fields = value_union.get("fields", []) if value_union else []
+        if [(item.get("name"), item.get("type")) for item in value_fields] != [
+            ("val_i", "int"), ("val_f", "float"), ("val_p", "void *")
+        ]:
+            raise TranslationError("flatten table pool storage value changed")
+        self.table_pool_map_int_path = (
+            self.field_names[pair_fields[1]["id"]] + ".val_i"
+        )
+
     def compute_public_complete_record_ids(self) -> set[str]:
         """Close public imgui.h records over their by-value dependencies."""
         if not self.split_public_header:
@@ -181,7 +383,7 @@ class Emitter:
                     if dependency in self.records and dependency not in result:
                         result.add(dependency)
                         changed = True
-        return result
+        return result - self.omitted_record_ids
 
     def record_id_for_simple_type(self, spelling: str) -> str | None:
         """Resolve an ordinary pointer/reference/array type to a record."""
@@ -230,7 +432,7 @@ class Emitter:
         context = self.records_by_spelling.get("ImGuiContext")
         if context is not None:
             result.add(context["id"])
-        return result
+        return result - self.omitted_record_ids
 
     def typedef_is_public(self, item: dict[str, Any]) -> bool:
         return self.declaration_is_public(item)
@@ -300,6 +502,15 @@ class Emitter:
             options.get("compact_imchunkstream", False)
         )
         self.compact_impool = bool(options.get("compact_impool", False))
+        self.flatten_table_pool = bool(
+            options.get("flatten_table_pool", False)
+        )
+        self.flatten_table_spans = bool(
+            options.get("flatten_table_spans", False)
+        )
+        self.flatten_table_vectors = bool(
+            options.get("flatten_table_vectors", False)
+        )
         self.compact_checkbox_flags = bool(
             options.get("compact_checkbox_flags", False)
         )
@@ -331,11 +542,19 @@ class Emitter:
             raise TranslationError(
                 "compact ImVector capacity requires compact ImVector"
             )
+        if self.flatten_table_vectors and not self.compact_imvector:
+            raise TranslationError(
+                "flattened table vectors require compact ImVector"
+            )
         if self.compact_impool and not self.compact_imvector:
             raise TranslationError("compact ImPool requires compact ImVector")
         if self.compact_impool and not self.compact_imvector_lifecycle:
             raise TranslationError(
                 "compact ImPool requires compact ImVector lifecycle"
+            )
+        if self.flatten_table_pool and not self.compact_impool:
+            raise TranslationError(
+                "flatten table pool requires compact ImPool"
             )
         self.compact_nav_key_ranges = bool(
             options.get("compact_nav_key_ranges", False)
@@ -456,6 +675,9 @@ class Emitter:
                 readable = readable.replace("*", "_ptr").replace("&", "_ref")
                 base_name = re.sub(r"[^A-Za-z0-9_]", "_", readable)
                 base_name = re.sub(r"_+", "_", base_name).strip("_")
+            if (self.flatten_table_pool
+                    and qualified == "ImPool<ImGuiTable>"):
+                base_name = "ImGuiTablePool"
             record_base_names[item["id"]] = base_name
         record_base_counts: dict[str, int] = {}
         for base_name in record_base_names.values():
@@ -513,6 +735,18 @@ class Emitter:
             for record in self.records.values()
             for field in record.get("fields", [])
         }
+        self.flattened_table_span_fields: dict[str, tuple[str, str]] = {}
+        self.flattened_table_vector_fields: dict[
+            str, tuple[str, str, str, str]
+        ] = {}
+        self.flattened_table_vector_record_ids: set[str] = set()
+        self.omitted_record_ids: set[str] = set()
+        if self.flatten_table_spans:
+            self.configure_flattened_table_spans()
+        if self.flatten_table_vectors:
+            self.configure_flattened_table_vectors()
+        if self.flatten_table_pool:
+            self.configure_flattened_table_pool()
         self.records_by_c_name = {
             self.record_names_by_id[record["id"]]: record
             for record in self.records.values()
@@ -566,6 +800,11 @@ class Emitter:
         self.function_declarations = self._merge_function_declarations(
             ir.get("functions", [])
         )
+        self.flattened_span_function_ids = {
+            identifier
+            for identifier, function in self.function_declarations.items()
+            if function.get("parent") in self.omitted_record_ids
+        }
         self.omitted_call_ids = {
             identifier
             for identifier, function in self.function_declarations.items()
@@ -813,6 +1052,57 @@ class Emitter:
                 + ", ".join(sorted(duplicate_exact_names))
             )
         self.function_names.update(self.exact_c_names)
+        self.compact_internal_c_names = (
+            self.stable_table_pool_function_names()
+            if self.flatten_table_pool else {
+                identifier: "imgui_i_table_pool_add"
+                for identifier, function in self.functions.items()
+                if self.compact_impool
+                and function.get("qualified_name")
+                == "ImPool<ImGuiTable>::Add"
+            }
+        )
+        if (not self.flatten_table_pool
+                and len(self.compact_internal_c_names) > 1):
+            raise TranslationError(
+                "compact ImPool expected one ImPool<ImGuiTable>::Add"
+            )
+        self.function_names.update(self.compact_internal_c_names)
+        self.handwritten_c_names = self.stable_handwritten_function_names(
+            set(self.exact_c_names) | set(self.compact_internal_c_names)
+        )
+        stable_name_owners: dict[str, str] = {
+            name: identifier for identifier, name in self.exact_c_names.items()
+        }
+        for identifier, name in self.compact_internal_c_names.items():
+            owner = stable_name_owners.get(name)
+            if owner is not None and owner != identifier:
+                raise TranslationError(
+                    f"stable compact C name collision: {name}"
+                )
+            if name in set(self.global_names.values()):
+                raise TranslationError(
+                    f"stable compact C name collides with global: {name}"
+                )
+            stable_name_owners[name] = identifier
+        for identifier, name in sorted(self.handwritten_c_names.items()):
+            owner = stable_name_owners.get(name)
+            if owner is not None and owner != identifier:
+                raise TranslationError(
+                    f"stable handwritten C name collision: {name}"
+                )
+            if name in set(self.global_names.values()):
+                raise TranslationError(
+                    f"stable handwritten C name collides with global: {name}"
+                )
+            stable_name_owners[name] = identifier
+        self.function_names.update(self.handwritten_c_names)
+        if len(set(self.function_names.values())) != len(self.function_names):
+            raise TranslationError("function C-name assignment is not unique")
+        self.handwritten_function_dependencies: dict[str, set[str]] = {}
+        self.handwritten_constructor_value_dependencies: dict[
+            str, set[str]
+        ] = {}
         self.public_complete_record_ids = (
             self.compute_public_complete_record_ids()
         )
@@ -880,6 +1170,7 @@ class Emitter:
         self.active_function_ids: set[str] | None = None
         self.active_global_ids: set[str] | None = None
         self.emit_runtime_support = True
+        self.prime_handwritten_function_dependencies()
         if linkage_analysis is None:
             linkage_analysis = self.analyze_function_linkage()
         (
@@ -1201,6 +1492,22 @@ class Emitter:
                 visit(value, consumer)
 
         for identifier, function in self.functions.items():
+            if self.is_flattened_table_pool_function(function):
+                # Every flattened pool definition replaces its C++ body, so
+                # constructor adapters in the discarded template AST are not
+                # consumers.
+                continue
+            if self.compact_table_pool_add_constructor(function) is not None:
+                # The compact C body initializes the slot directly.  The
+                # placement-new expression belongs to the discarded C++ body,
+                # so it must not keep a placement adapter alive.
+                continue
+            if identifier in self.handwritten_function_dependencies:
+                for constructor in self.handwritten_constructor_value_dependencies.get(
+                    identifier, set()
+                ):
+                    value_consumers[constructor].add(identifier)
+                continue
             for initializer in function.get("initializers", []):
                 value = initializer.get("value", {})
                 visit(
@@ -1259,6 +1566,8 @@ class Emitter:
                         implicit_constructor_dependencies(base_record, seen)
                     )
             for field in record.get("fields", []):
+                if field.get("id") in self.flattened_table_vector_fields:
+                    continue
                 constructor = self.default_constructor_by_record.get(
                     field.get("record_dependency", "")
                 )
@@ -1289,6 +1598,7 @@ class Emitter:
                         key in {"callee", "constructor", "destructor"}
                         and isinstance(value, str)
                         and value in self.functions
+                        and value not in self.flattened_span_function_ids
                     ):
                         result.add(value)
                     visit(value, result)
@@ -1297,18 +1607,34 @@ class Emitter:
                     visit(value, result)
 
         for identifier, function in self.functions.items():
-            visit(function.get("body", {}), references[identifier])
-            visit(function.get("initializers", []), references[identifier])
-            for declaration in self.collect_local_declarations(
-                function.get("body", {})
-            ):
-                if not declaration.get("static_local"):
-                    references[identifier].update(
-                        self.object_destructor_dependencies(
-                            declaration.get("type", "")
+            table_pool_dependencies = (
+                self.flattened_table_pool_dependencies(function)
+            )
+            if table_pool_dependencies is not None:
+                references[identifier].update(table_pool_dependencies)
+            elif self.compact_table_pool_add_constructor(function) is not None:
+                # The specialized body calls only the shared pool runtime and
+                # performs its own POD initialization.
+                references[identifier] = set()
+            elif identifier in self.handwritten_function_dependencies:
+                references[identifier].update(
+                    self.handwritten_function_dependencies[identifier]
+                )
+            else:
+                visit(function.get("body", {}), references[identifier])
+                visit(function.get("initializers", []), references[identifier])
+                for declaration in self.collect_local_declarations(
+                    function.get("body", {})
+                ):
+                    if not declaration.get("static_local"):
+                        references[identifier].update(
+                            self.object_destructor_dependencies(
+                                declaration.get("type", "")
+                            )
                         )
-                    )
-            if function.get("destructor") and function.get("parent") in self.records:
+            if (function.get("destructor")
+                    and function.get("parent") in self.records
+                    and not self.is_flattened_table_pool_function(function)):
                 references[identifier].update(
                     self.record_subobject_destructor_dependencies(
                         self.records[function["parent"]]
@@ -1332,7 +1658,10 @@ class Emitter:
         }
         for source, targets in references.items():
             for target in targets:
-                consumers[target].add(source)
+                # Declaration-only external bridges have no translated
+                # linkage vertex and therefore no ownership classification.
+                if target in consumers:
+                    consumers[target].add(source)
 
         internal: set[str] = set()
         for identifier in self.functions:
@@ -1800,11 +2129,51 @@ class Emitter:
             if not base_record:
                 self.fail(record, f"unresolved base record {base.get('type')}")
             result.extend(self.flattened_fields(base_record))
-        result.extend(record.get("fields", []))
+        for field in record.get("fields", []):
+            flattened = self.flattened_table_span_fields.get(field["id"])
+            if flattened is not None:
+                pointer_type, end_name = flattened
+                begin = dict(field)
+                begin["type"] = pointer_type
+                begin.pop("record_dependency", None)
+                end = dict(begin)
+                end["id"] = field["id"] + "#end"
+                end["name"] = end_name
+                result.extend((begin, end))
+                continue
+            vector = self.flattened_table_vector_fields.get(field["id"])
+            if vector is not None:
+                pointer_type, size_name, capacity_name, _ = vector
+                size = dict(field)
+                size["id"] = field["id"] + "#size"
+                size["name"] = size_name
+                size["type"] = "int"
+                size.pop("record_dependency", None)
+                capacity = dict(size)
+                capacity["id"] = field["id"] + "#capacity"
+                capacity["name"] = capacity_name
+                data = dict(field)
+                data["type"] = pointer_type
+                data.pop("record_dependency", None)
+                if field.get("name") == "SortSpecsMulti":
+                    padding = dict(size)
+                    padding["id"] = field["id"] + "#padding"
+                    padding["name"] = "SortSpecsMultiPadding"
+                    padding["c_comment"] = (
+                        "Preserve upstream ImVector aggregate alignment."
+                    )
+                    result.append(padding)
+                result.extend((size, capacity, data))
+                continue
+            result.append(field)
         return result
 
     def ordered_records(self) -> list[dict[str, Any]]:
-        remaining = dict(self.records)
+        remaining = {
+            identifier: record
+            for identifier, record in self.records.items()
+            if identifier not in self.omitted_record_ids
+        }
         emitted: set[str] = set()
         result: list[dict[str, Any]] = []
         while remaining:
@@ -1815,10 +2184,12 @@ class Emitter:
                 dependencies: set[str] = {
                     base["record"] for base in record.get("bases", [])
                     if base.get("record") in self.records
+                    and base.get("record") not in self.omitted_record_ids
                 }
                 for field in record.get("fields", []):
                     dependency = field.get("record_dependency")
-                    if dependency in self.records:
+                    if (dependency in self.records
+                            and dependency not in self.omitted_record_ids):
                         dependencies.add(dependency)
                 dependencies.discard(identifier)
                 if dependencies <= emitted:
@@ -2036,6 +2407,108 @@ class Emitter:
             target = self.record_names_by_id[record["id"]]
             return f"(({target} *)({value}))"
         return value
+
+    def flattened_table_vector_components(
+        self, node: dict[str, Any]
+    ) -> tuple[str, str, str, str, str] | None:
+        """Return data/size/capacity expressions for a flattened owner field."""
+        field = self._unwrap(node)
+        if (field.get("kind") != "MemberExpr"
+                or field.get("member") not in self.flattened_table_vector_fields):
+            return None
+        owner = self._unwrap(field["base"])
+        reference_owner = (
+            owner.get("kind") == "DeclRefExpr"
+            and owner.get("decl") in self.reference_parameters
+        )
+        owner_expression = (
+            self.local_names.get(owner.get("decl", ""), owner.get("name", ""))
+            if reference_owner else self.expression(owner)
+        )
+        owner_pointer = (
+            field.get("arrow")
+            or owner.get("kind") == "CXXThisExpr"
+            or reference_owner
+        )
+        separator = "->" if owner_pointer else "."
+        pointer_type, size_name, capacity_name, vector_name = (
+            self.flattened_table_vector_fields[field["member"]]
+        )
+        data_name = self.field_names[field["member"]]
+        return (
+            f"{owner_expression}{separator}{data_name}",
+            f"{owner_expression}{separator}{size_name}",
+            f"{owner_expression}{separator}{capacity_name}",
+            pointer_type, vector_name,
+        )
+
+    def flattened_table_vector_call(
+        self, node: dict[str, Any]
+    ) -> str | None:
+        components = self.flattened_table_vector_components(node["object"])
+        if components is None:
+            return None
+        data, size, capacity, pointer_type, vector_name = components
+        function = self.function_declarations.get(node.get("callee", ""), {})
+        method = node.get("callee_name", "")
+        arguments = node.get("arguments", [])
+        context = self.current_context_expression()
+        if method == "begin" and not arguments:
+            return data
+        if method == "end" and not arguments:
+            return f"({data} == 0 ? 0 : {data} + {size})"
+        if method == "clear" and not arguments:
+            return (
+                f"imgui_c89_vector_clear({context}, (void **)&{data}, "
+                f"&{size}, &{capacity})"
+            )
+        if method == "clear_destruct" and not arguments:
+            if (vector_name != "ImVector<ImGuiTableTempData>"
+                    or self.function_body_sha256(function)
+                    != "0c7764ae3faaac6c6704f85d4b7ec67b8cd47b3da80dc6dd4a05eebc63af3d91"):
+                self.fail(node, "flattened table vector clear_destruct changed")
+            return (
+                f"imgui_c89_vector_clear({context}, (void **)&{data}, "
+                f"&{size}, &{capacity})"
+            )
+        element_type = self.c_type(pointer_type[:-1].strip())
+        if method == "reserve" and len(arguments) == 1:
+            new_capacity = self.expression(arguments[0])
+            return (
+                f"({data} = ({element_type} *)imgui_c89_vector_reserve("
+                f"{context}, {data}, {size}, &{capacity}, {new_capacity}, "
+                f"sizeof(*{data}), 0))"
+            )
+        if method == "resize" and len(arguments) in {1, 2}:
+            new_size = self.expression(arguments[0])
+            if len(arguments) == 1:
+                return (
+                    f"({data} = ({element_type} *)imgui_c89_vector_resize("
+                    f"{context}, {data}, &{size}, &{capacity}, {new_size}, "
+                    f"sizeof(*{data})))"
+                )
+            fill = self.call_arguments(node.get("callee"), arguments)[1]
+            return (
+                f"({data} = ({element_type} *)imgui_c89_vector_resize_fill("
+                f"{context}, {data}, &{size}, &{capacity}, {new_size}, "
+                f"sizeof(*{data}), {fill}))"
+            )
+        if method == "push_back" and len(arguments) == 1:
+            value = self.call_arguments(node.get("callee"), arguments)[0]
+            return (
+                f"({data} = ({element_type} *)imgui_c89_vector_push_back("
+                f"{context}, {data}, &{size}, &{capacity}, "
+                f"sizeof(*{data}), {value}))"
+            )
+        if method == "back" and not arguments:
+            line = self.imvector_assert_line(
+                function, "back", "Size > 0"
+            )
+            return (
+                f"(*(({element_type} *)imgui_c89_vector_back("
+                f"{data}, {size}, sizeof(*{data}), {line})))"
+            )
+        self.fail(node, f"unsupported flattened table vector method {method}")
 
     def expression(self, node: dict[str, Any]) -> str:
         kind = node.get("kind")
@@ -2265,6 +2738,39 @@ class Emitter:
             )
         if kind == "MemberExpr":
             base_node = self._unwrap(node["base"])
+            vector = self.flattened_table_vector_components(base_node)
+            if vector is not None and node.get("name") in {
+                "Data", "Size", "Capacity"
+            }:
+                return vector[{"Data": 0, "Size": 1, "Capacity": 2}[node["name"]]]
+            if (base_node.get("kind") == "MemberExpr"
+                    and base_node.get("member") in self.flattened_table_span_fields
+                    and node.get("name") in {"Data", "DataEnd"}):
+                owner = self._unwrap(base_node["base"])
+                reference_owner = (
+                    owner.get("kind") == "DeclRefExpr"
+                    and owner.get("decl") in self.reference_parameters
+                )
+                owner_expression = (
+                    self.local_names.get(
+                        owner.get("decl", ""), owner.get("name", "")
+                    )
+                    if reference_owner else self.expression(owner)
+                )
+                owner_pointer = (
+                    base_node.get("arrow")
+                    or owner.get("kind") == "CXXThisExpr"
+                    or reference_owner
+                )
+                field_name = self.field_names[base_node["member"]]
+                if node.get("name") == "DataEnd":
+                    field_name = self.flattened_table_span_fields[
+                        base_node["member"]
+                    ][1]
+                return (
+                    f"{owner_expression}{'->' if owner_pointer else '.'}"
+                    f"{field_name}"
+                )
             reference_base = (
                 base_node.get("kind") == "DeclRefExpr"
                 and base_node.get("decl") in self.reference_parameters
@@ -2315,6 +2821,9 @@ class Emitter:
                 return f"({name}_data + {name}_offsets[{index}])"
             return f"{self.expression(node['base'])}[{self.expression(node['index'])}]"
         if kind == "CXXMemberCallExpr":
+            flattened_vector_call = self.flattened_table_vector_call(node)
+            if flattened_vector_call is not None:
+                return flattened_vector_call
             lambda_node = self.find_lambda(node.get("object"))
             if lambda_node:
                 if lambda_node.get("capture_count"):
@@ -2351,6 +2860,29 @@ class Emitter:
         if kind == "CXXOperatorCallExpr":
             arguments = node.get("arguments", [])
             operator_name = node.get("callee_name", "")
+            if operator_name == "operator[]" and len(arguments) == 2:
+                vector = self.flattened_table_vector_components(arguments[0])
+                if vector is not None:
+                    data, size, _, pointer_type, _ = vector
+                    element_type = self.c_type(pointer_type[:-1].strip())
+                    function = self.function_declarations.get(
+                        node.get("callee", ""), {}
+                    )
+                    line = self.imvector_assert_line(
+                        function, "operator[]", "i >= 0 && i < Size"
+                    )
+                    return (
+                        f"(*(({element_type} *)imgui_c89_vector_at("
+                        f"{data}, {size}, {self.expression(arguments[1])}, "
+                        f"sizeof(*{data}), {line})))"
+                    )
+            if (node.get("callee") in self.flattened_span_function_ids
+                    and operator_name == "operator[]"
+                    and len(arguments) == 2):
+                return "(*({} + {}))".format(
+                    self.expression(arguments[0]),
+                    self.expression(arguments[1]),
+                )
             infix = operator_name.removeprefix("operator")
             resolved = self.functions.get(node.get("callee", ""))
             if resolved:
@@ -2653,6 +3185,19 @@ class Emitter:
         for index, declaration in enumerate(
             self.collect_local_declarations(function.get("body", {}))
         ):
+            if (declaration.get("name", "").startswith("__range")
+                    and self.base_spelling(
+                        declaration.get("type", "").strip()
+                        .removesuffix("&").strip()
+                    )
+                    in {
+                        vector[3]
+                        for vector in self.flattened_table_vector_fields.values()
+                    }):
+                self.local_names[declaration["id"]] = declaration.get(
+                    "name", "range"
+                )
+                continue
             if (self.current_compact_nav_key_ranges
                     and (declaration.get("name", "").startswith("__begin2")
                          or declaration.get("name", "").startswith("__end2")
@@ -2893,6 +3438,8 @@ class Emitter:
                     target, base_record, indent, False
                 ))
         for field in record.get("fields", []):
+            if field.get("id") in self.flattened_table_vector_fields:
+                continue
             field_name = self.field_names[field["id"]]
             if "default" in field:
                 result.append(
@@ -3399,8 +3946,6 @@ class Emitter:
         identifier = next(iter(self.compact_cursor_global_ids))
         self.compact_cursor_values(self.globals[identifier])
         name = self.global_names[identifier]
-        local_lines = self.prepare_locals(function)
-        local_lines.append("    const unsigned char *cursor_data;")
         source = self.statement(function["body"])
         hits = [
             index for index, line in enumerate(source) if name in line
@@ -3415,17 +3960,49 @@ class Emitter:
                 "compact cursor metadata use sites changed shape"
             )
         start = hits[0]
+        advance = [
+            line for line in source[start + 4:]
+            if line.strip().startswith("pos.x += ")
+        ]
+        if len(advance) != 1:
+            raise TranslationError(
+                "compact cursor fill offset changed shape"
+            )
+        # The source expression uses ImVec2 operators and therefore normally
+        # needs three aggregate temporaries.  Once the cursor table has been
+        # byte-packed, direct component arithmetic is both clearer C and much
+        # smaller code.  Keep the validated control-flow prefix (including the
+        # atlas rectangle lookup) and replace the remaining vector shell.
+        local_lines = [
+            "    ImTextureRect *r;",
+            "    const unsigned char *cursor_data;",
+            "    float x;",
+            "    float y;",
+            "    float width;",
+            "    float height;",
+        ]
         replacement = [
             f"    cursor_data = {name} + cursor_type * 6;",
-            "    pos.x = (float)cursor_data[0] + (float)r->x;",
-            "    pos.y = (float)cursor_data[1] + (float)r->y;",
-            "    size.x = (float)cursor_data[2];",
-            "    size.y = (float)cursor_data[3];",
-            source[start + 2],
+            "    x = (float)cursor_data[0] + (float)r->x;",
+            "    y = (float)cursor_data[1] + (float)r->y;",
+            "    width = (float)cursor_data[2];",
+            "    height = (float)cursor_data[3];",
+            "    out_size->x = width;",
+            "    out_size->y = height;",
             "    out_offset->x = (float)cursor_data[4];",
             "    out_offset->y = (float)cursor_data[5];",
+            "    out_uv_border[0].x = x * atlas->TexUvScale.x;",
+            "    out_uv_border[0].y = y * atlas->TexUvScale.y;",
+            "    out_uv_border[1].x = (x + width) * atlas->TexUvScale.x;",
+            "    out_uv_border[1].y = (y + height) * atlas->TexUvScale.y;",
+            advance[0].replace("pos.x", "x"),
+            "    out_uv_fill[0].x = x * atlas->TexUvScale.x;",
+            "    out_uv_fill[0].y = y * atlas->TexUvScale.y;",
+            "    out_uv_fill[1].x = (x + width) * atlas->TexUvScale.x;",
+            "    out_uv_fill[1].y = (y + height) * atlas->TexUvScale.y;",
+            "    return 1;",
         ]
-        return local_lines, source[:start] + replacement + source[start + 4:]
+        return local_lines, source[:start] + replacement
 
     def compact_separator_values(
         self, declaration: dict[str, Any]
@@ -4167,6 +4744,91 @@ class Emitter:
             for index, record in enumerate(self.compact_assert_records)
         }
 
+    def configure_effective_reachability(self) -> None:
+        """Prune TU-local definitions made dead by handwritten overlays.
+
+        Cross-TU and externally observable definitions are unconditional roots.
+        A handwritten definition replaces, rather than augments, its original
+        IR call edges; its effective edges are the symbols actually selected by
+        the template's resolved function tokens. Only definitions already
+        proven TU-local by ``analyze_function_linkage`` may be removed.
+        """
+        if self.active_function_ids is None:
+            return
+        active = set(self.active_function_ids)
+        known_active = active & set(self.functions)
+        effective_references = {
+            identifier: set(references)
+            for identifier, references in self.function_references.items()
+        }
+        for identifier in sorted(known_active):
+            function = self.functions[identifier]
+            previous_function_id = self.current_function_id
+            self.current_function_id = identifier
+            try:
+                compact_vector = self.compact_imvector_body(function)
+                table_pool_dependencies = (
+                    self.flattened_table_pool_dependencies(function)
+                )
+                compact_table_add = (
+                    self.compact_table_pool_add_constructor(function)
+                )
+            finally:
+                self.current_function_id = previous_function_id
+            if table_pool_dependencies is not None:
+                effective_references[identifier] = set(
+                    table_pool_dependencies
+                )
+                continue
+            if compact_vector is not None or compact_table_add is not None:
+                # These lowerings call only the shared C runtime.  Keeping the
+                # original template-method edges here retained dead reserve /
+                # grow helpers in source after their callers were replaced.
+                effective_references[identifier] = set()
+                continue
+            if self.handwritten_specification(function) is None:
+                continue
+            body = self.handwritten_function_body(
+                function, resolve_asserts=False
+            )
+            if body is None:
+                raise TranslationError(
+                    "matched handwritten function lost its replacement body: "
+                    + function.get("qualified_name", identifier)
+                )
+            effective_references[identifier] = set(
+                self.handwritten_function_dependencies.get(identifier, set())
+            )
+            if function.get("destructor") and function.get("parent") in self.records:
+                effective_references[identifier].update(
+                    self.record_subobject_destructor_dependencies(
+                        self.records[function["parent"]]
+                    )
+                )
+
+        roots = {
+            identifier for identifier in known_active
+            if identifier not in self.internal_functions
+        }
+        reachable = set(roots)
+        pending = list(sorted(roots))
+        while pending:
+            source = pending.pop()
+            for target in effective_references.get(source, set()):
+                if target not in known_active or target in reachable:
+                    continue
+                reachable.add(target)
+                pending.append(target)
+
+        removed = known_active - reachable
+        unsafe = removed - self.internal_functions
+        if unsafe:
+            raise TranslationError(
+                "effective reachability attempted to prune non-local "
+                "definitions: " + ", ".join(sorted(unsafe))
+            )
+        self.active_function_ids = (active - removed)
+
     def emit_assert_metadata_support(self) -> list[str]:
         if not self.compact_assert_records:
             return []
@@ -4359,11 +5021,365 @@ class Emitter:
             return ["    imgui_c89_chunk_swap(self, rhs);"]
         raise AssertionError(method)
 
+    @staticmethod
+    def expression_has_only_self_effects(node: Any) -> bool:
+        """Accept expressions that can only read values or assign into self."""
+        if not isinstance(node, dict):
+            return False
+        kind = node.get("kind")
+        if kind in {
+            "FloatingLiteral", "IntegerLiteral", "CXXBoolLiteralExpr",
+            "CharacterLiteral", "CXXNullPtrLiteralExpr", "GNUNullExpr",
+            "DeclRefExpr", "CXXThisExpr",
+        }:
+            return True
+        if kind == "MemberExpr":
+            return Emitter.expression_has_only_self_effects(node.get("base"))
+        if kind in {
+            "ImplicitCastExpr", "ParenExpr", "ConstantExpr",
+            "CStyleCastExpr", "CXXStaticCastExpr", "CXXFunctionalCastExpr",
+            "CXXConstCastExpr", "CXXReinterpretCastExpr", "UnaryOperator",
+            "MaterializeTemporaryExpr", "ExprWithCleanups",
+        }:
+            return Emitter.expression_has_only_self_effects(node.get("operand"))
+        if kind in {"BinaryOperator", "CompoundAssignOperator"}:
+            lhs = node.get("lhs")
+            if node.get("opcode") == "=":
+                lhs = Emitter.unwrap_expression_node(lhs)
+                if (lhs.get("kind") != "MemberExpr"
+                        or not Emitter.expression_has_only_self_effects(
+                            lhs.get("base")
+                        )):
+                    return False
+            elif not Emitter.expression_has_only_self_effects(lhs):
+                return False
+            return Emitter.expression_has_only_self_effects(node.get("rhs"))
+        if kind == "ConditionalOperator":
+            return all(
+                Emitter.expression_has_only_self_effects(node.get(key))
+                for key in ("condition", "true", "false")
+            )
+        if kind == "UnaryExprOrTypeTraitExpr":
+            argument = node.get("argument")
+            return argument is None or Emitter.expression_has_only_self_effects(
+                argument
+            )
+        return False
+
+    @staticmethod
+    def unwrap_expression_node(node: Any) -> dict[str, Any]:
+        while isinstance(node, dict) and node.get("kind") in {
+            "ImplicitCastExpr", "ParenExpr", "ConstantExpr",
+            "CStyleCastExpr", "CXXStaticCastExpr", "CXXFunctionalCastExpr",
+            "CXXConstCastExpr", "CXXReinterpretCastExpr",
+        }:
+            node = node.get("operand", {})
+        return node if isinstance(node, dict) else {}
+
+    @classmethod
+    def zero_memset_of_self(cls, node: Any) -> bool:
+        if not isinstance(node, dict) or node.get("kind") != "CallExpr":
+            return False
+        arguments = node.get("arguments", [])
+        if node.get("callee_name") != "memset" or len(arguments) != 3:
+            return False
+        target = cls.unwrap_expression_node(arguments[0])
+        zero = cls.unwrap_expression_node(arguments[1])
+        size = cls.unwrap_expression_node(arguments[2])
+        if (target.get("kind") != "CXXThisExpr"
+                or zero.get("kind") != "IntegerLiteral"
+                or int(zero.get("value", "1"), 0) != 0
+                or size.get("kind") != "UnaryExprOrTypeTraitExpr"
+                or size.get("operator") != "sizeof"):
+            return False
+        argument = cls.unwrap_expression_node(size.get("argument", {}))
+        return (
+            argument.get("kind") == "UnaryOperator"
+            and argument.get("opcode") == "*"
+            and cls.unwrap_expression_node(argument.get("operand", {})).get(
+                "kind"
+            ) == "CXXThisExpr"
+        )
+
+    def constructor_has_only_self_effects(
+        self, constructor_id: str, visiting: set[str] | None = None,
+    ) -> bool:
+        """Prove a constructor discarded before a later memset has no effects."""
+        visiting = set() if visiting is None else set(visiting)
+        if constructor_id in visiting:
+            return False
+        constructor = self.functions.get(constructor_id)
+        if constructor is None or not constructor.get("constructor"):
+            return False
+        visiting.add(constructor_id)
+        for initializer in constructor.get("initializers", []):
+            value = initializer.get("value", {})
+            if value.get("kind") == "CXXConstructExpr":
+                nested = value.get("constructor", "")
+                if (not all(
+                        self.expression_has_only_self_effects(argument)
+                        for argument in value.get("arguments", [])
+                    ) or not self.constructor_has_only_self_effects(
+                        nested, visiting
+                    )):
+                    return False
+            elif not self.expression_has_only_self_effects(value):
+                return False
+        for statement in constructor.get("body", {}).get("statements", []):
+            if self.zero_memset_of_self(statement):
+                continue
+            if (statement.get("kind") not in {
+                    "BinaryOperator", "CompoundAssignOperator"
+                } or statement.get("opcode") != "="
+                    or not self.expression_has_only_self_effects(statement)):
+                return False
+        return True
+
+    def validate_compact_table_constructor(self, constructor_id: str) -> None:
+        constructor = self.functions.get(constructor_id, {})
+        statements = constructor.get("body", {}).get("statements", [])
+        if (constructor.get("qualified_name") != "ImGuiTable::ImGuiTable"
+                or constructor.get("parameters")
+                or len(statements) != 2
+                or not self.zero_memset_of_self(statements[0])):
+            raise TranslationError(
+                "compact ImPool<ImGuiTable>::Add constructor changed shape"
+            )
+        assignment = statements[1]
+        lhs = self.unwrap_expression_node(assignment.get("lhs", {}))
+        rhs = self.unwrap_expression_node(assignment.get("rhs", {}))
+        minus_one = (
+            rhs.get("kind") == "UnaryOperator"
+            and rhs.get("opcode") == "-"
+            and self.unwrap_expression_node(rhs.get("operand", {})).get(
+                "kind"
+            ) == "IntegerLiteral"
+            and int(
+                self.unwrap_expression_node(rhs.get("operand", {})).get(
+                    "value", "0"
+                ), 0
+            ) == 1
+        )
+        if (assignment.get("kind") != "BinaryOperator"
+                or assignment.get("opcode") != "="
+                or lhs.get("kind") != "MemberExpr"
+                or lhs.get("name") != "LastFrameActive"
+                or self.unwrap_expression_node(lhs.get("base", {})).get(
+                    "kind"
+                ) != "CXXThisExpr"
+                or not minus_one):
+            raise TranslationError(
+                "compact ImPool<ImGuiTable>::Add defaults changed"
+            )
+        for initializer in constructor.get("initializers", []):
+            value = initializer.get("value", {})
+            nested = value.get("constructor", "")
+            if (value.get("kind") != "CXXConstructExpr"
+                    or not all(
+                        self.expression_has_only_self_effects(argument)
+                        for argument in value.get("arguments", [])
+                    )
+                    or not self.constructor_has_only_self_effects(nested)):
+                raise TranslationError(
+                    "compact ImGuiTable member construction gained side effects"
+                )
+
+    def compact_table_pool_add_constructor(
+        self, function: dict[str, Any]
+    ) -> str | None:
+        if (not self.compact_impool
+                or function.get("qualified_name")
+                != "ImPool<ImGuiTable>::Add"):
+            return None
+        constructors = [
+            identifier for identifier, candidate in self.functions.items()
+            if candidate.get("qualified_name") == "ImGuiTable::ImGuiTable"
+            and candidate.get("constructor")
+            and not candidate.get("parameters")
+        ]
+        if len(constructors) != 1:
+            raise TranslationError(
+                "compact ImPool expected one ImGuiTable constructor"
+            )
+        constructor_id = constructors[0]
+        statements = function.get("body", {}).get("statements", [])
+        if [statement.get("kind") for statement in statements] != [
+            "DeclStmt", "IfStmt", "ExprWithCleanups", "UnaryOperator",
+            "ReturnStmt",
+        ]:
+            raise TranslationError(
+                "compact ImPool<ImGuiTable>::Add body changed shape"
+            )
+        placement = statements[2].get("operand", {})
+        initializer = placement.get("initializer", {})
+        alive = statements[3]
+        alive_operand = self.unwrap_expression_node(alive.get("operand", {}))
+        if (placement.get("kind") != "CXXNewExpr"
+                or placement.get("array")
+                or placement.get("allocated_type") != "ImGuiTable"
+                or initializer.get("kind") != "CXXConstructExpr"
+                or initializer.get("constructor") != constructor_id
+                or initializer.get("arguments")
+                or alive.get("kind") != "UnaryOperator"
+                or alive.get("opcode") != "++"
+                or alive_operand.get("kind") != "MemberExpr"
+                or alive_operand.get("name") != "AliveCount"):
+            raise TranslationError(
+                "compact ImPool<ImGuiTable>::Add placement construction changed"
+            )
+        self.validate_compact_table_constructor(constructor_id)
+        return constructor_id
+
+    def is_flattened_table_pool_function(
+        self, function: dict[str, Any]
+    ) -> bool:
+        return (
+            self.flatten_table_pool
+            and function.get("qualified_name", "").startswith(
+                "ImPool<ImGuiTable>::"
+            )
+        )
+
+    def function_id_with_c_name(self, name: str) -> str:
+        matches = [
+            identifier for identifier, candidate in self.function_names.items()
+            if candidate == name and identifier in self.functions
+        ]
+        if len(matches) != 1:
+            raise TranslationError(f"expected one function named {name}")
+        return matches[0]
+
+    def flattened_table_pool_dependencies(
+        self, function: dict[str, Any]
+    ) -> set[str] | None:
+        if not self.is_flattened_table_pool_function(function):
+            return None
+        operation = self.function_names[function["id"]]
+        names: dict[str, tuple[str, ...]] = {
+            "imgui_table_pool_fini": ("imgui_table_pool_clear",),
+            "imgui_table_pool_clear": (
+                "imgui_table_fini", "imgui_storage_clear",
+            ),
+            "imgui_table_pool_find": ("imgui_storage_get_int",),
+            "imgui_table_pool_get_or_add": (
+                "imgui_storage_get_int_ref", "imgui_table_pool_add",
+            ),
+            "imgui_table_pool_remove": (
+                "imgui_table_pool_index", "imgui_table_pool_remove_at",
+            ),
+            "imgui_table_pool_remove_at": (
+                "imgui_table_fini", "imgui_storage_set_int",
+            ),
+        }
+        return {
+            self.function_id_with_c_name(name)
+            for name in names.get(operation, ())
+        }
+
+    def compact_flattened_table_pool_body(
+        self, function: dict[str, Any]
+    ) -> list[str] | None:
+        dependencies = self.flattened_table_pool_dependencies(function)
+        if dependencies is None:
+            return None
+        operation = self.function_names[function["id"]]
+        if operation == "imgui_table_pool_init":
+            return ["    memset(self, 0, sizeof(*self));"]
+        if operation == "imgui_table_pool_fini":
+            return ["    imgui_table_pool_clear(imgui_c89_ctx, self);"]
+        if operation == "imgui_table_pool_clear":
+            value = "self->Map.Data.Data[n]." + self.table_pool_map_int_path
+            return [
+                "    int idx;",
+                "    int n;",
+                "",
+                "    for (n = 0; n < self->Map.Data.Size; n++) {",
+                f"        idx = {value};",
+                "        if (idx != -1) {",
+                "            imgui_table_fini(imgui_c89_ctx, self->Data + idx);",
+                "        }",
+                "    }",
+                "    imgui_storage_clear(imgui_c89_ctx, &self->Map);",
+                "    imgui_c89_vector_clear(imgui_c89_ctx,",
+                "        (void **)&self->Data, &self->Size, &self->Capacity);",
+                "    self->FreeIdx = self->AliveCount = 0;",
+            ]
+        if operation == "imgui_table_pool_add":
+            self.compact_table_pool_add_constructor(function)
+            return [
+                "    ImGuiTable *item;",
+                "",
+                "    item = (ImGuiTable *)imgui_c89_pool_add_slot(",
+                "        imgui_c89_ctx, (void **)&self->Data,",
+                "        &self->Size, &self->Capacity,",
+                "        &self->FreeIdx, &self->AliveCount, sizeof(*item));",
+                "    memset(item, 0, sizeof(*item));",
+                "    item->LastFrameActive = -1;",
+                "    return item;",
+            ]
+        if operation == "imgui_table_pool_find":
+            return [
+                "    int index;",
+                "",
+                "    index = imgui_storage_get_int(&self->Map, key, -1);",
+                "    return index == -1 ? 0 : self->Data + index;",
+            ]
+        if operation == "imgui_table_pool_at":
+            return ["    return self->Data + n;"]
+        if operation == "imgui_table_pool_index":
+            return [
+                "    return (ImPoolIdx)imgui_c89_pool_index(",
+                "        self->Data, self->Size, p, sizeof(*p));",
+            ]
+        if operation == "imgui_table_pool_get_or_add":
+            return [
+                "    int *index;",
+                "",
+                "    index = imgui_storage_get_int_ref(",
+                "        imgui_c89_ctx, &self->Map, key, -1);",
+                "    if (*index != -1) {",
+                "        return self->Data + *index;",
+                "    }",
+                "    *index = self->FreeIdx;",
+                "    return imgui_table_pool_add(imgui_c89_ctx, self);",
+            ]
+        if operation == "imgui_table_pool_remove":
+            return [
+                "    imgui_table_pool_remove_at(imgui_c89_ctx, self, key,",
+                "        imgui_table_pool_index(self, p));",
+            ]
+        if operation == "imgui_table_pool_remove_at":
+            return [
+                "    imgui_table_fini(imgui_c89_ctx, self->Data + idx);",
+                "    *(int *)(void *)(self->Data + idx) = self->FreeIdx;",
+                "    self->FreeIdx = idx;",
+                "    imgui_storage_set_int(imgui_c89_ctx, &self->Map, key, -1);",
+                "    self->AliveCount--;",
+            ]
+        if operation == "imgui_table_pool_alive_count":
+            return ["    return self->AliveCount;"]
+        if operation == "imgui_table_pool_map_size":
+            return ["    return self->Map.Data.Size;"]
+        if operation == "imgui_table_pool_map_at":
+            value = "self->Map.Data.Data[n]." + self.table_pool_map_int_path
+            return [
+                "    int idx;",
+                "",
+                f"    idx = {value};",
+                "    return idx == -1 ? 0 : self->Data + idx;",
+            ]
+        raise TranslationError(
+            f"unsupported flattened table pool definition: {operation}"
+        )
+
     def compact_impool_body(
         self, function: dict[str, Any]
     ) -> list[str] | None:
         if not self.compact_impool:
             return None
+        flattened = self.compact_flattened_table_pool_body(function)
+        if flattened is not None:
+            return flattened
         qualified_name = function.get("qualified_name", "")
         match = re.fullmatch(
             r"ImPool<(ImGuiMultiSelectState|ImGuiTabBar|ImGuiTable)>::"
@@ -4409,6 +5425,19 @@ class Emitter:
                 "    self->FreeIdx = self->AliveCount = 0;",
             ]
         if method == "Add":
+            table_constructor = self.compact_table_pool_add_constructor(function)
+            if table_constructor is not None:
+                return [
+                    "    ImGuiTable *item;",
+                    "",
+                    "    item = (ImGuiTable *)imgui_c89_pool_add_slot(",
+                    "        imgui_c89_ctx, (void **)&self->Buf.Data,",
+                    "        &self->Buf.Size, &self->Buf.Capacity,",
+                    "        &self->FreeIdx, &self->AliveCount, sizeof(*item));",
+                    "    memset(item, 0, sizeof(*item));",
+                    "    item->LastFrameActive = -1;",
+                    "    return item;",
+                ]
             constructors = [
                 identifier for identifier, candidate in self.functions.items()
                 if candidate.get("qualified_name") == f"{element}::{element}"
@@ -4488,9 +5517,10 @@ class Emitter:
             "    int *index;",
             "",
             f"    index = {storage_call}({', '.join(storage_args)});",
-            "    if (*index != -1)",
+            "    if (*index != -1) {",
             f"        return ({result_type})imgui_c89_pool_at(",
             f"            self->Buf.Data, *index, {size});",
+            "    }",
             "    *index = self->FreeIdx;",
             f"    return {add_call}({', '.join(add_args)});",
         ]
@@ -4685,10 +5715,17 @@ class Emitter:
         ]
         return locals_, result
 
-    def handwritten_function_body(
+    @staticmethod
+    def function_body_sha256(function: dict[str, Any]) -> str:
+        body_json = json.dumps(
+            function.get("body", {}), sort_keys=True, separators=(",", ":")
+        )
+        return hashlib.sha256(body_json.encode("utf-8")).hexdigest()
+
+    def handwritten_specification(
         self, function: dict[str, Any]
-    ) -> list[str] | None:
-        """Load a signature/body-guarded independent C89 implementation."""
+    ) -> dict[str, Any] | None:
+        """Return the unique signature/body-guarded overlay specification."""
         qualified_name = function.get("qualified_name", "")
         specification = self.handwritten_functions.get(qualified_name)
         if specification is None:
@@ -4697,10 +5734,7 @@ class Emitter:
             parameter.get("type")
             for parameter in function.get("parameters", [])
         ]
-        body_json = json.dumps(
-            function.get("body", {}), sort_keys=True, separators=(",", ":")
-        )
-        actual = hashlib.sha256(body_json.encode("utf-8")).hexdigest()
+        actual = self.function_body_sha256(function)
         if isinstance(specification, list):
             def body_hash_matches(item: dict[str, Any]) -> bool:
                 expected = item.get("body_sha256")
@@ -4739,6 +5773,230 @@ class Emitter:
                 f"handwritten replacement body changed for {qualified_name}: "
                 f"expected {sorted(str(item) for item in expected)}, got {actual}"
             )
+        return specification
+
+    def stable_handwritten_function_names(
+        self, excluded_ids: set[str]
+    ) -> dict[str, str]:
+        """Assign readable deterministic names to overlay-owned definitions."""
+        candidates: list[tuple[str, str, dict[str, Any]]] = []
+        for identifier, function in sorted(self.functions.items()):
+            if identifier in excluded_ids:
+                continue
+            if self.handwritten_specification(function) is None:
+                continue
+            operation = self.native_snake_name(
+                self.stable_operation_name(function)
+            ) or "function"
+            owner_token = ""
+            if function.get("method") and function.get("parent") in self.records:
+                owner = self.records[function["parent"]].get("name", "record")
+                owner_token = self.native_snake_name(owner) or "record"
+                if owner_token.startswith("im_gui_"):
+                    owner_token = owner_token[len("im_gui_"):]
+            else:
+                qualified = function.get("qualified_name", operation)
+                owner, separator, _ = qualified.rpartition("::")
+                if separator:
+                    owner_token = self.native_snake_name(owner)
+                    if owner_token == "im_gui":
+                        owner_token = ""
+                elif operation.startswith("im_"):
+                    # Dear ImGui's C-style private helpers carry an `Im`
+                    # prefix that is useful in the C++ source but redundant
+                    # below our `imgui_i_` internal namespace.
+                    operation = operation[len("im_"):]
+            base = "imgui_i_"
+            if owner_token:
+                base += owner_token + "_"
+            base += operation
+            candidates.append((base, identifier, function))
+
+        grouped: dict[str, list[tuple[str, dict[str, Any]]]] = {}
+        for base, identifier, function in candidates:
+            grouped.setdefault(base, []).append((identifier, function))
+        result: dict[str, str] = {}
+        used: dict[str, str] = {}
+        for base, group in sorted(grouped.items()):
+            for identifier, function in sorted(group):
+                name = base
+                if len(group) > 1:
+                    tokens = [
+                        self.native_type_token(parameter["type"])
+                        for parameter in function.get("parameters", [])
+                    ]
+                    if function.get("const"):
+                        tokens.append("const")
+                    if function.get("variadic"):
+                        tokens.append("varargs")
+                    name += "_" + "_".join(tokens or ["void"])
+                previous = used.get(name)
+                if previous is not None and previous != identifier:
+                    raise TranslationError(
+                        f"stable handwritten overload collision: {name}"
+                    )
+                used[name] = identifier
+                result[identifier] = name
+        return result
+
+    def stable_table_pool_function_names(self) -> dict[str, str]:
+        """Name the flattened table pool as a small idiomatic C module."""
+        operations = {
+            ("Add", ()): "add",
+            ("Clear", ()): "clear",
+            ("Contains", ("const ImGuiTable *",)): "contains",
+            ("GetAliveCount", ()): "alive_count",
+            ("GetBufSize", ()): "size",
+            ("GetByIndex", ("ImPoolIdx",)): "at",
+            ("GetByKey", ("ImGuiID",)): "find",
+            ("GetIndex", ("const ImGuiTable *",)): "index",
+            ("GetMapSize", ()): "map_size",
+            ("GetOrAddByKey", ("ImGuiID",)): "get_or_add",
+            ("ImPool", ()): "init",
+            ("Remove", ("ImGuiID", "const ImGuiTable *")): "remove",
+            ("Remove", ("ImGuiID", "ImPoolIdx")): "remove_at",
+            ("Reserve", ("int",)): "reserve",
+            ("TryGetMapData", ("ImPoolIdx",)): "map_at",
+            ("~ImPool", ()): "fini",
+        }
+        result: dict[str, str] = {}
+        seen: set[tuple[str, tuple[str, ...]]] = set()
+        for identifier, function in self.function_declarations.items():
+            if not function.get("qualified_name", "").startswith(
+                "ImPool<ImGuiTable>::"
+            ):
+                continue
+            key = (
+                function.get("name", ""),
+                tuple(
+                    parameter.get("type", "")
+                    for parameter in function.get("parameters", [])
+                ),
+            )
+            operation = operations.get(key)
+            if operation is None:
+                raise TranslationError(
+                    "flatten table pool gained an unknown operation: "
+                    + function.get("qualified_name", "")
+                )
+            result[identifier] = "imgui_table_pool_" + operation
+            seen.add(key)
+        missing = set(operations) - seen
+        if missing:
+            raise TranslationError(
+                "flatten table pool lost operations: "
+                + ", ".join(
+                    name + str(parameters)
+                    for name, parameters in sorted(missing)
+                )
+            )
+        table_destructors = [
+            (identifier, function)
+            for identifier, function in self.function_declarations.items()
+            if function.get("qualified_name") == "ImGuiTable::~ImGuiTable"
+        ]
+        if len(table_destructors) != 1:
+            raise TranslationError(
+                "flatten table pool expected one ImGuiTable destructor"
+            )
+        result[table_destructors[0][0]] = "imgui_table_fini"
+        self.validate_table_pool_fingerprints()
+        return result
+
+    @staticmethod
+    def table_pool_fingerprint_variants(
+    ) -> dict[tuple[str, tuple[str, ...]], set[str]]:
+        """Return the exact accepted AST bodies for table-pool operations."""
+        return {
+            ("Add", ()): {
+                "e4512c8cc8437efafd977b8ccbe0a2b8559cb8415c4715b36b41e7d13dd86792",
+            },
+            ("Clear", ()): {
+                "71bcd63005704cbb2333db6d80b1d4c18b2cf6dcc1058fce78886de269923fec",
+            },
+            ("GetAliveCount", ()): {
+                "421ac9b2db78fda7a09b23e91304ee780c878e1c94987fe3680bd635c7ceaa6c",
+            },
+            ("GetByIndex", ("ImPoolIdx",)): {
+                "00cde8c09aaacf6fb79b7b66c2ebc088771d2623a4b0e4760319ad9a3db65440",
+            },
+            ("GetByKey", ("ImGuiID",)): {
+                "cb85573afd58dbcac0ea7d6381180c8c38dc167d0ed7aa6280be5f7c29bcde54",
+            },
+            ("GetIndex", ("const ImGuiTable *",)): {
+                # The Test Engine replaces IM_ASSERT with an assert-log and
+                # debug-trap sequence; the predicate and return are unchanged.
+                "1087de96a2483f5891e1795751b1fa56cf71c8c626019a3753e822a9c12b1e19",
+                "b55ba7fdc5908b3033e057cd4119baabb381146be5e9826103d5fc1f9f00fa50",
+            },
+            ("GetMapSize", ()): {
+                "df5a136d0f4f29faecd7fd76ecc86ac2966b6941a6152f2873f3ed969274dd92",
+            },
+            ("GetOrAddByKey", ("ImGuiID",)): {
+                "8f9d4e2e97dbb9a09f5fd91cde57d398a0ebca7f5316cd025f3d4a10fad2e559",
+            },
+            ("ImPool", ()): {
+                "8336a30da2b2b01c791cc216e77080a06f92e516d7dbde947a69fe51a32f6509",
+            },
+            ("Remove", ("ImGuiID", "const ImGuiTable *")): {
+                "e85392fcfaf0069d15c22a006f44ea290b629d57a6d5e8a18ea68c1c216c87d1",
+            },
+            ("Remove", ("ImGuiID", "ImPoolIdx")): {
+                "dff6374bf31dc83be9152290ee64500d89ab253d1d1f332e299d7519d71d386f",
+            },
+            ("TryGetMapData", ("ImPoolIdx",)): {
+                "1c433700c423cda80ce275d55b77a069a66849655203c6de0c234820479dee0b",
+            },
+            ("~ImPool", ()): {
+                "16117568484ae3e1a7cad4c8ac913ea68273a31a70819b96e0250726a7e34546",
+            },
+        }
+
+    def validate_table_pool_fingerprints(self) -> None:
+        """Fail closed when an upstream pool operation changes semantics."""
+        expected = self.table_pool_fingerprint_variants()
+        actual: dict[tuple[str, tuple[str, ...]], str] = {}
+        for function in self.functions.values():
+            if not function.get("qualified_name", "").startswith(
+                "ImPool<ImGuiTable>::"
+            ):
+                continue
+            key = (
+                function.get("name", ""),
+                tuple(
+                    parameter.get("type", "")
+                    for parameter in function.get("parameters", [])
+                ),
+            )
+            actual[key] = self.function_body_sha256(function)
+        changed = sorted(
+            key for key in set(actual) | set(expected)
+            if key not in actual or key not in expected
+            or actual[key] not in expected[key]
+        )
+        if changed:
+            raise TranslationError(
+                "flatten table pool method fingerprints changed: "
+                + ", ".join(name + str(parameters) for name, parameters in changed)
+            )
+        destructor = next(
+            function for function in self.functions.values()
+            if function.get("qualified_name") == "ImGuiTable::~ImGuiTable"
+        )
+        if self.function_body_sha256(destructor) != (
+            "cf849c76c22272bfb8a8595e5bbce62c9302e3aab4720149dc08c19066bd21b2"
+        ):
+            raise TranslationError("ImGuiTable destructor fingerprint changed")
+
+    def handwritten_function_body(
+        self, function: dict[str, Any], *, resolve_asserts: bool = True
+    ) -> list[str] | None:
+        """Load a signature/body-guarded independent C89 implementation."""
+        qualified_name = function.get("qualified_name", "")
+        specification = self.handwritten_specification(function)
+        if specification is None:
+            return None
+        actual = self.function_body_sha256(function)
         relative = specification.get("template")
         if not isinstance(relative, str):
             raise TranslationError(
@@ -4802,9 +6060,6 @@ class Emitter:
                 )
             return matches[0]
 
-        def resolve_function(requirement: Any) -> str:
-            return self.function_names[resolve_function_identifier(requirement)]
-
         def resolve_value_function(requirement: Any) -> str:
             identifier = resolve_function_identifier(requirement)
             try:
@@ -4832,15 +6087,22 @@ class Emitter:
         snippets.update(
             specification.get("snippets_by_body_sha256", {}).get(actual, {})
         )
+        dependencies: set[str] = set()
+        constructor_value_dependencies: set[str] = set()
         for token, snippet in snippets.items():
             if not isinstance(snippet, str):
                 raise TranslationError("handwritten snippet is invalid")
             source = source.replace(token, snippet)
         for token, requirement in specification.get("functions", {}).items():
             if token in source:
-                source = source.replace(token, resolve_function(requirement))
+                dependency = resolve_function_identifier(requirement)
+                dependencies.add(dependency)
+                source = source.replace(token, self.function_names[dependency])
         for token, requirement in specification.get("value_functions", {}).items():
             if token in source:
+                dependency = resolve_function_identifier(requirement)
+                dependencies.add(dependency)
+                constructor_value_dependencies.add(dependency)
                 source = source.replace(token, resolve_value_function(requirement))
         for token, spelling in specification.get("types", {}).items():
             if not isinstance(spelling, str):
@@ -4850,13 +6112,118 @@ class Emitter:
         for token, name in specification.get("constants", {}).items():
             if token in source:
                 source = source.replace(token, resolve_constant(name))
+        # Snippets may refer to an already resolved generated function name.
+        # Recognize those references as well, while requiring every generated
+        # function name to remain globally unique.
+        names_to_ids = {
+            name: identifier for identifier, name in self.function_names.items()
+        }
+        for name in set(re.findall(r"\b[A-Za-z_][A-Za-z0-9_]*\b", source)):
+            dependency = names_to_ids.get(name)
+            if dependency is not None:
+                dependencies.add(dependency)
+        identifier = function.get("id")
+        if identifier in self.functions:
+            dependencies.discard(identifier)
+            self.handwritten_function_dependencies[identifier] = dependencies
+            self.handwritten_constructor_value_dependencies[identifier] = (
+                constructor_value_dependencies
+            )
+
+        assertion_pattern = re.compile(r"@ASSERT_(\d+)@")
+        if resolve_asserts:
+            source_path = Path(
+                function.get("location", {}).get("file", "")
+            )
+            source_file = source_path.name
+            try:
+                source_lines = source_path.read_text(
+                    encoding="utf-8"
+                ).splitlines()
+            except OSError:
+                source_lines = []
+
+            def replace_assertion(match: re.Match[str]) -> str:
+                line = int(match.group(1), 10)
+                matches = [
+                    assertion_id
+                    for (file_name, record_line, _), assertion_id
+                    in self.compact_assert_ids.items()
+                    if Path(file_name).name == source_file
+                    and record_line == line
+                ]
+                if len(matches) == 1:
+                    return f"imgui_c89_assert_id({matches[0]})"
+                if not matches and self.imvector_assert_backend == (
+                    "ImGuiTestEngine_AssertLog"
+                ):
+                    expression = (
+                        source_lines[line - 1].strip()
+                        if 0 < line <= len(source_lines)
+                        else f"assertion at line {line}"
+                    )
+                    return (
+                        "do { "
+                        "imgui_c89_external_ImGuiTestEngine_AssertLog("
+                        f"{self._string_literal(expression)}, "
+                        f"{self._string_literal(str(source_path))}, "
+                        f"{self._string_literal(function.get('name', ''))}, "
+                        f"{line}); imgui_c89_debugtrap(); "
+                        "} while (0)"
+                    )
+                if len(matches) != 1:
+                    condition = "missing" if not matches else "ambiguous"
+                    raise TranslationError(
+                        f"handwritten {qualified_name} has {condition} "
+                        f"assertion metadata for {source_file}:{line}"
+                    )
+                raise AssertionError("unreachable assertion resolution")
+
+            source = assertion_pattern.sub(replace_assertion, source)
         unresolved = sorted(set(re.findall(r"@[A-Z0-9_]+@", source)))
+        if not resolve_asserts:
+            unresolved = [
+                token for token in unresolved
+                if assertion_pattern.fullmatch(token) is None
+            ]
         if unresolved:
             raise TranslationError(
                 f"handwritten {qualified_name} has unresolved tokens: "
                 + ", ".join(unresolved)
             )
-        return source.rstrip("\n").splitlines()
+        source = textwrap.dedent(source)
+        lines = source.splitlines()
+        while lines and not lines[0].strip():
+            lines.pop(0)
+        while lines and not lines[-1].strip():
+            lines.pop()
+        return [("    " + line if line else "") for line in lines]
+
+    def prime_handwritten_function_dependencies(self) -> None:
+        """Resolve replacement call edges before linkage is classified.
+
+        A handwritten body replaces its upstream body completely.  Linkage and
+        constructor-adapter analysis therefore must not see calls that exist
+        only in the discarded C++ AST.  Resolve every guarded template once up
+        front; ordinary emission will resolve it again with assertion metadata.
+        """
+        previous_function_id = self.current_function_id
+        try:
+            for identifier, function in sorted(self.functions.items()):
+                if self.handwritten_specification(function) is None:
+                    continue
+                self.current_function_id = identifier
+                body = self.handwritten_function_body(
+                    function, resolve_asserts=False
+                )
+                if body is None:
+                    raise TranslationError(
+                        "matched handwritten function lost its replacement "
+                        "body: "
+                        + function.get("qualified_name", identifier)
+                    )
+        finally:
+            self.current_function_id = previous_function_id
 
     def compact_nav_overlay_setup_body(
         self, function: dict[str, Any]
@@ -5856,6 +7223,8 @@ class Emitter:
         seen.add(record["id"])
         result: set[str] = set()
         for field in record.get("fields", []):
+            if field.get("id") in self.flattened_table_vector_fields:
+                continue
             result.update(self.object_destructor_dependencies(
                 field["type"], seen
             ))
@@ -5919,6 +7288,14 @@ class Emitter:
         result: list[str] = []
         for field in reversed(record.get("fields", [])):
             field_name = self.field_names[field["id"]]
+            vector = self.flattened_table_vector_fields.get(field["id"])
+            if vector is not None:
+                result.append(
+                    indent + "imgui_c89_vector_destroy("
+                    + self.current_context_expression()
+                    + f", ({target}).{field_name});"
+                )
+                continue
             result.extend(self.object_cleanup_lines(
                 field["type"], f"({target}).{field_name}", indent
             ))
@@ -6360,9 +7737,39 @@ class Emitter:
                 return result
             self.cleanup_scopes.append([])
             result = []
-            for key in ("initializer", "range", "begin", "end"):
-                if key in node:
-                    result.extend(self.statement(node[key], indent))
+            range_declarations = node.get("range", {}).get(
+                "declarations", []
+            )
+            flattened_range = None
+            if len(range_declarations) == 1:
+                flattened_range = self.flattened_table_vector_components(
+                    range_declarations[0].get("initializer", {})
+                )
+            if flattened_range is None:
+                for key in ("initializer", "range", "begin", "end"):
+                    if key in node:
+                        result.extend(self.statement(node[key], indent))
+            else:
+                if "initializer" in node:
+                    result.extend(self.statement(node["initializer"], indent))
+                begin_declarations = node.get("begin", {}).get(
+                    "declarations", []
+                )
+                end_declarations = node.get("end", {}).get(
+                    "declarations", []
+                )
+                if (len(begin_declarations) != 1
+                        or len(end_declarations) != 1):
+                    raise TranslationError(
+                        "flattened table vector range shape changed"
+                    )
+                data, size, _, _, _ = flattened_range
+                begin_name = self.local_names[begin_declarations[0]["id"]]
+                end_name = self.local_names[end_declarations[0]["id"]]
+                result.append(indent + f"{begin_name} = {data};")
+                result.append(
+                    indent + f"{end_name} = {data} == 0 ? 0 : {data} + {size};"
+                )
             condition = self.statement_expression(node["condition"])
             increment = self.statement_expression(node["increment"])
             result.append(indent + f"for (; {condition}; {increment}) {{")
@@ -6631,6 +8038,8 @@ class Emitter:
         for record in sorted(
             self.records.values(), key=lambda item: item["qualified_name"]
         ):
+            if record["id"] in self.omitted_record_ids:
+                continue
             if record["id"] in self.public_forward_record_ids:
                 continue
             name = self.record_names_by_id[record["id"]]
@@ -6686,6 +8095,8 @@ class Emitter:
             lines.append(f"{tag} {name} {{")
             fields = self.flattened_fields(record)
             for field in fields:
+                if field.get("c_comment"):
+                    lines.append(f"    /* {field['c_comment']} */")
                 field_name = self.field_names[field["id"]]
                 declaration = self.c_field_declaration(field, field_name)
                 if "bit_width" in field:
@@ -6698,7 +8109,8 @@ class Emitter:
                 lines.append("    unsigned char imgui_c89_empty;")
             lines.extend(["};", ""])
         for identifier, function in sorted(self.function_declarations.items()):
-            if (identifier in self.internal_functions
+            if (identifier in self.flattened_span_function_ids
+                    or identifier in self.internal_functions
                     or identifier in self.public_exact_c_names):
                 continue
             c_name = self.function_names[identifier]
@@ -6969,6 +8381,8 @@ class Emitter:
             lines.append(f"{tag} {name} {{")
             fields = self.flattened_fields(record)
             for field in fields:
+                if field.get("c_comment"):
+                    lines.append(f"    /* {field['c_comment']} */")
                 field_name = self.field_names[field["id"]]
                 declaration = self.c_field_declaration(field, field_name)
                 if "bit_width" in field:
@@ -7024,6 +8438,7 @@ class Emitter:
         return "\n".join(lines)
 
     def emit_c_source(self) -> str:
+        self.configure_effective_reachability()
         self.configure_assert_metadata()
         mem_alloc_name = ""
         mem_free_name = ""
@@ -7515,6 +8930,8 @@ class Emitter:
             if function.get("destructor")
         }
         for identifier, function in sorted(self.functions.items()):
+            if identifier in self.flattened_span_function_ids:
+                continue
             if identifier not in self.internal_functions:
                 continue
             if (self.active_function_ids is not None
@@ -7528,6 +8945,8 @@ class Emitter:
         if self.internal_functions:
             lines.append("")
         for identifier, function in sorted(self.functions.items()):
+            if identifier in self.flattened_span_function_ids:
+                continue
             if not function.get("constructor") or function.get("parent") not in self.records:
                 continue
             record = self.records[function["parent"]]
@@ -7827,6 +9246,8 @@ class Emitter:
         if self.globals or self.static_locals:
             lines.append("")
         for identifier, function in sorted(self.functions.items()):
+            if identifier in self.flattened_span_function_ids:
+                continue
             if not function.get("constructor"):
                 continue
             helper = self.constructor_helpers[identifier]
@@ -7902,6 +9323,8 @@ class Emitter:
                 lines.append("    return result;")
                 lines.extend(["}", ""])
         for identifier, function in sorted(self.functions.items()):
+            if identifier in self.flattened_span_function_ids:
+                continue
             if (self.active_function_ids is not None
                     and identifier not in self.active_function_ids):
                 continue
@@ -7934,7 +9357,9 @@ class Emitter:
             self.break_cleanup_depths = []
             self.continue_cleanup_depths = []
             self.function_exit_cleanup = []
-            if function.get("destructor") and function.get("parent") in self.records:
+            if (function.get("destructor")
+                    and function.get("parent") in self.records
+                    and not self.is_flattened_table_pool_function(function)):
                 self.function_exit_cleanup = self.record_subobject_cleanup_lines(
                     self.records[function["parent"]], "(*self)", "    "
                 )
@@ -7996,6 +9421,7 @@ class Emitter:
                 local_lines = compact_initialize[0]
             if compact_cursor is not None:
                 local_lines = compact_cursor[0]
+                self.expression_temporaries = []
             if compact_separator is not None:
                 local_lines = compact_separator[0]
             if compact_glyph_delta is not None:
@@ -8059,6 +9485,10 @@ class Emitter:
                 body_lines.extend(compact_nav_wrapping[1])
             elif function.get("constructor"):
                 for initializer in function.get("initializers", []):
+                    if (initializer.get("target") in self.flattened_table_span_fields
+                            or initializer.get("target")
+                            in self.flattened_table_vector_fields):
+                        continue
                     if initializer.get("base"):
                         value = initializer["value"]
                         if value.get("kind") == "CXXConstructExpr":
@@ -8469,6 +9899,8 @@ class Emitter:
     def exact_wrapper_functions(self) -> list[tuple[str, dict[str, Any]]]:
         result = []
         for identifier, function in sorted(self.functions.items()):
+            if identifier in self.flattened_span_function_ids:
+                continue
             source = function.get("location", {}).get("file", "")
             if not source.endswith((".cpp", ".mm")):
                 continue
@@ -9141,11 +10573,15 @@ class Emitter:
             if function.get("method") and function.get("parent") in self.records:
                 owner = self.records[function["parent"]].get("name", "record")
                 owner = self.native_snake_name(owner) or "record"
+                if owner.startswith("im_gui_"):
+                    owner = owner[len("im_gui_"):]
                 base = f"imgui_i_{owner}_{operation}"
             else:
                 qualified = function.get("qualified_name", operation)
                 owner, separator, _ = qualified.rpartition("::")
                 owner_token = self.native_snake_name(owner) if separator else ""
+                if owner_token == "im_gui":
+                    owner_token = ""
                 base = "imgui_i_"
                 if owner_token:
                     base += owner_token + "_"

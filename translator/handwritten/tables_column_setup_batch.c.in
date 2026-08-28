@@ -10,11 +10,12 @@ if (init_mask & @RESIZABLE@)
     column->WidthRequest = (flags & @WIDTH_FIXED@) && value > 0.0f ? value : -1.0f;
     column->StretchWeight = (flags & @WIDTH_STRETCH@) && value > 0.0f ? value : -1.0f;
     if (value > 0.0f)
+        /* An explicit width or weight disables automatic fitting. */
         column->AutoFitQueue = 0;
 }
 if (init_mask & @REORDERABLE@)
     column->DisplayOrder = (ImGuiTableColumnIdx)
-        (table->Flags & @REORDERABLE@ ? -1 : column - table->Columns.Data);
+        (table->Flags & @REORDERABLE@ ? -1 : column - table->Columns);
 if (init_mask & @HIDEABLE@)
     column->IsUserEnabled = column->IsUserEnabledNextFrame =
         (flags & @DEFAULT_HIDE@) ? 0 : 1;
@@ -28,13 +29,16 @@ if (init_mask & @SORTABLE@)
 
 /* IMGUI_C89_FUNCTION_BEGIN table_setup_column_apply */
 ImGuiTableColumn *column;
-column = &table->Columns.Data[idx];
+column = &table->Columns[idx];
 if (table->IsDefaultSizingPolicy && !(flags & @WIDTH_MASK@) &&
     !(flags & @SCROLL_X@) && init_width_or_weight > 0.0f)
 {
-    @ERROR_LOG@(imgui_c89_ctx, "TableSetupColumn(): can only specify width/weight if sizing policy is set explicitly in either Table or Column.");
+    if (@ERROR_LOG@(imgui_c89_ctx,
+            "TableSetupColumn(): can only specify width/weight if sizing policy is set explicitly in either Table or Column."))
+        @ASSERT_1718@;
     return;
 }
+/* Passing an explicit width under a fixed sizing policy implies WidthFixed. */
 if (!(flags & @WIDTH_MASK@) && init_width_or_weight > 0.0f &&
     ((table->Flags & @SIZING_MASK@) == @SIZING_FIXED_FIT@ ||
      (table->Flags & @SIZING_MASK@) == @SIZING_FIXED_SAME@))
@@ -62,19 +66,28 @@ int index;
 table = imgui_c89_ctx->CurrentTable;
 if (!table)
 {
-    @ERROR_LOG@(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
+    if (@ERROR_LOG@(imgui_c89_ctx,
+            "Call should only be done while in BeginTable() scope!"))
+        @ASSERT_1742@;
     return;
 }
 if (table->DeclColumnsCount >= table->ColumnsCount)
 {
-    @ERROR_LOG@(imgui_c89_ctx, "TableSetupColumn(): called too many times!");
+    if (@ERROR_LOG@(imgui_c89_ctx,
+            "TableSetupColumn(): called too many times!"))
+        @ASSERT_1743@;
     return;
 }
 if (table->IsLayoutLocked)
 {
-    @ERROR_LOG@(imgui_c89_ctx, "TableSetupColumn(): need to call before first row!");
+    if (@ERROR_LOG@(imgui_c89_ctx,
+            "TableSetupColumn(): need to call before first row!"))
+        @ASSERT_1744@;
     return;
 }
+if (flags & ImGuiTableColumnFlags_StatusMask_)
+    @ASSERT_1745@;
+/* Store the name including its terminator in the table's contiguous buffer. */
 name_offset = -1;
 id = 0;
 if (label && *label)
@@ -84,28 +97,50 @@ if (label && *label)
     id = @HASH_STR@(label, 0, 0);
 }
 index = table->DeclColumnsCount++;
-column = &table->Columns.Data[index];
+column = &table->Columns[index];
 if (!table->IsReconcileMode && column->ID != id)
 {
     table->IsReconcileMode = 1;
-    @REQUEST_RESERVE@(imgui_c89_ctx, &table->TempData->ReconcileColumnsRequests,
-                     table->ColumnsCount - index);
+    table->TempData->ReconcileColumnsRequests = imgui_c89_vector_reserve(
+        imgui_c89_ctx, table->TempData->ReconcileColumnsRequests,
+        table->TempData->ReconcileColumnsRequestsSize,
+        &table->TempData->ReconcileColumnsRequestsCapacity,
+        table->ColumnsCount - index,
+        sizeof(*table->TempData->ReconcileColumnsRequests), 0);
 }
 if (!table->IsReconcileMode)
 {
+    /* Fast path: unchanged topology can be applied immediately. */
     @APPLY@(imgui_c89_ctx, table, index, id, name_offset, flags,
             init_width_or_weight, user_data);
     column->IsNeedReconcileSrc = column->IsNeedReconcileDst = 0;
-    if (index < table->TempData->OldColumnsData.DataEnd -
-                table->TempData->OldColumnsData.Data)
-        table->TempData->OldColumnsData.Data[index].IsNeedReconcileSrc = 0;
+    if (index < table->TempData->OldColumnsDataEnd -
+                table->TempData->OldColumnsData)
+        table->TempData->OldColumnsData[index].IsNeedReconcileSrc = 0;
     return;
 }
+/* Reconcile path: preserve old-column state until layout can match the full
+ * previous and new column topologies. */
 memset(&request, 0, sizeof(request));
-@COLUMN_INIT@(&request.ColumnOldData);
-@REQUEST_PUSH@(imgui_c89_ctx, &table->TempData->ReconcileColumnsRequests, &request);
-reconcile = &table->TempData->ReconcileColumnsRequests.Data[
-    table->TempData->ReconcileColumnsRequests.Size - 1];
+request.ColumnOldData.StretchWeight = -1.0f;
+request.ColumnOldData.WidthRequest = -1.0f;
+request.ColumnOldData.NameOffset = -1;
+request.ColumnOldData.DisplayOrder = -1;
+request.ColumnOldData.IndexWithinEnabledSet = -1;
+request.ColumnOldData.PrevEnabledColumn = -1;
+request.ColumnOldData.NextEnabledColumn = -1;
+request.ColumnOldData.SortOrder = -1;
+request.ColumnOldData.IsJustCreated = 1;
+request.ColumnOldData.DrawChannelCurrent = (ImU8)-1;
+request.ColumnOldData.DrawChannelFrozen = (ImU8)-1;
+request.ColumnOldData.DrawChannelUnfrozen = (ImU8)-1;
+table->TempData->ReconcileColumnsRequests = imgui_c89_vector_push_back(
+    imgui_c89_ctx, table->TempData->ReconcileColumnsRequests,
+    &table->TempData->ReconcileColumnsRequestsSize,
+    &table->TempData->ReconcileColumnsRequestsCapacity,
+    sizeof(*table->TempData->ReconcileColumnsRequests), &request);
+reconcile = &table->TempData->ReconcileColumnsRequests[
+    table->TempData->ReconcileColumnsRequestsSize - 1];
 reconcile->ID = id;
 reconcile->NameOffset = name_offset;
 reconcile->Flags = flags;
@@ -122,9 +157,17 @@ ImGuiTable *table;
 table = imgui_c89_ctx->CurrentTable;
 if (!table)
 {
-    @ERROR_LOG@(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
+    if (@ERROR_LOG@(imgui_c89_ctx,
+            "Call should only be done while in BeginTable() scope!"))
+        @ASSERT_1860@;
     return;
 }
+if (table->IsLayoutLocked)
+    @ASSERT_1861@;
+if (!(columns >= 0 && columns < 512))
+    @ASSERT_1862@;
+if (!(rows >= 0 && rows < 128))
+    @ASSERT_1863@;
 table->FreezeColumnsRequest = (ImGuiTableColumnIdx)
     (table->Flags & @SCROLL_X@ ? (columns < table->ColumnsCount ? columns : table->ColumnsCount) : 0);
 table->FreezeColumnsCount = table->InnerWindow->Scroll.x != 0.0f ? table->FreezeColumnsRequest : 0;

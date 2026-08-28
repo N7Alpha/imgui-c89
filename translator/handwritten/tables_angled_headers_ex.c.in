@@ -28,7 +28,7 @@
     ImU32 border_color;
     int vertex_begin;
     int vertex_end;
-    unsigned char flip;
+    int flip_label;
     int pass_n;
     int request_order;
     int column_n;
@@ -59,15 +59,26 @@
     table = imgui_c89_ctx->CurrentTable;
     window = imgui_c89_ctx->CurrentWindow;
     draw_list = window->DrawList;
+    if (!table)
+    {
+        if (@ERROR_LOG@(imgui_c89_ctx,
+                "Call should only be done while in BeginTable() scope!"))
+            @ASSERT_3510@;
+        return;
+    }
+    if (table->CurrentRow != -1)
+        @ASSERT_3511@;
     if (max_label_width == 0.0f)
         max_label_width = @TABLE_GET_HEADER_ANGLED_MAX_LABEL_WIDTH@(
             imgui_c89_ctx);
 
-    flip = angle < 0.0f;
+    /* The public angle is expressed in -pi/2..+pi/2; convert it to the
+     * rotation basis used by the text and background geometry. */
+    flip_label = angle < 0.0f;
     angle -= 3.14159265358979323846f * 0.5f;
     cos_a = cosf(angle);
     sin_a = sinf(angle);
-    if (flip)
+    if (flip_label)
     {
         label_cos_a = cosf(angle + 3.14159265358979323846f);
         label_sin_a = sinf(angle + 3.14159265358979323846f);
@@ -83,7 +94,7 @@
     header_height = imgui_c89_ctx->FontSize +
                     imgui_c89_ctx->Style.CellPadding.x * 2.0f;
     rotate_x = max_label_width;
-    rotate_y = flip ? header_height : -header_height;
+    rotate_y = flip_label ? header_height : -header_height;
     rotated.x = rotate_x * cos_a - rotate_y * sin_a;
     rotated.y = rotate_x * sin_a + rotate_y * cos_a;
     row_height = @TRUNC@(@ABS_FLOAT@(rotated.y));
@@ -92,6 +103,7 @@
     angled_vector.x = unit_right.x * (row_height / -sin_a);
     angled_vector.y = unit_right.y * (row_height / -sin_a);
 
+    /* Publish angled-header metrics before TableNextRow() performs layout. */
     @TABLE_NEXT_ROW@(imgui_c89_ctx, @TABLE_ROW_FLAGS_HEADERS@,
                     row_height);
     @TABLE_NEXT_COLUMN@(imgui_c89_ctx);
@@ -106,12 +118,12 @@
     clip_min_x = table->BgClipRect.Min.x;
     if (table->FreezeColumnsCount > 0)
     {
-        frozen_column_n = table->DisplayOrderToIndex.Data[
+        frozen_column_n = table->DisplayOrderToIndex[
             table->FreezeColumnsCount - 1];
         clip_min_x = clip_min_x >=
-                     table->Columns.Data[frozen_column_n].MaxX
+                     table->Columns[frozen_column_n].MaxX
                    ? clip_min_x
-                   : table->Columns.Data[frozen_column_n].MaxX;
+                   : table->Columns[frozen_column_n].MaxX;
     }
     @TABLE_SET_BG_COLOR@(imgui_c89_ctx, @TABLE_BG_TARGET_ROW_BG0@,
                         0, -1);
@@ -143,11 +155,13 @@
     line_offset_for_ascent_x = line_offset_for_ascent_x >= 0.0f
                              ? line_offset_for_ascent_x : 0.0f;
     line_offset_for_ascent_x /= -sin_a;
-    line_offset_for_ascent_x *= flip ? -1.0f : 1.0f;
+    line_offset_for_ascent_x *= flip_label ? -1.0f : 1.0f;
     padding = imgui_c89_ctx->Style.CellPadding;
     align = imgui_c89_ctx->Style.TableAngledHeadersTextAlign;
     max_x = -3.402823466e38f;
 
+    /* Draw backgrounds and rotated labels first, then borders so every
+     * separator remains visible over the fills. */
     for (pass_n = 0; pass_n < 2; ++pass_n)
     {
         for (request_order = 0;
@@ -156,7 +170,7 @@
         {
             request = &data[request_order];
             column_n = request->Index;
-            column = &table->Columns.Data[column_n];
+            column = &table->Columns[column_n];
 
             points[0].x = column->MaxX;
             points[0].y = row_rect.Max.y;
@@ -181,7 +195,9 @@
                 label_end = @FIND_RENDERED_TEXT_END@(label, NULL);
                 line_step = imgui_c89_ctx->FontSize / -sin_a;
                 line_count = @TEXT_COUNT_LINES@(label, label_end);
-                current_line_offset = flip
+                /* Rotate multiline labels one line at a time so each line
+                 * follows its own horizontal header border. */
+                current_line_offset = flip_label
                     ? (float)(line_count - 1) * line_step : 0.0f;
                 align_space =
                     (column->MaxX - column->MinX) - padding.x * 2.0f -
@@ -231,16 +247,16 @@
                     available_width = available_width >= 0.0f
                                     ? available_width : 0.0f;
                     vertical_offset = available_width * align.y *
-                                      (flip ? -1.0f : 1.0f);
+                                      (flip_label ? -1.0f : 1.0f);
                     pivot_in.x =
                         window->ClipRect.Min.x - vertical_offset;
                     pivot_in.y = window->ClipRect.Min.y + text_size.y;
                     pivot_out.x = column->WorkMinX;
                     pivot_out.y = row_rect.Max.y;
-                    current_line_offset += flip ? -line_step : line_step;
+                    current_line_offset += flip_label ? -line_step : line_step;
                     pivot_out.x += unit_right.x * padding.y;
                     pivot_out.y += unit_right.y * padding.y;
-                    if (flip)
+                    if (flip_label)
                     {
                         extra_width = clip_width -
                             (clip_width - text_size.x > 0.0f ?
@@ -248,7 +264,7 @@
                         pivot_out.x += unit_right.x * extra_width;
                         pivot_out.y += unit_right.y * extra_width;
                     }
-                    pivot_out.x += flip
+                    pivot_out.x += flip_label
                         ? current_line_offset + line_step
                         : current_line_offset;
                     @SHADE_VERTS_TRANSFORM_POS@(
@@ -277,7 +293,7 @@
     @POP_CLIP_RECT@(imgui_c89_ctx);
     @POP_CLIP_RECT@(imgui_c89_ctx);
     extra_width = max_x -
-        table->Columns.Data[table->RightMostEnabledColumn].MaxX;
+        table->Columns[table->RightMostEnabledColumn].MaxX;
     extra_width = extra_width >= 0.0f ? extra_width : 0.0f;
     table->TempData->AngledHeadersExtraWidth = extra_width;
 /* IMGUI_C89_FUNCTION_END table_angled_headers_ex */

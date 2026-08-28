@@ -30,7 +30,11 @@ int src_order;
 int direction;
 int order;
 int n;
-column = &table->Columns.Data[column_n];
+if (!(column_n >= 0 && column_n < table->ColumnsCount))
+    @ASSERT_734@;
+if (!(dst_order >= 0 && dst_order < table->ColumnsCount))
+    @ASSERT_735@;
+column = &table->Columns[column_n];
 src_order = column->DisplayOrder;
 if (src_order == dst_order)
     return;
@@ -38,12 +42,12 @@ direction = dst_order < src_order ? -1 : 1;
 column->DisplayOrder = (ImGuiTableColumnIdx)dst_order;
 for (order = src_order + direction; order != dst_order + direction;
      order += direction)
-    table->Columns.Data[table->DisplayOrderToIndex.Data[order]].DisplayOrder -=
+    table->Columns[table->DisplayOrderToIndex[order]].DisplayOrder -=
         (ImGuiTableColumnIdx)direction;
 for (n = 0; n < table->ColumnsCount; n++)
 {
-    column = &table->Columns.Data[n];
-    table->DisplayOrderToIndex.Data[column->DisplayOrder] =
+    column = &table->Columns[n];
+    table->DisplayOrderToIndex[column->DisplayOrder] =
         (ImGuiTableColumnIdx)n;
 }
 table->IsSettingsDirty = 1;
@@ -72,7 +76,7 @@ direction = src_order < dst_order ? 1 : -1;
 for (order = src_order;
      direction > 0 ? order <= dst_order : order >= dst_order;
      order += direction)
-    if (table->Columns.Data[table->DisplayOrderToIndex.Data[order]].Flags &
+    if (table->Columns[table->DisplayOrderToIndex[order]].Flags &
         @NO_REORDER@)
     {
         dst_order = order == src_order ? src_order : order - direction;
@@ -83,7 +87,7 @@ return dst_order;
 
 /* IMGUI_C89_FUNCTION_BEGIN table_queue_display_order */
 int src_order;
-src_order = table->Columns.Data[column_n].DisplayOrder;
+src_order = table->Columns[column_n].DisplayOrder;
 table->ReorderColumn = (ImGuiTableColumnIdx)column_n;
 table->ReorderColumnDstOrder = (ImGuiTableColumnIdx)-1;
 dst_order = @MAX_ORDER@(table, src_order, dst_order);
@@ -99,7 +103,7 @@ if (rect->Max.x < rect->Min.x || rect->Max.y < rect->Min.y)
     return;
 for (column_n = 0; column_n < table->ColumnsCount; column_n++)
 {
-    column = &table->Columns.Data[column_n];
+    column = &table->Columns[column_n];
     if (!column->IsRequestOutput &&
         column->MinX < rect->Max.x && column->MaxX > rect->Min.x &&
         table->WorkRect.Min.y < rect->Max.y &&

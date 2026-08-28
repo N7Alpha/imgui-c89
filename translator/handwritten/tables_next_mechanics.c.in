@@ -5,6 +5,8 @@ ImGuiTableColumn *column;
 int n;
 if (table->InstanceCurrent == 0)
 {
+    /* Resize and single-column auto-fit requests are consumed only by the
+     * first instance of a table. */
     if (table->ResizedColumn != -1 &&
         table->ResizedColumnNextWidth != 3.402823466e38f)
         @SET_COLUMN_WIDTH@(imgui_c89_ctx, table->ResizedColumn,
@@ -16,7 +18,7 @@ if (table->InstanceCurrent == 0)
     {
         n = table->AutoFitSingleColumn;
         @SET_COLUMN_WIDTH@(imgui_c89_ctx, n,
-            table->Columns.Data[n].WidthAuto);
+            table->Columns[n].WidthAuto);
         table->AutoFitSingleColumn = -1;
     }
 }
@@ -36,8 +38,8 @@ if (table->InstanceCurrent == 0)
 if (table->IsResetDisplayOrderRequest)
 {
     for (n = 0; n < table->ColumnsCount; n++)
-        table->DisplayOrderToIndex.Data[n] =
-            table->Columns.Data[n].DisplayOrder = (ImGuiTableColumnIdx)n;
+        table->DisplayOrderToIndex[n] =
+            table->Columns[n].DisplayOrder = (ImGuiTableColumnIdx)n;
     table->IsResetDisplayOrderRequest = 0;
     table->IsSettingsDirty = 1;
 }
@@ -45,7 +47,7 @@ if (table->IsResetVisibilityRequest)
 {
     for (n = 0; n < table->ColumnsCount; n++)
     {
-        column = &table->Columns.Data[n];
+        column = &table->Columns[n];
         column->IsUserEnabled = column->IsUserEnabledNextFrame =
             (column->Flags & @DEFAULT_HIDE@) ? 0 : 1;
     }
@@ -67,13 +69,15 @@ if (!(flags & @WIDTH_MASK@))
     flags |= sizing == @SIZING_FIXED_FIT@ ||
         sizing == @SIZING_FIXED_SAME@ ? @WIDTH_FIXED@ : @WIDTH_STRETCH@;
 }
+else if (((flags & @WIDTH_MASK@) & ((flags & @WIDTH_MASK@) - 1)) != 0)
+    @ASSERT_805@;
 if (!(table->Flags & @RESIZABLE@))
     flags |= @NO_RESIZE@;
 if ((flags & (@NO_SORT_ASCENDING@ | @NO_SORT_DESCENDING@)) ==
     (@NO_SORT_ASCENDING@ | @NO_SORT_DESCENDING@))
     flags |= @NO_SORT@;
 if (!(flags & @INDENT_MASK@))
-    flags |= column == table->Columns.Data ?
+    flags |= column == table->Columns ?
         @INDENT_ENABLE@ : @INDENT_DISABLE@;
 column->Flags = flags | (column->Flags & @STATUS_MASK@);
 column->SortDirectionsAvailCount = 0;
@@ -123,7 +127,7 @@ ImRect hit_rect;
 ImGuiID column_id;
 unsigned char hovered;
 unsigned char held;
-unsigned char pressed;
+int pressed;
 int order_n;
 int column_n;
 float half_width;
@@ -131,7 +135,11 @@ float y1;
 float y2_body;
 float y2_head;
 float y2;
+if (!(table->Flags & @RESIZABLE@))
+    @ASSERT_1402@;
 instance = @GET_INSTANCE@(table, table->InstanceCurrent);
+/* OuterRect may not yet have its final height, so hit testing uses last
+ * frame's height; current-frame border rendering happens later. */
 half_width = @TRUNC@(4.0f *
     imgui_c89_ctx->CurrentDpiScale);
 y1 = (table->FreezeRowsCount >= 1 ? table->OuterRect.Min.y :
@@ -144,8 +152,8 @@ for (order_n = 0; order_n < table->ColumnsCount; order_n++)
     if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
         ((ImU32)1 << (order_n & 31))))
         continue;
-    column_n = table->DisplayOrderToIndex.Data[order_n];
-    column = &table->Columns.Data[column_n];
+    column_n = table->DisplayOrderToIndex[order_n];
+    column = &table->Columns[column_n];
     if (column->Flags & (@NO_RESIZE@ | @NO_DIRECT_RESIZE@))
         continue;
     y2 = table->Flags & @NO_BORDERS_BODY@ ? y2_head : y2_body;
@@ -174,7 +182,7 @@ for (order_n = 0; order_n < table->ColumnsCount; order_n++)
         if (table->LastResizedColumn == -1)
             table->ResizeLockMinContentsX2 =
                 table->RightMostEnabledColumn != -1 ?
-                table->Columns.Data[table->RightMostEnabledColumn].MaxX :
+                table->Columns[table->RightMostEnabledColumn].MaxX :
                 -3.402823466e38f;
         table->ResizedColumn = (ImGuiTableColumnIdx)column_n;
         table->InstanceInteracted = table->InstanceCurrent;

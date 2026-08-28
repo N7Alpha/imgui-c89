@@ -66,6 +66,507 @@ def assert_same_outputs(left: Path, right: Path) -> None:
         raise RuntimeError(f"non-deterministic generated files: {different}")
 
 
+def assert_flattened_table_spans(
+    generated: Path,
+    units: list[dict],
+    ir_data: dict,
+    cc: str,
+    cxx: str,
+    facade_standard: str,
+    upstream: Path,
+    define_flags: list[str],
+    undefine_flags: list[str],
+    dependency_cflags: list[str],
+) -> None:
+    """Prove the table span lowering is complete and layout-compatible."""
+    if not ir_data.get("translator_options", {}).get("flatten_table_spans"):
+        return
+
+    checked_names = [
+        "imgui_c89.h",
+        "imgui_c89_internal.h",
+        "imgui_c89_api.h",
+        "imgui_c89_api.c",
+        "imgui_translated.h",
+        "imgui_translated.c",
+        *(item["source"] for item in units),
+    ]
+    leaks: list[str] = []
+    for name in checked_names:
+        text = (generated / name).read_text(encoding="utf-8")
+        tokens = [
+            token for token in ("ImSpan_", "ImSpanAllocator") if token in text
+        ]
+        if tokens:
+            leaks.append(f"{name} ({', '.join(tokens)})")
+    if leaks:
+        raise RuntimeError(
+            "flattened table spans leaked into canonical C output: "
+            + ", ".join(leaks)
+        )
+
+    internal = (generated / "imgui_c89_internal.h").read_text(encoding="utf-8")
+
+    def record_body(name: str) -> str:
+        match = re.search(
+            rf"struct {re.escape(name)}\s*\{{(.*?)\n\}};",
+            internal,
+            flags=re.DOTALL,
+        )
+        if match is None:
+            raise RuntimeError(f"flattened table span owner {name} is missing")
+        return match.group(1)
+
+    expected_fields = {
+        "ImGuiTable": (
+            "ImGuiTableColumn * Columns;",
+            "ImGuiTableColumn * ColumnsEnd;",
+            "ImGuiTableColumnIdx * DisplayOrderToIndex;",
+            "ImGuiTableColumnIdx * DisplayOrderToIndexEnd;",
+            "ImGuiTableCellData * RowCellData;",
+            "ImGuiTableCellData * RowCellDataEnd;",
+        ),
+        "ImGuiTableTempData": (
+            "ImGuiTableColumn * OldColumnsData;",
+            "ImGuiTableColumn * OldColumnsDataEnd;",
+        ),
+    }
+    for record, declarations in expected_fields.items():
+        body = record_body(record)
+        missing = [declaration for declaration in declarations if declaration not in body]
+        if missing:
+            raise RuntimeError(
+                f"flattened {record} pointer fields are incomplete: "
+                + ", ".join(missing)
+            )
+
+    c_probe = generated / "table_span_layout.c"
+    cpp_probe = generated / "table_span_layout.cpp"
+    c_probe.write_text(
+        '''#include "imgui_c89_internal.h"
+#include <stddef.h>
+#include <stdio.h>
+
+#define PRINT_LAYOUT(key, value) printf(key "=%lu\\n", (unsigned long)(value))
+
+int main(void)
+{
+    PRINT_LAYOUT("ImGuiTable.size", sizeof(ImGuiTable));
+    PRINT_LAYOUT("ImGuiTable.Columns", offsetof(ImGuiTable, Columns));
+    PRINT_LAYOUT("ImGuiTable.ColumnsEnd", offsetof(ImGuiTable, ColumnsEnd));
+    PRINT_LAYOUT("ImGuiTable.DisplayOrderToIndex", offsetof(ImGuiTable, DisplayOrderToIndex));
+    PRINT_LAYOUT("ImGuiTable.DisplayOrderToIndexEnd", offsetof(ImGuiTable, DisplayOrderToIndexEnd));
+    PRINT_LAYOUT("ImGuiTable.RowCellData", offsetof(ImGuiTable, RowCellData));
+    PRINT_LAYOUT("ImGuiTable.RowCellDataEnd", offsetof(ImGuiTable, RowCellDataEnd));
+    PRINT_LAYOUT("ImGuiTableTempData.size", sizeof(ImGuiTableTempData));
+    PRINT_LAYOUT("ImGuiTableTempData.OldColumnsData", offsetof(ImGuiTableTempData, OldColumnsData));
+    PRINT_LAYOUT("ImGuiTableTempData.OldColumnsDataEnd", offsetof(ImGuiTableTempData, OldColumnsDataEnd));
+    return 0;
+}
+''',
+        encoding="utf-8",
+    )
+    cpp_probe.write_text(
+        '''#include "imgui.h"
+#include "imgui_internal.h"
+#include <stddef.h>
+#include <stdio.h>
+
+#define PRINT_LAYOUT(key, value) printf(key "=%lu\\n", (unsigned long)(value))
+
+int main()
+{
+    PRINT_LAYOUT("ImGuiTable.size", sizeof(ImGuiTable));
+    PRINT_LAYOUT("ImGuiTable.Columns", offsetof(ImGuiTable, Columns) + offsetof(ImSpan<ImGuiTableColumn>, Data));
+    PRINT_LAYOUT("ImGuiTable.ColumnsEnd", offsetof(ImGuiTable, Columns) + offsetof(ImSpan<ImGuiTableColumn>, DataEnd));
+    PRINT_LAYOUT("ImGuiTable.DisplayOrderToIndex", offsetof(ImGuiTable, DisplayOrderToIndex) + offsetof(ImSpan<ImGuiTableColumnIdx>, Data));
+    PRINT_LAYOUT("ImGuiTable.DisplayOrderToIndexEnd", offsetof(ImGuiTable, DisplayOrderToIndex) + offsetof(ImSpan<ImGuiTableColumnIdx>, DataEnd));
+    PRINT_LAYOUT("ImGuiTable.RowCellData", offsetof(ImGuiTable, RowCellData) + offsetof(ImSpan<ImGuiTableCellData>, Data));
+    PRINT_LAYOUT("ImGuiTable.RowCellDataEnd", offsetof(ImGuiTable, RowCellData) + offsetof(ImSpan<ImGuiTableCellData>, DataEnd));
+    PRINT_LAYOUT("ImGuiTableTempData.size", sizeof(ImGuiTableTempData));
+    PRINT_LAYOUT("ImGuiTableTempData.OldColumnsData", offsetof(ImGuiTableTempData, OldColumnsData) + offsetof(ImSpan<ImGuiTableColumn>, Data));
+    PRINT_LAYOUT("ImGuiTableTempData.OldColumnsDataEnd", offsetof(ImGuiTableTempData, OldColumnsData) + offsetof(ImSpan<ImGuiTableColumn>, DataEnd));
+    return 0;
+}
+''',
+        encoding="utf-8",
+    )
+    c_executable = generated / "table_span_layout_c"
+    cpp_executable = generated / "table_span_layout_cpp"
+    run([
+        cc, "-std=c89", "-pedantic-errors", "-Wall",
+        "-Wno-overlength-strings", "-I", str(generated),
+        *define_flags, *undefine_flags, *dependency_cflags,
+        str(c_probe), "-o", str(c_executable),
+    ])
+    run([
+        cxx, f"-std={facade_standard}", "-pedantic-errors", "-Wall",
+        "-I", str(upstream), "-I", str(upstream / "backends"),
+        *define_flags, *undefine_flags, *dependency_cflags,
+        str(cpp_probe), "-o", str(cpp_executable),
+    ])
+    c_layout = capture([str(c_executable)])
+    cpp_layout = capture([str(cpp_executable)])
+    if c_layout != cpp_layout:
+        raise RuntimeError(
+            "flattened table span ABI differs from upstream C++:\n"
+            f"C89:\n{c_layout}\nC++:\n{cpp_layout}"
+        )
+    print("flattened table spans: PASS (no C span shell, C/C++ ABI match)")
+
+
+def assert_flattened_table_vectors(
+    generated: Path,
+    units: list[dict],
+    ir_data: dict,
+    cc: str,
+    cxx: str,
+    facade_standard: str,
+    upstream: Path,
+    define_flags: list[str],
+    undefine_flags: list[str],
+    dependency_cflags: list[str],
+) -> None:
+    """Prove table-owned vector shells were lowered without changing ABI."""
+    if not ir_data.get("translator_options", {}).get("flatten_table_vectors"):
+        return
+
+    checked_names = [
+        "imgui_c89.h",
+        "imgui_c89_internal.h",
+        "imgui_c89_api.h",
+        "imgui_c89_api.c",
+        "imgui_translated.h",
+        "imgui_translated.c",
+        *(item["source"] for item in units),
+    ]
+    specializations = (
+        "ImVector_ImGuiTableInstanceData",
+        "ImVector_ImGuiTableColumnSortSpecs",
+        "ImVector_ImGuiTableHeaderData",
+        "ImVector_ImGuiTableReconcileColumnData",
+        "ImVector_ImGuiTableTempData",
+    )
+    leaks: list[str] = []
+    for name in checked_names:
+        text = (generated / name).read_text(encoding="utf-8")
+        tokens = [token for token in specializations if token in text]
+        if tokens:
+            leaks.append(f"{name} ({', '.join(tokens)})")
+    if leaks:
+        raise RuntimeError(
+            "flattened table vectors leaked into canonical C output: "
+            + ", ".join(leaks)
+        )
+
+    internal = (generated / "imgui_c89_internal.h").read_text(encoding="utf-8")
+
+    def record_body(name: str) -> str:
+        match = re.search(
+            rf"struct {re.escape(name)}\s*\{{(.*?)\n\}};",
+            internal,
+            flags=re.DOTALL,
+        )
+        if match is None:
+            raise RuntimeError(f"flattened table vector owner {name} is missing")
+        return match.group(1)
+
+    expected_fields = {
+        "ImGuiTable": (
+            "int InstanceDataExtraSize;",
+            "int InstanceDataExtraCapacity;",
+            "ImGuiTableInstanceData * InstanceDataExtra;",
+            "int SortSpecsMultiSize;",
+            "int SortSpecsMultiCapacity;",
+            "ImGuiTableColumnSortSpecs * SortSpecsMulti;",
+        ),
+        "ImGuiTableTempData": (
+            "int AngledHeadersRequestsSize;",
+            "int AngledHeadersRequestsCapacity;",
+            "ImGuiTableHeaderData * AngledHeadersRequests;",
+            "int ReconcileColumnsRequestsSize;",
+            "int ReconcileColumnsRequestsCapacity;",
+            "ImGuiTableReconcileColumnData * ReconcileColumnsRequests;",
+        ),
+        "ImGuiContext": (
+            "int TablesTempDataSize;",
+            "int TablesTempDataCapacity;",
+            "ImGuiTableTempData * TablesTempData;",
+        ),
+    }
+    for record, declarations in expected_fields.items():
+        body = record_body(record)
+        missing = [declaration for declaration in declarations if declaration not in body]
+        if missing:
+            raise RuntimeError(
+                f"flattened {record} vector fields are incomplete: "
+                + ", ".join(missing)
+            )
+
+    c_probe = generated / "table_vector_layout.c"
+    cpp_probe = generated / "table_vector_layout.cpp"
+    c_probe.write_text(
+        '''#include "imgui_c89_internal.h"
+#include <stddef.h>
+#include <stdio.h>
+
+#define PRINT_LAYOUT(key, value) printf(key "=%lu\\n", (unsigned long)(value))
+
+int main(void)
+{
+    PRINT_LAYOUT("ImGuiTable.size", sizeof(ImGuiTable));
+    PRINT_LAYOUT("ImGuiTable.InstanceDataExtra.Size", offsetof(ImGuiTable, InstanceDataExtraSize));
+    PRINT_LAYOUT("ImGuiTable.InstanceDataExtra.Capacity", offsetof(ImGuiTable, InstanceDataExtraCapacity));
+    PRINT_LAYOUT("ImGuiTable.InstanceDataExtra.Data", offsetof(ImGuiTable, InstanceDataExtra));
+    PRINT_LAYOUT("ImGuiTable.SortSpecsMulti.Size", offsetof(ImGuiTable, SortSpecsMultiSize));
+    PRINT_LAYOUT("ImGuiTable.SortSpecsMulti.Capacity", offsetof(ImGuiTable, SortSpecsMultiCapacity));
+    PRINT_LAYOUT("ImGuiTable.SortSpecsMulti.Data", offsetof(ImGuiTable, SortSpecsMulti));
+    PRINT_LAYOUT("ImGuiTableTempData.size", sizeof(ImGuiTableTempData));
+    PRINT_LAYOUT("ImGuiTableTempData.AngledHeadersRequests.Size", offsetof(ImGuiTableTempData, AngledHeadersRequestsSize));
+    PRINT_LAYOUT("ImGuiTableTempData.AngledHeadersRequests.Capacity", offsetof(ImGuiTableTempData, AngledHeadersRequestsCapacity));
+    PRINT_LAYOUT("ImGuiTableTempData.AngledHeadersRequests.Data", offsetof(ImGuiTableTempData, AngledHeadersRequests));
+    PRINT_LAYOUT("ImGuiTableTempData.ReconcileColumnsRequests.Size", offsetof(ImGuiTableTempData, ReconcileColumnsRequestsSize));
+    PRINT_LAYOUT("ImGuiTableTempData.ReconcileColumnsRequests.Capacity", offsetof(ImGuiTableTempData, ReconcileColumnsRequestsCapacity));
+    PRINT_LAYOUT("ImGuiTableTempData.ReconcileColumnsRequests.Data", offsetof(ImGuiTableTempData, ReconcileColumnsRequests));
+    PRINT_LAYOUT("ImGuiContext.size", sizeof(ImGuiContext));
+    PRINT_LAYOUT("ImGuiContext.TablesTempData.Size", offsetof(ImGuiContext, TablesTempDataSize));
+    PRINT_LAYOUT("ImGuiContext.TablesTempData.Capacity", offsetof(ImGuiContext, TablesTempDataCapacity));
+    PRINT_LAYOUT("ImGuiContext.TablesTempData.Data", offsetof(ImGuiContext, TablesTempData));
+    return 0;
+}
+''',
+        encoding="utf-8",
+    )
+    cpp_probe.write_text(
+        '''#include "imgui.h"
+#include "imgui_internal.h"
+#include <stddef.h>
+#include <stdio.h>
+
+#define PRINT_LAYOUT(key, value) printf(key "=%lu\\n", (unsigned long)(value))
+#define VECTOR_OFFSET(owner, field, type, member) (offsetof(owner, field) + offsetof(ImVector<type>, member))
+
+int main()
+{
+    PRINT_LAYOUT("ImGuiTable.size", sizeof(ImGuiTable));
+    PRINT_LAYOUT("ImGuiTable.InstanceDataExtra.Size", VECTOR_OFFSET(ImGuiTable, InstanceDataExtra, ImGuiTableInstanceData, Size));
+    PRINT_LAYOUT("ImGuiTable.InstanceDataExtra.Capacity", VECTOR_OFFSET(ImGuiTable, InstanceDataExtra, ImGuiTableInstanceData, Capacity));
+    PRINT_LAYOUT("ImGuiTable.InstanceDataExtra.Data", VECTOR_OFFSET(ImGuiTable, InstanceDataExtra, ImGuiTableInstanceData, Data));
+    PRINT_LAYOUT("ImGuiTable.SortSpecsMulti.Size", VECTOR_OFFSET(ImGuiTable, SortSpecsMulti, ImGuiTableColumnSortSpecs, Size));
+    PRINT_LAYOUT("ImGuiTable.SortSpecsMulti.Capacity", VECTOR_OFFSET(ImGuiTable, SortSpecsMulti, ImGuiTableColumnSortSpecs, Capacity));
+    PRINT_LAYOUT("ImGuiTable.SortSpecsMulti.Data", VECTOR_OFFSET(ImGuiTable, SortSpecsMulti, ImGuiTableColumnSortSpecs, Data));
+    PRINT_LAYOUT("ImGuiTableTempData.size", sizeof(ImGuiTableTempData));
+    PRINT_LAYOUT("ImGuiTableTempData.AngledHeadersRequests.Size", VECTOR_OFFSET(ImGuiTableTempData, AngledHeadersRequests, ImGuiTableHeaderData, Size));
+    PRINT_LAYOUT("ImGuiTableTempData.AngledHeadersRequests.Capacity", VECTOR_OFFSET(ImGuiTableTempData, AngledHeadersRequests, ImGuiTableHeaderData, Capacity));
+    PRINT_LAYOUT("ImGuiTableTempData.AngledHeadersRequests.Data", VECTOR_OFFSET(ImGuiTableTempData, AngledHeadersRequests, ImGuiTableHeaderData, Data));
+    PRINT_LAYOUT("ImGuiTableTempData.ReconcileColumnsRequests.Size", VECTOR_OFFSET(ImGuiTableTempData, ReconcileColumnsRequests, ImGuiTableReconcileColumnData, Size));
+    PRINT_LAYOUT("ImGuiTableTempData.ReconcileColumnsRequests.Capacity", VECTOR_OFFSET(ImGuiTableTempData, ReconcileColumnsRequests, ImGuiTableReconcileColumnData, Capacity));
+    PRINT_LAYOUT("ImGuiTableTempData.ReconcileColumnsRequests.Data", VECTOR_OFFSET(ImGuiTableTempData, ReconcileColumnsRequests, ImGuiTableReconcileColumnData, Data));
+    PRINT_LAYOUT("ImGuiContext.size", sizeof(ImGuiContext));
+    PRINT_LAYOUT("ImGuiContext.TablesTempData.Size", VECTOR_OFFSET(ImGuiContext, TablesTempData, ImGuiTableTempData, Size));
+    PRINT_LAYOUT("ImGuiContext.TablesTempData.Capacity", VECTOR_OFFSET(ImGuiContext, TablesTempData, ImGuiTableTempData, Capacity));
+    PRINT_LAYOUT("ImGuiContext.TablesTempData.Data", VECTOR_OFFSET(ImGuiContext, TablesTempData, ImGuiTableTempData, Data));
+    return 0;
+}
+''',
+        encoding="utf-8",
+    )
+    c_executable = generated / "table_vector_layout_c"
+    cpp_executable = generated / "table_vector_layout_cpp"
+    run([
+        cc, "-std=c89", "-pedantic-errors", "-Wall",
+        "-Wno-overlength-strings", "-I", str(generated),
+        *define_flags, *undefine_flags, *dependency_cflags,
+        str(c_probe), "-o", str(c_executable),
+    ])
+    run([
+        cxx, f"-std={facade_standard}", "-pedantic-errors", "-Wall",
+        "-I", str(upstream), "-I", str(upstream / "backends"),
+        *define_flags, *undefine_flags, *dependency_cflags,
+        str(cpp_probe), "-o", str(cpp_executable),
+    ])
+    c_layout = capture([str(c_executable)])
+    cpp_layout = capture([str(cpp_executable)])
+    if c_layout != cpp_layout:
+        raise RuntimeError(
+            "flattened table vector ABI differs from upstream C++:\n"
+            f"C89:\n{c_layout}\nC++:\n{cpp_layout}"
+        )
+    print("flattened table vectors: PASS (no specialized C shell, C/C++ ABI match)")
+
+
+def assert_flattened_table_pool(
+    generated: Path,
+    units: list[dict],
+    ir_data: dict,
+    cc: str,
+    cxx: str,
+    facade_standard: str,
+    upstream: Path,
+    define_flags: list[str],
+    undefine_flags: list[str],
+    dependency_cflags: list[str],
+) -> None:
+    """Prove the table pool is direct C storage with the upstream layout."""
+    if not ir_data.get("translator_options", {}).get("flatten_table_pool"):
+        return
+
+    checked_names = [
+        "imgui_c89.h",
+        "imgui_c89_internal.h",
+        "imgui_c89_api.h",
+        "imgui_c89_api.c",
+        "imgui_translated.h",
+        "imgui_translated.c",
+        *(item["source"] for item in units),
+    ]
+    shell_patterns = (
+        re.compile(r"\bImPool_ImGuiTable(?:\b|__)"),
+        re.compile(r"\bImVector_ImGuiTable(?:\b|__)"),
+    )
+    leaks: list[str] = []
+    canonical_text: list[str] = []
+    for name in checked_names:
+        text = (generated / name).read_text(encoding="utf-8")
+        canonical_text.append(text)
+        tokens = [pattern.pattern for pattern in shell_patterns if pattern.search(text)]
+        if tokens:
+            leaks.append(f"{name} ({', '.join(tokens)})")
+    if leaks:
+        raise RuntimeError(
+            "flattened table pool shells leaked into canonical C output: "
+            + ", ".join(leaks)
+        )
+
+    internal = (generated / "imgui_c89_internal.h").read_text(encoding="utf-8")
+    match = re.search(
+        r"struct ImGuiTablePool\s*\{(.*?)\n\};",
+        internal,
+        flags=re.DOTALL,
+    )
+    if match is None:
+        raise RuntimeError("flattened table pool owner ImGuiTablePool is missing")
+    pool_body = match.group(1)
+    expected_fields = (
+        "int Size;",
+        "int Capacity;",
+        "ImGuiTable * Data;",
+        "ImGuiStorage Map;",
+        "ImPoolIdx FreeIdx;",
+        "ImPoolIdx AliveCount;",
+    )
+    missing = [field for field in expected_fields if field not in pool_body]
+    if missing:
+        raise RuntimeError(
+            "flattened ImGuiTablePool fields are incomplete: "
+            + ", ".join(missing)
+        )
+    context_match = re.search(
+        r"struct ImGuiContext\s*\{(.*?)\n\};",
+        internal,
+        flags=re.DOTALL,
+    )
+    if context_match is None or "ImGuiTablePool Tables;" not in context_match.group(1):
+        raise RuntimeError("ImGuiContext Tables is not a direct ImGuiTablePool owner")
+
+    all_c = "\n".join(canonical_text)
+    required_surface = (
+        "imgui_table_pool_init(",
+        "imgui_table_pool_fini(",
+        "imgui_table_pool_clear(",
+        "imgui_table_pool_add(",
+        "imgui_table_pool_find(",
+        "imgui_table_pool_at(",
+        "imgui_table_pool_index(",
+        "imgui_table_pool_get_or_add(",
+        "imgui_table_pool_alive_count(",
+        "imgui_table_pool_map_size(",
+        "imgui_table_pool_map_at(",
+        "imgui_table_pool_remove(",
+        "imgui_table_pool_remove_at(",
+        "imgui_table_fini(",
+    )
+    missing_surface = [name for name in required_surface if name not in all_c]
+    if missing_surface:
+        raise RuntimeError(
+            "flattened table pool stable C surface is incomplete: "
+            + ", ".join(missing_surface)
+        )
+
+    c_probe = generated / "table_pool_layout.c"
+    cpp_probe = generated / "table_pool_layout.cpp"
+    c_probe.write_text(
+        '''#include "imgui_c89_internal.h"
+#include <stddef.h>
+#include <stdio.h>
+
+#define PRINT_LAYOUT(key, value) printf(key "=%lu\\n", (unsigned long)(value))
+
+int main(void)
+{
+    PRINT_LAYOUT("ImGuiTablePool.size", sizeof(ImGuiTablePool));
+    PRINT_LAYOUT("ImGuiTablePool.Size", offsetof(ImGuiTablePool, Size));
+    PRINT_LAYOUT("ImGuiTablePool.Capacity", offsetof(ImGuiTablePool, Capacity));
+    PRINT_LAYOUT("ImGuiTablePool.Data", offsetof(ImGuiTablePool, Data));
+    PRINT_LAYOUT("ImGuiTablePool.Map", offsetof(ImGuiTablePool, Map));
+    PRINT_LAYOUT("ImGuiTablePool.FreeIdx", offsetof(ImGuiTablePool, FreeIdx));
+    PRINT_LAYOUT("ImGuiTablePool.AliveCount", offsetof(ImGuiTablePool, AliveCount));
+    PRINT_LAYOUT("ImGuiContext.Tables.offset", offsetof(ImGuiContext, Tables));
+    PRINT_LAYOUT("ImGuiContext.Tables.size", sizeof(((ImGuiContext *)0)->Tables));
+    return 0;
+}
+''',
+        encoding="utf-8",
+    )
+    cpp_probe.write_text(
+        '''#include "imgui.h"
+#include "imgui_internal.h"
+#include <stddef.h>
+#include <stdio.h>
+
+#define PRINT_LAYOUT(key, value) printf(key "=%lu\\n", (unsigned long)(value))
+#define POOL_VECTOR_OFFSET(member) (offsetof(ImPool<ImGuiTable>, Buf) + offsetof(ImVector<ImGuiTable>, member))
+
+int main()
+{
+    PRINT_LAYOUT("ImGuiTablePool.size", sizeof(ImPool<ImGuiTable>));
+    PRINT_LAYOUT("ImGuiTablePool.Size", POOL_VECTOR_OFFSET(Size));
+    PRINT_LAYOUT("ImGuiTablePool.Capacity", POOL_VECTOR_OFFSET(Capacity));
+    PRINT_LAYOUT("ImGuiTablePool.Data", POOL_VECTOR_OFFSET(Data));
+    PRINT_LAYOUT("ImGuiTablePool.Map", offsetof(ImPool<ImGuiTable>, Map));
+    PRINT_LAYOUT("ImGuiTablePool.FreeIdx", offsetof(ImPool<ImGuiTable>, FreeIdx));
+    PRINT_LAYOUT("ImGuiTablePool.AliveCount", offsetof(ImPool<ImGuiTable>, AliveCount));
+    PRINT_LAYOUT("ImGuiContext.Tables.offset", offsetof(ImGuiContext, Tables));
+    PRINT_LAYOUT("ImGuiContext.Tables.size", sizeof(((ImGuiContext *)0)->Tables));
+    return 0;
+}
+''',
+        encoding="utf-8",
+    )
+    c_executable = generated / "table_pool_layout_c"
+    cpp_executable = generated / "table_pool_layout_cpp"
+    run([
+        cc, "-std=c89", "-pedantic-errors", "-Wall",
+        "-Wno-overlength-strings", "-I", str(generated),
+        *define_flags, *undefine_flags, *dependency_cflags,
+        str(c_probe), "-o", str(c_executable),
+    ])
+    run([
+        cxx, f"-std={facade_standard}", "-pedantic-errors", "-Wall",
+        "-I", str(upstream), "-I", str(upstream / "backends"),
+        *define_flags, *undefine_flags, *dependency_cflags,
+        str(cpp_probe), "-o", str(cpp_executable),
+    ])
+    c_layout = capture([str(c_executable)])
+    cpp_layout = capture([str(cpp_executable)])
+    if c_layout != cpp_layout:
+        raise RuntimeError(
+            "flattened table pool ABI differs from upstream C++:\n"
+            f"C89:\n{c_layout}\nC++:\n{cpp_layout}"
+        )
+    print("flattened table pool: PASS (direct C pool, stable surface, ABI match)")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--profile", default="baseline")
@@ -299,6 +800,19 @@ def main() -> int:
     actual = [item["source"] for item in units]
     if actual != expected:
         raise RuntimeError(f"translation-unit mismatch: expected {expected}, got {actual}")
+
+    assert_flattened_table_spans(
+        generated_a, units, ir_data, cc, cxx, facade_standard, upstream,
+        define_flags, undefine_flags, dependency_cflags,
+    )
+    assert_flattened_table_vectors(
+        generated_a, units, ir_data, cc, cxx, facade_standard, upstream,
+        define_flags, undefine_flags, dependency_cflags,
+    )
+    assert_flattened_table_pool(
+        generated_a, units, ir_data, cc, cxx, facade_standard, upstream,
+        define_flags, undefine_flags, dependency_cflags,
+    )
 
     objects: list[Path] = []
     for item in units:

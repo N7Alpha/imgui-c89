@@ -14,13 +14,18 @@ int order_n;
 int column_n;
 table = imgui_c89_ctx->CurrentTable;
 temp = table->TempData;
-temp->AngledHeadersRequests.Size = 0;
-@RESERVE@(imgui_c89_ctx, &temp->AngledHeadersRequests,
-    table->ColumnsEnabledCount);
+temp->AngledHeadersRequestsSize = 0;
+temp->AngledHeadersRequests = imgui_c89_vector_reserve(
+    imgui_c89_ctx, temp->AngledHeadersRequests,
+    temp->AngledHeadersRequestsSize,
+    &temp->AngledHeadersRequestsCapacity, table->ColumnsEnabledCount,
+    sizeof(*temp->AngledHeadersRequests), 0);
+/* Select the column whose angled header needs a highlight before building
+ * the left-to-right render request array. */
 row_id = @GET_ID@(imgui_c89_ctx, imgui_c89_ctx->CurrentWindow,
     "##AngledHeaders", 0);
 instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
-    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
+    &table->InstanceDataExtra[table->InstanceCurrent - 1];
 highlight = table->LastHeldHeaderColumn != -1 ?
     table->LastHeldHeaderColumn : table->HighlightColumnHeader;
 if (highlight == -1 && table->HoveredColumnBody != -1 &&
@@ -35,8 +40,8 @@ for (order_n = 0; order_n < table->ColumnsCount; order_n++)
     if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
           ((ImU32)1 << (order_n & 31))))
         continue;
-    column_n = table->DisplayOrderToIndex.Data[order_n];
-    column = &table->Columns.Data[column_n];
+    column_n = table->DisplayOrderToIndex[order_n];
+    column = &table->Columns[column_n];
     if (!(column->Flags & @ANGLED_HEADER@))
         continue;
     request.Index = (ImGuiTableColumnIdx)column_n;
@@ -44,9 +49,14 @@ for (order_n = 0; order_n < table->ColumnsCount; order_n++)
     request.BgColor0 = header_bg;
     request.BgColor1 = column_n == highlight ?
         @GET_COLOR@(imgui_c89_ctx, @HEADER_COLOR@, 1.0f) : 0;
-    @PUSH@(imgui_c89_ctx, &temp->AngledHeadersRequests, &request);
+    temp->AngledHeadersRequests = imgui_c89_vector_push_back(
+        imgui_c89_ctx, temp->AngledHeadersRequests,
+        &temp->AngledHeadersRequestsSize,
+        &temp->AngledHeadersRequestsCapacity,
+        sizeof(*temp->AngledHeadersRequests), &request);
 }
+/* TableAngledHeadersRowEx requires requests in display order. */
 @ROW_EX@(imgui_c89_ctx, row_id, imgui_c89_ctx->Style.TableAngledHeadersAngle,
-    0.0f, temp->AngledHeadersRequests.Data,
-    temp->AngledHeadersRequests.Size);
+    0.0f, temp->AngledHeadersRequests,
+    temp->AngledHeadersRequestsSize);
 /* IMGUI_C89_FUNCTION_END table_angled_headers_row */

@@ -1,0 +1,46 @@
+/* IMGUI_C89_FUNCTION_BEGIN render_check_mark */
+ImVec2 point;
+float thickness;
+float third;
+float bx;
+float by;
+
+thickness = @MAX_FLOAT@(sz / 5.0f, 1.0f);
+sz -= thickness * 0.5f;
+pos.x += thickness * 0.25f;
+pos.y += thickness * 0.25f;
+third = sz / 3.0f;
+bx = pos.x + third;
+by = pos.y + sz - third * 0.5f;
+
+point.x = bx - third;
+point.y = by - third;
+@PATH_LINE_TO@(imgui_c89_ctx, draw_list, &point);
+point.x = bx;
+point.y = by;
+@PATH_LINE_TO@(imgui_c89_ctx, draw_list, &point);
+point.x = bx + third * 2.0f;
+point.y = by - third * 2.0f;
+@PATH_LINE_TO@(imgui_c89_ctx, draw_list, &point);
+@PATH_STROKE@(imgui_c89_ctx, draw_list, col, thickness, 0);
+/* IMGUI_C89_FUNCTION_END render_check_mark */
+
+/* IMGUI_C89_FUNCTION_BEGIN render_arrow_pointing_at */
+ImVec2 a;
+ImVec2 b;
+
+if (direction == @DIR_LEFT@ || direction == @DIR_RIGHT@) {
+    a.x = pos.x + (direction == @DIR_LEFT@ ? half_sz.x : -half_sz.x);
+    a.y = pos.y + (direction == @DIR_LEFT@ ? -half_sz.y : half_sz.y);
+    b.x = a.x;
+    b.y = pos.y + (direction == @DIR_LEFT@ ? half_sz.y : -half_sz.y);
+} else if (direction == @DIR_UP@ || direction == @DIR_DOWN@) {
+    a.x = pos.x + (direction == @DIR_UP@ ? half_sz.x : -half_sz.x);
+    a.y = pos.y + (direction == @DIR_UP@ ? half_sz.y : -half_sz.y);
+    b.x = pos.x + (direction == @DIR_UP@ ? -half_sz.x : half_sz.x);
+    b.y = a.y;
+} else {
+    return;
+}
+@ADD_TRIANGLE_FILLED@(imgui_c89_ctx, draw_list, &a, &b, &pos, col);
+/* IMGUI_C89_FUNCTION_END render_arrow_pointing_at */

@@ -2,7 +2,7 @@
 
 The idiomatic C89 implementation pins Dear ImGui `v1.92.9b` at commit
 `f1cc2ae15e53a861a874c3034aae6798fde194ab`, the latest published release
-verified again on 2026-08-26. It deliberately does not use `NDEBUG` or any
+verified again on 2026-08-28. It deliberately does not use `NDEBUG` or any
 `IMGUI_DISABLE_*` feature macro. The built-in fonts, settings, navigation,
 debug tools, recovery paths, TrueType and CFF loaders, and all four core
 translation units remain present.
@@ -23,6 +23,10 @@ project's strict builds and semantic gates:
 - shared element-size-driven `ImVector<T>` mutation, checked-accessor,
   lifecycle, and capacity helpers, plus type-erased safe subsets of the two
   `ImChunkStream<T>` and three `ImPool<T>` instantiation families used by core;
+- direct C pointer/end pairs for table spans, direct size/capacity/pointer
+  fields for table-owned variable arrays, and an ABI-identical
+  `ImGuiTablePool`. The corresponding table-specific `ImSpan`, `ImVector`,
+  and `ImPool` shells are absent from the generated C;
 - exact assertion metadata dictionaries local to each generated translation
   unit: each cold failure ID reconstructs the original file, line, and
   expression through a generation-verified byte-pair decoder before invoking
@@ -76,20 +80,20 @@ adapters.
 | Variant | Core archive bytes | Core object bytes | Loaded section bytes |
 |---|---:|---:|---:|
 | upstream C++ | 1,023,912 | 961,544 | 589,342 |
-| literal translated C89 | 993,272 | 928,032 | 579,186 |
-| idiomatic C89 | 825,600 | 760,288 | 515,582 |
+| literal translated C89 | 985,704 | 923,632 | 579,186 |
+| idiomatic C89 | 812,592 | 752,712 | 516,999 |
 
-The overlay removes 167,672 physical archive bytes and 63,604 loaded section
-bytes (10.98%) from literal C89. The idiomatic core is 198,312 archive bytes
-(19.37%) and 73,760 loaded section bytes (12.52%) smaller than upstream C++.
+The overlay removes 173,112 physical archive bytes and 62,187 loaded section
+bytes (10.74%) from literal C89. The idiomatic core is 211,320 archive bytes
+(20.64%) and 72,343 loaded section bytes (12.27%) smaller than upstream C++.
 
 Compatibility surfaces are shown separately because an embedded C client and
 a C++ compatibility client would not ship both:
 
 | Surface | Literal archive | Idiomatic archive | Literal sections | Idiomatic sections |
 |---|---:|---:|---:|---:|
-| exact C API + optional scope helpers | 994,344 | 826,672 | 579,390 | 515,786 |
-| exact C++ facade + core | 1,246,232 | 1,078,552 | 634,181 | 570,577 |
+| exact C API + optional scope helpers | 986,776 | 813,664 | 579,390 | 517,203 |
+| exact C++ facade + core | 1,235,624 | 1,062,520 | 634,181 | 571,994 |
 
 The exact C API is now the core implementation surface itself. The optional
 three-function normalized-scope helper object adds only 204 loaded section
@@ -108,7 +112,7 @@ intended C-only deliverable.
   exhaustive 8-bit typed arithmetic, wider boundary samples, rounded-range
   geometry, changing/reordered table layouts, and enabled table diagnostic
   logs. Native C++ and C89 produce SHA-256
-  `29c2ad57acc3e1c00b22c2473f76b1cf27e7d36992e8d2bc7ac15070926f991f`.
+  `73a48d622635739cc9d1f7acf94890545e7865e711e1dbf7eea62e83894357b6`.
 - ASan reports no error. UBSan adds no diagnostic in a handwritten body; its
   remaining null-empty-vector offset reports are a known translator-wide
   baseline outside these rewrites.

@@ -1,0 +1,38 @@
+ImDrawVert *vtx;
+ImDrawIdx *idx;
+ImDrawIdx base;
+ImVec2 uv;
+
+if (((col_upr_left | col_upr_right | col_bot_right | col_bot_left) &
+     0xff000000u) == 0)
+    return;
+
+@PRIM_RESERVE@(imgui_c89_ctx, self, 6, 4);
+base = (ImDrawIdx)self->_VtxCurrentIdx;
+idx = self->_IdxWritePtr;
+idx[0] = base;
+idx[1] = (ImDrawIdx)(base + 1);
+idx[2] = (ImDrawIdx)(base + 2);
+idx[3] = base;
+idx[4] = (ImDrawIdx)(base + 2);
+idx[5] = (ImDrawIdx)(base + 3);
+self->_IdxWritePtr += 6;
+
+uv = self->_Data->TexUvWhitePixel;
+vtx = self->_VtxWritePtr;
+vtx[0].pos = *p_min;
+vtx[0].uv = uv;
+vtx[0].col = col_upr_left;
+vtx[1].pos.x = p_max->x;
+vtx[1].pos.y = p_min->y;
+vtx[1].uv = uv;
+vtx[1].col = col_upr_right;
+vtx[2].pos = *p_max;
+vtx[2].uv = uv;
+vtx[2].col = col_bot_right;
+vtx[3].pos.x = p_min->x;
+vtx[3].pos.y = p_max->y;
+vtx[3].uv = uv;
+vtx[3].col = col_bot_left;
+self->_VtxWritePtr += 4;
+self->_VtxCurrentIdx += 4;

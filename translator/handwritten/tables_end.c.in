@@ -1,7 +1,6 @@
 /* Maintained strict-C89 implementation of ImGui::EndTable(). */
 
 /* IMGUI_C89_FUNCTION_BEGIN end_table */
-{
     ImGuiContext *g;
     ImGuiTable *table;
     ImGuiTableFlags flags;
@@ -37,12 +36,16 @@
     table = g->CurrentTable;
     if (table == (ImGuiTable *)0)
     {
-        imgui_c89_debugtrap();
+        if (@ERROR_LOG@(
+                imgui_c89_ctx,
+                "EndTable() call should only be done while in BeginTable() scope!"))
+            @ASSERT_1464@;
         return;
     }
 
+    /* Empty tables still run layout so borders and all exit paths agree. */
     if (!table->IsLayoutLocked)
-        imgui_i_im_gui_table_update_layout(imgui_c89_ctx, table);
+        @TABLE_UPDATE_LAYOUT@(imgui_c89_ctx, table);
 
     flags = table->Flags;
     inner_window = table->InnerWindow;
@@ -50,13 +53,13 @@
     temp_data = table->TempData;
     if (!(inner_window == g->CurrentWindow &&
           inner_window->ID == temp_data->WindowID))
-        imgui_c89_debugtrap();
+        @ASSERT_1479@;
     if (!(outer_window == inner_window ||
           outer_window == inner_window->ParentWindow))
-        imgui_c89_debugtrap();
+        @ASSERT_1480@;
 
     if (table->IsInsideRow)
-        imgui_i_im_gui_table_end_row(imgui_c89_ctx, table);
+        @TABLE_END_ROW@(imgui_c89_ctx, table);
 
     if ((flags & ImGuiTableFlags_ContextMenuInBody) != 0 &&
         table->HoveredColumnBody != (ImGuiTableColumnIdx)-1 &&
@@ -64,7 +67,7 @@
         imgui_is_mouse_released(
             imgui_c89_ctx, ImGuiMouseButton_Right))
     {
-        imgui_i_im_gui_table_open_context_menu(
+        @TABLE_OPEN_CONTEXT_MENU@(
             imgui_c89_ctx, (int)table->HoveredColumnBody);
     }
 
@@ -75,7 +78,7 @@
     inner_window->DC.CursorMaxPos = temp_data->HostBackupCursorMaxPos;
     inner_content_max_y = @IM_CEIL_FLOAT@(table->RowPosY2);
     if (!(table->RowPosY2 == inner_window->DC.CursorPos.y))
-        imgui_c89_debugtrap();
+        @ASSERT_1496@;
     if (inner_window != outer_window)
     {
         inner_window->DC.CursorMaxPos.y = inner_content_max_y;
@@ -99,7 +102,7 @@
         max_pos_x = inner_window->DC.CursorMaxPos.x;
         if (table->RightMostEnabledColumn != (ImGuiTableColumnIdx)-1)
         {
-            column = &table->Columns.Data[
+            column = &table->Columns[
                 (int)table->RightMostEnabledColumn];
             max_pos_x = @IM_MAX_FLOAT@(
                 max_pos_x,
@@ -115,6 +118,7 @@
             max_pos_x + temp_data->AngledHeadersExtraWidth;
     }
 
+    /* Restore host clipping before drawing borders and flattening channels. */
     if ((flags & ImGuiTableFlags_NoClip) == 0)
         @DRAW_LIST_POP_CLIP_RECT@(
             imgui_c89_ctx, inner_window->DrawList);
@@ -126,13 +130,13 @@
     inner_window->ClipRect.Max.y = clip_rect_v->w;
 
     if ((flags & ImGuiTableFlags_Borders) != 0)
-        imgui_i_im_gui_table_draw_borders(imgui_c89_ctx, table);
+        @TABLE_DRAW_BORDERS@(imgui_c89_ctx, table);
 
     splitter = table->DrawSplitter;
     @DRAW_LIST_SPLITTER_SET_CURRENT_CHANNEL@(
         imgui_c89_ctx, splitter, inner_window->DrawList, 0);
     if ((table->Flags & ImGuiTableFlags_NoClip) == 0)
-        imgui_i_im_gui_table_merge_draw_channels(imgui_c89_ctx, table);
+        @TABLE_MERGE_DRAW_CHANNELS@(imgui_c89_ctx, table);
     @DRAW_LIST_SPLITTER_MERGE@(
         imgui_c89_ctx, splitter, inner_window->DrawList);
 
@@ -146,7 +150,7 @@
         {
             continue;
         }
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) != 0 &&
             (column->Flags & ImGuiTableColumnFlags_NoResize) == 0)
         {
@@ -155,7 +159,7 @@
         else
         {
             column_width_request =
-                imgui_i_im_gui_table_get_column_width_auto(table, column);
+                @TABLE_GET_COLUMN_WIDTH_AUTO@(table, column);
         }
         if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) != 0)
             auto_fit_width_for_fixed += column_width_request;
@@ -193,10 +197,10 @@
     {
         neighbor_width_to_keep_visible =
             table->MinColumnWidth + table->CellPaddingX * 2.0f;
-        column = &table->Columns.Data[(int)table->LastResizedColumn];
+        column = &table->Columns[(int)table->LastResizedColumn];
         if (column->MaxX < table->InnerClipRect.Min.x)
         {
-            imgui_i_im_gui_set_scroll_from_pos_x(
+            @SET_SCROLL_FROM_POS_X@(
                 inner_window,
                 column->MaxX - inner_window->Pos.x -
                     neighbor_width_to_keep_visible,
@@ -204,7 +208,7 @@
         }
         else if (column->MaxX > table->InnerClipRect.Max.x)
         {
-            imgui_i_im_gui_set_scroll_from_pos_x(
+            @SET_SCROLL_FROM_POS_X@(
                 inner_window,
                 column->MaxX - inner_window->Pos.x +
                     neighbor_width_to_keep_visible,
@@ -215,7 +219,7 @@
     if (table->ResizedColumn != (ImGuiTableColumnIdx)-1 &&
         table->InstanceCurrent == table->InstanceInteracted)
     {
-        column = &table->Columns.Data[(int)table->ResizedColumn];
+        column = &table->Columns[(int)table->ResizedColumn];
         new_x2 = g->IO.MousePos.x - g->ActiveIdClickOffset.x +
             @IM_TRUNC_FLOAT@(
                 @TABLE_RESIZE_SEPARATOR_HALF_THICKNESS@ *
@@ -232,14 +236,23 @@
     if (!(inner_window->IDStack.Size > 0 &&
           inner_window->IDStack.Data[inner_window->IDStack.Size - 1] ==
               table_instance->TableInstanceID))
-        imgui_c89_debugtrap();
+    {
+        if (@ERROR_LOG@(
+                imgui_c89_ctx, "Mismatching PushID/PopID!"))
+            @ASSERT_1594@;
+    }
     if (!(outer_window->DC.ItemWidthStack.Size >=
           temp_data->HostBackupItemWidthStackSize))
-        imgui_c89_debugtrap();
+    {
+        if (@ERROR_LOG@(
+                imgui_c89_ctx, "Too many PopItemWidth!"))
+            @ASSERT_1595@;
+    }
     if (table->InstanceCurrent > 0)
         imgui_pop_id(imgui_c89_ctx);
     imgui_pop_id(imgui_c89_ctx);
 
+    /* Restore window state saved by BeginTableEx(). */
     backup_outer_max_pos = outer_window->DC.CursorMaxPos;
     inner_window->WorkRect = temp_data->HostBackupWorkRect;
     inner_window->ParentWorkRect = temp_data->HostBackupParentWorkRect;
@@ -267,9 +280,9 @@
             table->OuterRect.Max.x - table->OuterRect.Min.x;
         outer_rect_size.y =
             table->OuterRect.Max.y - table->OuterRect.Min.y;
-        imgui_i_im_gui_item_size(
+        @ITEM_SIZE@(
             imgui_c89_ctx, &outer_rect_size, -1.0f);
-        imgui_i_im_gui_item_add(
+        @ITEM_ADD@(
             imgui_c89_ctx,
             &table->OuterRect,
             0,
@@ -280,7 +293,7 @@
     if ((table->Flags & ImGuiTableFlags_NoHostExtendX) != 0)
     {
         if (!((table->Flags & ImGuiTableFlags_ScrollX) == 0))
-            imgui_c89_debugtrap();
+            @ASSERT_1634@;
         outer_window->DC.CursorMaxPos.x = @IM_MAX_FLOAT@(
             backup_outer_max_pos.x,
             table->OuterRect.Min.x + table->ColumnsAutoFitWidth);
@@ -340,17 +353,17 @@
     }
 
     if (table->IsSettingsDirty)
-        imgui_i_im_gui_table_save_settings(imgui_c89_ctx, table);
+        @TABLE_SAVE_SETTINGS@(imgui_c89_ctx, table);
     table->IsInitializing = 0;
 
     if (!(g->CurrentWindow == outer_window && g->CurrentTable == table))
-        imgui_c89_debugtrap();
+        @ASSERT_1671@;
     if (!(g->TablesTempDataStacked > 0))
-        imgui_c89_debugtrap();
+        @ASSERT_1672@;
     g->TablesTempDataStacked--;
     if (g->TablesTempDataStacked > 0)
     {
-        temp_data = &g->TablesTempData.Data[
+        temp_data = &g->TablesTempData[
             g->TablesTempDataStacked - 1];
     }
     else
@@ -379,7 +392,6 @@
     {
         outer_window->DC.CurrentTableIdx = -1;
     }
-    imgui_i_im_gui_nav_update_current_window_is_scroll_pushable_x(
+    @NAV_UPDATE_SCROLL_PUSHABLE_X@(
         imgui_c89_ctx);
-}
 /* IMGUI_C89_FUNCTION_END end_table */

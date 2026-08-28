@@ -102,6 +102,14 @@ int main()
             return 3;
         }
         ImGui::Text("translated value: %d", 42);
+        if (!ImGui::BeginTable("translated-table", 2))
+        {
+            ImGui::End();
+            return 13;
+        }
+        ImGui::TableNextColumn();
+        ImGui::Text("table value: %d", frame);
+        ImGui::EndTable();
         if (frame == 0)
         {
             if (!ImGui::BeginChild(

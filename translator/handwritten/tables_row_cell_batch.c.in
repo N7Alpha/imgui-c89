@@ -12,9 +12,12 @@ table->RowFlags = row_flags;
 table->RowCellPaddingY = imgui_c89_ctx->Style.CellPadding.y;
 table->RowMinHeight = row_min_height;
 @BEGIN_ROW@(imgui_c89_ctx, table);
+/* A minimum height is honored, but a maximum would require a distinct
+ * clipping rectangle for every cell. */
 table->RowPosY2 += table->RowCellPaddingY * 2.0f;
 if (table->RowPosY2 < table->RowPosY1 + row_min_height)
     table->RowPosY2 = table->RowPosY1 + row_min_height;
+/* Output stays disabled until the caller selects a column. */
 table->InnerWindow->SkipItems = 1;
 /* IMGUI_C89_FUNCTION_END table_next_row */
 
@@ -22,6 +25,9 @@ table->InnerWindow->SkipItems = 1;
 ImGuiWindow *window;
 float next_y;
 window = table->InnerWindow;
+if (table->IsInsideRow)
+    @ASSERT_2091@;
+/* Start a new row and reset the line state shared by all of its cells. */
 table->CurrentRow++;
 table->CurrentColumn = -1;
 table->RowBgColor[0] = table->RowBgColor[1] = (ImU32)1 << 24;
@@ -60,12 +66,14 @@ if (table->CurrentColumn != column_n)
         @END_CELL@(imgui_c89_ctx, table);
     if (column_n < 0 || column_n >= table->ColumnsCount)
     {
-        @ERROR_LOG@(imgui_c89_ctx, "TableSetColumnIndex() invalid column index!");
+        if (@ERROR_LOG@(imgui_c89_ctx,
+                "TableSetColumnIndex() invalid column index!"))
+            @ASSERT_2302@;
         return 0;
     }
     @BEGIN_CELL@(imgui_c89_ctx, table, column_n);
 }
-return table->Columns.Data[column_n].IsRequestOutput;
+return table->Columns[column_n].IsRequestOutput;
 /* IMGUI_C89_FUNCTION_END table_set_column_index */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_next_column */
@@ -84,16 +92,18 @@ else
     @NEXT_ROW@(imgui_c89_ctx, 0, 0.0f);
     @BEGIN_CELL@(imgui_c89_ctx, table, 0);
 }
-return table->Columns.Data[table->CurrentColumn].IsRequestOutput;
+return table->Columns[table->CurrentColumn].IsRequestOutput;
 /* IMGUI_C89_FUNCTION_END table_next_column */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_begin_cell */
 ImGuiTableColumn *column;
 ImGuiWindow *window;
 float start_x;
-column = &table->Columns.Data[column_n];
+column = &table->Columns[column_n];
 window = table->InnerWindow;
 table->CurrentColumn = column_n;
+/* This is a hot path. The row locks the indent offset so every cell starts
+ * from the same row-wide indentation state. */
 start_x = column->WorkMinX;
 if (column->Flags & @INDENT_ENABLE@)
     start_x += table->RowIndentOffsetX;
@@ -115,6 +125,7 @@ if (column->IsSkipItems)
     imgui_c89_ctx->LastItemData.StatusFlags = 0;
 }
 if (table->Flags & @NO_CLIP@)
+    /* All unclipped table cells deliberately share one draw channel. */
     @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
         2);
 else
@@ -135,10 +146,12 @@ ImGuiTableColumn *column;
 ImGuiWindow *window;
 float *max_x;
 float y;
-column = &table->Columns.Data[table->CurrentColumn];
+column = &table->Columns[table->CurrentColumn];
 window = table->InnerWindow;
 if (window->DC.IsSetPos)
     @CHECK_SET_CURSOR@(imgui_c89_ctx);
+/* Record content extent in the header, frozen, or unfrozen accumulator that
+ * owns this cell. */
 if (table->RowFlags & @HEADERS@)
     max_x = &column->ContentMaxXHeadersUsed;
 else if (table->IsUnfrozenRows)
@@ -154,6 +167,7 @@ if (column->IsEnabled)
         table->RowPosY2 = y;
 }
 column->ItemWidth = window->DC.ItemWidth;
+/* The row uses the greatest cell baseline so later cells remain aligned. */
 if (table->RowTextBaseline < window->DC.PrevLineTextBaseOffset)
     table->RowTextBaseline = window->DC.PrevLineTextBaseOffset;
 /* IMGUI_C89_FUNCTION_END table_end_cell */

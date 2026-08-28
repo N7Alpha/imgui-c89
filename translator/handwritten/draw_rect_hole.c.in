@@ -1,0 +1,77 @@
+ImVec2 min;
+ImVec2 max;
+ImDrawFlags flags;
+int left;
+int right;
+int up;
+int down;
+
+left = inner->Min.x > outer->Min.x;
+right = inner->Max.x < outer->Max.x;
+up = inner->Min.y > outer->Min.y;
+down = inner->Max.y < outer->Max.y;
+
+if (left) {
+    min.x = outer->Min.x;
+    min.y = inner->Min.y;
+    max.x = inner->Min.x;
+    max.y = inner->Max.y;
+    flags = @ROUND_NONE@ | (up ? 0 : @ROUND_TOP_LEFT@) |
+            (down ? 0 : @ROUND_BOTTOM_LEFT@);
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &min, &max, col, rounding, flags);
+}
+if (right) {
+    min.x = inner->Max.x;
+    min.y = inner->Min.y;
+    max.x = outer->Max.x;
+    max.y = inner->Max.y;
+    flags = @ROUND_NONE@ | (up ? 0 : @ROUND_TOP_RIGHT@) |
+            (down ? 0 : @ROUND_BOTTOM_RIGHT@);
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &min, &max, col, rounding, flags);
+}
+if (up) {
+    min.x = inner->Min.x;
+    min.y = outer->Min.y;
+    max.x = inner->Max.x;
+    max.y = inner->Min.y;
+    flags = @ROUND_NONE@ | (left ? 0 : @ROUND_TOP_LEFT@) |
+            (right ? 0 : @ROUND_TOP_RIGHT@);
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &min, &max, col, rounding, flags);
+}
+if (down) {
+    min.x = inner->Min.x;
+    min.y = inner->Max.y;
+    max.x = inner->Max.x;
+    max.y = outer->Max.y;
+    flags = @ROUND_NONE@ | (left ? 0 : @ROUND_BOTTOM_LEFT@) |
+            (right ? 0 : @ROUND_BOTTOM_RIGHT@);
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &min, &max, col, rounding, flags);
+}
+if (left && up) {
+    min = outer->Min;
+    max = inner->Min;
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &min, &max, col, rounding,
+                     @ROUND_TOP_LEFT@);
+}
+if (right && up) {
+    min.x = inner->Max.x;
+    min.y = outer->Min.y;
+    max.x = outer->Max.x;
+    max.y = inner->Min.y;
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &min, &max, col, rounding,
+                     @ROUND_TOP_RIGHT@);
+}
+if (left && down) {
+    min.x = outer->Min.x;
+    min.y = inner->Max.y;
+    max.x = inner->Min.x;
+    max.y = outer->Max.y;
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &min, &max, col, rounding,
+                     @ROUND_BOTTOM_LEFT@);
+}
+if (right && down) {
+    min = inner->Max;
+    max = outer->Max;
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &min, &max, col, rounding,
+                     @ROUND_BOTTOM_RIGHT@);
+}

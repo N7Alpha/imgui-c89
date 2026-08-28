@@ -1,0 +1,19 @@
+ImVec2 min;
+ImVec2 max;
+float far_inset;
+
+if (flags & @INVALID_MASK@) {
+    @ERROR_LOG@(imgui_c89_ctx,
+        "Incorrect parameter. Did you swap 'thickness' and 'flags'?");
+    return;
+}
+if ((col & 0xff000000u) == 0)
+    return;
+
+far_inset = (self->Flags & @ANTI_ALIASED_LINES@) ? 0.50f : 0.49f;
+min.x = p_min->x + 0.50f;
+min.y = p_min->y + 0.50f;
+max.x = p_max->x - far_inset;
+max.y = p_max->y - far_inset;
+@PATH_RECT@(imgui_c89_ctx, self, &min, &max, rounding, flags);
+@PATH_STROKE@(imgui_c89_ctx, self, col, thickness, @CLOSED@);

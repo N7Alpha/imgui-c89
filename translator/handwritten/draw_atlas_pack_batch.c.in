@@ -1,0 +1,192 @@
+/* Handwritten C89 font-atlas packing and repacking cluster. */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_pack_alloc_entry */
+ImFontAtlasBuilder *builder;
+ImFontAtlasRectEntry *entry;
+int index;
+
+builder = atlas->Builder;
+index = builder->RectsIndexFreeListStart;
+if (index < 0)
+{
+    index = builder->RectsIndex.Size;
+    @INDEX_RESIZE@(imgui_c89_ctx, &builder->RectsIndex, index + 1);
+    entry = builder->RectsIndex.Data + index;
+    memset(entry, 0, sizeof(*entry));
+}
+else
+{
+    entry = builder->RectsIndex.Data + index;
+    if (entry->IsUsed || entry->Generation == 0)
+        @ASSERT_4409@;
+    builder->RectsIndexFreeListStart = entry->TargetIndex;
+}
+entry->TargetIndex = rect_idx;
+entry->IsUsed = 1;
+return @ID_MAKE@(index, entry->Generation);
+/* IMGUI_C89_FUNCTION_END atlas_pack_alloc_entry */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_pack_reuse_entry */
+int index;
+
+if (!index_entry->IsUsed)
+    @ASSERT_4420@;
+index_entry->TargetIndex = atlas->Builder->Rects.Size - 1;
+index = (int)(index_entry - atlas->Builder->RectsIndex.Data);
+return @ID_MAKE@(index, index_entry->Generation);
+/* IMGUI_C89_FUNCTION_END atlas_pack_reuse_entry */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_pack_add_rect */
+ImFontAtlasBuilder *builder;
+ImTextureRect rect;
+stbrp_rect packed;
+int attempts;
+int padding;
+int bound;
+
+if (w <= 0 || w > 0xffff)
+    @ASSERT_4456@;
+if (h <= 0 || h > 0xffff)
+    @ASSERT_4457@;
+builder = atlas->Builder;
+padding = atlas->TexGlyphPadding;
+if (builder->MaxRectSize.x < w)
+    builder->MaxRectSize.x = w;
+if (builder->MaxRectSize.y < h)
+    builder->MaxRectSize.y = h;
+
+rect.x = rect.y = 0;
+rect.w = (unsigned short)w;
+rect.h = (unsigned short)h;
+for (attempts = 3; attempts >= 0; --attempts)
+{
+    memset(&packed, 0, sizeof(packed));
+    packed.w = w + padding;
+    packed.h = h + padding;
+    @PACK_RECTS@((stbrp_context *)(void *)&builder->PackContext, &packed, 1);
+    rect.x = (unsigned short)packed.x;
+    rect.y = (unsigned short)packed.y;
+    if (packed.was_packed)
+        break;
+    if (attempts == 0 || builder->LockDisableResize)
+    {
+        if (imgui_c89_ctx && (imgui_c89_ctx->DebugLogFlags & @EVENT_FONT@))
+            @DEBUG_LOG@(imgui_c89_ctx,
+                       "[font] Failed packing %dx%d rectangle. Returning fallback.\n",
+                       w, h);
+        return @INVALID_ID@;
+    }
+    @MAKE_SPACE@(imgui_c89_ctx, atlas);
+}
+
+bound = rect.x + rect.w + padding;
+if (builder->MaxRectBounds.x < bound)
+    builder->MaxRectBounds.x = bound;
+bound = rect.y + rect.h + padding;
+if (builder->MaxRectBounds.y < bound)
+    builder->MaxRectBounds.y = bound;
+++builder->RectsPackedCount;
+builder->RectsPackedSurface += (w + padding) * (h + padding);
+@RECT_PUSH@(imgui_c89_ctx, &builder->Rects, &rect);
+if (overwrite_entry)
+    return @REUSE_ENTRY@(atlas, overwrite_entry);
+return @ALLOC_ENTRY@(imgui_c89_ctx, atlas, builder->Rects.Size - 1);
+/* IMGUI_C89_FUNCTION_END atlas_pack_add_rect */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_texture_repack */
+ImFontAtlasBuilder *builder;
+ImTextureData *old_tex;
+ImTextureData *new_tex;
+@RECT_VECTOR_TYPE@ old_rects;
+@INDEX_VECTOR_TYPE@ old_index;
+ImFontAtlasRectEntry *entry;
+ImTextureRect *old_rect;
+ImTextureRect *new_rect;
+ImFontBaked *baked;
+ImFontGlyph *glyph;
+ImFontAtlasRectId id;
+int entry_n;
+int baked_n;
+int glyph_n;
+
+builder = atlas->Builder;
+builder->LockDisableResize = 1;
+old_tex = atlas->TexData;
+new_tex = @TEXTURE_ADD@(imgui_c89_ctx, atlas, w, h);
+new_tex->UseColors = old_tex->UseColors;
+if (imgui_c89_ctx && (imgui_c89_ctx->DebugLogFlags & @EVENT_FONT@))
+    @DEBUG_LOG@(imgui_c89_ctx,
+               "[font] Texture #%03d: resize+repack %dx%d => Texture #%03d: %dx%d\n",
+               old_tex->UniqueID, old_tex->Width, old_tex->Height,
+               new_tex->UniqueID, new_tex->Width, new_tex->Height);
+
+@PACK_INIT@(imgui_c89_ctx, atlas);
+old_rects = builder->Rects;
+memset(&builder->Rects, 0, sizeof(builder->Rects));
+memset(&old_index, 0, sizeof(old_index));
+@INDEX_RESIZE@(imgui_c89_ctx, &old_index, builder->RectsIndex.Size);
+memcpy(old_index.Data, builder->RectsIndex.Data,
+       (size_t)old_index.Size * sizeof(*old_index.Data));
+
+for (entry_n = 0; entry_n < builder->RectsIndex.Size; ++entry_n)
+{
+    entry = builder->RectsIndex.Data + entry_n;
+    if (!entry->IsUsed)
+        continue;
+    old_rect = old_rects.Data + entry->TargetIndex;
+    if (old_rect->w == 0 && old_rect->h == 0)
+        continue;
+    id = @ADD_RECT@(imgui_c89_ctx, atlas, old_rect->w, old_rect->h, entry);
+    if (id == @INVALID_ID@)
+    {
+        if (imgui_c89_ctx && (imgui_c89_ctx->DebugLogFlags & @EVENT_FONT@))
+            @DEBUG_LOG@(imgui_c89_ctx,
+                       "[font] Texture #%03d: resize failed. Will grow.\n",
+                       new_tex->UniqueID);
+        new_tex->WantDestroyNextFrame = 1;
+        @MEM_FREE@(imgui_c89_ctx, builder->Rects.Data);
+        builder->Rects = old_rects;
+        memset(&old_rects, 0, sizeof(old_rects));
+        @INDEX_RESIZE@(imgui_c89_ctx, &builder->RectsIndex, old_index.Size);
+        memcpy(builder->RectsIndex.Data, old_index.Data,
+               (size_t)old_index.Size * sizeof(*old_index.Data));
+        @MEM_FREE@(imgui_c89_ctx, old_index.Data);
+        memset(&old_index, 0, sizeof(old_index));
+        @SET_TEXTURE@(imgui_c89_ctx, atlas, old_tex);
+        @TEXTURE_GROW@(imgui_c89_ctx, atlas, w, h);
+        return;
+    }
+    if (@ID_INDEX@(id) != entry_n)
+        @ASSERT_4176@;
+    new_rect = @GET_RECT@(atlas, id);
+    @BLOCK_COPY@(old_tex, old_rect->x, old_rect->y,
+                new_tex, new_rect->x, new_rect->y,
+                new_rect->w, new_rect->h);
+}
+
+if (old_rects.Size != builder->Rects.Size + builder->RectsDiscardedCount)
+    @ASSERT_4180@;
+builder->RectsDiscardedCount = 0;
+builder->RectsDiscardedSurface = 0;
+for (baked_n = 0; baked_n < builder->BakedPool.Size; ++baked_n)
+{
+    baked = builder->BakedPool.Blocks.Data[baked_n / 32] + baked_n % 32;
+    for (glyph_n = 0; glyph_n < baked->Glyphs.Size; ++glyph_n)
+    {
+        glyph = baked->Glyphs.Data + glyph_n;
+        if (glyph->PackId == @INVALID_ID@)
+            continue;
+        new_rect = @GET_RECT@(atlas, glyph->PackId);
+        glyph->U0 = new_rect->x * atlas->TexUvScale.x;
+        glyph->V0 = new_rect->y * atlas->TexUvScale.y;
+        glyph->U1 = (new_rect->x + new_rect->w) * atlas->TexUvScale.x;
+        glyph->V1 = (new_rect->y + new_rect->h) * atlas->TexUvScale.y;
+    }
+}
+
+@UPDATE_TEX_DATA@(imgui_c89_ctx, atlas);
+builder->LockDisableResize = 0;
+@UPDATE_SHARED@(atlas);
+@MEM_FREE@(imgui_c89_ctx, old_index.Data);
+@MEM_FREE@(imgui_c89_ctx, old_rects.Data);
+/* IMGUI_C89_FUNCTION_END atlas_texture_repack */

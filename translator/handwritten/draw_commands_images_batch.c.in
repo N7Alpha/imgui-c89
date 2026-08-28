@@ -1,0 +1,55 @@
+/* IMGUI_C89_FUNCTION_BEGIN draw_list_pop_unused_draw_cmd */
+ImDrawCmd *cmd;
+
+while (self->CmdBuffer.Size > 0)
+{
+    cmd = &self->CmdBuffer.Data[self->CmdBuffer.Size - 1];
+    if (cmd->ElemCount != 0 || cmd->UserCallback != NULL)
+        return;
+    /* The loop condition proves ImVector::pop_back()'s only precondition. */
+    self->CmdBuffer.Size--;
+}
+/* IMGUI_C89_FUNCTION_END draw_list_pop_unused_draw_cmd */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_list_add_callback */
+ImDrawCmd *cmd;
+
+if (callback == NULL)
+    @ASSERT_533@;
+if (callback == @RESET_RENDER_STATE@ && self->_Data->Context != NULL &&
+    self->_Data->Context->PlatformIO.DrawCallback_ResetRenderState != NULL)
+    callback = self->_Data->Context->PlatformIO.DrawCallback_ResetRenderState;
+
+cmd = &self->CmdBuffer.Data[self->CmdBuffer.Size - 1];
+if (cmd->UserCallback != NULL)
+    @ASSERT_541@;
+if (cmd->ElemCount != 0)
+{
+    @ADD_DRAW_CMD@(imgui_c89_ctx, self);
+    cmd = &self->CmdBuffer.Data[self->CmdBuffer.Size - 1];
+}
+
+cmd->UserCallback = callback;
+if (userdata_size == 0)
+{
+    cmd->UserCallbackData = userdata;
+    cmd->UserCallbackDataSize = 0;
+    cmd->UserCallbackDataOffset = -1;
+}
+else
+{
+    if (userdata == NULL)
+        @ASSERT_559@;
+    if (userdata_size >= ((size_t)1 << 31))
+        @ASSERT_560@;
+    cmd->UserCallbackData = NULL;
+    cmd->UserCallbackDataSize = (int)userdata_size;
+    cmd->UserCallbackDataOffset = self->_CallbacksDataBuf.Size;
+    @CALLBACK_DATA_RESIZE@(
+        imgui_c89_ctx, &self->_CallbacksDataBuf,
+        self->_CallbacksDataBuf.Size + (int)userdata_size);
+    memcpy(self->_CallbacksDataBuf.Data +
+           (size_t)cmd->UserCallbackDataOffset, userdata, userdata_size);
+}
+@ADD_DRAW_CMD@(imgui_c89_ctx, self);
+/* IMGUI_C89_FUNCTION_END draw_list_add_callback */

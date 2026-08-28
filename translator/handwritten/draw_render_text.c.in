@@ -1,0 +1,234 @@
+/* Handwritten C89 text renderer. */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_render_text */
+ImFontBaked *baked;
+const ImFontGlyph *glyph;
+const char *s;
+const char *line_end;
+const char *word_wrap_eol;
+const char *visible_end;
+ImDrawVert *vtx;
+ImDrawIdx *idx;
+float x;
+float y;
+float scale;
+float origin_x;
+float x1;
+float x2;
+float y1;
+float y2;
+float u1;
+float u2;
+float v1;
+float v2;
+float char_width;
+float visible_y;
+unsigned int c;
+unsigned int vtx_index;
+unsigned int glyph_col;
+unsigned int col_untinted;
+int text_len;
+int vtx_count_max;
+int idx_count_max;
+int idx_expected_size;
+int cmd_count;
+int word_wrap;
+int fine_clip;
+
+begin:
+x = pos->x;
+y = pos->y;
+if (y > clip_rect->w)
+    return;
+if ((draw_list->Flags & @NO_PIXEL_SNAP@) == 0)
+{
+    x = (float)(int)x;
+    y = (float)(int)y;
+}
+if (!text_end)
+    text_end = text_begin + strlen(text_begin);
+
+baked = @GET_BAKED@(imgui_c89_ctx, self, size, -1.0f);
+scale = size / baked->Size;
+origin_x = x;
+word_wrap = wrap_width > 0.0f;
+s = text_begin;
+
+/* Skip complete lines above the clip rectangle. */
+while (y + size < clip_rect->y && s < text_end)
+{
+    line_end = (const char *)memchr(s, '\n', (size_t)(text_end - s));
+    if (word_wrap)
+    {
+        s = @CALC_WORD_WRAP@(imgui_c89_ctx, self, size, s,
+            line_end ? line_end : text_end, wrap_width, flags);
+        s = @NEXT_LINE_START@(s, text_end, flags);
+    }
+    else
+        s = line_end ? line_end + 1 : text_end;
+    y += size;
+}
+
+/* Avoid reserving storage for complete lines below the clip rectangle. */
+if (text_end - s > 10000 && !word_wrap)
+{
+    visible_end = s;
+    visible_y = y;
+    while (visible_y < clip_rect->w && visible_end < text_end)
+    {
+        visible_end = (const char *)memchr(visible_end, '\n',
+            (size_t)(text_end - visible_end));
+        visible_end = visible_end ? visible_end + 1 : text_end;
+        visible_y += size;
+    }
+    text_end = visible_end;
+}
+if (s == text_end)
+    return;
+
+text_len = (int)(text_end - s);
+vtx_count_max = text_len * 4;
+idx_count_max = text_len * 6;
+idx_expected_size = draw_list->IdxBuffer.Size + idx_count_max;
+@PRIM_RESERVE@(imgui_c89_ctx, draw_list, idx_count_max, vtx_count_max);
+vtx = draw_list->_VtxWritePtr;
+idx = draw_list->_IdxWritePtr;
+vtx_index = draw_list->_VtxCurrentIdx;
+cmd_count = draw_list->CmdBuffer.Size;
+fine_clip = (flags & @CPU_FINE_CLIP@) != 0;
+col_untinted = col | 0x00ffffffu;
+word_wrap_eol = 0;
+
+while (s < text_end)
+{
+    if (word_wrap)
+    {
+        if (!word_wrap_eol)
+            word_wrap_eol = @CALC_WORD_WRAP@(imgui_c89_ctx, self, size, s,
+                text_end, wrap_width - (x - origin_x), flags);
+        if (s >= word_wrap_eol)
+        {
+            x = origin_x;
+            y += size;
+            if (y > clip_rect->w)
+                break;
+            word_wrap_eol = 0;
+            s = @NEXT_LINE_START@(s, text_end, flags);
+            continue;
+        }
+    }
+
+    c = (unsigned int)(unsigned char)*s;
+    if (c < 0x80u)
+        ++s;
+    else
+        s += @TEXT_CHAR_FROM_UTF8@(&c, s, text_end);
+
+    if (c == '\n')
+    {
+        x = origin_x;
+        y += size;
+        if (y > clip_rect->w)
+            break;
+        continue;
+    }
+    if (c == '\r')
+        continue;
+
+    glyph = @FIND_GLYPH@(imgui_c89_ctx, baked, (ImWchar)c);
+    char_width = glyph->AdvanceX * scale;
+    if (glyph->Visible)
+    {
+        x1 = x + glyph->X0 * scale;
+        x2 = x + glyph->X1 * scale;
+        y1 = y + glyph->Y0 * scale;
+        y2 = y + glyph->Y1 * scale;
+        if (x1 <= clip_rect->z && x2 >= clip_rect->x)
+        {
+            u1 = glyph->U0;
+            v1 = glyph->V0;
+            u2 = glyph->U1;
+            v2 = glyph->V1;
+            if (fine_clip)
+            {
+                if (x1 < clip_rect->x)
+                {
+                    u1 += (1.0f - (x2 - clip_rect->x) / (x2 - x1)) *
+                        (u2 - u1);
+                    x1 = clip_rect->x;
+                }
+                if (y1 < clip_rect->y)
+                {
+                    v1 += (1.0f - (y2 - clip_rect->y) / (y2 - y1)) *
+                        (v2 - v1);
+                    y1 = clip_rect->y;
+                }
+                if (x2 > clip_rect->z)
+                {
+                    u2 = u1 + (clip_rect->z - x1) / (x2 - x1) * (u2 - u1);
+                    x2 = clip_rect->z;
+                }
+                if (y2 > clip_rect->w)
+                {
+                    v2 = v1 + (clip_rect->w - y1) / (y2 - y1) * (v2 - v1);
+                    y2 = clip_rect->w;
+                }
+            }
+            if (!fine_clip || y1 < y2)
+            {
+                glyph_col = glyph->Colored ? col_untinted : col;
+                vtx[0].pos.x = x1;
+                vtx[0].pos.y = y1;
+                vtx[0].uv.x = u1;
+                vtx[0].uv.y = v1;
+                vtx[0].col = glyph_col;
+                vtx[1].pos.x = x2;
+                vtx[1].pos.y = y1;
+                vtx[1].uv.x = u2;
+                vtx[1].uv.y = v1;
+                vtx[1].col = glyph_col;
+                vtx[2].pos.x = x2;
+                vtx[2].pos.y = y2;
+                vtx[2].uv.x = u2;
+                vtx[2].uv.y = v2;
+                vtx[2].col = glyph_col;
+                vtx[3].pos.x = x1;
+                vtx[3].pos.y = y2;
+                vtx[3].uv.x = u1;
+                vtx[3].uv.y = v2;
+                vtx[3].col = glyph_col;
+                idx[0] = (ImDrawIdx)vtx_index;
+                idx[1] = (ImDrawIdx)(vtx_index + 1);
+                idx[2] = (ImDrawIdx)(vtx_index + 2);
+                idx[3] = (ImDrawIdx)vtx_index;
+                idx[4] = (ImDrawIdx)(vtx_index + 2);
+                idx[5] = (ImDrawIdx)(vtx_index + 3);
+                vtx += 4;
+                idx += 6;
+                vtx_index += 4;
+            }
+        }
+    }
+    x += char_width;
+}
+
+/* Loading a missing glyph may append a texture-switch command. Retry after
+   cancelling the reservation so every emitted quad uses one texture. */
+if (cmd_count != draw_list->CmdBuffer.Size)
+{
+    if (draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1].ElemCount != 0)
+        @ASSERT_5999@;
+    @CMD_POP_BACK@(&draw_list->CmdBuffer);
+    @PRIM_UNRESERVE@(draw_list, idx_count_max, vtx_count_max);
+    @ADD_DRAW_CMD@(imgui_c89_ctx, draw_list);
+    goto begin;
+}
+
+draw_list->VtxBuffer.Size = (int)(vtx - draw_list->VtxBuffer.Data);
+draw_list->IdxBuffer.Size = (int)(idx - draw_list->IdxBuffer.Data);
+draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1].ElemCount -=
+    (unsigned int)(idx_expected_size - draw_list->IdxBuffer.Size);
+draw_list->_VtxWritePtr = vtx;
+draw_list->_IdxWritePtr = idx;
+draw_list->_VtxCurrentIdx = vtx_index;
+/* IMGUI_C89_FUNCTION_END font_render_text */

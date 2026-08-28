@@ -19,6 +19,7 @@ size_t bits0_off;
 size_t bits1_off;
 size_t bits2_off;
 size_t total;
+    /* Match the upstream packed arena's four-byte alignment. */
 columns_bytes = (size_t)columns_count * sizeof(ImGuiTableColumn);
 order_bytes = (size_t)columns_count * sizeof(ImGuiTableColumnIdx);
 cells_bytes = (size_t)columns_count * sizeof(ImGuiTableCellData);
@@ -32,14 +33,14 @@ total = bits2_off + bits_bytes;
 arena = (char *)@ALLOC@(imgui_c89_ctx, total);
 table->RawData = arena;
 memset(arena, 0, total);
-table->Columns.Data = (ImGuiTableColumn *)arena;
-table->Columns.DataEnd = table->Columns.Data + columns_count;
-table->DisplayOrderToIndex.Data =
+table->Columns = (ImGuiTableColumn *)arena;
+table->ColumnsEnd = table->Columns + columns_count;
+table->DisplayOrderToIndex =
     (ImGuiTableColumnIdx *)(arena + order_off);
-table->DisplayOrderToIndex.DataEnd =
-    table->DisplayOrderToIndex.Data + columns_count;
-table->RowCellData.Data = (ImGuiTableCellData *)(arena + cells_off);
-table->RowCellData.DataEnd = table->RowCellData.Data + columns_count;
+table->DisplayOrderToIndexEnd =
+    table->DisplayOrderToIndex + columns_count;
+table->RowCellData = (ImGuiTableCellData *)(arena + cells_off);
+table->RowCellDataEnd = table->RowCellData + columns_count;
 table->EnabledMaskByDisplayOrder = (ImU32 *)(arena + bits0_off);
 table->EnabledMaskByIndex = (ImU32 *)(arena + bits1_off);
 table->VisibleMaskByIndex = (ImU32 *)(arena + bits2_off);

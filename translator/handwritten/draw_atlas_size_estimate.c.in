@@ -1,0 +1,53 @@
+/* Estimate a compact atlas size with ordinary scalar C89 control flow. */
+ImFontAtlasBuilder *builder;
+ImVec2i size;
+int min_w;
+int min_h;
+int surface;
+int root;
+int candidate;
+
+min_w = @UPPER_POWER_OF_TWO@(atlas->TexMinWidth);
+min_h = @UPPER_POWER_OF_TWO@(atlas->TexMinHeight);
+size.x = min_w;
+size.y = min_h;
+if (!atlas->Builder || !atlas->TexData ||
+    atlas->TexData->Status == @WANT_DESTROY@)
+    return size;
+
+builder = atlas->Builder;
+candidate = @UPPER_POWER_OF_TWO@(builder->MaxRectSize.x);
+if (min_w < candidate)
+    min_w = candidate;
+candidate = @UPPER_POWER_OF_TWO@(builder->MaxRectSize.y);
+if (min_h < candidate)
+    min_h = candidate;
+surface = builder->RectsPackedSurface - builder->RectsDiscardedSurface;
+root = (int)sqrtf((float)surface);
+
+if (min_w >= min_h)
+{
+    size.x = @UPPER_POWER_OF_TWO@(root);
+    if (size.x < min_w)
+        size.x = min_w;
+    size.y = (surface + size.x - 1) / size.x;
+    if (size.y < min_h)
+        size.y = min_h;
+    if (!(atlas->Flags & @NO_POWER_OF_TWO_HEIGHT@))
+        size.y = @UPPER_POWER_OF_TWO@(size.y);
+}
+else
+{
+    size.y = @UPPER_POWER_OF_TWO@(root);
+    if (size.y < min_h)
+        size.y = min_h;
+    if (!(atlas->Flags & @NO_POWER_OF_TWO_HEIGHT@))
+        size.y = @UPPER_POWER_OF_TWO@(size.y);
+    size.x = (surface + size.y - 1) / size.y;
+    if (size.x < min_w)
+        size.x = min_w;
+}
+
+if (!@IS_POWER_OF_TWO@(size.x) || !@IS_POWER_OF_TWO@(size.y))
+    @ASSERT_4280@;
+return size;

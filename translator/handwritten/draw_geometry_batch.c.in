@@ -1,0 +1,423 @@
+/* IMGUI_C89_FUNCTION_BEGIN add_concave_poly_filled */
+ImTriangulator triangulator;
+ImVec2 uv;
+ImVec2 *normals;
+unsigned int triangle[3];
+unsigned int inner_idx;
+unsigned int outer_idx;
+ImU32 transparent_col;
+float fringe;
+float dx;
+float dy;
+float d2;
+float scale;
+int idx_count;
+int vtx_count;
+int previous;
+int current;
+int anti_aliased;
+int i;
+
+if (points_count < 3 || (col & @ALPHA_MASK@) == 0)
+    return;
+
+uv = self->_Data->TexUvWhitePixel;
+memset(&triangulator, 0, sizeof(triangulator));
+anti_aliased = (self->Flags & @ANTI_ALIASED_FILL@) != 0;
+idx_count = (points_count - 2) * 3;
+vtx_count = points_count;
+if (anti_aliased)
+{
+    idx_count += points_count * 6;
+    vtx_count *= 2;
+}
+@PRIM_RESERVE@(imgui_c89_ctx, self, idx_count, vtx_count);
+
+if (anti_aliased)
+{
+    inner_idx = self->_VtxCurrentIdx;
+    outer_idx = inner_idx + 1;
+}
+else
+{
+    for (i = 0; i < points_count; i++)
+    {
+        self->_VtxWritePtr->pos = points[i];
+        self->_VtxWritePtr->uv = uv;
+        self->_VtxWritePtr->col = col;
+        self->_VtxWritePtr++;
+    }
+}
+
+/* Both paths triangulate at this same point relative to their vertex writes. */
+@TEMP_RESERVE@(
+    imgui_c89_ctx, (@TEMP_VECTOR_TYPE@ *)&self->_Data->TempBuffer,
+    (@TRI_SCRATCH_SIZE@(points_count) + sizeof(ImVec2)) / sizeof(ImVec2));
+@TRI_INIT@(&triangulator, points, points_count,
+           self->_Data->TempBuffer.Data);
+while (triangulator._TrianglesLeft > 0)
+{
+    @TRI_NEXT@(&triangulator, triangle);
+    if (anti_aliased)
+    {
+        self->_IdxWritePtr[0] = (ImDrawIdx)(inner_idx + (triangle[0] << 1));
+        self->_IdxWritePtr[1] = (ImDrawIdx)(inner_idx + (triangle[1] << 1));
+        self->_IdxWritePtr[2] = (ImDrawIdx)(inner_idx + (triangle[2] << 1));
+    }
+    else
+    {
+        self->_IdxWritePtr[0] = (ImDrawIdx)(self->_VtxCurrentIdx + triangle[0]);
+        self->_IdxWritePtr[1] = (ImDrawIdx)(self->_VtxCurrentIdx + triangle[1]);
+        self->_IdxWritePtr[2] = (ImDrawIdx)(self->_VtxCurrentIdx + triangle[2]);
+    }
+    self->_IdxWritePtr += 3;
+}
+
+if (!anti_aliased)
+{
+    self->_VtxCurrentIdx += (ImDrawIdx)vtx_count;
+    return;
+}
+
+fringe = self->_FringeScale;
+transparent_col = col & ~@ALPHA_MASK@;
+@TEMP_RESERVE@(imgui_c89_ctx, (@TEMP_VECTOR_TYPE@ *)&self->_Data->TempBuffer,
+                points_count);
+normals = self->_Data->TempBuffer.Data;
+previous = points_count - 1;
+for (current = 0; current < points_count; current++)
+{
+    dx = points[current].x - points[previous].x;
+    dy = points[current].y - points[previous].y;
+    d2 = dx * dx + dy * dy;
+    if (d2 > 0.0f)
+    {
+        scale = @RSQRT@(d2);
+        dx *= scale;
+        dy *= scale;
+    }
+    normals[previous].x = dy;
+    normals[previous].y = -dx;
+    previous = current;
+}
+
+previous = points_count - 1;
+for (current = 0; current < points_count; current++)
+{
+    dx = (normals[previous].x + normals[current].x) * 0.5f;
+    dy = (normals[previous].y + normals[current].y) * 0.5f;
+    d2 = dx * dx + dy * dy;
+    if (d2 > 0.000001f)
+    {
+        scale = 1.0f / d2;
+        if (scale > 100.0f)
+            scale = 100.0f;
+        dx *= scale;
+        dy *= scale;
+    }
+    dx *= fringe * 0.5f;
+    dy *= fringe * 0.5f;
+
+    self->_VtxWritePtr[0].pos.x = points[current].x - dx;
+    self->_VtxWritePtr[0].pos.y = points[current].y - dy;
+    self->_VtxWritePtr[0].uv = uv;
+    self->_VtxWritePtr[0].col = col;
+    self->_VtxWritePtr[1].pos.x = points[current].x + dx;
+    self->_VtxWritePtr[1].pos.y = points[current].y + dy;
+    self->_VtxWritePtr[1].uv = uv;
+    self->_VtxWritePtr[1].col = transparent_col;
+    self->_VtxWritePtr += 2;
+
+    self->_IdxWritePtr[0] = (ImDrawIdx)(inner_idx + (current << 1));
+    self->_IdxWritePtr[1] = (ImDrawIdx)(inner_idx + (previous << 1));
+    self->_IdxWritePtr[2] = (ImDrawIdx)(outer_idx + (previous << 1));
+    self->_IdxWritePtr[3] = (ImDrawIdx)(outer_idx + (previous << 1));
+    self->_IdxWritePtr[4] = (ImDrawIdx)(outer_idx + (current << 1));
+    self->_IdxWritePtr[5] = (ImDrawIdx)(inner_idx + (current << 1));
+    self->_IdxWritePtr += 6;
+    previous = current;
+}
+self->_VtxCurrentIdx += (ImDrawIdx)vtx_count;
+/* IMGUI_C89_FUNCTION_END add_concave_poly_filled */
+
+/* IMGUI_C89_FUNCTION_BEGIN add_convex_poly_filled */
+ImVec2 uv;
+ImVec2 *normals;
+unsigned int inner_idx;
+unsigned int outer_idx;
+ImU32 transparent_col;
+float fringe;
+float dx;
+float dy;
+float d2;
+float scale;
+int idx_count;
+int vtx_count;
+int previous;
+int current;
+int i;
+
+if (points_count < 3 || (col & @ALPHA_MASK@) == 0)
+    return;
+
+uv = self->_Data->TexUvWhitePixel;
+if ((self->Flags & @ANTI_ALIASED_FILL@) == 0)
+{
+    idx_count = (points_count - 2) * 3;
+    vtx_count = points_count;
+    @PRIM_RESERVE@(imgui_c89_ctx, self, idx_count, vtx_count);
+
+    for (i = 0; i < vtx_count; i++)
+    {
+        self->_VtxWritePtr->pos = points[i];
+        self->_VtxWritePtr->uv = uv;
+        self->_VtxWritePtr->col = col;
+        self->_VtxWritePtr++;
+    }
+    for (i = 2; i < points_count; i++)
+    {
+        self->_IdxWritePtr[0] = (ImDrawIdx)self->_VtxCurrentIdx;
+        self->_IdxWritePtr[1] = (ImDrawIdx)(self->_VtxCurrentIdx + i - 1);
+        self->_IdxWritePtr[2] = (ImDrawIdx)(self->_VtxCurrentIdx + i);
+        self->_IdxWritePtr += 3;
+    }
+    self->_VtxCurrentIdx += (ImDrawIdx)vtx_count;
+    return;
+}
+
+/* Anti-aliased fill: one opaque and one transparent vertex per point. */
+fringe = self->_FringeScale;
+transparent_col = col & ~@ALPHA_MASK@;
+idx_count = (points_count - 2) * 3 + points_count * 6;
+vtx_count = points_count * 2;
+@PRIM_RESERVE@(imgui_c89_ctx, self, idx_count, vtx_count);
+
+inner_idx = self->_VtxCurrentIdx;
+outer_idx = inner_idx + 1;
+for (i = 2; i < points_count; i++)
+{
+    self->_IdxWritePtr[0] = (ImDrawIdx)inner_idx;
+    self->_IdxWritePtr[1] = (ImDrawIdx)(inner_idx + ((i - 1) << 1));
+    self->_IdxWritePtr[2] = (ImDrawIdx)(inner_idx + (i << 1));
+    self->_IdxWritePtr += 3;
+}
+
+@TEMP_RESERVE@(imgui_c89_ctx, (@TEMP_VECTOR_TYPE@ *)&self->_Data->TempBuffer,
+                points_count);
+normals = self->_Data->TempBuffer.Data;
+previous = points_count - 1;
+for (current = 0; current < points_count; current++)
+{
+    dx = points[current].x - points[previous].x;
+    dy = points[current].y - points[previous].y;
+    d2 = dx * dx + dy * dy;
+    if (d2 > 0.0f)
+    {
+        scale = @RSQRT@(d2);
+        dx *= scale;
+        dy *= scale;
+    }
+    normals[previous].x = dy;
+    normals[previous].y = -dx;
+    previous = current;
+}
+
+previous = points_count - 1;
+for (current = 0; current < points_count; current++)
+{
+    dx = (normals[previous].x + normals[current].x) * 0.5f;
+    dy = (normals[previous].y + normals[current].y) * 0.5f;
+    d2 = dx * dx + dy * dy;
+    if (d2 > 0.000001f)
+    {
+        scale = 1.0f / d2;
+        if (scale > 100.0f)
+            scale = 100.0f;
+        dx *= scale;
+        dy *= scale;
+    }
+    dx *= fringe * 0.5f;
+    dy *= fringe * 0.5f;
+
+    self->_VtxWritePtr[0].pos.x = points[current].x - dx;
+    self->_VtxWritePtr[0].pos.y = points[current].y - dy;
+    self->_VtxWritePtr[0].uv = uv;
+    self->_VtxWritePtr[0].col = col;
+    self->_VtxWritePtr[1].pos.x = points[current].x + dx;
+    self->_VtxWritePtr[1].pos.y = points[current].y + dy;
+    self->_VtxWritePtr[1].uv = uv;
+    self->_VtxWritePtr[1].col = transparent_col;
+    self->_VtxWritePtr += 2;
+
+    self->_IdxWritePtr[0] = (ImDrawIdx)(inner_idx + (current << 1));
+    self->_IdxWritePtr[1] = (ImDrawIdx)(inner_idx + (previous << 1));
+    self->_IdxWritePtr[2] = (ImDrawIdx)(outer_idx + (previous << 1));
+    self->_IdxWritePtr[3] = (ImDrawIdx)(outer_idx + (previous << 1));
+    self->_IdxWritePtr[4] = (ImDrawIdx)(outer_idx + (current << 1));
+    self->_IdxWritePtr[5] = (ImDrawIdx)(inner_idx + (current << 1));
+    self->_IdxWritePtr += 6;
+    previous = current;
+}
+self->_VtxCurrentIdx += (ImDrawIdx)vtx_count;
+/* IMGUI_C89_FUNCTION_END add_convex_poly_filled */
+
+/* IMGUI_C89_FUNCTION_BEGIN path_arc_to */
+ImVec2 point;
+float arc_length;
+float min_sample_f;
+float max_sample_f;
+float min_sample_angle;
+float max_sample_angle;
+int circle_segments;
+int arc_segments;
+int min_sample;
+int max_sample;
+int middle_samples;
+int reverse;
+int emit_start;
+int emit_end;
+
+if (radius < 0.5f)
+{
+    @PATH_PUSH@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path, center);
+    return;
+}
+if (num_segments > 0)
+{
+    @PATH_ARC_TO_N@(imgui_c89_ctx, self, center, radius,
+                    a_min, a_max, num_segments);
+    return;
+}
+
+if (radius <= self->_Data->ArcFastRadiusCutoff)
+{
+    reverse = a_max < a_min;
+    min_sample_f = @ARCFAST_SAMPLE_MAX@ * a_min / (@PI@ * 2.0f);
+    max_sample_f = @ARCFAST_SAMPLE_MAX@ * a_max / (@PI@ * 2.0f);
+    min_sample = reverse ? (int)@FLOOR@(min_sample_f) : (int)@CEIL@(min_sample_f);
+    max_sample = reverse ? (int)@CEIL@(max_sample_f) : (int)@FLOOR@(max_sample_f);
+    middle_samples = reverse
+                   ? @MAX_INT@(min_sample - max_sample, 0)
+                   : @MAX_INT@(max_sample - min_sample, 0);
+
+    min_sample_angle = min_sample * @PI@ * 2.0f / @ARCFAST_SAMPLE_MAX@;
+    max_sample_angle = max_sample * @PI@ * 2.0f / @ARCFAST_SAMPLE_MAX@;
+    emit_start = @ABS_FLOAT@(min_sample_angle - a_min) >= 0.00001f;
+    emit_end = @ABS_FLOAT@(a_max - max_sample_angle) >= 0.00001f;
+
+    @PATH_RESERVE@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path,
+                   self->_Path.Size + middle_samples + 1 + emit_start + emit_end);
+    if (emit_start)
+    {
+        point.x = center->x + @COS@(a_min) * radius;
+        point.y = center->y + @SIN@(a_min) * radius;
+        @PATH_PUSH@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path, &point);
+    }
+    if (middle_samples > 0)
+        @PATH_ARC_TO_FAST_EX@(imgui_c89_ctx, self, center, radius,
+                             min_sample, max_sample, 0);
+    if (emit_end)
+    {
+        point.x = center->x + @COS@(a_max) * radius;
+        point.y = center->y + @SIN@(a_max) * radius;
+        @PATH_PUSH@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path, &point);
+    }
+    return;
+}
+
+arc_length = @ABS_FLOAT@(a_max - a_min);
+circle_segments = @CALC_CIRCLE_SEGMENTS@(self, radius);
+arc_segments = @MAX_INT@((int)@CEIL@(circle_segments * arc_length /
+                                     (@PI@ * 2.0f)), 1);
+@PATH_ARC_TO_N@(imgui_c89_ctx, self, center, radius,
+                a_min, a_max, arc_segments);
+/* IMGUI_C89_FUNCTION_END path_arc_to */
+
+/* IMGUI_C89_FUNCTION_BEGIN path_arc_to_fast_ex */
+ImVec2 *out;
+ImVec2 sample;
+int sample_range;
+int normal_step;
+int sample_count;
+int overstep;
+int sample_index;
+int normalized_max;
+int extra_max;
+int a;
+
+if (radius < 0.5f)
+{
+    @PATH_PUSH@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path, center);
+    return;
+}
+if (a_step <= 0)
+    a_step = @ARCFAST_SAMPLE_MAX@ / @CALC_CIRCLE_SEGMENTS@(self, radius);
+a_step = @CLAMP_INT@(a_step, 1, @ARCFAST_TABLE_SIZE@ / 4);
+
+sample_range = @ABS_INT@(a_max_sample - a_min_sample);
+normal_step = a_step;
+sample_count = sample_range + 1;
+extra_max = 0;
+if (a_step > 1)
+{
+    sample_count = sample_range / a_step + 1;
+    overstep = sample_range % a_step;
+    if (overstep > 0)
+    {
+        extra_max = 1;
+        sample_count++;
+        if (sample_range > 0)
+            a_step -= (a_step - overstep) / 2;
+    }
+}
+
+@PATH_RESIZE@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path,
+               self->_Path.Size + sample_count);
+out = self->_Path.Data + self->_Path.Size - sample_count;
+sample_index = a_min_sample;
+if (sample_index < 0 || sample_index >= @ARCFAST_SAMPLE_MAX@)
+{
+    sample_index %= @ARCFAST_SAMPLE_MAX@;
+    if (sample_index < 0)
+        sample_index += @ARCFAST_SAMPLE_MAX@;
+}
+
+if (a_max_sample >= a_min_sample)
+{
+    for (a = a_min_sample; a <= a_max_sample;
+         a += a_step, sample_index += a_step, a_step = normal_step)
+    {
+        if (sample_index >= @ARCFAST_SAMPLE_MAX@)
+            sample_index -= @ARCFAST_SAMPLE_MAX@;
+        sample = self->_Data->ArcFastVtx[sample_index];
+        out->x = center->x + sample.x * radius;
+        out->y = center->y + sample.y * radius;
+        out++;
+    }
+}
+else
+{
+    for (a = a_min_sample; a >= a_max_sample;
+         a -= a_step, sample_index -= a_step, a_step = normal_step)
+    {
+        if (sample_index < 0)
+            sample_index += @ARCFAST_SAMPLE_MAX@;
+        sample = self->_Data->ArcFastVtx[sample_index];
+        out->x = center->x + sample.x * radius;
+        out->y = center->y + sample.y * radius;
+        out++;
+    }
+}
+
+if (extra_max)
+{
+    normalized_max = a_max_sample % @ARCFAST_SAMPLE_MAX@;
+    if (normalized_max < 0)
+        normalized_max += @ARCFAST_SAMPLE_MAX@;
+    sample = self->_Data->ArcFastVtx[normalized_max];
+    out->x = center->x + sample.x * radius;
+    out->y = center->y + sample.y * radius;
+    out++;
+}
+/* The upstream paranoid assertion is compiled out in the baseline profile. */
+/* IMGUI_C89_FUNCTION_END path_arc_to_fast_ex */

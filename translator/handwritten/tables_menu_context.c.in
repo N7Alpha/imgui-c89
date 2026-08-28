@@ -74,7 +74,7 @@ context_column_n = table->ContextPopupColumn;
 if (context_column_n < 0 || context_column_n >= table->ColumnsCount)
     context_column_n = -1;
 context_column = context_column_n >= 0 ?
-    &table->Columns.Data[context_column_n] : 0;
+    &table->Columns[context_column_n] : 0;
 if (flags_for_section_to_display & @RESIZABLE@)
 {
     if (context_column)
@@ -120,15 +120,15 @@ if (flags_for_section_to_display & @HIDEABLE@)
         table->ReorderColumn != -1 &&
         imgui_c89_ctx->ActiveIdHasBeenEditedBefore;
     src_order = is_reordering ?
-        table->Columns.Data[table->ReorderColumn].DisplayOrder : -1;
+        table->Columns[table->ReorderColumn].DisplayOrder : -1;
     min_order = is_reordering ? @MAX_ORDER@(table, src_order, 0) : 0;
     max_order = is_reordering ? @MAX_ORDER@(table, src_order,
         table->ColumnsCount - 1) : table->ColumnsCount - 1;
     @PUSH_ITEM_FLAG@(imgui_c89_ctx, @AUTO_CLOSE_POPUPS@, 0);
     for (order_n = 0; order_n < table->ColumnsCount; order_n++)
     {
-        column_n = table->DisplayOrderToIndex.Data[order_n];
-        column = &table->Columns.Data[column_n];
+        column_n = table->DisplayOrderToIndex[order_n];
+        column = &table->Columns[column_n];
         if (column->Flags & @DISABLED@)
             continue;
         name = @GET_COLUMN_NAME@(table, column_n);

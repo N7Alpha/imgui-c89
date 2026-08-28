@@ -13,12 +13,16 @@ float row_height;
 ImU32 bg0;
 ImU32 bg1;
 ImU32 top_border;
-int unfreeze;
-int unfreeze_request;
+int unfreeze_rows_actual;
+int unfreeze_rows_request;
 int draw_cells;
 int column_n;
 int cell_n;
 window = imgui_c89_ctx->CurrentWindow;
+if (window != table->InnerWindow)
+    @ASSERT_2129@;
+if (!table->IsInsideRow)
+    @ASSERT_2130@;
 if (table->CurrentColumn != -1)
 {
     @END_CELL@(imgui_c89_ctx, table);
@@ -29,10 +33,10 @@ if (imgui_c89_ctx->LogEnabled)
 window->DC.CursorPos.y = table->RowPosY2;
 bg_y1 = table->RowPosY1;
 bg_y2 = table->RowPosY2;
-unfreeze = table->CurrentRow + 1 == table->FreezeRowsCount;
-unfreeze_request = table->CurrentRow + 1 == table->FreezeRowsRequest;
+unfreeze_rows_actual = table->CurrentRow + 1 == table->FreezeRowsCount;
+unfreeze_rows_request = table->CurrentRow + 1 == table->FreezeRowsRequest;
 instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
-    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
+    &table->InstanceDataExtra[table->InstanceCurrent - 1];
 if ((table->RowFlags & @HEADERS@) &&
     (table->CurrentRow == 0 || (table->LastRowFlags & @HEADERS@)))
     instance->LastTopHeadersRowHeight += bg_y2 - bg_y1;
@@ -58,7 +62,8 @@ if (bg_y2 >= table->InnerClipRect.Min.y &&
         top_border = table->LastRowFlags & @HEADERS@ ?
             table->BorderColorStrong : table->BorderColorLight;
     draw_cells = table->RowCellDataCurrent >= 0;
-    if (bg0 || bg1 || top_border || unfreeze || draw_cells)
+    /* Background layers share the table background channel. */
+    if (bg0 || bg1 || top_border || unfreeze_rows_actual || draw_cells)
     {
         if (!(table->Flags & @NO_CLIP@))
         {
@@ -91,8 +96,8 @@ if (bg_y2 >= table->InnerClipRect.Min.y &&
     }
     for (cell_n = 0; cell_n <= table->RowCellDataCurrent; cell_n++)
     {
-        cell = &table->RowCellData.Data[cell_n];
-        column = &table->Columns.Data[cell->Column];
+        cell = &table->RowCellData[cell_n];
+        column = &table->Columns[cell->Column];
         rect.Min.x = column->MinX > table->WorkRect.Min.x ?
             column->MinX : table->WorkRect.Min.x;
         rect.Min.y = bg_y1;
@@ -119,27 +124,36 @@ if (bg_y2 >= table->InnerClipRect.Min.y &&
         bg_y1 < table->BgClipRect.Max.y)
         @ADD_LINE_H@(imgui_c89_ctx, window->DrawList, table->BorderX1,
             table->BorderX2, bg_y1, top_border, 1.0f);
-    if (unfreeze && bg_y2 >= table->BgClipRect.Min.y &&
+    if (unfreeze_rows_actual && bg_y2 >= table->BgClipRect.Min.y &&
         bg_y2 < table->BgClipRect.Max.y)
         @ADD_LINE_H@(imgui_c89_ctx, window->DrawList, table->BorderX1,
             table->BorderX2, bg_y2, table->BorderColorStrong, 1.0f);
 }
-if (unfreeze_request)
+/* End frozen rows here, rather than in TableBeginRow(), so the list clipper
+ * observes the completed row before the cursor is teleported. */
+if (unfreeze_rows_request)
 {
+    if (!(table->FreezeRowsRequest > 0))
+        @ASSERT_2233@;
     for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-        table->Columns.Data[column_n].NavLayerCurrent = table->NavLayer;
+        table->Columns[column_n].NavLayerCurrent = table->NavLayer;
     y0 = table->RowPosY2 + 1.0f;
     if (y0 < table->InnerClipRect.Min.y)
         y0 = table->InnerClipRect.Min.y;
     instance->LastFrozenHeight = y0 - table->OuterRect.Min.y;
-    if (unfreeze)
+    if (unfreeze_rows_actual)
     {
+        if (table->IsUnfrozenRows)
+            @ASSERT_2241@;
         table->IsUnfrozenRows = 1;
         if (y0 > table->InnerClipRect.Max.y)
             y0 = table->InnerClipRect.Max.y;
         table->BgClipRect.Min.y = table->Bg2ClipRectForDrawCmd.Min.y = y0;
         table->BgClipRect.Max.y = table->Bg2ClipRectForDrawCmd.Max.y =
             table->InnerClipRect.Max.y;
+        if (!(table->Bg2ClipRectForDrawCmd.Min.y <=
+              table->Bg2ClipRectForDrawCmd.Max.y))
+            @ASSERT_2248@;
         table->Bg2DrawChannelCurrent = table->Bg2DrawChannelUnfrozen;
         row_height = table->RowPosY2 - table->RowPosY1;
         table->RowPosY2 = window->DC.CursorPos.y =
@@ -147,13 +161,13 @@ if (unfreeze_request)
         table->RowPosY1 = table->RowPosY2 - row_height;
         for (column_n = 0; column_n < table->ColumnsCount; column_n++)
         {
-            column = &table->Columns.Data[column_n];
+            column = &table->Columns[column_n];
             column->DrawChannelCurrent = column->DrawChannelUnfrozen;
             column->ClipRect.Min.y = y0;
         }
-        @SET_CLIP@(window, &table->Columns.Data[0].ClipRect);
+        @SET_CLIP@(window, &table->Columns[0].ClipRect);
         @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-            table->Columns.Data[0].DrawChannelCurrent);
+            table->Columns[0].DrawChannelCurrent);
     }
 }
 if (!(table->RowFlags & @HEADERS@))

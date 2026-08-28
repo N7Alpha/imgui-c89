@@ -19,6 +19,7 @@ ImU32 bit;
 ImRect clip;
 int freeze_v;
 int freeze_h;
+int max_draw_channels;
 int mask_bytes;
 int mask_words;
 int group_mask;
@@ -32,10 +33,14 @@ int merge_count;
 int remaining_count;
 float content_max_x;
 splitter = table->DrawSplitter;
+if (!(splitter->_Current == 0))
+    @ASSERT_2777@;
 freeze_v = table->FreezeRowsCount > 0;
 freeze_h = table->FreezeColumnsCount > 0;
-mask_bytes = ((4 + table->ColumnsCount * 2 + 31) >> 5) * 4;
-mask_words = mask_bytes >> 2;
+/* Four freeze groups share four masks plus one remaining-channel mask. */
+max_draw_channels = 4 + table->ColumnsCount * 2;
+mask_bytes = ((max_draw_channels + 31) >> 5) * sizeof(ImU32);
+mask_words = mask_bytes / (int)sizeof(ImU32);
 @TEMP_RESERVE@(imgui_c89_ctx, &imgui_c89_ctx->TempBuffer, mask_bytes * 5);
 memset(imgui_c89_ctx->TempBuffer.Data, 0, (size_t)mask_bytes * 5);
 for (group_n = 0; group_n < 4; group_n++)
@@ -47,13 +52,14 @@ for (group_n = 0; group_n < 4; group_n++)
 remaining = (ImU32 *)(void *)
     (imgui_c89_ctx->TempBuffer.Data + mask_bytes * 4);
 group_mask = 0;
+/* First identify column channels whose single draw command can be merged. */
 sub_count = freeze_v ? 2 : 1;
 for (column_n = 0; column_n < table->ColumnsCount; column_n++)
 {
     if (!(table->VisibleMaskByIndex[column_n >> 5] &
           ((ImU32)1 << (column_n & 31))))
         continue;
-    column = &table->Columns.Data[column_n];
+    column = &table->Columns[column_n];
     for (sub_n = 0; sub_n < sub_count; sub_n++)
     {
         channel_n = sub_n == 0 ?
@@ -88,6 +94,8 @@ for (column_n = 0; column_n < table->ColumnsCount; column_n++)
         }
         group_n = (freeze_h && column_n < table->FreezeColumnsCount ? 0 : 1) +
             (freeze_v && sub_n == 0 ? 0 : 2);
+        if (!(channel_n < max_draw_channels))
+            @ASSERT_2833@;
         group = &groups[group_n];
         if (group->ChannelsCount == 0)
         {
@@ -112,6 +120,7 @@ for (column_n = 0; column_n < table->ColumnsCount; column_n++)
 }
 if (!group_mask)
     return;
+/* Rewrite movable channels after the two fixed leading background channels. */
 @CHANNELS_RESIZE@(imgui_c89_ctx, &imgui_c89_ctx->DrawChannelsTempMergeBuffer,
     splitter->_Count - 2);
 dst = imgui_c89_ctx->DrawChannelsTempMergeBuffer.Data;
@@ -119,6 +128,8 @@ for (channel_n = 2; channel_n < splitter->_Count; channel_n++)
     remaining[channel_n >> 5] |= (ImU32)1 << (channel_n & 31);
 channel_n = table->Bg2DrawChannelUnfrozen;
 remaining[channel_n >> 5] &= ~((ImU32)1 << (channel_n & 31));
+if (!(!freeze_v || table->Bg2DrawChannelUnfrozen != 1))
+    @ASSERT_2875@;
 remaining_count = splitter->_Count - (freeze_v ? 3 : 2);
 for (group_n = 0; group_n < 4; group_n++)
 {
@@ -152,6 +163,12 @@ for (group_n = 0; group_n < 4; group_n++)
             merge_count--;
             channel = &splitter->_Channels.Data[channel_n];
             cmd = &channel->_CmdBuffer.Data[0];
+            if (!(channel->_CmdBuffer.Size == 1 &&
+                  cmd->ClipRect.x >= clip.Min.x &&
+                  cmd->ClipRect.y >= clip.Min.y &&
+                  cmd->ClipRect.z <= clip.Max.x &&
+                  cmd->ClipRect.w <= clip.Max.y))
+                @ASSERT_2916@;
             cmd->ClipRect.x = clip.Min.x;
             cmd->ClipRect.y = clip.Min.y;
             cmd->ClipRect.z = clip.Max.x;
@@ -173,6 +190,9 @@ for (channel_n = 0;
     memcpy(dst++, &splitter->_Channels.Data[channel_n], sizeof(*dst));
     remaining_count--;
 }
+if (!(dst == imgui_c89_ctx->DrawChannelsTempMergeBuffer.Data +
+             imgui_c89_ctx->DrawChannelsTempMergeBuffer.Size))
+    @ASSERT_2936@;
 memcpy(splitter->_Channels.Data + 2,
     imgui_c89_ctx->DrawChannelsTempMergeBuffer.Data,
     (size_t)(splitter->_Count - 2) * sizeof(*dst));

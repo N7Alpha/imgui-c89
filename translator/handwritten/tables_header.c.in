@@ -11,10 +11,10 @@
     ImGuiTableColumn *column;
     ImRect cell_rect;
     ImRect bb;
-    ImVec2 label_size_value;
-    ImVec2 vector_value;
-    ImVec2 label_pos_value;
-    ImVec2 pos_max_value;
+    ImVec2 label_size;
+    ImVec2 temp_vec;
+    ImVec2 label_pos;
+    ImVec2 label_max;
     ImGuiID id;
     ImU32 color;
     ImGuiCol style_color;
@@ -36,24 +36,33 @@
     float ellipsis_max_x;
     float sort_x;
     float sort_y;
-    unsigned char sort_arrow;
+    int sort_arrow;
     unsigned char hovered;
     unsigned char held;
-    unsigned char pressed;
-    unsigned char highlight;
-    unsigned char text_clipped;
+    int pressed;
+    int highlight;
+    int text_clipped;
 
     ctx = imgui_c89_ctx;
     window = ctx->CurrentWindow;
     if (window->SkipItems)
         return;
     table = ctx->CurrentTable;
+    if (!table)
+    {
+        if (@ERROR_LOG@(ctx,
+                "Call should only be done while in BeginTable() scope!"))
+            @ASSERT_3333@;
+        return;
+    }
+    if (table->CurrentColumn == -1)
+        @ASSERT_3334@;
     column_n = table->CurrentColumn;
-    column = &table->Columns.Data[column_n];
+    column = &table->Columns[column_n];
     if (label == 0)
         label = "";
     label_end = @FIND_RENDERED_TEXT_END@(label, 0);
-    label_size_value = @CALC_TEXT_SIZE@(ctx, label, label_end, 0, -1.0f);
+    label_size = @CALC_TEXT_SIZE@(ctx, label, label_end, 0, -1.0f);
     label_pos_x = window->DC.CursorPos.x;
     label_pos_y = window->DC.CursorPos.y;
     cell_rect = @TABLE_GET_CELL_BG_RECT@(table, column_n);
@@ -61,8 +70,10 @@
     cell_min_y = cell_rect.Min.y;
     cell_max_x = cell_rect.Max.x;
     cell_max_y = cell_rect.Max.y;
+    /* CPU-clipping labels allows the header cells to merge into one draw
+     * call; do not publish their unclipped width through CursorMaxPos. */
     label_height = @MAX_FLOAT@(
-        label_size_value.y,
+        label_size.y,
         table->RowMinHeight - table->RowCellPaddingY * 2.0f);
     arrow_width = 0.0f;
     sort_text_width = 0.0f;
@@ -74,16 +85,16 @@
         (column->Flags & @NO_SORT@) == 0) {
         arrow_width = @TRUNC@(ctx->FontSize * arrow_scale +
                              ctx->Style.FramePadding.x);
-        sort_arrow = (unsigned char)(column->SortOrder != -1);
+        sort_arrow = column->SortOrder != -1;
         if (column->SortOrder > 0) {
             @FORMAT_STRING@(suffix, sizeof(suffix), "%d",
                             column->SortOrder + 1);
-            vector_value = @CALC_TEXT_SIZE@(ctx, suffix, 0, 0, -1.0f);
-            sort_text_width = ctx->Style.ItemInnerSpacing.x + vector_value.x;
+            temp_vec = @CALC_TEXT_SIZE@(ctx, suffix, 0, 0, -1.0f);
+            sort_text_width = ctx->Style.ItemInnerSpacing.x + temp_vec.x;
         }
     }
 
-    max_pos_x = label_pos_x + label_size_value.x +
+    max_pos_x = label_pos_x + label_size.x +
         arrow_width + sort_text_width;
     column->ContentMaxXHeadersUsed = @MAX_FLOAT@(
         column->ContentMaxXHeadersUsed,
@@ -98,13 +109,15 @@
     bb.Max.y = @MAX_FLOAT@(
         cell_max_y,
         cell_min_y + label_height + ctx->Style.CellPadding.y * 2.0f);
-    vector_value.x = 0.0f;
-    vector_value.y = label_height;
-    @ITEM_SIZE@(ctx, &vector_value, 0.0f);
+    temp_vec.x = 0.0f;
+    temp_vec.y = label_height;
+    @ITEM_SIZE@(ctx, &temp_vec, 0.0f);
     if (!@ITEM_ADD@(ctx, &bb, id, 0, 0))
         return;
 
-    highlight = (unsigned char)(table->HighlightColumnHeader == column_n);
+    /* Allow overlap because this behavior covers the whole cell while users
+     * may still submit later items in their custom header. */
+    highlight = table->HighlightColumnHeader == column_n;
     hovered = 0;
     held = 0;
     pressed = @BUTTON_BEHAVIOR@(
@@ -133,14 +146,14 @@
             column->PrevEnabledColumn != -1) {
             @TABLE_QUEUE_SET_COLUMN_DISPLAY_ORDER@(
                 table, column_n,
-                table->Columns.Data[column->PrevEnabledColumn].DisplayOrder);
+                table->Columns[column->PrevEnabledColumn].DisplayOrder);
         }
         if (ctx->IO.MouseDelta.x > 0.0f &&
             ctx->IO.MousePos.x > cell_max_x &&
             column->NextEnabledColumn != -1) {
             @TABLE_QUEUE_SET_COLUMN_DISPLAY_ORDER@(
                 table, column_n,
-                table->Columns.Data[column->NextEnabledColumn].DisplayOrder);
+                table->Columns[column->NextEnabledColumn].DisplayOrder);
         }
     }
 
@@ -156,17 +169,17 @@
             if (column->SortOrder > 0) {
                 color = @GET_COLOR_U32@(ctx, @TEXT_COLOR@, 0.70f);
                 @PUSH_STYLE_COLOR@(ctx, @TEXT_COLOR@, color);
-                vector_value.x = sort_x + ctx->Style.ItemInnerSpacing.x;
-                vector_value.y = sort_y;
-                @RENDER_TEXT@(ctx, vector_value, suffix, 0, 0);
+                temp_vec.x = sort_x + ctx->Style.ItemInnerSpacing.x;
+                temp_vec.y = sort_y;
+                @RENDER_TEXT@(ctx, temp_vec, suffix, 0, 0);
                 @POP_STYLE_COLOR@(ctx, 1);
                 sort_x += sort_text_width;
             }
-            vector_value.x = sort_x;
-            vector_value.y = sort_y;
+            temp_vec.x = sort_x;
+            temp_vec.y = sort_y;
             color = @GET_COLOR_U32@(ctx, @TEXT_COLOR@, 1.0f);
             @RENDER_ARROW@(
-                ctx, window->DrawList, vector_value, color,
+                ctx, window->DrawList, temp_vec, color,
                 column->SortDirection == @SORT_ASCENDING@
                     ? @DIRECTION_UP@ : @DIRECTION_DOWN@,
                 arrow_scale);
@@ -178,18 +191,19 @@
         }
     }
 
-    label_pos_value.x = label_pos_x;
-    label_pos_value.y = label_pos_y;
-    pos_max_value.x = ellipsis_max_x;
-    pos_max_value.y = bb.Max.y;
+    /* Only reserve sort-indicator space when an indicator is visible. */
+    label_pos.x = label_pos_x;
+    label_pos.y = label_pos_y;
+    label_max.x = ellipsis_max_x;
+    label_max.y = bb.Max.y;
     @RENDER_TEXT_ELLIPSIS@(
-        ctx, window->DrawList, &label_pos_value, &pos_max_value,
-        ellipsis_max_x, label, label_end, &label_size_value);
-    text_clipped = (unsigned char)(
-        label_size_value.x > ellipsis_max_x - label_pos_x);
+        ctx, window->DrawList, &label_pos, &label_max,
+        ellipsis_max_x, label, label_end, &label_size);
+    text_clipped = label_size.x > ellipsis_max_x - label_pos_x;
     if (text_clipped && hovered && ctx->ActiveId == 0)
         @SET_ITEM_TOOLTIP@(
             ctx, "%.*s", (int)(label_end - label), label);
+    /* Keep the popup alive even if its column becomes hidden. */
     if (@IS_POPUP_OPEN_REQUEST_FOR_ITEM@(ctx, @POPUP_NONE@, id))
         @TABLE_OPEN_CONTEXT_MENU@(ctx, column_n);
     @TEST_ENGINE_ITEM_INFO@/* optional Test Engine item metadata */

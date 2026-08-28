@@ -34,6 +34,12 @@ return offset / (columns->OffMaxX - columns->OffMinX);
 /* IMGUI_C89_FUNCTION_BEGIN columns_dragged_offset */
 float x;
 float bound;
+if (!(column_index > 0))
+    @ASSERT_4525@;
+if (!(imgui_c89_ctx->ActiveId == columns->ID + (ImGuiID)column_index))
+    @ASSERT_4526@;
+/* Keep the dragged separator in absolute coordinates: normalized positions
+ * would feed an auto-resizing window back into its own drag calculation. */
 x = imgui_c89_ctx->IO.MousePos.x - imgui_c89_ctx->ActiveIdClickOffset.x +
     @TRUNC@(4.0f * imgui_c89_ctx->CurrentDpiScale) -
     imgui_c89_ctx->CurrentWindow->Pos.x;
@@ -57,6 +63,8 @@ if (!columns)
     return 0.0f;
 if (column_index < 0)
     column_index = columns->Current;
+if (!(column_index < columns->Columns.Size))
+    @ASSERT_4545@;
 t = columns->Columns.Data[column_index].OffsetNorm;
 return columns->OffMinX + (columns->OffMaxX - columns->OffMinX) * t;
 /* IMGUI_C89_FUNCTION_END columns_get_offset */
@@ -98,8 +106,12 @@ float width;
 float limit;
 int preserve;
 columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+if (!columns)
+    @ASSERT_4583@;
 if (column_index < 0)
     column_index = columns->Current;
+if (!(column_index < columns->Columns.Size))
+    @ASSERT_4587@;
 preserve = !(columns->Flags & @NO_PRESERVE_WIDTHS@) &&
     column_index < columns->Count - 1;
 width = preserve ? @GET_WIDTH_EX@(columns, column_index,
@@ -120,6 +132,8 @@ if (preserve)
 /* IMGUI_C89_FUNCTION_BEGIN columns_set_width */
 ImGuiOldColumns *columns;
 columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+if (!columns)
+    @ASSERT_4604@;
 if (column_index < 0)
     column_index = columns->Current;
 @SET_OFFSET@(imgui_c89_ctx, column_index + 1,
@@ -143,6 +157,8 @@ window = imgui_c89_ctx->CurrentWindow;
 columns = window->DC.CurrentColumns;
 if (columns->Count == 1)
     return;
+/* Preemptively overwrite the clip rectangle to avoid a redundant
+ * SetCurrentChannel()/PushClipRect() sequence. */
 columns->HostBackupClipRect = window->ClipRect;
 @SET_WINDOW_CLIP@(window, &columns->HostInitialClipRect);
 @SET_CHANNEL@(imgui_c89_ctx, &columns->Splitter, window->DrawList, 0);
@@ -155,6 +171,7 @@ window = imgui_c89_ctx->CurrentWindow;
 columns = window->DC.CurrentColumns;
 if (columns->Count == 1)
     return;
+/* Restore the cell clip without a redundant PopClipRect()/channel switch. */
 @SET_WINDOW_CLIP@(window, &columns->HostBackupClipRect);
 @SET_CHANNEL@(imgui_c89_ctx, &columns->Splitter, window->DrawList,
     columns->Current + 1);
@@ -164,6 +181,7 @@ if (columns->Count == 1)
 ImGuiOldColumns value;
 ImGuiOldColumns *columns;
 int n;
+/* Legacy column sets are few per window, so linear lookup is intentional. */
 for (n = 0; n < window->ColumnsStorage.Size; n++)
 {
     columns = &window->ColumnsStorage.Data[n];
@@ -183,6 +201,7 @@ return columns;
 ImGuiWindow *window;
 ImGuiID id;
 window = @GET_WINDOW@(imgui_c89_ctx);
+/* Prefix the ID namespace and include the count when no explicit ID exists. */
 @PUSH_ID@(imgui_c89_ctx, 0x11223347 + (str_id ? 0 : columns_count));
 id = @WINDOW_GET_ID@(imgui_c89_ctx, window, str_id ? str_id : "columns", 0);
 @POP_ID@(imgui_c89_ctx);

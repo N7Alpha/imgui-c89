@@ -152,14 +152,14 @@
     zero_size.y = 0.0f;
     for (column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         if ((column->Flags & ImGuiTableColumnFlags_WidthStretch) != 0)
             stretch_weight_sum += column->StretchWeight;
     }
 
     for (column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         column_name = @TABLE_GET_COLUMN_NAME@(table, column_n);
         frozen_suffix =
             (column_n < (int)table->FreezeColumnsRequest) ?

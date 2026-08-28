@@ -16,8 +16,6 @@ ImVec2 override_content_size;
 ImVec2 next_content_size;
 ImVec2 zero_scroll;
 ImRect outer_rect;
-ImGuiTableTempData temp_data_value;
-ImGuiTableInstanceData instance_data_value;
 ImGuiID instance_id;
 ImGuiID instances_seed;
 ImGuiChildFlags child_flags;
@@ -48,12 +46,12 @@ if (outer_window->SkipItems)
     return 0;
 
 if (!(columns_count > 0 && columns_count < @TABLE_MAX_COLUMNS@))
-    imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex", "imgui_tables.cpp",
-                         329, "columns_count > 0 && columns_count < IMGUI_TABLE_MAX_COLUMNS");
-if ((flags & @SCROLL_X@) && !(inner_width >= 0.0f))
-    imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex", "imgui_tables.cpp",
-                         331, "inner_width >= 0.0f");
+    @ASSERT_329@;
+if (flags & @SCROLL_X@)
+    if (!(inner_width >= 0.0f))
+        @ASSERT_331@;
 
+/* Scrolling tables may be rejected before acquiring pooled table state. */
 use_child_window = (unsigned char)
     ((flags & (@SCROLL_X@ | @SCROLL_Y@)) != 0);
 avail_size = @GET_CONTENT_REGION_AVAIL@(imgui_c89_ctx);
@@ -82,19 +80,24 @@ if (use_child_window &&
 if (g->DebugBreakInTable == id)
     imgui_c89_debugtrap();
 
+/* Acquire persistent table state and a temporary frame-local work record. */
 table = @TABLE_POOL_GET_OR_ADD@(imgui_c89_ctx, &g->Tables, id);
 table_idx = @TABLE_POOL_GET_INDEX@(&g->Tables, table);
 g->TablesTempDataStacked++;
-if (g->TablesTempDataStacked > g->TablesTempData.Size)
+if (g->TablesTempDataStacked > g->TablesTempDataSize)
 {
-    @TEMP_DATA_INIT@(&temp_data_value);
-    @TEMP_DATA_RESIZE@(imgui_c89_ctx, &g->TablesTempData,
-                       g->TablesTempDataStacked, &temp_data_value);
+    ImGuiTableTempData temp_data_value = {0};
+    temp_data_value.LastTimeActive = -1.0f;
+    g->TablesTempData = imgui_c89_vector_resize_fill(
+        imgui_c89_ctx, g->TablesTempData,
+        &g->TablesTempDataSize, &g->TablesTempDataCapacity,
+        g->TablesTempDataStacked, sizeof(*g->TablesTempData),
+        &temp_data_value);
 }
-temp_data = &g->TablesTempData.Data[g->TablesTempDataStacked - 1];
+temp_data = &g->TablesTempData[g->TablesTempDataStacked - 1];
 table->TempData = temp_data;
 temp_data->TableIndex = table_idx;
-temp_data->ReconcileColumnsRequests.Size = 0;
+temp_data->ReconcileColumnsRequestsSize = 0;
 table->DrawSplitter = &temp_data->DrawSplitter;
 @DRAW_SPLITTER_CLEAR@(table->DrawSplitter);
 
@@ -122,15 +125,17 @@ table->InstanceCurrent = (ImS16)instance_no;
 if (instance_no > 0)
 {
     if (!(table->ColumnsCount == columns_count))
-        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
-                             "imgui_tables.cpp", 394,
-                             "BeginTable(): Cannot change columns count mid-frame while preserving same ID");
-    if (table->InstanceDataExtra.Size < instance_no)
+        @ASSERT_394@;
+    if (table->InstanceDataExtraSize < instance_no)
     {
-        @INSTANCE_DATA_INIT@(&instance_data_value);
-        @INSTANCE_DATA_PUSH_BACK@(imgui_c89_ctx,
-                                  &table->InstanceDataExtra,
-                                  &instance_data_value);
+        ImGuiTableInstanceData instance_data_value = {0};
+        instance_data_value.HoveredRowLast = -1;
+        instance_data_value.HoveredRowNext = -1;
+        table->InstanceDataExtra = imgui_c89_vector_push_back(
+            imgui_c89_ctx, table->InstanceDataExtra,
+            &table->InstanceDataExtraSize,
+            &table->InstanceDataExtraCapacity,
+            sizeof(*table->InstanceDataExtra), &instance_data_value);
     }
     instances_seed = @GET_ID_WITH_SEED_STRING@(
         imgui_c89_ctx, "##Instances", 0, id);
@@ -184,9 +189,7 @@ if (use_child_window)
     if (!(table->InnerWindow->WindowPadding.x == 0.0f &&
           table->InnerWindow->WindowPadding.y == 0.0f &&
           table->InnerWindow->WindowBorderSize == 0.0f))
-        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
-                             "imgui_tables.cpp", 440,
-                             "table inner window must have zero padding and border");
+        @ASSERT_440@;
     if (table->InnerWindow->SkipItems && outer_window_is_measuring_size)
         table->InnerWindow->SkipItems = 0;
     if (instance_no == 0)
@@ -211,6 +214,7 @@ else
 if (instance_no > 0)
     @PUSH_OVERRIDE_ID@(imgui_c89_ctx, instance_id);
 
+/* Back up host-window state modified while the table is current. */
 inner_window = table->InnerWindow;
 table->HostIndentX = inner_window->DC.Indent.x;
 table->HostClipRect = inner_window->ClipRect;
@@ -320,17 +324,21 @@ if ((previous_flags & @REORDERABLE@) &&
     (flags & @REORDERABLE@) == 0)
     table->IsResetDisplayOrderRequest = 1;
 
-if (table_idx >= g->TablesLastTimeActive.Size)
-{
-    inactive_time = -1.0f;
-    @FLOAT_VECTOR_RESIZE@(imgui_c89_ctx, &g->TablesLastTimeActive,
-                           table_idx + 1, &inactive_time);
+    if (table_idx >= g->TablesLastTimeActive.Size)
+    {
+        inactive_time = -1.0f;
+        g->TablesLastTimeActive.Data = imgui_c89_vector_resize_fill(
+            imgui_c89_ctx, g->TablesLastTimeActive.Data,
+            &g->TablesLastTimeActive.Size,
+            &g->TablesLastTimeActive.Capacity,
+            table_idx + 1, sizeof(*g->TablesLastTimeActive.Data),
+            &inactive_time);
 }
 g->TablesLastTimeActive.Data[table_idx] = (float)g->Time;
 temp_data->LastTimeActive = (float)g->Time;
 table->MemoryCompacted = 0;
 
-old_columns_count = @COLUMN_SPAN_SIZE@(&table->Columns);
+old_columns_count = (int)(table->ColumnsEnd - table->Columns);
 if (old_columns_count != 0 && old_columns_count != columns_count)
 {
     if (g->DebugLogFlags & @DEBUG_EVENT_TABLE@)
@@ -338,13 +346,12 @@ if (old_columns_count != 0 && old_columns_count != columns_count)
             "[table] Table 0x%08X column count %d -> %d, recreating storage.\n",
             table->ID, old_columns_count, columns_count);
     if (!(temp_data->OldColumnsRawData == 0))
-        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
-                             "imgui_tables.cpp", 574,
-                             "temp_data->OldColumnsRawData == NULL");
+        @ASSERT_574@;
     temp_data->OldColumnsRawData = table->RawData;
     temp_data->OldColumnsData = table->Columns;
-    src_column = temp_data->OldColumnsData.Data;
-    while (src_column != temp_data->OldColumnsData.DataEnd)
+    temp_data->OldColumnsDataEnd = table->ColumnsEnd;
+    src_column = temp_data->OldColumnsData;
+    while (src_column != temp_data->OldColumnsDataEnd)
     {
         src_column->IsNeedReconcileSrc = 1;
         src_column++;
@@ -380,25 +387,37 @@ if (table->IsInitializing)
     n = 0;
     while (n < columns_count)
     {
-        column = &table->Columns.Data[n];
-        if (temp_data->OldColumnsData.Data != 0 &&
-            n < (int)(temp_data->OldColumnsData.DataEnd -
-                      temp_data->OldColumnsData.Data))
+        column = &table->Columns[n];
+        if (temp_data->OldColumnsData != 0 &&
+            n < (int)(temp_data->OldColumnsDataEnd -
+                      temp_data->OldColumnsData))
         {
-            *column = temp_data->OldColumnsData.Data[n];
+            *column = temp_data->OldColumnsData[n];
         }
-        else
-        {
-            width_auto = column->WidthAuto;
-            @TABLE_COLUMN_INIT@(column);
-            column->WidthAuto = width_auto;
+            else
+            {
+                width_auto = column->WidthAuto;
+                memset(column, 0, sizeof(*column));
+                column->StretchWeight = -1.0f;
+                column->WidthRequest = -1.0f;
+                column->NameOffset = -1;
+                column->DisplayOrder = -1;
+                column->IndexWithinEnabledSet = -1;
+                column->PrevEnabledColumn = -1;
+                column->NextEnabledColumn = -1;
+                column->SortOrder = -1;
+                column->IsJustCreated = 1;
+                column->DrawChannelCurrent = (ImU8)-1;
+                column->DrawChannelFrozen = (ImU8)-1;
+                column->DrawChannelUnfrozen = (ImU8)-1;
+                column->WidthAuto = width_auto;
             column->IsPreserveWidthAuto = 1;
             column->IsEnabled = 1;
             column->IsUserEnabled = 1;
             column->IsUserEnabledNextFrame = 1;
             column->DisplayOrder = (ImGuiTableColumnIdx)n;
         }
-        table->DisplayOrderToIndex.Data[n] = column->DisplayOrder;
+        table->DisplayOrderToIndex[n] = column->DisplayOrder;
         n++;
     }
 }
@@ -406,6 +425,7 @@ if (table->IsInitializing)
 if (table->IsSettingsRequestLoad)
     @TABLE_LOAD_SETTINGS@(imgui_c89_ctx, table);
 
+/* Keep output disabled until the first row/column locks the layout. */
 inner_window->SkipItems = 1;
 if (table->ColumnsNames.Buf.Size > 0)
     table->ColumnsNames.Buf.Size = 0;

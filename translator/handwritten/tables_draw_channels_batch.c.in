@@ -5,6 +5,7 @@ ImGuiWindow *window;
 ImGuiTable *table;
 window = imgui_c89_ctx->CurrentWindow;
 table = imgui_c89_ctx->CurrentTable;
+/* Avoid the regular PushClipRect/SetCurrentChannel pair on this hot path. */
 table->HostBackupInnerClipRect = window->ClipRect;
 @SET_CLIP@(window, &table->Bg2ClipRectForDrawCmd);
 @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
@@ -16,9 +17,10 @@ ImGuiWindow *window;
 ImGuiTable *table;
 window = imgui_c89_ctx->CurrentWindow;
 table = imgui_c89_ctx->CurrentTable;
+/* Restore both clip state and the current column's draw channel directly. */
 @SET_CLIP@(window, &table->HostBackupInnerClipRect);
 @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-              table->Columns.Data[table->CurrentColumn].DrawChannelCurrent);
+              table->Columns[table->CurrentColumn].DrawChannelCurrent);
 /* IMGUI_C89_FUNCTION_END table_pop_background_channel */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_push_column_channel */
@@ -28,9 +30,9 @@ table = imgui_c89_ctx->CurrentTable;
 if (table->Flags & @NO_CLIP@)
     return;
 window = imgui_c89_ctx->CurrentWindow;
-@SET_CLIP@(window, &table->Columns.Data[column_n].ClipRect);
+@SET_CLIP@(window, &table->Columns[column_n].ClipRect);
 @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-              table->Columns.Data[column_n].DrawChannelCurrent);
+              table->Columns[column_n].DrawChannelCurrent);
 /* IMGUI_C89_FUNCTION_END table_push_column_channel */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_pop_column_channel */
@@ -40,9 +42,9 @@ table = imgui_c89_ctx->CurrentTable;
 if ((table->Flags & @NO_CLIP@) || table->CurrentColumn == -1)
     return;
 window = imgui_c89_ctx->CurrentWindow;
-@SET_CLIP@(window, &table->Columns.Data[table->CurrentColumn].ClipRect);
+@SET_CLIP@(window, &table->Columns[table->CurrentColumn].ClipRect);
 @SET_CHANNEL@(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-              table->Columns.Data[table->CurrentColumn].DrawChannelCurrent);
+              table->Columns[table->CurrentColumn].DrawChannelCurrent);
 /* IMGUI_C89_FUNCTION_END table_pop_column_channel */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_setup_draw_channels */
@@ -56,6 +58,10 @@ int draw_channel;
 int bg2_frozen;
 int n;
 bg2_frozen = 1;
+/*
+ * Allocate in storage order: background, per-row columns, then an optional
+ * dummy channel. Frozen rows require a second row/background set.
+ */
 freeze_multiplier = table->FreezeRowsCount > 0 ? 2 : 1;
 row_channels = table->Flags & @NO_CLIP@ ? 1 : table->ColumnsEnabledCount;
 background_channels = 1 + freeze_multiplier;
@@ -74,7 +80,7 @@ table->Bg2DrawChannelUnfrozen = (ImGuiTableDrawChannelIdx)
 draw_channel = 2;
 for (n = 0; n < table->ColumnsCount; n++)
 {
-    column = &table->Columns.Data[n];
+    column = &table->Columns[n];
     if (column->IsVisibleX && column->IsVisibleY)
     {
         column->DrawChannelFrozen = (ImGuiTableDrawChannelIdx)draw_channel;
@@ -91,4 +97,6 @@ for (n = 0; n < table->ColumnsCount; n++)
 table->BgClipRect = table->InnerClipRect;
 table->Bg0ClipRectForDrawCmd = table->OuterWindow->ClipRect;
 table->Bg2ClipRectForDrawCmd = table->HostClipRect;
+if (!(table->BgClipRect.Min.y <= table->BgClipRect.Max.y))
+    @ASSERT_2739@;
 /* IMGUI_C89_FUNCTION_END table_setup_draw_channels */

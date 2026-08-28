@@ -14,20 +14,21 @@ temp_data = table->TempData;
 if (imgui_c89_ctx->DebugLogFlags & @EVENT_TABLE@)
     @DEBUG_LOG@(imgui_c89_ctx,
                "[table] Reconcile columns for table 0x%08X\n", table->ID);
-if (temp_data->OldColumnsData.Data != temp_data->OldColumnsData.DataEnd)
+if (temp_data->OldColumnsData != temp_data->OldColumnsDataEnd)
 {
-    src_begin = temp_data->OldColumnsData.Data;
-    src_end = temp_data->OldColumnsData.DataEnd;
+    src_begin = temp_data->OldColumnsData;
+    src_end = temp_data->OldColumnsDataEnd;
 }
 else
 {
-    src_begin = table->Columns.Data;
-    src_end = table->Columns.DataEnd;
+    src_begin = table->Columns;
+    src_end = table->ColumnsEnd;
 }
 
-requests = temp_data->ReconcileColumnsRequests.Data;
-request_count = temp_data->ReconcileColumnsRequests.Size;
+requests = temp_data->ReconcileColumnsRequests;
+request_count = temp_data->ReconcileColumnsRequestsSize;
 named_match_count = 0;
+/* First preserve named columns by stable ID. */
 for (request_n = 0; request_n < request_count; request_n++)
 {
     request = requests + request_n;
@@ -37,7 +38,9 @@ for (request_n = 0; request_n < request_count; request_n++)
     {
         if (src->ID == request->ID && src->IsNeedReconcileSrc)
         {
-            dst = table->Columns.Data + request->ColumnNewIdx;
+            dst = table->Columns + request->ColumnNewIdx;
+            if (!(src->IsNeedReconcileSrc && dst->IsNeedReconcileDst))
+                @ASSERT_1815@;
             src->IsNeedReconcileSrc = 0;
             dst->IsNeedReconcileDst = 0;
             request->ColumnOldIdx = (ImGuiTableColumnIdx)(src - src_begin);
@@ -48,6 +51,7 @@ for (request_n = 0; request_n < request_count; request_n++)
     }
 }
 
+/* Match remaining unnamed or unmatched columns sequentially. */
 if (named_match_count != request_count)
 {
     dst_request_n = 0;
@@ -61,7 +65,9 @@ if (named_match_count != request_count)
         if (dst_request_n == request_count)
             break;
         request = requests + dst_request_n;
-        dst = table->Columns.Data + request->ColumnNewIdx;
+        dst = table->Columns + request->ColumnNewIdx;
+        if (!(src->IsNeedReconcileSrc && dst->IsNeedReconcileDst))
+            @ASSERT_1836@;
         src->IsNeedReconcileSrc = 0;
         dst->IsNeedReconcileDst = 0;
         request->ColumnOldIdx = (ImGuiTableColumnIdx)(src - src_begin);
@@ -69,10 +75,11 @@ if (named_match_count != request_count)
     }
 }
 
+/* Apply from temporary copies so source and destination spans may alias. */
 for (request_n = 0; request_n < request_count; request_n++)
 {
     request = requests + request_n;
-    table->Columns.Data[request->ColumnNewIdx] = request->ColumnOldData;
+    table->Columns[request->ColumnNewIdx] = request->ColumnOldData;
     @SETUP_COLUMN_APPLY@(imgui_c89_ctx, table, request->ColumnNewIdx,
                          request->ID, request->NameOffset, request->Flags,
                          request->InitWidthOrWeight, request->UserData);
@@ -86,4 +93,4 @@ for (request_n = 0; request_n < request_count; request_n++)
 @FIX_DISPLAY_ORDER@(imgui_c89_ctx, table);
 table->IsSettingsDirty = 1;
 table->IsReconcileMode = 0;
-temp_data->ReconcileColumnsRequests.Size = 0;
+temp_data->ReconcileColumnsRequestsSize = 0;

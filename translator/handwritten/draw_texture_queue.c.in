@@ -1,0 +1,53 @@
+ImTextureRect request;
+int old_right;
+int old_bottom;
+int right;
+int bottom;
+
+if (tex->Status == @WANT_DESTROY@ || tex->Status == @DESTROYED@)
+    @ASSERT_3008@;
+if (x < 0 || x > 0xffff || y < 0 || y > 0xffff ||
+    w < 0 || x + w > 0x10000 || h < 0 || y + h > 0x10000)
+    @ASSERT_3009@;
+
+request.x = (unsigned short)x;
+request.y = (unsigned short)y;
+request.w = (unsigned short)w;
+request.h = (unsigned short)h;
+
+old_right = tex->UpdateRect.w ?
+            tex->UpdateRect.x + tex->UpdateRect.w : 0;
+old_bottom = tex->UpdateRect.h ?
+             tex->UpdateRect.y + tex->UpdateRect.h : 0;
+right = request.x + request.w;
+bottom = request.y + request.h;
+if (right < old_right)
+    right = old_right;
+if (bottom < old_bottom)
+    bottom = old_bottom;
+if (request.x < tex->UpdateRect.x)
+    tex->UpdateRect.x = request.x;
+if (request.y < tex->UpdateRect.y)
+    tex->UpdateRect.y = request.y;
+tex->UpdateRect.w = (unsigned short)(right - tex->UpdateRect.x);
+tex->UpdateRect.h = (unsigned short)(bottom - tex->UpdateRect.y);
+
+right = request.x + request.w;
+bottom = request.y + request.h;
+if (request.x < tex->UsedRect.x)
+    tex->UsedRect.x = request.x;
+if (request.y < tex->UsedRect.y)
+    tex->UsedRect.y = request.y;
+old_right = tex->UsedRect.x + tex->UsedRect.w;
+old_bottom = tex->UsedRect.y + tex->UsedRect.h;
+if (right < old_right)
+    right = old_right;
+if (bottom < old_bottom)
+    bottom = old_bottom;
+tex->UsedRect.w = (unsigned short)(right - tex->UsedRect.x);
+tex->UsedRect.h = (unsigned short)(bottom - tex->UsedRect.y);
+
+if (tex->Status == @STATUS_OK@ || tex->Status == @WANT_UPDATES@) {
+    tex->Status = @WANT_UPDATES@;
+    @UPDATES_PUSH@(imgui_c89_ctx, &tex->Updates, &request);
+}

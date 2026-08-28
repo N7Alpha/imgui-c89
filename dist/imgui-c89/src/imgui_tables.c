@@ -13,21 +13,21 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-static const char imgui_c89_assert_files[] = "imgui.h\000imgui_internal.h\000imgui_tables.cpp\000";
-static const unsigned char imgui_c89_assert_file_offsets[] = { 0, 8, 25 };
-static const unsigned char imgui_c89_assert_message_data[] = { 33, 232, 95, 118, 232, 105, 129, 0, 33, 241, 73, 110, 115, 163, 101, 248, 0, 40, 238, 224, 238, 158, 235, 218, 156, 228, 151, 73, 110, 100, 230, 173, 32, 137, 118, 164, 163, 32, 146, 32, 152, 230, 217, 0, 40, 102, 185, 138, 226, 156, 151, 199, 95, 249, 116, 117, 115, 247, 115, 107, 95, 41, 236, 182, 73, 108, 128, 103, 164, 32, 116, 111, 32, 112, 97, 115, 115, 32, 249, 116, 117, 115, 247, 115, 107, 32, 118, 164, 117, 101, 115, 32, 116, 111, 32, 156, 228, 117, 112, 151, 173, 34, 0, 40, 137, 105, 116, 162, 194, 251, 162, 101, 254, 116, 153, 132, 48, 197, 218, 156, 228, 117, 112, 151, 173, 58, 243, 179, 32, 211, 108, 121, 216, 112, 101, 99, 105, 102, 233, 119, 194, 47, 119, 101, 254, 116, 32, 105, 102, 216, 105, 122, 137, 103, 32, 112, 133, 105, 99, 233, 232, 216, 170, 32, 230, 112, 221, 99, 105, 116, 108, 233, 137, 32, 101, 105, 171, 147, 32, 156, 32, 154, 32, 151, 46, 34, 0, 40, 234, 205, 131, 178, 249, 202, 46, 98, 97, 202, 173, 144, 139, 95, 137, 115, 157, 110, 99, 101, 131, 156, 73, 110, 115, 157, 110, 99, 101, 178, 218, 77, 232, 109, 97, 116, 208, 137, 103, 32, 80, 117, 115, 104, 178, 47, 80, 111, 112, 178, 217, 0, 40, 222, 147, 205, 131, 68, 67, 46, 73, 116, 203, 87, 194, 249, 202, 244, 161, 116, 203, 112, 95, 100, 180, 131, 72, 111, 166, 66, 97, 202, 117, 112, 73, 116, 203, 87, 194, 249, 202, 201, 218, 84, 111, 111, 32, 109, 179, 233, 80, 111, 112, 73, 116, 203, 87, 194, 217, 0, 40, 139, 196, 252, 117, 255, 218, 67, 164, 108, 216, 104, 150, 108, 100, 32, 211, 108, 233, 98, 209, 100, 111, 176, 32, 119, 104, 105, 128, 32, 137, 32, 66, 101, 103, 137, 156, 173, 216, 99, 111, 112, 101, 217, 0, 40, 139, 196, 252, 117, 255, 218, 246, 100, 156, 173, 243, 164, 108, 216, 104, 150, 108, 100, 32, 211, 108, 233, 98, 209, 100, 111, 176, 32, 119, 104, 105, 128, 32, 137, 32, 66, 101, 103, 137, 156, 173, 216, 99, 111, 112, 101, 217, 0, 40, 142, 68, 101, 99, 108, 195, 158, 235, 218, 156, 228, 117, 112, 151, 173, 58, 243, 164, 128, 100, 32, 116, 111, 111, 32, 109, 179, 233, 116, 105, 109, 101, 115, 217, 0, 40, 142, 199, 138, 226, 156, 199, 95, 83, 99, 114, 133, 108, 88, 41, 236, 0, 40, 241, 76, 97, 121, 222, 76, 111, 202, 181, 242, 101, 218, 156, 228, 117, 112, 151, 173, 58, 32, 176, 181, 32, 116, 111, 243, 164, 108, 32, 98, 101, 102, 154, 209, 102, 105, 114, 166, 32, 114, 145, 217, 0, 48, 0, 189, 73, 115, 80, 145, 147, 79, 102, 84, 119, 111, 40, 102, 185, 138, 226, 156, 151, 199, 95, 87, 194, 247, 115, 107, 95, 41, 0, 201, 184, 0, 208, 240, 131, 95, 67, 109, 100, 225, 102, 147, 244, 144, 49, 141, 109, 147, 103, 101, 250, 221, 112, 95, 159, 174, 46, 67, 111, 149, 97, 137, 115, 40, 189, 200, 174, 40, 208, 240, 131, 95, 67, 109, 100, 225, 102, 147, 91, 48, 93, 46, 67, 221, 112, 200, 174, 41, 41, 0, 208, 240, 169, 111, 158, 109, 97, 120, 95, 100, 114, 229, 95, 208, 240, 115, 0, 146, 131, 73, 110, 100, 230, 87, 105, 171, 137, 246, 130, 100, 228, 153, 132, 146, 131, 68, 232, 112, 175, 121, 79, 114, 220, 0, 146, 131, 83, 212, 68, 105, 159, 174, 105, 211, 115, 65, 118, 97, 105, 108, 168, 184, 0, 146, 131, 83, 212, 79, 114, 220, 158, 142, 83, 212, 83, 112, 101, 99, 115, 168, 0, 146, 131, 83, 116, 159, 116, 208, 87, 101, 254, 116, 184, 197, 0, 146, 95, 48, 162, 194, 184, 197, 141, 146, 95, 49, 162, 194, 184, 197, 0, 146, 95, 152, 230, 158, 183, 131, 172, 244, 0, 146, 95, 152, 230, 184, 0, 238, 144, 227, 0, 238, 161, 227, 141, 238, 158, 235, 0, 238, 224, 238, 158, 235, 0, 146, 162, 105, 171, 95, 115, 109, 164, 128, 166, 95, 115, 212, 251, 220, 196, 227, 0, 183, 196, 252, 117, 255, 0, 183, 224, 183, 158, 53, 49, 50, 0, 183, 131, 223, 236, 0, 183, 131, 178, 144, 163, 0, 183, 250, 160, 184, 141, 183, 250, 160, 158, 53, 49, 50, 0, 183, 250, 160, 161, 49, 0, 100, 166, 251, 220, 224, 100, 166, 251, 220, 158, 235, 0, 100, 166, 95, 116, 109, 112, 144, 210, 68, 114, 229, 67, 104, 240, 115, 84, 203, 112, 77, 147, 103, 101, 225, 102, 147, 46, 206, 32, 43, 32, 210, 68, 114, 229, 67, 104, 240, 115, 84, 203, 112, 77, 147, 103, 101, 225, 102, 147, 244, 0, 210, 65, 174, 105, 118, 101, 73, 100, 144, 183, 131, 178, 32, 43, 226, 178, 40, 146, 95, 152, 230, 41, 0, 210, 223, 190, 144, 222, 147, 205, 141, 210, 223, 156, 144, 139, 0, 210, 156, 115, 84, 203, 112, 206, 249, 202, 181, 184, 0, 104, 97, 115, 95, 102, 159, 101, 167, 95, 118, 242, 209, 124, 124, 32, 142, 245, 50, 68, 114, 229, 67, 104, 240, 85, 110, 102, 114, 111, 167, 110, 196, 84, 65, 66, 76, 69, 95, 68, 82, 65, 87, 95, 67, 72, 65, 78, 78, 69, 76, 95, 66, 71, 50, 95, 70, 82, 79, 90, 69, 78, 0, 105, 224, 105, 158, 201, 0, 234, 162, 194, 204, 197, 0, 234, 205, 144, 210, 223, 190, 141, 234, 205, 131, 178, 144, 116, 203, 112, 95, 100, 180, 131, 190, 178, 0, 105, 116, 161, 206, 141, 105, 116, 158, 206, 246, 100, 0, 110, 158, 146, 131, 83, 212, 68, 105, 159, 174, 105, 211, 115, 65, 118, 97, 105, 108, 168, 0, 110, 144, 198, 114, 73, 100, 120, 141, 110, 158, 67, 72, 85, 78, 75, 83, 0, 110, 224, 110, 158, 67, 72, 85, 78, 75, 83, 141, 198, 114, 73, 100, 120, 144, 67, 72, 85, 78, 75, 83, 0, 111, 102, 102, 161, 52, 141, 111, 102, 102, 158, 225, 244, 0, 222, 147, 205, 144, 234, 205, 32, 124, 124, 32, 222, 147, 205, 144, 234, 205, 131, 80, 97, 213, 190, 0, 112, 161, 225, 46, 206, 141, 112, 158, 225, 46, 206, 32, 43, 32, 225, 244, 0, 112, 161, 206, 141, 112, 158, 206, 246, 100, 0, 112, 161, 98, 101, 103, 137, 173, 141, 112, 158, 101, 110, 100, 173, 0, 114, 145, 115, 224, 114, 145, 115, 158, 49, 50, 56, 0, 115, 170, 116, 137, 165, 131, 195, 144, 235, 141, 115, 170, 116, 137, 165, 131, 195, 247, 120, 161, 115, 170, 116, 137, 165, 131, 195, 0, 115, 170, 116, 137, 165, 131, 178, 144, 142, 178, 0, 115, 212, 95, 100, 105, 159, 174, 105, 211, 196, 215, 83, 212, 68, 105, 159, 174, 105, 211, 95, 78, 111, 176, 0, 115, 212, 251, 220, 250, 160, 158, 40, 137, 116, 41, 115, 191, 111, 102, 40, 115, 212, 251, 220, 95, 109, 97, 115, 107, 41, 32, 42, 32, 56, 0, 115, 112, 221, 116, 116, 147, 131, 95, 223, 236, 0, 115, 114, 99, 95, 146, 46, 73, 115, 78, 101, 181, 200, 99, 211, 99, 105, 128, 83, 114, 99, 141, 100, 166, 95, 146, 46, 73, 115, 78, 101, 181, 200, 99, 211, 99, 105, 128, 68, 166, 0, 139, 196, 252, 117, 255, 141, 241, 76, 97, 121, 222, 76, 111, 202, 181, 242, 101, 0, 142, 245, 50, 67, 221, 112, 200, 174, 70, 154, 68, 114, 229, 67, 109, 100, 46, 77, 137, 46, 121, 153, 132, 142, 245, 50, 67, 221, 112, 200, 174, 70, 154, 68, 114, 229, 67, 109, 100, 46, 247, 120, 46, 121, 0, 142, 245, 67, 221, 112, 200, 174, 46, 77, 137, 46, 121, 153, 132, 142, 245, 67, 221, 112, 200, 174, 46, 247, 120, 46, 121, 0, 235, 144, 183, 250, 160, 182, 66, 101, 103, 137, 156, 173, 58, 32, 67, 179, 110, 111, 116, 32, 208, 179, 103, 209, 183, 243, 160, 32, 109, 163, 45, 102, 114, 97, 109, 209, 119, 104, 105, 128, 32, 112, 159, 115, 147, 118, 137, 103, 216, 97, 109, 209, 178, 34, 0, 142, 223, 151, 196, 227, 0, 142, 223, 248, 144, 227, 182, 77, 117, 166, 32, 98, 209, 102, 105, 114, 166, 32, 114, 145, 34, 0, 142, 199, 138, 226, 156, 199, 95, 72, 163, 101, 130, 0, 142, 199, 138, 226, 156, 199, 95, 200, 115, 105, 122, 130, 0, 142, 199, 138, 226, 156, 199, 95, 83, 154, 139, 0, 142, 70, 159, 101, 167, 248, 115, 200, 113, 117, 101, 166, 184, 0, 193, 110, 192, 190, 131, 190, 80, 97, 100, 100, 137, 210, 120, 236, 197, 141, 193, 110, 192, 190, 131, 190, 80, 97, 100, 100, 137, 210, 121, 236, 197, 141, 193, 110, 192, 190, 131, 190, 66, 154, 220, 201, 236, 197, 0, 241, 73, 110, 115, 163, 101, 248, 0, 241, 76, 97, 121, 222, 76, 111, 202, 181, 242, 101, 0, 241, 76, 97, 121, 222, 76, 111, 202, 181, 242, 101, 182, 156, 228, 117, 112, 151, 173, 58, 32, 176, 181, 32, 116, 111, 243, 164, 108, 32, 98, 101, 102, 154, 209, 102, 105, 114, 166, 32, 114, 145, 217, 0, 241, 85, 110, 102, 114, 111, 167, 110, 248, 115, 242, 101, 0, 142, 76, 101, 102, 116, 77, 111, 166, 246, 130, 100, 151, 224, 142, 82, 254, 116, 77, 111, 166, 246, 130, 100, 151, 204, 0, 142, 76, 101, 102, 116, 77, 111, 166, 83, 116, 159, 116, 208, 181, 151, 196, 227, 141, 142, 82, 254, 116, 77, 111, 166, 83, 116, 159, 116, 208, 181, 151, 196, 227, 0, 142, 77, 203, 154, 121, 67, 111, 109, 112, 97, 174, 181, 242, 101, 0, 142, 77, 137, 151, 87, 194, 184, 197, 0, 142, 248, 80, 111, 115, 89, 50, 144, 234, 205, 131, 68, 67, 46, 198, 115, 154, 80, 111, 115, 46, 121, 0, 157, 114, 103, 170, 196, 215, 156, 245, 84, 97, 114, 103, 170, 95, 78, 111, 176, 0, 116, 203, 112, 95, 100, 180, 131, 79, 108, 100, 172, 82, 229, 206, 144, 252, 117, 255, 0, 118, 232, 105, 129, 162, 101, 254, 116, 184, 197, 141, 118, 232, 105, 129, 162, 194, 184, 197, 0, 119, 155, 144, 193, 110, 192, 190, 0, 119, 155, 131, 68, 67, 46, 223, 172, 144, 252, 117, 255, 0 };
-static const unsigned char imgui_c89_assert_message_rules[] = { 108, 101, 98, 128, 97, 129, 45, 62, 61, 32, 111, 108, 109, 110, 117, 134, 133, 135, 105, 110, 32, 38, 116, 130, 38, 32, 138, 140, 139, 131, 32, 61, 143, 132, 111, 119, 99, 136, 101, 114, 32, 62, 110, 116, 111, 117, 67, 136, 137, 100, 32, 60, 111, 114, 152, 145, 84, 130, 116, 97, 153, 32, 114, 101, 150, 149, 148, 132, 95, 119, 105, 100, 97, 108, 103, 115, 115, 116, 122, 101, 67, 160, 95, 110, 101, 116, 116, 104, 151, 115, 40, 41, 99, 116, 108, 97, 110, 101, 32, 48, 73, 68, 97, 110, 97, 157, 101, 100, 141, 34, 146, 115, 148, 177, 175, 165, 32, 33, 46, 48, 67, 117, 73, 109, 87, 155, 105, 167, 110, 147, 142, 73, 163, 171, 172, 168, 186, 132, 187, 102, 188, 114, 70, 185, 82, 101, 83, 191, 99, 107, 101, 109, 161, 48, 162, 155, 68, 180, 71, 117, 99, 104, 101, 32, 103, 46, 111, 110, 154, 116, 159, 149, 189, 207, 214, 105, 32, 115, 33, 34, 41, 182, 66, 117, 100, 147, 108, 105, 150, 116, 198, 213, 204, 141, 219, 102, 32, 215, 45, 49, 83, 170, 97, 119, 101, 120, 102, 164, 105, 115, 121, 32, 137, 192, 142, 195, 144, 48, 144, 231, 146, 169, 176, 108, 179, 239, 193, 115, 237, 115, 32, 99, 46, 201, 66, 103, 69, 110, 77, 97, 82, 145, 83, 157, 95, 99, 95, 154, 95, 169, 103, 104, 105, 253, 108, 108 };
-static const unsigned char imgui_c89_assert_message_ids[] = { 40, 40, 14, 50, 50, 43, 45, 46, 46, 49, 51, 47, 32, 41, 62, 69, 80, 26, 34, 13, 71, 17, 74, 0, 66, 8, 42, 48, 78, 5, 6, 10, 37, 38, 4, 7, 9, 11, 3, 58, 58, 7, 72, 29, 52, 7, 65, 26, 26, 7, 79, 24, 12, 1, 82, 70, 68, 73, 60, 2, 59, 26, 77, 21, 75, 20, 81, 20, 61, 57, 16, 39, 15, 35, 44, 18, 12, 55, 67, 56, 27, 19, 7, 7, 63, 7, 64, 25, 54, 54, 53, 76, 23, 36, 22, 28, 22, 28, 33, 83, 31, 30, 28, 33 };
-static const unsigned short imgui_c89_assert_lines[] = { 2262, 2263, 2271, 701, 702, 710, 726, 729, 730, 784, 819, 820, 329, 331, 394, 440, 574, 734, 735, 805, 853, 978, 1008, 1230, 1402, 1464, 1479, 1480, 1496, 1594, 1595, 1634, 1671, 1672, 1718, 1742, 1743, 1744, 1745, 1815, 1836, 1860, 1861, 1862, 1863, 1925, 1926, 1929, 1971, 2003, 2004, 2032, 2038, 2091, 2129, 2130, 2233, 2241, 2248, 2302, 2487, 2488, 2494, 2556, 2590, 2600, 2604, 2613, 2739, 2777, 2833, 2875, 2916, 2936, 3076, 3095, 3101, 3115, 3142, 3156, 3173, 3226, 3288, 3333, 3334, 3510, 3511, 3655, 3911, 3947, 3948, 4289, 4525, 4526, 4545, 4583, 4587, 4604, 4679, 4680, 4685, 4765, 4814, 4888 };
-static const unsigned char imgui_c89_assert_file_ids[] = { 64, 85, 85, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 0 };
+static const char imgui_c89_assert_files[] = "imgui_internal.h\000imgui_tables.cpp\000";
+static const unsigned char imgui_c89_assert_file_offsets[] = { 0, 17 };
+static const unsigned char imgui_c89_assert_message_data[] = { 33, 230, 95, 118, 230, 105, 129, 0, 33, 238, 73, 110, 115, 161, 101, 245, 0, 40, 234, 221, 146, 234, 164, 233, 214, 155, 226, 150, 73, 110, 100, 228, 173, 32, 137, 118, 162, 161, 32, 144, 32, 151, 228, 213, 0, 40, 102, 182, 139, 224, 155, 150, 195, 95, 246, 116, 117, 115, 244, 115, 107, 95, 41, 235, 181, 73, 108, 128, 103, 162, 32, 116, 111, 32, 112, 97, 115, 115, 32, 246, 116, 117, 115, 244, 115, 107, 32, 118, 162, 117, 101, 115, 32, 116, 111, 32, 155, 226, 255, 150, 173, 34, 0, 40, 137, 105, 116, 159, 191, 248, 159, 101, 251, 116, 156, 133, 48, 194, 214, 155, 226, 255, 150, 173, 58, 241, 169, 32, 206, 108, 121, 212, 112, 101, 99, 105, 102, 231, 119, 191, 47, 119, 101, 251, 116, 32, 105, 102, 212, 105, 122, 137, 103, 32, 112, 132, 105, 99, 231, 230, 212, 170, 32, 228, 112, 219, 99, 105, 116, 108, 231, 137, 32, 101, 105, 171, 145, 32, 155, 32, 153, 32, 150, 46, 34, 0, 40, 232, 199, 131, 178, 246, 197, 46, 98, 97, 197, 173, 147, 138, 95, 137, 160, 169, 99, 101, 131, 155, 73, 110, 160, 169, 99, 101, 178, 214, 77, 230, 109, 97, 116, 202, 137, 103, 32, 80, 117, 115, 104, 178, 47, 80, 111, 112, 178, 213, 0, 40, 220, 145, 199, 131, 68, 67, 46, 73, 254, 87, 191, 246, 197, 242, 166, 254, 112, 95, 100, 217, 131, 72, 111, 160, 66, 97, 197, 255, 73, 254, 87, 191, 246, 197, 216, 214, 84, 111, 111, 32, 109, 169, 231, 80, 111, 112, 73, 254, 87, 191, 213, 0, 40, 138, 193, 249, 117, 252, 214, 67, 162, 108, 212, 104, 149, 108, 100, 32, 206, 108, 231, 98, 203, 100, 111, 176, 32, 119, 104, 105, 128, 32, 137, 32, 66, 101, 103, 137, 155, 173, 212, 99, 111, 112, 101, 213, 0, 40, 138, 193, 249, 117, 252, 214, 69, 110, 100, 155, 173, 241, 162, 108, 212, 104, 149, 108, 100, 32, 206, 108, 231, 98, 203, 100, 111, 176, 32, 119, 104, 105, 128, 32, 137, 32, 66, 101, 103, 137, 155, 173, 212, 99, 111, 112, 101, 213, 0, 40, 140, 68, 101, 99, 108, 192, 164, 233, 214, 155, 226, 255, 150, 173, 58, 241, 162, 128, 100, 32, 116, 111, 111, 32, 109, 169, 231, 116, 105, 109, 101, 115, 213, 0, 40, 140, 195, 139, 224, 155, 195, 95, 83, 99, 114, 132, 108, 88, 41, 235, 0, 40, 238, 76, 97, 121, 220, 76, 111, 197, 179, 239, 101, 214, 155, 226, 255, 150, 173, 58, 32, 176, 179, 32, 116, 111, 241, 162, 108, 32, 98, 101, 102, 153, 203, 102, 105, 114, 160, 32, 114, 141, 213, 0, 48, 0, 186, 73, 115, 80, 141, 145, 79, 102, 84, 119, 111, 40, 102, 182, 139, 224, 155, 150, 195, 95, 87, 191, 244, 115, 107, 95, 41, 0, 202, 240, 131, 95, 67, 109, 100, 223, 102, 145, 242, 147, 49, 146, 109, 145, 103, 101, 247, 219, 112, 95, 157, 174, 46, 67, 111, 148, 97, 137, 115, 40, 186, 196, 174, 40, 202, 240, 131, 95, 67, 109, 100, 223, 102, 145, 91, 48, 93, 46, 67, 219, 112, 196, 174, 41, 41, 0, 202, 240, 168, 111, 164, 109, 97, 120, 95, 100, 253, 95, 202, 240, 115, 0, 144, 131, 73, 110, 100, 228, 87, 105, 171, 137, 69, 110, 130, 100, 226, 156, 133, 144, 131, 68, 230, 112, 175, 121, 79, 114, 218, 0, 144, 131, 83, 207, 68, 105, 157, 174, 105, 206, 115, 65, 118, 97, 105, 108, 167, 190, 0, 144, 131, 83, 207, 79, 114, 218, 164, 140, 83, 207, 83, 112, 101, 99, 115, 167, 0, 144, 131, 83, 116, 157, 116, 202, 87, 101, 251, 116, 190, 194, 0, 144, 95, 48, 159, 191, 190, 194, 146, 144, 95, 49, 159, 191, 190, 194, 0, 144, 95, 151, 228, 164, 180, 131, 172, 242, 0, 144, 95, 151, 228, 190, 0, 234, 147, 225, 0, 234, 166, 225, 146, 234, 164, 233, 0, 234, 221, 146, 234, 164, 233, 0, 144, 159, 105, 171, 95, 115, 109, 162, 128, 160, 95, 115, 207, 248, 218, 193, 225, 0, 180, 193, 249, 117, 252, 0, 180, 221, 146, 180, 164, 53, 49, 50, 0, 180, 131, 222, 235, 0, 180, 131, 178, 147, 161, 0, 180, 247, 158, 190, 146, 180, 247, 158, 164, 53, 49, 50, 0, 180, 247, 158, 166, 49, 0, 100, 160, 248, 218, 221, 146, 100, 160, 248, 218, 164, 233, 0, 100, 160, 95, 116, 109, 112, 147, 204, 68, 253, 67, 104, 240, 115, 84, 198, 112, 77, 145, 103, 101, 223, 102, 145, 46, 68, 217, 32, 43, 32, 204, 68, 253, 67, 104, 240, 115, 84, 198, 112, 77, 145, 103, 101, 223, 102, 145, 242, 0, 204, 65, 174, 105, 118, 101, 73, 100, 147, 180, 131, 178, 32, 43, 224, 178, 40, 144, 95, 151, 228, 41, 0, 204, 222, 187, 147, 220, 145, 199, 146, 204, 222, 155, 147, 138, 0, 204, 155, 115, 84, 198, 112, 68, 217, 246, 197, 179, 190, 0, 104, 97, 115, 95, 102, 157, 101, 177, 95, 118, 239, 203, 124, 124, 32, 140, 243, 50, 68, 253, 67, 104, 240, 85, 110, 102, 114, 111, 177, 110, 193, 84, 65, 66, 76, 69, 95, 68, 82, 65, 87, 95, 67, 72, 65, 78, 78, 69, 76, 95, 66, 71, 50, 95, 70, 82, 79, 90, 69, 78, 0, 232, 159, 191, 221, 194, 0, 232, 199, 147, 204, 222, 187, 146, 232, 199, 131, 178, 147, 254, 112, 95, 100, 217, 131, 187, 178, 0, 110, 164, 144, 131, 83, 207, 68, 105, 157, 174, 105, 206, 115, 65, 118, 97, 105, 108, 167, 0, 111, 102, 102, 166, 52, 146, 111, 102, 102, 164, 223, 242, 0, 220, 145, 199, 147, 232, 199, 32, 124, 124, 32, 220, 145, 199, 147, 232, 199, 131, 80, 97, 208, 187, 0, 112, 166, 223, 46, 68, 217, 146, 112, 164, 223, 46, 68, 217, 32, 43, 32, 223, 242, 0, 112, 166, 98, 101, 103, 137, 173, 146, 112, 164, 101, 110, 100, 173, 0, 114, 141, 115, 221, 146, 114, 141, 115, 164, 49, 50, 56, 0, 115, 170, 116, 137, 163, 131, 192, 147, 233, 146, 115, 170, 116, 137, 163, 131, 192, 244, 120, 166, 115, 170, 116, 137, 163, 131, 192, 0, 115, 170, 116, 137, 163, 131, 178, 147, 140, 178, 0, 115, 207, 95, 100, 105, 157, 174, 105, 206, 193, 211, 83, 207, 68, 105, 157, 174, 105, 206, 95, 78, 111, 176, 0, 115, 207, 248, 218, 247, 158, 164, 40, 137, 116, 41, 115, 205, 111, 102, 40, 115, 207, 248, 218, 95, 109, 97, 115, 107, 41, 32, 42, 32, 56, 0, 115, 112, 219, 116, 116, 145, 131, 95, 222, 235, 0, 115, 114, 99, 95, 144, 46, 73, 115, 78, 101, 179, 196, 99, 206, 99, 105, 128, 83, 114, 99, 146, 100, 160, 95, 144, 46, 73, 115, 78, 101, 179, 196, 99, 206, 99, 105, 128, 68, 160, 0, 138, 193, 249, 117, 252, 146, 238, 76, 97, 121, 220, 76, 111, 197, 179, 239, 101, 0, 140, 243, 50, 67, 219, 112, 196, 174, 70, 153, 68, 253, 67, 109, 100, 46, 77, 137, 46, 121, 156, 133, 140, 243, 50, 67, 219, 112, 196, 174, 70, 153, 68, 253, 67, 109, 100, 46, 244, 120, 46, 121, 0, 140, 243, 67, 219, 112, 196, 174, 46, 77, 137, 46, 121, 156, 133, 140, 243, 67, 219, 112, 196, 174, 46, 244, 120, 46, 121, 0, 233, 147, 180, 247, 158, 181, 66, 101, 103, 137, 155, 173, 58, 32, 67, 169, 110, 111, 116, 32, 202, 169, 103, 203, 180, 241, 158, 32, 109, 161, 45, 102, 114, 97, 109, 203, 119, 104, 105, 128, 32, 112, 157, 115, 145, 118, 137, 103, 212, 97, 109, 203, 178, 34, 0, 140, 222, 150, 193, 225, 0, 140, 222, 245, 147, 225, 181, 77, 117, 160, 32, 98, 203, 102, 105, 114, 160, 32, 114, 141, 34, 0, 140, 195, 139, 224, 155, 195, 95, 72, 161, 101, 130, 0, 140, 195, 139, 224, 155, 195, 95, 196, 115, 105, 122, 130, 0, 140, 195, 139, 224, 155, 195, 95, 83, 153, 138, 0, 140, 70, 157, 101, 177, 245, 115, 196, 113, 117, 101, 160, 190, 0, 189, 110, 188, 187, 131, 187, 80, 97, 100, 100, 137, 204, 120, 235, 194, 146, 189, 110, 188, 187, 131, 187, 80, 97, 100, 100, 137, 204, 121, 235, 194, 146, 189, 110, 188, 187, 131, 187, 66, 153, 218, 216, 235, 194, 0, 238, 73, 110, 115, 161, 101, 245, 0, 238, 76, 97, 121, 220, 76, 111, 197, 179, 239, 101, 0, 238, 76, 97, 121, 220, 76, 111, 197, 179, 239, 101, 181, 155, 226, 255, 150, 173, 58, 32, 176, 179, 32, 116, 111, 241, 162, 108, 32, 98, 101, 102, 153, 203, 102, 105, 114, 160, 32, 114, 141, 213, 0, 238, 85, 110, 102, 114, 111, 177, 110, 245, 115, 239, 101, 0, 140, 76, 101, 102, 116, 77, 111, 160, 69, 110, 130, 100, 150, 221, 146, 140, 82, 251, 116, 77, 111, 160, 69, 110, 130, 100, 150, 221, 0, 140, 76, 101, 102, 116, 77, 111, 160, 83, 116, 157, 116, 202, 179, 150, 193, 225, 146, 140, 82, 251, 116, 77, 111, 160, 83, 116, 157, 116, 202, 179, 150, 193, 225, 0, 140, 77, 198, 153, 121, 67, 111, 109, 112, 97, 174, 179, 239, 101, 0, 140, 77, 137, 150, 87, 191, 190, 194, 0, 140, 245, 80, 111, 115, 89, 50, 147, 232, 199, 131, 68, 67, 46, 210, 115, 153, 80, 111, 115, 46, 121, 0, 165, 114, 103, 170, 193, 211, 155, 243, 84, 97, 114, 103, 170, 95, 78, 111, 176, 0, 254, 112, 95, 100, 217, 131, 79, 108, 100, 172, 82, 227, 68, 217, 147, 249, 117, 252, 0, 118, 230, 105, 129, 159, 101, 251, 116, 190, 194, 146, 118, 230, 105, 129, 159, 191, 190, 194, 0, 119, 154, 147, 189, 110, 188, 187, 0, 119, 154, 131, 68, 67, 46, 222, 172, 147, 249, 117, 252, 0 };
+static const unsigned char imgui_c89_assert_message_rules[] = { 108, 101, 98, 128, 97, 129, 45, 62, 111, 108, 61, 32, 109, 110, 117, 134, 132, 135, 105, 110, 116, 130, 32, 38, 138, 131, 111, 119, 32, 61, 38, 32, 99, 136, 101, 114, 139, 143, 142, 133, 110, 116, 111, 117, 67, 136, 137, 100, 32, 62, 111, 114, 151, 141, 84, 130, 32, 60, 114, 101, 149, 148, 95, 119, 115, 116, 105, 100, 97, 108, 103, 115, 156, 32, 116, 97, 152, 133, 67, 158, 95, 110, 97, 110, 101, 116, 116, 104, 150, 115, 40, 41, 99, 116, 108, 97, 110, 101, 122, 101, 73, 68, 101, 100, 144, 115, 146, 34, 175, 163, 32, 33, 32, 48, 46, 48, 73, 109, 87, 154, 110, 145, 140, 73, 152, 184, 161, 171, 172, 167, 183, 133, 185, 102, 70, 182, 82, 101, 99, 107, 101, 109, 159, 154, 67, 117, 71, 117, 99, 104, 101, 32, 103, 46, 105, 177, 111, 110, 153, 116, 157, 148, 186, 201, 200, 114, 209, 105, 32, 115, 33, 34, 41, 181, 66, 117, 83, 205, 97, 165, 100, 145, 108, 105, 149, 116, 166, 48, 210, 208, 215, 102, 32, 211, 45, 49, 83, 170, 97, 119, 101, 120, 102, 162, 105, 115, 121, 32, 137, 188, 140, 192, 144, 168, 147, 48, 147, 229, 169, 176, 189, 115, 236, 115, 237, 108, 32, 99, 46, 216, 66, 103, 77, 97, 82, 141, 83, 165, 95, 99, 95, 153, 95, 168, 103, 104, 105, 250, 108, 108, 114, 227, 116, 198, 117, 112 };
+static const unsigned char imgui_c89_assert_message_ids[] = { 44, 45, 42, 31, 39, 56, 63, 74, 25, 33, 13, 65, 16, 68, 0, 60, 8, 40, 43, 72, 5, 6, 10, 36, 37, 4, 7, 9, 11, 3, 52, 52, 7, 66, 28, 46, 7, 59, 25, 25, 7, 73, 23, 12, 1, 76, 64, 62, 67, 54, 2, 53, 25, 71, 20, 69, 19, 75, 19, 55, 51, 15, 38, 14, 34, 41, 17, 12, 49, 61, 50, 26, 18, 7, 7, 57, 7, 58, 24, 48, 48, 47, 70, 22, 35, 21, 27, 21, 27, 32, 77, 30, 29, 27, 32 };
+static const unsigned short imgui_c89_assert_lines[] = { 784, 819, 820, 329, 331, 394, 440, 574, 734, 735, 805, 853, 978, 1008, 1230, 1402, 1464, 1479, 1480, 1496, 1594, 1595, 1634, 1671, 1672, 1718, 1742, 1743, 1744, 1745, 1815, 1836, 1860, 1861, 1862, 1863, 1925, 1926, 1929, 1971, 2003, 2004, 2032, 2038, 2091, 2129, 2130, 2233, 2241, 2248, 2302, 2487, 2488, 2494, 2556, 2590, 2600, 2604, 2613, 2739, 2777, 2833, 2875, 2916, 2936, 3076, 3095, 3101, 3115, 3142, 3156, 3173, 3226, 3288, 3333, 3334, 3510, 3511, 3655, 3911, 3947, 3948, 4289, 4525, 4526, 4545, 4583, 4587, 4604, 4679, 4680, 4685, 4765, 4814, 4888 };
+static const unsigned char imgui_c89_assert_file_ids[] = { 248, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 127, 0 };
 static void imgui_c89_assert_id(unsigned int id)
 {
     char message[148];
-    unsigned int file_bit = id * 2;
+    unsigned int file_bit = id * 1;
     unsigned int file_offset = file_bit >> 3;
     unsigned int file_id = (imgui_c89_assert_file_ids[file_offset]
         | (unsigned int)imgui_c89_assert_file_ids[file_offset + 1] << 8)
-        >> (file_bit & 7) & 3;
+        >> (file_bit & 7) & 1;
     imgui_c89_assert_rtn("",
         imgui_c89_assert_files + imgui_c89_assert_file_offsets[file_id],
         imgui_c89_assert_lines[id],
@@ -36,97 +36,37 @@ static void imgui_c89_assert_id(unsigned int id)
             128, (int)imgui_c89_assert_message_ids[id], message));
 }
 
-static short ImMax__d747398678(short lhs, short rhs);
-static ImGuiTableFlags TableFixFlags__6e08bf5957(ImGuiTableFlags flags, ImGuiWindow * outer_window);
+static ImGuiTableFlags imgui_i_table_fix_flags(ImGuiTableFlags flags, ImGuiWindow * outer_window);
 static ImGuiTableSettings * ImChunkStream_ImGuiTableSettings__alloc_chunk__ebcbcf6a7c(ImGuiContext *imgui_c89_ctx, ImChunkStream_ImGuiTableSettings *self, size_t sz);
 static void ImChunkStream_ImGuiTableSettings__clear__5fb9d3300d(ImGuiContext *imgui_c89_ctx, ImChunkStream_ImGuiTableSettings *self);
 static int ImChunkStream_ImGuiTableSettings__offset_from_ptr__6ff582cefd(ImChunkStream_ImGuiTableSettings *self, const ImGuiTableSettings * p);
 static ImGuiTableSettings * ImChunkStream_ImGuiTableSettings__ptr_from_offset__d5fdd2f08e(ImChunkStream_ImGuiTableSettings *self, int off);
 static void ImChunkStream_ImGuiTableSettings__swap__09219107fa(ImChunkStream_ImGuiTableSettings *self, ImChunkStream_ImGuiTableSettings * rhs);
-static ImGuiTable * ImPool_ImGuiTable__Add__153b3075c8(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTable *self);
-static ImGuiTable * ImPool_ImGuiTable__GetByKey__b9c786232c(ImPool_ImGuiTable *self, ImGuiID key);
-static ImPoolIdx ImPool_ImGuiTable__GetIndex__9187fcfe0b(ImPool_ImGuiTable *self, const ImGuiTable * p);
-static ImGuiTable * ImPool_ImGuiTable__GetOrAddByKey__e67404e771(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTable *self, ImGuiID key);
-static void ImPool_ImGuiTable__Remove__de4b7a8310(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTable *self, ImGuiID key, const ImGuiTable * p);
-static void ImPool_ImGuiTable__Remove__09b37246df(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTable *self, ImGuiID key, ImPoolIdx idx);
-static ImGuiTableCellData * ImSpan_ImGuiTableCellData__operator____c3934dca7a(ImSpan_ImGuiTableCellData *self, int i);
-static void ImSpan_ImGuiTableCellData__set__9a608544d7(ImSpan_ImGuiTableCellData *self, ImGuiTableCellData * data, ImGuiTableCellData * data_end);
-static ImGuiTableColumn * ImSpan_ImGuiTableColumn__begin__47a64a5242(ImSpan_ImGuiTableColumn *self);
-static void ImSpan_ImGuiTableColumn__clear__83871bf6d8(ImSpan_ImGuiTableColumn *self);
-static unsigned char ImSpan_ImGuiTableColumn__empty__fa37023415(ImSpan_ImGuiTableColumn *self);
-static ImGuiTableColumn * ImSpan_ImGuiTableColumn__end__86eec06ec5(ImSpan_ImGuiTableColumn *self);
-static int ImSpan_ImGuiTableColumn__index_from_ptr__3468a31bfc(ImSpan_ImGuiTableColumn *self, const ImGuiTableColumn * it);
-static const ImGuiTableColumn * ImSpan_ImGuiTableColumn__operator____7a74e5e58e(ImSpan_ImGuiTableColumn *self, int i);
-static void ImSpan_ImGuiTableColumn__set__c5651babe5(ImSpan_ImGuiTableColumn *self, ImGuiTableColumn * data, ImGuiTableColumn * data_end);
-static int ImSpan_ImGuiTableColumn__size__26d3756bd7(ImSpan_ImGuiTableColumn *self);
-static short * ImSpan_short__operator____76506b7980(ImSpan_short *self, int i);
-static void ImSpan_short__set__62a223df44(ImSpan_short *self, short * data, short * data_end);
-static int ImSpanAllocator_6__GetArenaSizeInBytes__190a148dd1(ImSpanAllocator_6 *self);
-static void ImSpanAllocator_6__GetSpan__283a0a72ff(ImSpanAllocator_6 *self, int n, ImSpan_ImGuiTableCellData * span);
-static void ImSpanAllocator_6__GetSpan__6e4bf43a41(ImSpanAllocator_6 *self, int n, ImSpan_ImGuiTableColumn * span);
-static void ImSpanAllocator_6__GetSpan__df24077f74(ImSpanAllocator_6 *self, int n, ImSpan_short * span);
-static void * ImSpanAllocator_6__GetSpanPtrBegin__eec30097bf(ImSpanAllocator_6 *self, int n);
-static void * ImSpanAllocator_6__GetSpanPtrEnd__678ad83cae(ImSpanAllocator_6 *self, int n);
-static void ImSpanAllocator_6__ImSpanAllocator__41efd1b735(ImSpanAllocator_6 *self);
-static void ImSpanAllocator_6__Reserve__9bc4506dc5(ImSpanAllocator_6 *self, int n, size_t sz, int a);
-static void ImSpanAllocator_6__SetArenaBasePtr__60f366114f(ImSpanAllocator_6 *self, void * base_ptr);
-static int ImVector_ImGuiOldColumnData___grow_capacity__90ee69ad3a(ImVector_ImGuiOldColumnData *self, int sz);
-static ImGuiOldColumnData * ImVector_ImGuiOldColumnData__operator____db73c664cd(ImVector_ImGuiOldColumnData *self, int i);
-static void ImVector_ImGuiOldColumnData__push_back__f37c042a27(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumnData *self, const ImGuiOldColumnData * v);
-static void ImVector_ImGuiOldColumnData__reserve__7e45ad4d46(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumnData *self, int new_capacity);
-static void ImVector_ImGuiOldColumnData__resize__11b999b1d8(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumnData *self, int new_size);
-static int ImVector_ImGuiOldColumns___grow_capacity__9ca1d56437(ImVector_ImGuiOldColumns *self, int sz);
-static ImGuiOldColumns * ImVector_ImGuiOldColumns__back__94412316d5(ImVector_ImGuiOldColumns *self);
-static ImGuiOldColumns * ImVector_ImGuiOldColumns__operator____986c28a323(ImVector_ImGuiOldColumns *self, int i);
-static void ImVector_ImGuiOldColumns__push_back__0c3f71346c(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumns *self, const ImGuiOldColumns * v);
-static void ImVector_ImGuiOldColumns__reserve__aaf9eabcae(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumns *self, int new_capacity);
-static int ImVector_ImGuiTable___grow_capacity__2f8c7b47e5(ImVector_ImGuiTable *self, int sz);
-static void ImVector_ImGuiTable__reserve__9f1feaf3bd(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTable *self, int new_capacity);
-static void ImVector_ImGuiTable__resize__97a3d1c587(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTable *self, int new_size);
-static int ImVector_ImGuiTableColumnSortSpecs___grow_capacity__5d5129bbf5(ImVector_ImGuiTableColumnSortSpecs *self, int sz);
-static void ImVector_ImGuiTableColumnSortSpecs__clear__dc4c85f565(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableColumnSortSpecs *self);
-static void ImVector_ImGuiTableColumnSortSpecs__reserve__f4b9cd8665(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableColumnSortSpecs *self, int new_capacity);
-static void ImVector_ImGuiTableColumnSortSpecs__resize__429b11f80b(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableColumnSortSpecs *self, int new_size);
-static int ImVector_ImGuiTableHeaderData___grow_capacity__22238efe5a(ImVector_ImGuiTableHeaderData *self, int sz);
-static void ImVector_ImGuiTableHeaderData__clear__e936969283(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableHeaderData *self);
-static void ImVector_ImGuiTableHeaderData__push_back__4901f7814e(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableHeaderData *self, const ImGuiTableHeaderData * v);
-static void ImVector_ImGuiTableHeaderData__reserve__19cc31f8cc(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableHeaderData *self, int new_capacity);
-static void ImVector_ImGuiTableHeaderData__resize__c5a84d9865(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableHeaderData *self, int new_size);
-static int ImVector_ImGuiTableInstanceData___grow_capacity__f24f822b8c(ImVector_ImGuiTableInstanceData *self, int sz);
-static void ImVector_ImGuiTableInstanceData__push_back__1b1e857ab3(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableInstanceData *self, const ImGuiTableInstanceData * v);
-static void ImVector_ImGuiTableInstanceData__reserve__fb6ab6a50b(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableInstanceData *self, int new_capacity);
-static int ImVector_ImGuiTableReconcileColumnData___grow_capacity__f22f6e2bb5(ImVector_ImGuiTableReconcileColumnData *self, int sz);
-static ImGuiTableReconcileColumnData * ImVector_ImGuiTableReconcileColumnData__back__0881194b09(ImVector_ImGuiTableReconcileColumnData *self);
-static ImGuiTableReconcileColumnData * ImVector_ImGuiTableReconcileColumnData__begin__99a6fb41dd(ImVector_ImGuiTableReconcileColumnData *self);
-static ImGuiTableReconcileColumnData * ImVector_ImGuiTableReconcileColumnData__end__099ac12a93(ImVector_ImGuiTableReconcileColumnData *self);
-static ImGuiTableReconcileColumnData * ImVector_ImGuiTableReconcileColumnData__operator____edc2e2d44e(ImVector_ImGuiTableReconcileColumnData *self, int i);
-static void ImVector_ImGuiTableReconcileColumnData__push_back__6946bac754(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableReconcileColumnData *self, const ImGuiTableReconcileColumnData * v);
-static void ImVector_ImGuiTableReconcileColumnData__reserve__2c73d7c217(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableReconcileColumnData *self, int new_capacity);
-static void ImVector_ImGuiTableReconcileColumnData__resize__69fbca6396(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableReconcileColumnData *self, int new_size);
-static int ImVector_ImGuiTableTempData___grow_capacity__933c8f77f2(ImVector_ImGuiTableTempData *self, int sz);
-static ImGuiTableTempData * ImVector_ImGuiTableTempData__operator____d023aa5434(ImVector_ImGuiTableTempData *self, int i);
-static void ImVector_ImGuiTableTempData__reserve__a07b348ffc(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableTempData *self, int new_capacity);
-static void ImVector_ImGuiTableTempData__resize__52dad32fae(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableTempData *self, int new_size, const ImGuiTableTempData * v);
-static const char * ImVector_char__operator____bea4762081(ImVector_char *self, int i);
+static ImGuiTable * imgui_table_pool_add(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self);
+static ImGuiTable * imgui_table_pool_find(ImGuiTablePool *self, ImGuiID key);
+static ImPoolIdx imgui_table_pool_index(ImGuiTablePool *self, const ImGuiTable * p);
+static ImGuiTable * imgui_table_pool_get_or_add(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self, ImGuiID key);
+static void imgui_table_pool_remove(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self, ImGuiID key, const ImGuiTable * p);
+static void imgui_table_pool_remove_at(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self, ImGuiID key, ImPoolIdx idx);
 static void ImVector_char__swap__e025a240c6(ImVector_char *self, ImVector_char * rhs);
-static const char * DebugNodeTableGetSizingPolicyDesc__5aab95655e(ImGuiTableFlags sizing_policy);
-static float GetColumnWidthEx__b040b1a359(ImGuiOldColumns * columns, int column_index, unsigned char before_resize);
-static float GetDraggedColumnOffset__bff71b419b(ImGuiContext *imgui_c89_ctx, ImGuiOldColumns * columns, int column_index);
-static unsigned char MenuItemForColumnReorder__e881d10945(ImGuiContext *imgui_c89_ctx, const char * label, unsigned char selected, unsigned char enabled);
-static int TableFixDisplayOrderComparer__4f18b3bf60(const void * lhs, const void * rhs);
-static ImGuiSortDirection TableGetColumnAvailSortDirection__ccd2c84aa9(ImGuiTableColumn * column, int n);
-static ImU32 TableGetColumnBorderCol__08e5751e75(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int order_n, int column_n);
-static int TableGetMaxDisplayOrderAllowed__501237b51d(ImGuiTable * table, int src_order, int dst_order);
-static size_t TableSettingsCalcChunkSize__760aeea963(int columns_count);
-static void TableSettingsHandler_ApplyAll__1d802ec58a(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1);
-static void TableSettingsHandler_Cleanup__1928564537(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1, ImGuiSettingsCleanupArgs * args);
-static void TableSettingsHandler_ClearAll__7504c1753b(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1);
-static void TableSettingsHandler_ReadLine__a95685e3ec(ImGuiContext * arg_0, ImGuiSettingsHandler * arg_1, void * entry, const char * line);
-static void * TableSettingsHandler_ReadOpen__cb3642ee3f(ImGuiContext * arg_0, ImGuiSettingsHandler * arg_1, const char * name);
-static void TableSettingsHandler_WriteAll__f87e4dd34e(ImGuiContext * ctx, ImGuiSettingsHandler * handler, ImGuiTextBuffer * buf);
-static void TableSettingsInit__26cd849599(ImGuiTableSettings * settings, ImGuiID id, int columns_count, int columns_count_max);
-static void TableSetupColumnApply__7f77d8a256(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int idx, ImGuiID id, ImS16 name_offset, ImGuiTableColumnFlags flags, float init_width_or_weight, ImGuiID user_data);
-static void TableSetupColumnFlags__fd03640bbb(ImGuiTable * table, ImGuiTableColumn * column, ImGuiTableColumnFlags flags_in);
+static const char * imgui_i_debug_node_table_get_sizing_policy_desc(ImGuiTableFlags sizing_policy);
+static float imgui_i_get_column_width_ex(ImGuiOldColumns * columns, int column_index, unsigned char before_resize);
+static float imgui_i_get_dragged_column_offset(ImGuiContext *imgui_c89_ctx, ImGuiOldColumns * columns, int column_index);
+static unsigned char imgui_i_menu_item_for_column_reorder(ImGuiContext *imgui_c89_ctx, const char * label, unsigned char selected, unsigned char enabled);
+static int imgui_i_table_fix_display_order_comparer(const void * lhs, const void * rhs);
+static ImGuiSortDirection imgui_i_table_get_column_avail_sort_direction(ImGuiTableColumn * column, int n);
+static ImU32 imgui_i_table_get_column_border_col(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int order_n, int column_n);
+static int imgui_i_table_get_max_display_order_allowed(ImGuiTable * table, int src_order, int dst_order);
+static size_t imgui_i_table_settings_calc_chunk_size(int columns_count);
+static void imgui_i_table_settings_handler_apply_all(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1);
+static void imgui_i_table_settings_handler_cleanup(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1, ImGuiSettingsCleanupArgs * args);
+static void imgui_i_table_settings_handler_clear_all(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1);
+static void imgui_i_table_settings_handler_read_line(ImGuiContext * arg_0, ImGuiSettingsHandler * arg_1, void * entry, const char * line);
+static void * imgui_i_table_settings_handler_read_open(ImGuiContext * arg_0, ImGuiSettingsHandler * arg_1, const char * name);
+static void imgui_i_table_settings_handler_write_all(ImGuiContext * ctx, ImGuiSettingsHandler * handler, ImGuiTextBuffer * buf);
+static void imgui_i_table_settings_init(ImGuiTableSettings * settings, ImGuiID id, int columns_count, int columns_count_max);
+static void imgui_i_table_setup_column_apply(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int idx, ImGuiID id, ImS16 name_offset, ImGuiTableColumnFlags flags, float init_width_or_weight, ImGuiID user_data);
+static void imgui_i_table_setup_column_flags(ImGuiTable * table, ImGuiTableColumn * column, ImGuiTableColumnFlags flags_in);
 
 ImDrawCmd ImDrawCmd_ImDrawCmd_value__8a1bdf676d(void);
 ImDrawList *ImDrawList_ImDrawList_at__d042a13f30(ImGuiContext *imgui_c89_ctx, void *memory, ImDrawListSharedData * shared_data);
@@ -134,25 +74,15 @@ ImFontAtlas *ImFontAtlas_ImFontAtlas_at__e0f3099eea(void *memory);
 ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *memory);
 ImGuiMultiSelectState *ImGuiMultiSelectState_ImGuiMultiSelectState_at__07be8ac108(void *memory);
 ImGuiMultiSelectTempData ImGuiMultiSelectTempData_ImGuiMultiSelectTempData_value__24d89ca7b9(ImGuiContext *imgui_c89_ctx);
-ImGuiOldColumns ImGuiOldColumns_ImGuiOldColumns_value__0997316293(void);
-ImGuiPackedDate ImGuiPackedDate_ImGuiPackedDate_value__ae3457108a(int yyyymmdd);
 ImGuiPtrOrIndex ImGuiPtrOrIndex_ImGuiPtrOrIndex_value__0bb7038807(void * ptr);
 ImGuiPtrOrIndex ImGuiPtrOrIndex_ImGuiPtrOrIndex_value__78437c8ea8(int index);
 ImGuiStoragePair ImGuiStoragePair_ImGuiStoragePair_value__a7819c3db3(ImGuiID _key, int _val);
 ImGuiTabItem ImGuiTabItem_ImGuiTabItem_value__30880aa21c(void);
-ImGuiTable *ImGuiTable_ImGuiTable_at__8557b5c94d(void *memory);
-ImGuiTableColumn ImGuiTableColumn_ImGuiTableColumn_value__a1e00f00b7(void);
-ImGuiTableColumnSettings *ImGuiTableColumnSettings_ImGuiTableColumnSettings_at__5e075f3b50(void *memory);
-ImGuiTableInstanceData ImGuiTableInstanceData_ImGuiTableInstanceData_value__c5fa8147a8(void);
-ImGuiTableSettings *ImGuiTableSettings_ImGuiTableSettings_at__980d9ec17d(void *memory);
-ImGuiTableTempData ImGuiTableTempData_ImGuiTableTempData_value__31acb38f61(void);
 ImRect ImRect_ImRect_value__30f36f8459(void);
 ImRect ImRect_ImRect_value__99b7f05542(const ImVec2 * min, const ImVec2 * max);
-ImRect ImRect_ImRect_value__001487ee3c(const ImVec4 * v);
 ImRect ImRect_ImRect_value__ca8705754c(float x1, float y1, float x2, float y2);
 ImTextureData *ImTextureData_ImTextureData_at__0bdcc9fa5c(void *memory);
 ImTextureRef ImTextureRef_ImTextureRef_value__480182bb5d(void);
-static ImVec2 ImVec2_ImVec2_value__c798775144(float _x, float _y);
 
 static const float COLUMNS_HIT_RECT_HALF_THICKNESS__96133deb43 = 4.0f;
 static const float TABLE_BORDER_SIZE__081b6d8fee = 1.0f;
@@ -162,570 +92,581 @@ static const int TABLE_DRAW_CHANNEL_NOCLIP__29ef610f6b = 2;
 static const float TABLE_RESIZE_SEPARATOR_FEEDBACK_TIMER__ed32128c54 = 0.0599999987f;
 static const float TABLE_RESIZE_SEPARATOR_HALF_THICKNESS__a8c063411b = 4.0f;
 
-static ImVec2 ImVec2_ImVec2_value__c798775144(float _x, float _y)
+static ImGuiTableFlags imgui_i_table_fix_flags(ImGuiTableFlags flags, ImGuiWindow * outer_window)
 {
-    ImVec2 result;
-    result.x = _x;
-    result.y = _y;
-    return result;
+    if (!(flags & ImGuiTableFlags_SizingMask_))
+        flags |= (flags & ImGuiTableFlags_ScrollX) ||
+            (outer_window->Flags & ImGuiWindowFlags_AlwaysAutoResize) ?
+            ImGuiTableFlags_SizingFixedFit : ImGuiTableFlags_SizingStretchSame;
+    if ((flags & ImGuiTableFlags_SizingMask_) == ImGuiTableFlags_SizingFixedSame)
+        flags |= ImGuiTableFlags_NoKeepColumnsVisible;
+    if (flags & ImGuiTableFlags_Resizable)
+        flags |= ImGuiTableFlags_BordersInnerV;
+    if (flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY))
+        flags &= ~(ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoHostExtendY);
+    if (flags & ImGuiTableFlags_NoBordersInBodyUntilResize)
+        flags &= ~ImGuiTableFlags_NoBordersInBody;
+    if (!(flags & (ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Sortable)))
+        flags |= ImGuiTableFlags_NoSavedSettings;
+    if (outer_window->RootWindow->Flags & ImGuiWindowFlags_NoSavedSettings)
+        flags |= ImGuiTableFlags_NoSavedSettings;
+    return flags;
 }
 
-static short ImMax__d747398678(short lhs, short rhs)
+void imgui_i_begin_columns(ImGuiContext *imgui_c89_ctx, const char * str_id, int columns_count, ImGuiOldColumnFlags flags)
 {
-    return (lhs >= rhs) ? lhs : rhs;
-}
-
-static ImGuiTableFlags TableFixFlags__6e08bf5957(ImGuiTableFlags flags, ImGuiWindow * outer_window)
-{
-
-if (!(flags & ImGuiTableFlags_SizingMask_))
-    flags |= (flags & ImGuiTableFlags_ScrollX) ||
-        (outer_window->Flags & ImGuiWindowFlags_AlwaysAutoResize) ?
-        ImGuiTableFlags_SizingFixedFit : ImGuiTableFlags_SizingStretchSame;
-if ((flags & ImGuiTableFlags_SizingMask_) == ImGuiTableFlags_SizingFixedSame)
-    flags |= ImGuiTableFlags_NoKeepColumnsVisible;
-if (flags & ImGuiTableFlags_Resizable)
-    flags |= ImGuiTableFlags_BordersInnerV;
-if (flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY))
-    flags &= ~(ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoHostExtendY);
-if (flags & ImGuiTableFlags_NoBordersInBodyUntilResize)
-    flags &= ~ImGuiTableFlags_NoBordersInBody;
-if (!(flags & (ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Sortable)))
-    flags |= ImGuiTableFlags_NoSavedSettings;
-if (outer_window->RootWindow->Flags & ImGuiWindowFlags_NoSavedSettings)
-    flags |= ImGuiTableFlags_NoSavedSettings;
-return flags;
-}
-
-void imgui_i_im_gui_begin_columns(ImGuiContext *imgui_c89_ctx, const char * str_id, int columns_count, ImGuiOldColumnFlags flags)
-{
-
-ImGuiWindow *window;
-ImGuiOldColumns *columns;
-ImGuiOldColumnData *column;
-ImGuiID id;
-float padding;
-float padding_over_window;
-float half_clip_extend;
-float max_1;
-float max_2;
-float offset_0;
-float offset_1;
-float clip_x1;
-float clip_x2;
-int n;
-window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
-id = imgui_i_im_gui_get_columns_id(imgui_c89_ctx, str_id, columns_count);
-columns = imgui_i_im_gui_find_or_create_columns(imgui_c89_ctx, window, id);
-columns->Current = 0;
-columns->Count = columns_count;
-columns->Flags = flags;
-window->DC.CurrentColumns = columns;
-window->DC.NavIsScrollPushableX = 0;
-columns->HostCursorPosY = window->DC.CursorPos.y;
-columns->HostCursorMaxPosX = window->DC.CursorMaxPos.x;
-columns->HostInitialClipRect = window->ClipRect;
-columns->HostBackupParentWorkRect = window->ParentWorkRect;
-window->ParentWorkRect = window->WorkRect;
-padding = imgui_c89_ctx->Style.ItemSpacing.x;
-padding_over_window = ImMax__3c7b1bb7d1(padding - window->WindowPadding.x, 0.0f);
-half_clip_extend = ImTrunc__ae7a4018f8(ImMax__3c7b1bb7d1(window->WindowPadding.x * 0.5f,
-    window->WindowBorderSize));
-max_1 = window->WorkRect.Max.x + padding - padding_over_window;
-max_2 = window->WorkRect.Max.x + half_clip_extend;
-columns->OffMinX = window->DC.Indent.x - padding + padding_over_window;
-columns->OffMaxX = ImMax__3c7b1bb7d1(ImMin__f04263da73(max_1, max_2) - window->Pos.x,
-    columns->OffMinX + 1.0f);
-columns->LineMinY = columns->LineMaxY = window->DC.CursorPos.y;
-if (columns->Columns.Size && columns->Columns.Size != columns_count + 1)
-    columns->Columns.Size = 0;
-columns->IsFirstFrame = columns->Columns.Size == 0;
-if (!columns->Columns.Size)
-{
-    columns->Columns.Data = imgui_c89_vector_reserve(imgui_c89_ctx,
-        columns->Columns.Data, 0, &columns->Columns.Capacity,
-        columns_count + 1, sizeof(*columns->Columns.Data), 0);
-    for (n = 0; n <= columns_count; n++)
+    ImGuiWindow *window;
+    ImGuiOldColumns *columns;
+    ImGuiOldColumnData *column;
+    ImGuiID id;
+    float padding;
+    float padding_over_window;
+    float half_clip_extend;
+    float max_1;
+    float max_2;
+    float offset_0;
+    float offset_1;
+    float clip_x1;
+    float clip_x2;
+    int n;
+    window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
+    if (!(columns_count >= 1))
+        imgui_c89_assert_id(89);
+    if (window->DC.CurrentColumns != 0)
+        imgui_c89_assert_id(90);
+    /* Acquire the persistent legacy-column state and configure its first cell. */
+    id = imgui_i_get_columns_id(imgui_c89_ctx, str_id, columns_count);
+    columns = imgui_i_find_or_create_columns(imgui_c89_ctx, window, id);
+    if (columns->ID != id)
+        imgui_c89_assert_id(91);
+    columns->Current = 0;
+    columns->Count = columns_count;
+    columns->Flags = flags;
+    window->DC.CurrentColumns = columns;
+    window->DC.NavIsScrollPushableX = 0;
+    columns->HostCursorPosY = window->DC.CursorPos.y;
+    columns->HostCursorMaxPosX = window->DC.CursorMaxPos.x;
+    columns->HostInitialClipRect = window->ClipRect;
+    columns->HostBackupParentWorkRect = window->ParentWorkRect;
+    window->ParentWorkRect = window->WorkRect;
+    padding = imgui_c89_ctx->Style.ItemSpacing.x;
+    padding_over_window = ImMax__3c7b1bb7d1(padding - window->WindowPadding.x, 0.0f);
+    half_clip_extend = ImTrunc__ae7a4018f8(ImMax__3c7b1bb7d1(window->WindowPadding.x * 0.5f,
+        window->WindowBorderSize));
+    max_1 = window->WorkRect.Max.x + padding - padding_over_window;
+    max_2 = window->WorkRect.Max.x + half_clip_extend;
+    columns->OffMinX = window->DC.Indent.x - padding + padding_over_window;
+    columns->OffMaxX = ImMax__3c7b1bb7d1(ImMin__f04263da73(max_1, max_2) - window->Pos.x,
+        columns->OffMinX + 1.0f);
+    columns->LineMinY = columns->LineMaxY = window->DC.CursorPos.y;
+    if (columns->Columns.Size && columns->Columns.Size != columns_count + 1)
+        columns->Columns.Size = 0;
+    columns->IsFirstFrame = columns->Columns.Size == 0;
+    if (!columns->Columns.Size)
     {
-        column = &columns->Columns.Data[n];
-        memset(column, 0, sizeof(*column));
-        column->OffsetNorm = n / (float)columns_count;
+        columns->Columns.Data = imgui_c89_vector_reserve(imgui_c89_ctx,
+            columns->Columns.Data, 0, &columns->Columns.Capacity,
+            columns_count + 1, sizeof(*columns->Columns.Data), 0);
+        for (n = 0; n <= columns_count; n++)
+        {
+            column = &columns->Columns.Data[n];
+            memset(column, 0, sizeof(*column));
+            column->OffsetNorm = n / (float)columns_count;
+        }
+        columns->Columns.Size = columns_count + 1;
     }
-    columns->Columns.Size = columns_count + 1;
-}
-for (n = 0; n < columns_count; n++)
-{
-    column = &columns->Columns.Data[n];
-    clip_x1 = (float)(int)(window->Pos.x +
-        imgui_get_column_offset(imgui_c89_ctx, n) + 0.5f);
-    clip_x2 = (float)(int)(window->Pos.x +
-        imgui_get_column_offset(imgui_c89_ctx, n + 1) - 1.0f + 0.5f);
-    column->ClipRect.Min.x = clip_x1;
-    column->ClipRect.Min.y = -3.402823466e38f;
-    column->ClipRect.Max.x = clip_x2;
-    column->ClipRect.Max.y = 3.402823466e38f;
-    ImRect_ClipWithFull__ea61dd1d9a(&column->ClipRect, &window->ClipRect);
-}
-if (columns->Count > 1)
-{
-    imgui_draw_list_splitter_split(imgui_c89_ctx, &columns->Splitter, window->DrawList,
-        1 + columns->Count);
-    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, &columns->Splitter, window->DrawList, 1);
-    imgui_i_im_gui_push_column_clip_rect(imgui_c89_ctx, 0);
-}
-offset_0 = imgui_get_column_offset(imgui_c89_ctx, columns->Current);
-offset_1 = imgui_get_column_offset(imgui_c89_ctx, columns->Current + 1);
-imgui_push_item_width(imgui_c89_ctx, (offset_1 - offset_0) * 0.65f);
-window->DC.ColumnsOffset.x = padding_over_window;
-window->DC.CursorPos.x = (float)(int)(window->Pos.x +
-    window->DC.Indent.x + window->DC.ColumnsOffset.x);
-window->WorkRect.Max.x = window->Pos.x + offset_1 - padding;
-window->WorkRect.Max.y = window->ContentRegionRect.Max.y;
+    for (n = 0; n < columns_count; n++)
+    {
+        /* Compute a per-column clip rectangle before splitting draw channels. */
+        column = &columns->Columns.Data[n];
+        clip_x1 = (float)(int)(window->Pos.x +
+            imgui_get_column_offset(imgui_c89_ctx, n) + 0.5f);
+        clip_x2 = (float)(int)(window->Pos.x +
+            imgui_get_column_offset(imgui_c89_ctx, n + 1) - 1.0f + 0.5f);
+        column->ClipRect.Min.x = clip_x1;
+        column->ClipRect.Min.y = -3.402823466e38f;
+        column->ClipRect.Max.x = clip_x2;
+        column->ClipRect.Max.y = 3.402823466e38f;
+        ImRect_ClipWithFull__ea61dd1d9a(&column->ClipRect, &window->ClipRect);
+    }
+    if (columns->Count > 1)
+    {
+        imgui_draw_list_splitter_split(imgui_c89_ctx, &columns->Splitter, window->DrawList,
+            1 + columns->Count);
+        imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, &columns->Splitter, window->DrawList, 1);
+        imgui_i_push_column_clip_rect(imgui_c89_ctx, 0);
+    }
+    offset_0 = imgui_get_column_offset(imgui_c89_ctx, columns->Current);
+    offset_1 = imgui_get_column_offset(imgui_c89_ctx, columns->Current + 1);
+    imgui_push_item_width(imgui_c89_ctx, (offset_1 - offset_0) * 0.65f);
+    window->DC.ColumnsOffset.x = padding_over_window;
+    window->DC.CursorPos.x = (float)(int)(window->Pos.x +
+        window->DC.Indent.x + window->DC.ColumnsOffset.x);
+    window->WorkRect.Max.x = window->Pos.x + offset_1 - padding;
+    window->WorkRect.Max.y = window->ContentRegionRect.Max.y;
 }
 
 unsigned char imgui_begin_table(ImGuiContext *imgui_c89_ctx, const char * str_id, int columns_count, ImGuiTableFlags flags, const ImVec2 * outer_size, float inner_width)
 {
-
-ImGuiID id;
-id = imgui_get_id_string_none(imgui_c89_ctx, str_id);
-return imgui_i_im_gui_begin_table_ex(imgui_c89_ctx, str_id, id, columns_count, flags,
-    outer_size, inner_width);
+    ImGuiID id;
+    id = imgui_get_id_string_none(imgui_c89_ctx, str_id);
+    return imgui_i_begin_table_ex(imgui_c89_ctx, str_id, id, columns_count, flags,
+        outer_size, inner_width);
 }
 
-unsigned char imgui_i_im_gui_begin_table_ex(ImGuiContext *imgui_c89_ctx, const char * name, ImGuiID id, int columns_count, ImGuiTableFlags flags, const ImVec2 * outer_size, float inner_width)
+unsigned char imgui_i_begin_table_ex(ImGuiContext *imgui_c89_ctx, const char * name, ImGuiID id, int columns_count, ImGuiTableFlags flags, const ImVec2 * outer_size, float inner_width)
 {
+    ImGuiContext *g;
+    ImGuiWindow *outer_window;
+    ImGuiWindow *inner_window;
+    ImGuiTable *table;
+    ImGuiTableTempData *temp_data;
+    ImGuiTableInstanceData *table_instance;
+    ImGuiTableColumn *column;
+    ImGuiTableColumn *src_column;
+    ImVec2 avail_size;
+    ImVec2 calculated_outer_size;
+    ImVec2 actual_outer_size;
+    ImVec2 override_content_size;
+    ImVec2 next_content_size;
+    ImVec2 zero_scroll;
+    ImRect outer_rect;
+    ImGuiID instance_id;
+    ImGuiID instances_seed;
+    ImGuiChildFlags child_flags;
+    ImGuiWindowFlags child_window_flags;
+    ImGuiTableFlags previous_flags;
+    int table_idx;
+    int previous_frame_active;
+    int instance_no;
+    int old_columns_count;
+    int n;
+    float border_size;
+    float inner_spacing_for_border;
+    float inner_spacing_explicit;
+    float inner_padding_explicit;
+    float outer_padding_for_border;
+    float outer_padding_explicit;
+    float width_auto;
+    float inactive_time;
+    unsigned char use_child_window;
+    unsigned char outer_window_is_measuring_size;
+    unsigned char is_new_table;
+    unsigned char pad_outer_x;
+    unsigned char pad_inner_x;
 
-ImGuiContext *g;
-ImGuiWindow *outer_window;
-ImGuiWindow *inner_window;
-ImGuiTable *table;
-ImGuiTableTempData *temp_data;
-ImGuiTableInstanceData *table_instance;
-ImGuiTableColumn *column;
-ImGuiTableColumn *src_column;
-ImVec2 avail_size;
-ImVec2 calculated_outer_size;
-ImVec2 actual_outer_size;
-ImVec2 override_content_size;
-ImVec2 next_content_size;
-ImVec2 zero_scroll;
-ImRect outer_rect;
-ImGuiTableTempData temp_data_value;
-ImGuiTableInstanceData instance_data_value;
-ImGuiID instance_id;
-ImGuiID instances_seed;
-ImGuiChildFlags child_flags;
-ImGuiWindowFlags child_window_flags;
-ImGuiTableFlags previous_flags;
-int table_idx;
-int previous_frame_active;
-int instance_no;
-int old_columns_count;
-int n;
-float border_size;
-float inner_spacing_for_border;
-float inner_spacing_explicit;
-float inner_padding_explicit;
-float outer_padding_for_border;
-float outer_padding_explicit;
-float width_auto;
-float inactive_time;
-unsigned char use_child_window;
-unsigned char outer_window_is_measuring_size;
-unsigned char is_new_table;
-unsigned char pad_outer_x;
-unsigned char pad_inner_x;
+    g = imgui_c89_ctx;
+    outer_window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
+    if (outer_window->SkipItems)
+        return 0;
 
-g = imgui_c89_ctx;
-outer_window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
-if (outer_window->SkipItems)
-    return 0;
-
-if (!(columns_count > 0 && columns_count < 512))
-    imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex", "imgui_tables.cpp",
-                         329, "columns_count > 0 && columns_count < IMGUI_TABLE_MAX_COLUMNS");
-if ((flags & ImGuiTableFlags_ScrollX) && !(inner_width >= 0.0f))
-    imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex", "imgui_tables.cpp",
-                         331, "inner_width >= 0.0f");
-
-use_child_window = (unsigned char)
-    ((flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY)) != 0);
-avail_size = imgui_get_content_region_avail(imgui_c89_ctx);
-calculated_outer_size = imgui_i_im_gui_calc_item_size(
-    imgui_c89_ctx, *outer_size,
-    ImMax__3c7b1bb7d1(avail_size.x, 4.0f),
-    use_child_window
-        ? ImMax__3c7b1bb7d1(avail_size.y, 4.0f)
-        : 0.0f);
-actual_outer_size = ImTrunc__735393dfb3(&calculated_outer_size);
-outer_rect.Min = outer_window->DC.CursorPos;
-outer_rect.Max.x = outer_rect.Min.x + actual_outer_size.x;
-outer_rect.Max.y = outer_rect.Min.y + actual_outer_size.y;
-outer_window_is_measuring_size = (unsigned char)
-    (outer_window->AutoFitFramesX > 0 || outer_window->AutoFitFramesY > 0);
-if (use_child_window &&
-    imgui_i_im_gui_is_clipped_ex(imgui_c89_ctx, &outer_rect, 0) &&
-    !outer_window_is_measuring_size)
-{
-    ImGui_ItemSize__8033f34120(imgui_c89_ctx, &outer_rect, -1.0f);
-    imgui_i_im_gui_item_add(imgui_c89_ctx, &outer_rect, id, 0, ImGuiItemFlags_None);
-    ImGuiNextWindowData_ClearFlags__5c145439ca(&g->NextWindowData);
-    return 0;
-}
-
-if (g->DebugBreakInTable == id)
-    imgui_c89_debugtrap();
-
-table = ImPool_ImGuiTable__GetOrAddByKey__e67404e771(imgui_c89_ctx, &g->Tables, id);
-table_idx = ImPool_ImGuiTable__GetIndex__9187fcfe0b(&g->Tables, table);
-g->TablesTempDataStacked++;
-if (g->TablesTempDataStacked > g->TablesTempData.Size)
-{
-    ImGuiTableTempData_ImGuiTableTempData__94a2a9cfc9(&temp_data_value);
-    ImVector_ImGuiTableTempData__resize__52dad32fae(imgui_c89_ctx, &g->TablesTempData,
-                       g->TablesTempDataStacked, &temp_data_value);
-}
-temp_data = &g->TablesTempData.Data[g->TablesTempDataStacked - 1];
-table->TempData = temp_data;
-temp_data->TableIndex = table_idx;
-temp_data->ReconcileColumnsRequests.Size = 0;
-table->DrawSplitter = &temp_data->DrawSplitter;
-imgui_draw_list_splitter_clear(table->DrawSplitter);
-
-table->IsDefaultSizingPolicy = (unsigned char)
-    ((flags & ImGuiTableFlags_SizingMask_) == 0);
-flags = TableFixFlags__6e08bf5957(flags, outer_window);
-
-previous_frame_active = table->LastFrameActive;
-instance_no = previous_frame_active != g->FrameCount
-    ? 0 : table->InstanceCurrent + 1;
-previous_flags = table->Flags;
-is_new_table = (unsigned char)(previous_frame_active == -1);
-table->ID = id;
-table->Flags = flags;
-table->LastFrameActive = g->FrameCount;
-table->OuterWindow = outer_window;
-table->InnerWindow = outer_window;
-table->ColumnsCount = columns_count;
-table->IsLayoutLocked = 0;
-table->InnerWidth = inner_width;
-table->NavLayer = (ImS8)outer_window->DC.NavLayerCurrent;
-temp_data->UserOuterSize = *outer_size;
-
-table->InstanceCurrent = (ImS16)instance_no;
-if (instance_no > 0)
-{
-    if (!(table->ColumnsCount == columns_count))
-        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
-                             "imgui_tables.cpp", 394,
-                             "BeginTable(): Cannot change columns count mid-frame while preserving same ID");
-    if (table->InstanceDataExtra.Size < instance_no)
-    {
-        ImGuiTableInstanceData_ImGuiTableInstanceData__2dcc41cc28(&instance_data_value);
-        ImVector_ImGuiTableInstanceData__push_back__1b1e857ab3(imgui_c89_ctx,
-                                  &table->InstanceDataExtra,
-                                  &instance_data_value);
-    }
-    instances_seed = imgui_i_im_gui_get_id_with_seed_string_string_id(
-        imgui_c89_ctx, "##Instances", 0, id);
-    instance_id = imgui_i_im_gui_get_id_with_seed_int_id(
-        imgui_c89_ctx, instance_no, instances_seed);
-}
-else
-{
-    instance_id = id;
-}
-table_instance = ImGui_TableGetInstanceData__27767b51c6(table, table->InstanceCurrent);
-table_instance->TableInstanceID = instance_id;
-
-if (use_child_window)
-{
-    override_content_size.x = 3.40282347E+38f;
-    override_content_size.y = 3.40282347E+38f;
-    if ((flags & ImGuiTableFlags_ScrollX) && !(flags & ImGuiTableFlags_ScrollY))
-        override_content_size.y = 1.17549435E-38f;
-    if ((flags & ImGuiTableFlags_ScrollX) && inner_width > 0.0f)
-        override_content_size.x = inner_width;
-    if (override_content_size.x != 3.40282347E+38f ||
-        override_content_size.y != 3.40282347E+38f)
-    {
-        next_content_size.x = override_content_size.x != 3.40282347E+38f
-            ? override_content_size.x : 0.0f;
-        next_content_size.y = override_content_size.y != 3.40282347E+38f
-            ? override_content_size.y : 0.0f;
-        imgui_set_next_window_content_size(imgui_c89_ctx, &next_content_size);
-    }
-    if ((previous_flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY)) == 0 &&
-        (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasScroll) == 0)
-    {
-        zero_scroll.x = 0.0f;
-        zero_scroll.y = 0.0f;
-        imgui_set_next_window_scroll(imgui_c89_ctx, &zero_scroll);
-    }
-    child_flags = (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasChildFlags)
-        ? g->NextWindowData.ChildFlags : ImGuiChildFlags_None;
-    child_window_flags =
-        (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasWindowFlags)
-        ? g->NextWindowData.WindowFlags : ImGuiWindowFlags_None;
+    if (!(columns_count > 0 && columns_count < 512))
+        imgui_c89_assert_id(3);
     if (flags & ImGuiTableFlags_ScrollX)
-        child_window_flags |= ImGuiWindowFlags_HorizontalScrollbar;
-    imgui_i_im_gui_begin_child_ex(imgui_c89_ctx, name, instance_id,
-                     &actual_outer_size, child_flags, child_window_flags);
-    table->InnerWindow = g->CurrentWindow;
-    table->WorkRect = table->InnerWindow->WorkRect;
-    table->OuterRect = ImGuiWindow_Rect__460e84dccd(table->InnerWindow);
-    table->InnerRect = table->InnerWindow->InnerRect;
-    if (!(table->InnerWindow->WindowPadding.x == 0.0f &&
-          table->InnerWindow->WindowPadding.y == 0.0f &&
-          table->InnerWindow->WindowBorderSize == 0.0f))
-        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
-                             "imgui_tables.cpp", 440,
-                             "table inner window must have zero padding and border");
-    if (table->InnerWindow->SkipItems && outer_window_is_measuring_size)
-        table->InnerWindow->SkipItems = 0;
-    if (instance_no == 0)
+        if (!(inner_width >= 0.0f))
+            imgui_c89_assert_id(4);
+
+    /* Scrolling tables may be rejected before acquiring pooled table state. */
+    use_child_window = (unsigned char)
+        ((flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY)) != 0);
+    avail_size = imgui_get_content_region_avail(imgui_c89_ctx);
+    calculated_outer_size = imgui_i_calc_item_size(
+        imgui_c89_ctx, *outer_size,
+        ImMax__3c7b1bb7d1(avail_size.x, 4.0f),
+        use_child_window
+            ? ImMax__3c7b1bb7d1(avail_size.y, 4.0f)
+            : 0.0f);
+    actual_outer_size = ImTrunc__735393dfb3(&calculated_outer_size);
+    outer_rect.Min = outer_window->DC.CursorPos;
+    outer_rect.Max.x = outer_rect.Min.x + actual_outer_size.x;
+    outer_rect.Max.y = outer_rect.Min.y + actual_outer_size.y;
+    outer_window_is_measuring_size = (unsigned char)
+        (outer_window->AutoFitFramesX > 0 || outer_window->AutoFitFramesY > 0);
+    if (use_child_window &&
+        imgui_i_is_clipped_ex(imgui_c89_ctx, &outer_rect, 0) &&
+        !outer_window_is_measuring_size)
     {
-        table->HasScrollbarYPrev = table->HasScrollbarYCurr;
+        ImGui_ItemSize__8033f34120(imgui_c89_ctx, &outer_rect, -1.0f);
+        imgui_i_item_add(imgui_c89_ctx, &outer_rect, id, 0, ImGuiItemFlags_None);
+        ImGuiNextWindowData_ClearFlags__5c145439ca(&g->NextWindowData);
+        return 0;
+    }
+
+    if (g->DebugBreakInTable == id)
+        imgui_c89_debugtrap();
+
+    /* Acquire persistent table state and a temporary frame-local work record. */
+    table = imgui_table_pool_get_or_add(imgui_c89_ctx, &g->Tables, id);
+    table_idx = imgui_table_pool_index(&g->Tables, table);
+    g->TablesTempDataStacked++;
+    if (g->TablesTempDataStacked > g->TablesTempDataSize)
+    {
+        ImGuiTableTempData temp_data_value = {0};
+        temp_data_value.LastTimeActive = -1.0f;
+        g->TablesTempData = imgui_c89_vector_resize_fill(
+            imgui_c89_ctx, g->TablesTempData,
+            &g->TablesTempDataSize, &g->TablesTempDataCapacity,
+            g->TablesTempDataStacked, sizeof(*g->TablesTempData),
+            &temp_data_value);
+    }
+    temp_data = &g->TablesTempData[g->TablesTempDataStacked - 1];
+    table->TempData = temp_data;
+    temp_data->TableIndex = table_idx;
+    temp_data->ReconcileColumnsRequestsSize = 0;
+    table->DrawSplitter = &temp_data->DrawSplitter;
+    imgui_draw_list_splitter_clear(table->DrawSplitter);
+
+    table->IsDefaultSizingPolicy = (unsigned char)
+        ((flags & ImGuiTableFlags_SizingMask_) == 0);
+    flags = imgui_i_table_fix_flags(flags, outer_window);
+
+    previous_frame_active = table->LastFrameActive;
+    instance_no = previous_frame_active != g->FrameCount
+        ? 0 : table->InstanceCurrent + 1;
+    previous_flags = table->Flags;
+    is_new_table = (unsigned char)(previous_frame_active == -1);
+    table->ID = id;
+    table->Flags = flags;
+    table->LastFrameActive = g->FrameCount;
+    table->OuterWindow = outer_window;
+    table->InnerWindow = outer_window;
+    table->ColumnsCount = columns_count;
+    table->IsLayoutLocked = 0;
+    table->InnerWidth = inner_width;
+    table->NavLayer = (ImS8)outer_window->DC.NavLayerCurrent;
+    temp_data->UserOuterSize = *outer_size;
+
+    table->InstanceCurrent = (ImS16)instance_no;
+    if (instance_no > 0)
+    {
+        if (!(table->ColumnsCount == columns_count))
+            imgui_c89_assert_id(5);
+        if (table->InstanceDataExtraSize < instance_no)
+        {
+            ImGuiTableInstanceData instance_data_value = {0};
+            instance_data_value.HoveredRowLast = -1;
+            instance_data_value.HoveredRowNext = -1;
+            table->InstanceDataExtra = imgui_c89_vector_push_back(
+                imgui_c89_ctx, table->InstanceDataExtra,
+                &table->InstanceDataExtraSize,
+                &table->InstanceDataExtraCapacity,
+                sizeof(*table->InstanceDataExtra), &instance_data_value);
+        }
+        instances_seed = imgui_i_get_id_with_seed_string_string_id(
+            imgui_c89_ctx, "##Instances", 0, id);
+        instance_id = imgui_i_get_id_with_seed_int_id(
+            imgui_c89_ctx, instance_no, instances_seed);
+    }
+    else
+    {
+        instance_id = id;
+    }
+    table_instance = ImGui_TableGetInstanceData__27767b51c6(table, table->InstanceCurrent);
+    table_instance->TableInstanceID = instance_id;
+
+    if (use_child_window)
+    {
+        override_content_size.x = 3.40282347E+38f;
+        override_content_size.y = 3.40282347E+38f;
+        if ((flags & ImGuiTableFlags_ScrollX) && !(flags & ImGuiTableFlags_ScrollY))
+            override_content_size.y = 1.17549435E-38f;
+        if ((flags & ImGuiTableFlags_ScrollX) && inner_width > 0.0f)
+            override_content_size.x = inner_width;
+        if (override_content_size.x != 3.40282347E+38f ||
+            override_content_size.y != 3.40282347E+38f)
+        {
+            next_content_size.x = override_content_size.x != 3.40282347E+38f
+                ? override_content_size.x : 0.0f;
+            next_content_size.y = override_content_size.y != 3.40282347E+38f
+                ? override_content_size.y : 0.0f;
+            imgui_set_next_window_content_size(imgui_c89_ctx, &next_content_size);
+        }
+        if ((previous_flags & (ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY)) == 0 &&
+            (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasScroll) == 0)
+        {
+            zero_scroll.x = 0.0f;
+            zero_scroll.y = 0.0f;
+            imgui_set_next_window_scroll(imgui_c89_ctx, &zero_scroll);
+        }
+        child_flags = (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasChildFlags)
+            ? g->NextWindowData.ChildFlags : ImGuiChildFlags_None;
+        child_window_flags =
+            (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasWindowFlags)
+            ? g->NextWindowData.WindowFlags : ImGuiWindowFlags_None;
+        if (flags & ImGuiTableFlags_ScrollX)
+            child_window_flags |= ImGuiWindowFlags_HorizontalScrollbar;
+        imgui_i_begin_child_ex(imgui_c89_ctx, name, instance_id,
+                         &actual_outer_size, child_flags, child_window_flags);
+        table->InnerWindow = g->CurrentWindow;
+        table->WorkRect = table->InnerWindow->WorkRect;
+        table->OuterRect = ImGuiWindow_Rect__460e84dccd(table->InnerWindow);
+        table->InnerRect = table->InnerWindow->InnerRect;
+        if (!(table->InnerWindow->WindowPadding.x == 0.0f &&
+              table->InnerWindow->WindowPadding.y == 0.0f &&
+              table->InnerWindow->WindowBorderSize == 0.0f))
+            imgui_c89_assert_id(6);
+        if (table->InnerWindow->SkipItems && outer_window_is_measuring_size)
+            table->InnerWindow->SkipItems = 0;
+        if (instance_no == 0)
+        {
+            table->HasScrollbarYPrev = table->HasScrollbarYCurr;
+            table->HasScrollbarYCurr = 0;
+        }
+        table->HasScrollbarYCurr = (unsigned char)
+            (table->HasScrollbarYCurr | table->InnerWindow->ScrollbarY);
+    }
+    else
+    {
+        table->WorkRect = outer_rect;
+        table->OuterRect = outer_rect;
+        table->InnerRect = outer_rect;
+        table->HasScrollbarYPrev = 0;
         table->HasScrollbarYCurr = 0;
+        table->InnerWindow->DC.TreeDepth++;
     }
-    table->HasScrollbarYCurr = (unsigned char)
-        (table->HasScrollbarYCurr | table->InnerWindow->ScrollbarY);
-}
-else
-{
-    table->WorkRect = outer_rect;
-    table->OuterRect = outer_rect;
-    table->InnerRect = outer_rect;
-    table->HasScrollbarYPrev = 0;
-    table->HasScrollbarYCurr = 0;
-    table->InnerWindow->DC.TreeDepth++;
-}
 
-imgui_i_im_gui_push_override_id(imgui_c89_ctx, id);
-if (instance_no > 0)
-    imgui_i_im_gui_push_override_id(imgui_c89_ctx, instance_id);
+    imgui_i_push_override_id(imgui_c89_ctx, id);
+    if (instance_no > 0)
+        imgui_i_push_override_id(imgui_c89_ctx, instance_id);
 
-inner_window = table->InnerWindow;
-table->HostIndentX = inner_window->DC.Indent.x;
-table->HostClipRect = inner_window->ClipRect;
-table->HostSkipItems = inner_window->SkipItems;
-temp_data->WindowID = inner_window->ID;
-temp_data->HostBackupWorkRect = inner_window->WorkRect;
-temp_data->HostBackupParentWorkRect = inner_window->ParentWorkRect;
-temp_data->HostBackupColumnsOffset = outer_window->DC.ColumnsOffset;
-temp_data->HostBackupPrevLineSize = inner_window->DC.PrevLineSize;
-temp_data->HostBackupCurrLineSize = inner_window->DC.CurrLineSize;
-temp_data->HostBackupCursorMaxPos = inner_window->DC.CursorMaxPos;
-temp_data->HostBackupItemWidth = outer_window->DC.ItemWidth;
-temp_data->HostBackupItemWidthStackSize =
-    outer_window->DC.ItemWidthStack.Size;
-inner_window->DC.PrevLineSize.x = 0.0f;
-inner_window->DC.PrevLineSize.y = 0.0f;
-inner_window->DC.CurrLineSize.x = 0.0f;
-inner_window->DC.CurrLineSize.y = 0.0f;
+    /* Back up host-window state modified while the table is current. */
+    inner_window = table->InnerWindow;
+    table->HostIndentX = inner_window->DC.Indent.x;
+    table->HostClipRect = inner_window->ClipRect;
+    table->HostSkipItems = inner_window->SkipItems;
+    temp_data->WindowID = inner_window->ID;
+    temp_data->HostBackupWorkRect = inner_window->WorkRect;
+    temp_data->HostBackupParentWorkRect = inner_window->ParentWorkRect;
+    temp_data->HostBackupColumnsOffset = outer_window->DC.ColumnsOffset;
+    temp_data->HostBackupPrevLineSize = inner_window->DC.PrevLineSize;
+    temp_data->HostBackupCurrLineSize = inner_window->DC.CurrLineSize;
+    temp_data->HostBackupCursorMaxPos = inner_window->DC.CursorMaxPos;
+    temp_data->HostBackupItemWidth = outer_window->DC.ItemWidth;
+    temp_data->HostBackupItemWidthStackSize =
+        outer_window->DC.ItemWidthStack.Size;
+    inner_window->DC.PrevLineSize.x = 0.0f;
+    inner_window->DC.PrevLineSize.y = 0.0f;
+    inner_window->DC.CurrLineSize.x = 0.0f;
+    inner_window->DC.CurrLineSize.y = 0.0f;
 
-if (inner_window != outer_window)
-{
-    border_size = 1.0f;
-    if (flags & ImGuiTableFlags_BordersOuterV)
+    if (inner_window != outer_window)
     {
-        table->HostClipRect.Min.x = ImMin__f04263da73(
-            table->HostClipRect.Min.x + border_size,
-            table->HostClipRect.Max.x);
-        if (inner_window->DecoOuterSizeX2 == 0.0f)
-            table->HostClipRect.Max.x = ImMax__3c7b1bb7d1(
-                table->HostClipRect.Max.x - border_size,
-                table->HostClipRect.Min.x);
-    }
-    if (flags & ImGuiTableFlags_BordersOuterH)
-    {
-        table->HostClipRect.Min.y = ImMin__f04263da73(
-            table->HostClipRect.Min.y + border_size,
-            table->HostClipRect.Max.y);
-        if (inner_window->DecoOuterSizeY2 == 0.0f)
-            table->HostClipRect.Max.y = ImMax__3c7b1bb7d1(
-                table->HostClipRect.Max.y - border_size,
-                table->HostClipRect.Min.y);
-    }
-}
-
-pad_outer_x = (unsigned char)
-    ((flags & ImGuiTableFlags_NoPadOuterX) ? 0 :
-     (flags & ImGuiTableFlags_PadOuterX) ? 1 :
-     (flags & ImGuiTableFlags_BordersOuterV) != 0);
-pad_inner_x = (unsigned char)((flags & ImGuiTableFlags_NoPadInnerX) ? 0 : 1);
-inner_spacing_for_border = (flags & ImGuiTableFlags_BordersInnerV)
-    ? 1.0f : 0.0f;
-inner_spacing_explicit =
-    pad_inner_x && (flags & ImGuiTableFlags_BordersInnerV) == 0
-    ? g->Style.CellPadding.x : 0.0f;
-inner_padding_explicit =
-    pad_inner_x && (flags & ImGuiTableFlags_BordersInnerV) != 0
-    ? g->Style.CellPadding.x : 0.0f;
-table->CellSpacingX1 = inner_spacing_explicit + inner_spacing_for_border;
-table->CellSpacingX2 = inner_spacing_explicit;
-table->CellPaddingX = inner_padding_explicit;
-outer_padding_for_border = (flags & ImGuiTableFlags_BordersOuterV)
-    ? 1.0f : 0.0f;
-outer_padding_explicit = pad_outer_x ? g->Style.CellPadding.x : 0.0f;
-table->OuterPaddingX = outer_padding_for_border + outer_padding_explicit
-    - table->CellPaddingX;
-
-table->CurrentColumn = -1;
-table->CurrentRow = -1;
-table->RowBgColorCounter = 0;
-table->LastRowFlags = ImGuiTableRowFlags_None;
-table->InnerClipRect = inner_window == outer_window
-    ? table->WorkRect : inner_window->ClipRect;
-ImRect_ClipWith__be335bbfd9(&table->InnerClipRect, &table->WorkRect);
-ImRect_ClipWithFull__ea61dd1d9a(&table->InnerClipRect, &table->HostClipRect);
-table->InnerClipRect.Max.y = (flags & ImGuiTableFlags_NoHostExtendY)
-    ? ImMin__f04263da73(table->InnerClipRect.Max.y,
-                   inner_window->WorkRect.Max.y)
-    : table->HostClipRect.Max.y;
-table->RowPosY1 = table->WorkRect.Min.y;
-table->RowPosY2 = table->WorkRect.Min.y;
-table->RowTextBaseline = 0.0f;
-table->RowCellPaddingY = 0.0f;
-table->FreezeRowsRequest = 0;
-table->FreezeRowsCount = 0;
-table->FreezeColumnsRequest = 0;
-table->FreezeColumnsCount = 0;
-table->IsUnfrozenRows = 1;
-table->DeclColumnsCount = 0;
-table->AngledHeadersCount = 0;
-if (previous_frame_active + 1 < g->FrameCount)
-    table->IsActiveIdInTable = 0;
-table->AngledHeadersHeight = 0.0f;
-temp_data->AngledHeadersExtraWidth = 0.0f;
-
-table->BorderColorStrong = imgui_get_color_u32_col_float(
-    imgui_c89_ctx, ImGuiCol_TableBorderStrong, 1.0f);
-table->BorderColorLight = imgui_get_color_u32_col_float(
-    imgui_c89_ctx, ImGuiCol_TableBorderLight, 1.0f);
-
-g->CurrentTable = table;
-inner_window->DC.NavIsScrollPushableX = 0;
-outer_window->DC.CurrentTableIdx = table_idx;
-if (inner_window != outer_window)
-    inner_window->DC.CurrentTableIdx = table_idx;
-
-if ((previous_flags & ImGuiTableFlags_Reorderable) &&
-    (flags & ImGuiTableFlags_Reorderable) == 0)
-    table->IsResetDisplayOrderRequest = 1;
-
-if (table_idx >= g->TablesLastTimeActive.Size)
-{
-    inactive_time = -1.0f;
-    ImVector_float__resize__8e3f413a04(imgui_c89_ctx, &g->TablesLastTimeActive,
-                           table_idx + 1, &inactive_time);
-}
-g->TablesLastTimeActive.Data[table_idx] = (float)g->Time;
-temp_data->LastTimeActive = (float)g->Time;
-table->MemoryCompacted = 0;
-
-old_columns_count = ImSpan_ImGuiTableColumn__size__26d3756bd7(&table->Columns);
-if (old_columns_count != 0 && old_columns_count != columns_count)
-{
-    if (g->DebugLogFlags & ImGuiDebugLogFlags_EventTable)
-        imgui_i_im_gui_debug_log(imgui_c89_ctx,
-            "[table] Table 0x%08X column count %d -> %d, recreating storage.\n",
-            table->ID, old_columns_count, columns_count);
-    if (!(temp_data->OldColumnsRawData == 0))
-        imgui_c89_assert_rtn("imgui_i_im_gui_begin_table_ex",
-                             "imgui_tables.cpp", 574,
-                             "temp_data->OldColumnsRawData == NULL");
-    temp_data->OldColumnsRawData = table->RawData;
-    temp_data->OldColumnsData = table->Columns;
-    src_column = temp_data->OldColumnsData.Data;
-    while (src_column != temp_data->OldColumnsData.DataEnd)
-    {
-        src_column->IsNeedReconcileSrc = 1;
-        src_column++;
-    }
-    table->RawData = 0;
-}
-if (table->RawData == 0)
-{
-    imgui_i_im_gui_table_begin_init_memory(imgui_c89_ctx, table, columns_count);
-    table->IsInitializing = 1;
-}
-if (table->IsResetAllRequest)
-    imgui_i_im_gui_table_reset_settings(table);
-if (table->IsInitializing)
-{
-    if (is_new_table)
-    {
-        table->SettingsOffset = -1;
-        table->IsSettingsRequestLoad = 1;
-    }
-    table->IsSortSpecsDirty = 1;
-    table->IsSettingsDirty = 1;
-    table->IsReconcileMode = 0;
-    table->InstanceInteracted = -1;
-    table->ContextPopupColumn = -1;
-    table->ReorderColumn = -1;
-    table->ReorderColumnDstOrder = -1;
-    table->ResizedColumn = -1;
-    table->LastResizedColumn = -1;
-    table->AutoFitSingleColumn = -1;
-    table->HoveredColumnBody = -1;
-    table->HoveredColumnBorder = -1;
-    n = 0;
-    while (n < columns_count)
-    {
-        column = &table->Columns.Data[n];
-        if (temp_data->OldColumnsData.Data != 0 &&
-            n < (int)(temp_data->OldColumnsData.DataEnd -
-                      temp_data->OldColumnsData.Data))
+        border_size = 1.0f;
+        if (flags & ImGuiTableFlags_BordersOuterV)
         {
-            *column = temp_data->OldColumnsData.Data[n];
+            table->HostClipRect.Min.x = ImMin__f04263da73(
+                table->HostClipRect.Min.x + border_size,
+                table->HostClipRect.Max.x);
+            if (inner_window->DecoOuterSizeX2 == 0.0f)
+                table->HostClipRect.Max.x = ImMax__3c7b1bb7d1(
+                    table->HostClipRect.Max.x - border_size,
+                    table->HostClipRect.Min.x);
         }
-        else
+        if (flags & ImGuiTableFlags_BordersOuterH)
         {
-            width_auto = column->WidthAuto;
-            ImGuiTableColumn_ImGuiTableColumn__076012539a(column);
-            column->WidthAuto = width_auto;
-            column->IsPreserveWidthAuto = 1;
-            column->IsEnabled = 1;
-            column->IsUserEnabled = 1;
-            column->IsUserEnabledNextFrame = 1;
-            column->DisplayOrder = (ImGuiTableColumnIdx)n;
+            table->HostClipRect.Min.y = ImMin__f04263da73(
+                table->HostClipRect.Min.y + border_size,
+                table->HostClipRect.Max.y);
+            if (inner_window->DecoOuterSizeY2 == 0.0f)
+                table->HostClipRect.Max.y = ImMax__3c7b1bb7d1(
+                    table->HostClipRect.Max.y - border_size,
+                    table->HostClipRect.Min.y);
         }
-        table->DisplayOrderToIndex.Data[n] = column->DisplayOrder;
-        n++;
     }
-}
 
-if (table->IsSettingsRequestLoad)
-    imgui_i_im_gui_table_load_settings(imgui_c89_ctx, table);
+    pad_outer_x = (unsigned char)
+        ((flags & ImGuiTableFlags_NoPadOuterX) ? 0 :
+         (flags & ImGuiTableFlags_PadOuterX) ? 1 :
+         (flags & ImGuiTableFlags_BordersOuterV) != 0);
+    pad_inner_x = (unsigned char)((flags & ImGuiTableFlags_NoPadInnerX) ? 0 : 1);
+    inner_spacing_for_border = (flags & ImGuiTableFlags_BordersInnerV)
+        ? 1.0f : 0.0f;
+    inner_spacing_explicit =
+        pad_inner_x && (flags & ImGuiTableFlags_BordersInnerV) == 0
+        ? g->Style.CellPadding.x : 0.0f;
+    inner_padding_explicit =
+        pad_inner_x && (flags & ImGuiTableFlags_BordersInnerV) != 0
+        ? g->Style.CellPadding.x : 0.0f;
+    table->CellSpacingX1 = inner_spacing_explicit + inner_spacing_for_border;
+    table->CellSpacingX2 = inner_spacing_explicit;
+    table->CellPaddingX = inner_padding_explicit;
+    outer_padding_for_border = (flags & ImGuiTableFlags_BordersOuterV)
+        ? 1.0f : 0.0f;
+    outer_padding_explicit = pad_outer_x ? g->Style.CellPadding.x : 0.0f;
+    table->OuterPaddingX = outer_padding_for_border + outer_padding_explicit
+        - table->CellPaddingX;
 
-inner_window->SkipItems = 1;
-if (table->ColumnsNames.Buf.Size > 0)
-    table->ColumnsNames.Buf.Size = 0;
-return 1;
+    table->CurrentColumn = -1;
+    table->CurrentRow = -1;
+    table->RowBgColorCounter = 0;
+    table->LastRowFlags = ImGuiTableRowFlags_None;
+    table->InnerClipRect = inner_window == outer_window
+        ? table->WorkRect : inner_window->ClipRect;
+    ImRect_ClipWith__be335bbfd9(&table->InnerClipRect, &table->WorkRect);
+    ImRect_ClipWithFull__ea61dd1d9a(&table->InnerClipRect, &table->HostClipRect);
+    table->InnerClipRect.Max.y = (flags & ImGuiTableFlags_NoHostExtendY)
+        ? ImMin__f04263da73(table->InnerClipRect.Max.y,
+                       inner_window->WorkRect.Max.y)
+        : table->HostClipRect.Max.y;
+    table->RowPosY1 = table->WorkRect.Min.y;
+    table->RowPosY2 = table->WorkRect.Min.y;
+    table->RowTextBaseline = 0.0f;
+    table->RowCellPaddingY = 0.0f;
+    table->FreezeRowsRequest = 0;
+    table->FreezeRowsCount = 0;
+    table->FreezeColumnsRequest = 0;
+    table->FreezeColumnsCount = 0;
+    table->IsUnfrozenRows = 1;
+    table->DeclColumnsCount = 0;
+    table->AngledHeadersCount = 0;
+    if (previous_frame_active + 1 < g->FrameCount)
+        table->IsActiveIdInTable = 0;
+    table->AngledHeadersHeight = 0.0f;
+    temp_data->AngledHeadersExtraWidth = 0.0f;
+
+    table->BorderColorStrong = imgui_get_color_u32_col_float(
+        imgui_c89_ctx, ImGuiCol_TableBorderStrong, 1.0f);
+    table->BorderColorLight = imgui_get_color_u32_col_float(
+        imgui_c89_ctx, ImGuiCol_TableBorderLight, 1.0f);
+
+    g->CurrentTable = table;
+    inner_window->DC.NavIsScrollPushableX = 0;
+    outer_window->DC.CurrentTableIdx = table_idx;
+    if (inner_window != outer_window)
+        inner_window->DC.CurrentTableIdx = table_idx;
+
+    if ((previous_flags & ImGuiTableFlags_Reorderable) &&
+        (flags & ImGuiTableFlags_Reorderable) == 0)
+        table->IsResetDisplayOrderRequest = 1;
+
+        if (table_idx >= g->TablesLastTimeActive.Size)
+        {
+            inactive_time = -1.0f;
+            g->TablesLastTimeActive.Data = imgui_c89_vector_resize_fill(
+                imgui_c89_ctx, g->TablesLastTimeActive.Data,
+                &g->TablesLastTimeActive.Size,
+                &g->TablesLastTimeActive.Capacity,
+                table_idx + 1, sizeof(*g->TablesLastTimeActive.Data),
+                &inactive_time);
+    }
+    g->TablesLastTimeActive.Data[table_idx] = (float)g->Time;
+    temp_data->LastTimeActive = (float)g->Time;
+    table->MemoryCompacted = 0;
+
+    old_columns_count = (int)(table->ColumnsEnd - table->Columns);
+    if (old_columns_count != 0 && old_columns_count != columns_count)
+    {
+        if (g->DebugLogFlags & ImGuiDebugLogFlags_EventTable)
+            imgui_i_debug_log(imgui_c89_ctx,
+                "[table] Table 0x%08X column count %d -> %d, recreating storage.\n",
+                table->ID, old_columns_count, columns_count);
+        if (!(temp_data->OldColumnsRawData == 0))
+            imgui_c89_assert_id(7);
+        temp_data->OldColumnsRawData = table->RawData;
+        temp_data->OldColumnsData = table->Columns;
+        temp_data->OldColumnsDataEnd = table->ColumnsEnd;
+        src_column = temp_data->OldColumnsData;
+        while (src_column != temp_data->OldColumnsDataEnd)
+        {
+            src_column->IsNeedReconcileSrc = 1;
+            src_column++;
+        }
+        table->RawData = 0;
+    }
+    if (table->RawData == 0)
+    {
+        imgui_i_table_begin_init_memory(imgui_c89_ctx, table, columns_count);
+        table->IsInitializing = 1;
+    }
+    if (table->IsResetAllRequest)
+        imgui_i_table_reset_settings(table);
+    if (table->IsInitializing)
+    {
+        if (is_new_table)
+        {
+            table->SettingsOffset = -1;
+            table->IsSettingsRequestLoad = 1;
+        }
+        table->IsSortSpecsDirty = 1;
+        table->IsSettingsDirty = 1;
+        table->IsReconcileMode = 0;
+        table->InstanceInteracted = -1;
+        table->ContextPopupColumn = -1;
+        table->ReorderColumn = -1;
+        table->ReorderColumnDstOrder = -1;
+        table->ResizedColumn = -1;
+        table->LastResizedColumn = -1;
+        table->AutoFitSingleColumn = -1;
+        table->HoveredColumnBody = -1;
+        table->HoveredColumnBorder = -1;
+        n = 0;
+        while (n < columns_count)
+        {
+            column = &table->Columns[n];
+            if (temp_data->OldColumnsData != 0 &&
+                n < (int)(temp_data->OldColumnsDataEnd -
+                          temp_data->OldColumnsData))
+            {
+                *column = temp_data->OldColumnsData[n];
+            }
+                else
+                {
+                    width_auto = column->WidthAuto;
+                    memset(column, 0, sizeof(*column));
+                    column->StretchWeight = -1.0f;
+                    column->WidthRequest = -1.0f;
+                    column->NameOffset = -1;
+                    column->DisplayOrder = -1;
+                    column->IndexWithinEnabledSet = -1;
+                    column->PrevEnabledColumn = -1;
+                    column->NextEnabledColumn = -1;
+                    column->SortOrder = -1;
+                    column->IsJustCreated = 1;
+                    column->DrawChannelCurrent = (ImU8)-1;
+                    column->DrawChannelFrozen = (ImU8)-1;
+                    column->DrawChannelUnfrozen = (ImU8)-1;
+                    column->WidthAuto = width_auto;
+                column->IsPreserveWidthAuto = 1;
+                column->IsEnabled = 1;
+                column->IsUserEnabled = 1;
+                column->IsUserEnabledNextFrame = 1;
+                column->DisplayOrder = (ImGuiTableColumnIdx)n;
+            }
+            table->DisplayOrderToIndex[n] = column->DisplayOrder;
+            n++;
+        }
+    }
+
+    if (table->IsSettingsRequestLoad)
+        imgui_i_table_load_settings(imgui_c89_ctx, table);
+
+    /* Keep output disabled until the first row/column locks the layout. */
+    inner_window->SkipItems = 1;
+    if (table->ColumnsNames.Buf.Size > 0)
+        table->ColumnsNames.Buf.Size = 0;
+    return 1;
 }
 
 void imgui_columns(ImGuiContext *imgui_c89_ctx, int columns_count, const char * id, unsigned char borders)
 {
-
-ImGuiWindow *window;
-ImGuiOldColumns *columns;
-ImGuiOldColumnFlags flags;
-window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
-flags = borders ? 0 : ImGuiOldColumnFlags_NoBorder;
-columns = window->DC.CurrentColumns;
-if (columns && columns->Count == columns_count && columns->Flags == flags)
-    return;
-if (columns)
-    imgui_i_im_gui_end_columns(imgui_c89_ctx);
-if (columns_count != 1)
-    imgui_i_im_gui_begin_columns(imgui_c89_ctx, id, columns_count, flags);
+    ImGuiWindow *window;
+    ImGuiOldColumns *columns;
+    ImGuiOldColumnFlags flags;
+    window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
+    if (!(columns_count >= 1))
+        imgui_c89_assert_id(94);
+    flags = borders ? 0 : ImGuiOldColumnFlags_NoBorder;
+    columns = window->DC.CurrentColumns;
+    if (columns && columns->Count == columns_count && columns->Flags == flags)
+        return;
+    if (columns)
+        imgui_i_end_columns(imgui_c89_ctx);
+    if (columns_count != 1)
+        imgui_i_begin_columns(imgui_c89_ctx, id, columns_count, flags);
 }
 
-void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+void imgui_i_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-
     ImGuiTableColumn *column;
     ImGuiTableInstanceData *instance_data;
     ImGuiTableSettings *settings;
@@ -765,7 +706,7 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
             ImGuiCol_Text,
             disabled_color);
     }
-    open = imgui_i_im_gui_tree_node_const_pointer_string_varargs(
+    open = imgui_i_tree_node_const_pointer_string_varargs(
         imgui_c89_ctx,
         table,
         "Table 0x%08X (%d columns, in '%s')%s",
@@ -802,7 +743,7 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
 
     if (table->InstanceCurrent > 0)
     {
-        imgui_i_im_gui_text(
+        imgui_i_text(
             imgui_c89_ctx,
             "** %d instances of same table! Some data below will refer to last instance.",
             (int)table->InstanceCurrent + 1);
@@ -810,7 +751,7 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
 
     if (imgui_c89_ctx->IO.ConfigDebugIsDebuggerPresent)
     {
-        if (imgui_i_im_gui_debug_break_button(
+        if (imgui_i_debug_break_button(
                 imgui_c89_ctx,
                 "**DebugBreak**",
                 "in BeginTable()"))
@@ -823,8 +764,8 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
 
     outer_width = table->OuterRect.Max.x - table->OuterRect.Min.x;
     outer_height = table->OuterRect.Max.y - table->OuterRect.Min.y;
-    sizing_name = DebugNodeTableGetSizingPolicyDesc__5aab95655e(table->Flags);
-    imgui_i_im_gui_bullet_text(
+    sizing_name = imgui_i_debug_node_table_get_sizing_policy_desc(table->Flags);
+    imgui_i_bullet_text(
         imgui_c89_ctx,
         "OuterRect: Pos: (%.1f,%.1f) Size: (%.1f,%.1f) Sizing: '%s'",
         table->OuterRect.Min.x,
@@ -833,26 +774,26 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
         outer_height,
         sizing_name);
     inner_width_suffix = (table->InnerWidth == 0.0f) ? " (auto)" : "";
-    imgui_i_im_gui_bullet_text(
+    imgui_i_bullet_text(
         imgui_c89_ctx,
         "ColumnsGivenWidth: %.1f, ColumnsAutoFitWidth: %.1f, InnerWidth: %.1f%s",
         table->ColumnsGivenWidth,
         table->ColumnsAutoFitWidth,
         table->InnerWidth,
         inner_width_suffix);
-    imgui_i_im_gui_bullet_text(
+    imgui_i_bullet_text(
         imgui_c89_ctx,
         "CellPaddingX: %.1f, CellSpacingX: %.1f/%.1f, OuterPaddingX: %.1f",
         table->CellPaddingX,
         table->CellSpacingX1,
         table->CellSpacingX2,
         table->OuterPaddingX);
-    imgui_i_im_gui_bullet_text(
+    imgui_i_bullet_text(
         imgui_c89_ctx,
         "HoveredColumnBody: %d, HoveredColumnBorder: %d",
         (int)table->HoveredColumnBody,
         (int)table->HoveredColumnBorder);
-    imgui_i_im_gui_bullet_text(
+    imgui_i_bullet_text(
         imgui_c89_ctx,
         "ResizedColumn: %d, HeldHeaderColumn: %d, ReorderColumn: %d",
         (int)table->LastResizedColumn,
@@ -864,7 +805,7 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
          instance_n++)
     {
         instance_data = ImGui_TableGetInstanceData__27767b51c6(table, instance_n);
-        imgui_i_im_gui_bullet_text(
+        imgui_i_bullet_text(
             imgui_c89_ctx,
             "Instance %d: HoveredRow: %d, LastOuterHeight: %.2f",
             instance_n,
@@ -877,15 +818,15 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
     zero_size.y = 0.0f;
     for (column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         if ((column->Flags & ImGuiTableColumnFlags_WidthStretch) != 0)
             stretch_weight_sum += column->StretchWeight;
     }
 
     for (column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        column = &table->Columns.Data[column_n];
-        column_name = imgui_i_im_gui_table_get_column_name(table, column_n);
+        column = &table->Columns[column_n];
+        column_name = imgui_i_table_get_column_name(table, column_n);
         frozen_suffix =
             (column_n < (int)table->FreezeColumnsRequest) ?
             " (Frozen)" : "";
@@ -981,10 +922,10 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
         }
     }
 
-    settings = imgui_i_im_gui_table_get_bound_settings(imgui_c89_ctx, table);
+    settings = imgui_i_table_get_bound_settings(imgui_c89_ctx, table);
     if (settings != (ImGuiTableSettings *)0)
     {
-        imgui_i_im_gui_debug_node_table_settings(
+        imgui_i_debug_node_table_settings(
             imgui_c89_ctx, settings, table);
     }
     if (clear_settings)
@@ -992,9 +933,8 @@ void imgui_i_im_gui_debug_node_table(ImGuiContext *imgui_c89_ctx, ImGuiTable * t
     imgui_tree_pop(imgui_c89_ctx);
 }
 
-void imgui_i_im_gui_debug_node_table_settings(ImGuiContext *imgui_c89_ctx, ImGuiTableSettings * settings, ImGuiTable * table)
+void imgui_i_debug_node_table_settings(ImGuiContext *imgui_c89_ctx, ImGuiTableSettings * settings, ImGuiTable * table)
 {
-
     ImGuiTableColumnSettings *column_settings;
     ImGuiTableColumnSettings *column;
     ImDrawList *foreground_draw_list;
@@ -1007,7 +947,7 @@ void imgui_i_im_gui_debug_node_table_settings(ImGuiContext *imgui_c89_ctx, ImGui
 
     if (settings->ID == 0)
         imgui_push_id_const_pointer_none(imgui_c89_ctx, settings);
-    open = imgui_i_im_gui_tree_node_const_pointer_string_varargs(
+    open = imgui_i_tree_node_const_pointer_string_varargs(
         imgui_c89_ctx,
         (void *)(size_t)settings->ID,
         "Settings 0x%08X (%d columns)",
@@ -1016,7 +956,7 @@ void imgui_i_im_gui_debug_node_table_settings(ImGuiContext *imgui_c89_ctx, ImGui
     hovered = imgui_is_item_hovered(imgui_c89_ctx, 0);
     if (hovered && table == (ImGuiTable *)0 && settings->ID != 0)
     {
-        table = imgui_i_im_gui_table_find_by_id(imgui_c89_ctx, settings->ID);
+        table = imgui_i_table_find_by_id(imgui_c89_ctx, settings->ID);
     }
     if (hovered && table != (ImGuiTable *)0)
     {
@@ -1031,11 +971,11 @@ void imgui_i_im_gui_debug_node_table_settings(ImGuiContext *imgui_c89_ctx, ImGui
 
     if (open)
     {
-        imgui_i_im_gui_bullet_text(
+        imgui_i_bullet_text(
             imgui_c89_ctx,
             "SaveFlags: 0x%08X",
             (unsigned int)settings->SaveFlags);
-        imgui_i_im_gui_bullet_text(
+        imgui_i_bullet_text(
             imgui_c89_ctx,
             "ColumnsCount: %d (max %d)",
             (int)settings->ColumnsCount,
@@ -1062,7 +1002,7 @@ void imgui_i_im_gui_debug_node_table_settings(ImGuiContext *imgui_c89_ctx, ImGui
             else
                 sort_direction_name = "---";
             width_or_weight_name = column->IsStretch ? "Weight" : "Width ";
-            imgui_i_im_gui_bullet_text(
+            imgui_i_bullet_text(
                 imgui_c89_ctx,
                 "Column %d Order %d SortOrder %2d %s Vis %d %s %7.3f ID 0x%08X",
                 column_n,
@@ -1080,98 +1020,99 @@ void imgui_i_im_gui_debug_node_table_settings(ImGuiContext *imgui_c89_ctx, ImGui
         imgui_pop_id(imgui_c89_ctx);
 }
 
-void imgui_i_im_gui_end_columns(ImGuiContext *imgui_c89_ctx)
+void imgui_i_end_columns(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiWindow *window;
-ImGuiOldColumns *columns;
-ImGuiOldColumnData *column;
-ImGuiOldColumnFlags flags;
-ImRect hit_rect;
-ImGuiID column_id;
-ImU32 color;
-float y1;
-float y2;
-float x;
-float half_width;
-int n;
-int dragging_column;
-int resizing;
-unsigned char hovered;
-unsigned char held;
-window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
-columns = window->DC.CurrentColumns;
-imgui_pop_item_width(imgui_c89_ctx);
-if (columns->Count > 1)
-{
-    imgui_pop_clip_rect(imgui_c89_ctx);
-    imgui_draw_list_splitter_merge(imgui_c89_ctx, &columns->Splitter, window->DrawList);
-}
-flags = columns->Flags;
-columns->LineMaxY = ImMax__3c7b1bb7d1(columns->LineMaxY, window->DC.CursorPos.y);
-window->DC.CursorPos.y = columns->LineMaxY;
-if (!(flags & ImGuiOldColumnFlags_GrowParentContentsSize))
-    window->DC.CursorMaxPos.x = columns->HostCursorMaxPosX;
-resizing = 0;
-if (!(flags & ImGuiOldColumnFlags_NoBorder) && !window->SkipItems)
-{
-    y1 = ImMax__3c7b1bb7d1(columns->HostCursorPosY, window->ClipRect.Min.y);
-    y2 = ImMin__f04263da73(window->DC.CursorPos.y, window->ClipRect.Max.y);
-    dragging_column = -1;
-    for (n = 1; n < columns->Count; n++)
+    ImGuiWindow *window;
+    ImGuiOldColumns *columns;
+    ImGuiOldColumnData *column;
+    ImGuiOldColumnFlags flags;
+    ImRect hit_rect;
+    ImGuiID column_id;
+    ImU32 color;
+    float y1;
+    float y2;
+    float x;
+    float half_width;
+    int n;
+    int dragging_column;
+    int resizing;
+    unsigned char hovered;
+    unsigned char held;
+    window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
+    columns = window->DC.CurrentColumns;
+    if (!columns)
+        imgui_c89_assert_id(93);
+    imgui_pop_item_width(imgui_c89_ctx);
+    if (columns->Count > 1)
     {
-        column = &columns->Columns.Data[n];
-        x = window->Pos.x + imgui_get_column_offset(imgui_c89_ctx, n);
-        column_id = columns->ID + (ImGuiID)n;
-        half_width = ImTrunc__ae7a4018f8(4.0f * imgui_c89_ctx->CurrentDpiScale);
-        hit_rect.Min.x = x - half_width;
-        hit_rect.Min.y = y1;
-        hit_rect.Max.x = x + half_width;
-        hit_rect.Max.y = y2;
-        if (!imgui_i_im_gui_item_add(imgui_c89_ctx, &hit_rect, column_id, 0,
-                ImGuiItemFlags_NoNav))
-            continue;
-        hovered = held = 0;
-        if (!(flags & ImGuiOldColumnFlags_NoResize))
+        imgui_pop_clip_rect(imgui_c89_ctx);
+        imgui_draw_list_splitter_merge(imgui_c89_ctx, &columns->Splitter, window->DrawList);
+    }
+    flags = columns->Flags;
+    columns->LineMaxY = ImMax__3c7b1bb7d1(columns->LineMaxY, window->DC.CursorPos.y);
+    window->DC.CursorPos.y = columns->LineMaxY;
+    if (!(flags & ImGuiOldColumnFlags_GrowParentContentsSize))
+        window->DC.CursorMaxPos.x = columns->HostCursorMaxPosX;
+    resizing = 0;
+    if (!(flags & ImGuiOldColumnFlags_NoBorder) && !window->SkipItems)
+    {
+        y1 = ImMax__3c7b1bb7d1(columns->HostCursorPosY, window->ClipRect.Min.y);
+        y2 = ImMin__f04263da73(window->DC.CursorPos.y, window->ClipRect.Max.y);
+        dragging_column = -1;
+        for (n = 1; n < columns->Count; n++)
         {
-            imgui_i_im_gui_button_behavior(imgui_c89_ctx, &hit_rect, column_id,
-                &hovered, &held, 0);
-            if (hovered || held)
-                imgui_set_mouse_cursor(imgui_c89_ctx, ImGuiMouseCursor_ResizeEW);
-            if (held && !(column->Flags & ImGuiOldColumnFlags_NoResize))
-                dragging_column = n;
+            column = &columns->Columns.Data[n];
+            x = window->Pos.x + imgui_get_column_offset(imgui_c89_ctx, n);
+            column_id = columns->ID + (ImGuiID)n;
+            half_width = ImTrunc__ae7a4018f8(4.0f * imgui_c89_ctx->CurrentDpiScale);
+            hit_rect.Min.x = x - half_width;
+            hit_rect.Min.y = y1;
+            hit_rect.Max.x = x + half_width;
+            hit_rect.Max.y = y2;
+            if (!imgui_i_item_add(imgui_c89_ctx, &hit_rect, column_id, 0,
+                    ImGuiItemFlags_NoNav))
+                continue;
+            hovered = held = 0;
+            if (!(flags & ImGuiOldColumnFlags_NoResize))
+            {
+                imgui_i_button_behavior(imgui_c89_ctx, &hit_rect, column_id,
+                    &hovered, &held, 0);
+                if (hovered || held)
+                    imgui_set_mouse_cursor(imgui_c89_ctx, ImGuiMouseCursor_ResizeEW);
+                if (held && !(column->Flags & ImGuiOldColumnFlags_NoResize))
+                    dragging_column = n;
+            }
+            color = imgui_get_color_u32_col_float(imgui_c89_ctx,
+                held ? ImGuiCol_SeparatorActive :
+                (hovered ? ImGuiCol_SeparatorHovered : ImGuiCol_Separator), 1.0f);
+            imgui_draw_list_add_line_v(imgui_c89_ctx, window->DrawList, (float)(int)x,
+                y1 + 1.0f, y2, color, 1.0f);
         }
-        color = imgui_get_color_u32_col_float(imgui_c89_ctx,
-            held ? ImGuiCol_SeparatorActive :
-            (hovered ? ImGuiCol_SeparatorHovered : ImGuiCol_Separator), 1.0f);
-        imgui_draw_list_add_line_v(imgui_c89_ctx, window->DrawList, (float)(int)x,
-            y1 + 1.0f, y2, color, 1.0f);
+        /* Apply dragging only after drawing separators so visuals remain in sync
+         * with the item positions submitted for this frame. */
+        if (dragging_column != -1)
+        {
+            if (!columns->IsBeingResized)
+                for (n = 0; n <= columns->Count; n++)
+                    columns->Columns.Data[n].OffsetNormBeforeResize =
+                        columns->Columns.Data[n].OffsetNorm;
+            resizing = 1;
+            columns->IsBeingResized = 1;
+            x = imgui_i_get_dragged_column_offset(imgui_c89_ctx, columns, dragging_column);
+            imgui_set_column_offset(imgui_c89_ctx, dragging_column, x);
+        }
     }
-    if (dragging_column != -1)
-    {
-        if (!columns->IsBeingResized)
-            for (n = 0; n <= columns->Count; n++)
-                columns->Columns.Data[n].OffsetNormBeforeResize =
-                    columns->Columns.Data[n].OffsetNorm;
-        resizing = 1;
-        columns->IsBeingResized = 1;
-        x = GetDraggedColumnOffset__bff71b419b(imgui_c89_ctx, columns, dragging_column);
-        imgui_set_column_offset(imgui_c89_ctx, dragging_column, x);
-    }
-}
-columns->IsBeingResized = resizing;
-window->WorkRect = window->ParentWorkRect;
-window->ParentWorkRect = columns->HostBackupParentWorkRect;
-window->DC.CurrentColumns = 0;
-window->DC.ColumnsOffset.x = 0.0f;
-window->DC.CursorPos.x = (float)(int)(window->Pos.x +
-    window->DC.Indent.x + window->DC.ColumnsOffset.x);
-imgui_i_im_gui_nav_update_current_window_is_scroll_pushable_x(imgui_c89_ctx);
+    columns->IsBeingResized = resizing;
+    window->WorkRect = window->ParentWorkRect;
+    window->ParentWorkRect = columns->HostBackupParentWorkRect;
+    window->DC.CurrentColumns = 0;
+    window->DC.ColumnsOffset.x = 0.0f;
+    window->DC.CursorPos.x = (float)(int)(window->Pos.x +
+        window->DC.Indent.x + window->DC.ColumnsOffset.x);
+    imgui_i_nav_update_current_window_is_scroll_pushable_x(imgui_c89_ctx);
 }
 
 void imgui_end_table(ImGuiContext *imgui_c89_ctx)
-{
-
 {
     ImGuiContext *g;
     ImGuiTable *table;
@@ -1208,12 +1149,16 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     table = g->CurrentTable;
     if (table == (ImGuiTable *)0)
     {
-        imgui_c89_debugtrap();
+        if (imgui_i_error_log(
+                imgui_c89_ctx,
+                "EndTable() call should only be done while in BeginTable() scope!"))
+            imgui_c89_assert_id(16);
         return;
     }
 
+    /* Empty tables still run layout so borders and all exit paths agree. */
     if (!table->IsLayoutLocked)
-        imgui_i_im_gui_table_update_layout(imgui_c89_ctx, table);
+        imgui_i_table_update_layout(imgui_c89_ctx, table);
 
     flags = table->Flags;
     inner_window = table->InnerWindow;
@@ -1221,13 +1166,13 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     temp_data = table->TempData;
     if (!(inner_window == g->CurrentWindow &&
           inner_window->ID == temp_data->WindowID))
-        imgui_c89_debugtrap();
+        imgui_c89_assert_id(17);
     if (!(outer_window == inner_window ||
           outer_window == inner_window->ParentWindow))
-        imgui_c89_debugtrap();
+        imgui_c89_assert_id(18);
 
     if (table->IsInsideRow)
-        imgui_i_im_gui_table_end_row(imgui_c89_ctx, table);
+        imgui_i_table_end_row(imgui_c89_ctx, table);
 
     if ((flags & ImGuiTableFlags_ContextMenuInBody) != 0 &&
         table->HoveredColumnBody != (ImGuiTableColumnIdx)-1 &&
@@ -1235,7 +1180,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
         imgui_is_mouse_released(
             imgui_c89_ctx, ImGuiMouseButton_Right))
     {
-        imgui_i_im_gui_table_open_context_menu(
+        imgui_i_table_open_context_menu(
             imgui_c89_ctx, (int)table->HoveredColumnBody);
     }
 
@@ -1246,7 +1191,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     inner_window->DC.CursorMaxPos = temp_data->HostBackupCursorMaxPos;
     inner_content_max_y = ceilf(table->RowPosY2);
     if (!(table->RowPosY2 == inner_window->DC.CursorPos.y))
-        imgui_c89_debugtrap();
+        imgui_c89_assert_id(19);
     if (inner_window != outer_window)
     {
         inner_window->DC.CursorMaxPos.y = inner_content_max_y;
@@ -1270,7 +1215,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
         max_pos_x = inner_window->DC.CursorMaxPos.x;
         if (table->RightMostEnabledColumn != (ImGuiTableColumnIdx)-1)
         {
-            column = &table->Columns.Data[
+            column = &table->Columns[
                 (int)table->RightMostEnabledColumn];
             max_pos_x = ImMax__3c7b1bb7d1(
                 max_pos_x,
@@ -1286,6 +1231,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
             max_pos_x + temp_data->AngledHeadersExtraWidth;
     }
 
+    /* Restore host clipping before drawing borders and flattening channels. */
     if ((flags & ImGuiTableFlags_NoClip) == 0)
         imgui_draw_list_pop_clip_rect(
             imgui_c89_ctx, inner_window->DrawList);
@@ -1297,13 +1243,13 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     inner_window->ClipRect.Max.y = clip_rect_v->w;
 
     if ((flags & ImGuiTableFlags_Borders) != 0)
-        imgui_i_im_gui_table_draw_borders(imgui_c89_ctx, table);
+        imgui_i_table_draw_borders(imgui_c89_ctx, table);
 
     splitter = table->DrawSplitter;
     imgui_draw_list_splitter_set_current_channel(
         imgui_c89_ctx, splitter, inner_window->DrawList, 0);
     if ((table->Flags & ImGuiTableFlags_NoClip) == 0)
-        imgui_i_im_gui_table_merge_draw_channels(imgui_c89_ctx, table);
+        imgui_i_table_merge_draw_channels(imgui_c89_ctx, table);
     imgui_draw_list_splitter_merge(
         imgui_c89_ctx, splitter, inner_window->DrawList);
 
@@ -1317,7 +1263,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
         {
             continue;
         }
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) != 0 &&
             (column->Flags & ImGuiTableColumnFlags_NoResize) == 0)
         {
@@ -1326,7 +1272,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
         else
         {
             column_width_request =
-                imgui_i_im_gui_table_get_column_width_auto(table, column);
+                imgui_i_table_get_column_width_auto(table, column);
         }
         if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) != 0)
             auto_fit_width_for_fixed += column_width_request;
@@ -1364,10 +1310,10 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     {
         neighbor_width_to_keep_visible =
             table->MinColumnWidth + table->CellPaddingX * 2.0f;
-        column = &table->Columns.Data[(int)table->LastResizedColumn];
+        column = &table->Columns[(int)table->LastResizedColumn];
         if (column->MaxX < table->InnerClipRect.Min.x)
         {
-            imgui_i_im_gui_set_scroll_from_pos_x(
+            imgui_i_set_scroll_from_pos_x(
                 inner_window,
                 column->MaxX - inner_window->Pos.x -
                     neighbor_width_to_keep_visible,
@@ -1375,7 +1321,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
         }
         else if (column->MaxX > table->InnerClipRect.Max.x)
         {
-            imgui_i_im_gui_set_scroll_from_pos_x(
+            imgui_i_set_scroll_from_pos_x(
                 inner_window,
                 column->MaxX - inner_window->Pos.x +
                     neighbor_width_to_keep_visible,
@@ -1386,7 +1332,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     if (table->ResizedColumn != (ImGuiTableColumnIdx)-1 &&
         table->InstanceCurrent == table->InstanceInteracted)
     {
-        column = &table->Columns.Data[(int)table->ResizedColumn];
+        column = &table->Columns[(int)table->ResizedColumn];
         new_x2 = g->IO.MousePos.x - g->ActiveIdClickOffset.x +
             ImTrunc__ae7a4018f8(
                 4.0f *
@@ -1403,14 +1349,23 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     if (!(inner_window->IDStack.Size > 0 &&
           inner_window->IDStack.Data[inner_window->IDStack.Size - 1] ==
               table_instance->TableInstanceID))
-        imgui_c89_debugtrap();
+    {
+        if (imgui_i_error_log(
+                imgui_c89_ctx, "Mismatching PushID/PopID!"))
+            imgui_c89_assert_id(20);
+    }
     if (!(outer_window->DC.ItemWidthStack.Size >=
           temp_data->HostBackupItemWidthStackSize))
-        imgui_c89_debugtrap();
+    {
+        if (imgui_i_error_log(
+                imgui_c89_ctx, "Too many PopItemWidth!"))
+            imgui_c89_assert_id(21);
+    }
     if (table->InstanceCurrent > 0)
         imgui_pop_id(imgui_c89_ctx);
     imgui_pop_id(imgui_c89_ctx);
 
+    /* Restore window state saved by BeginTableEx(). */
     backup_outer_max_pos = outer_window->DC.CursorMaxPos;
     inner_window->WorkRect = temp_data->HostBackupWorkRect;
     inner_window->ParentWorkRect = temp_data->HostBackupParentWorkRect;
@@ -1438,9 +1393,9 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
             table->OuterRect.Max.x - table->OuterRect.Min.x;
         outer_rect_size.y =
             table->OuterRect.Max.y - table->OuterRect.Min.y;
-        imgui_i_im_gui_item_size(
+        imgui_i_item_size(
             imgui_c89_ctx, &outer_rect_size, -1.0f);
-        imgui_i_im_gui_item_add(
+        imgui_i_item_add(
             imgui_c89_ctx,
             &table->OuterRect,
             0,
@@ -1451,7 +1406,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     if ((table->Flags & ImGuiTableFlags_NoHostExtendX) != 0)
     {
         if (!((table->Flags & ImGuiTableFlags_ScrollX) == 0))
-            imgui_c89_debugtrap();
+            imgui_c89_assert_id(22);
         outer_window->DC.CursorMaxPos.x = ImMax__3c7b1bb7d1(
             backup_outer_max_pos.x,
             table->OuterRect.Min.x + table->ColumnsAutoFitWidth);
@@ -1511,17 +1466,17 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     }
 
     if (table->IsSettingsDirty)
-        imgui_i_im_gui_table_save_settings(imgui_c89_ctx, table);
+        imgui_i_table_save_settings(imgui_c89_ctx, table);
     table->IsInitializing = 0;
 
     if (!(g->CurrentWindow == outer_window && g->CurrentTable == table))
-        imgui_c89_debugtrap();
+        imgui_c89_assert_id(23);
     if (!(g->TablesTempDataStacked > 0))
-        imgui_c89_debugtrap();
+        imgui_c89_assert_id(24);
     g->TablesTempDataStacked--;
     if (g->TablesTempDataStacked > 0)
     {
-        temp_data = &g->TablesTempData.Data[
+        temp_data = &g->TablesTempData[
             g->TablesTempDataStacked - 1];
     }
     else
@@ -1531,7 +1486,7 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
     if (temp_data != (ImGuiTableTempData *)0 &&
         temp_data->WindowID == outer_window->ID)
     {
-        g->CurrentTable = ImPool_ImGuiTable__GetByIndex__5cd9213811(
+        g->CurrentTable = imgui_table_pool_at(
             &g->Tables, temp_data->TableIndex);
     }
     else
@@ -1543,304 +1498,313 @@ void imgui_end_table(ImGuiContext *imgui_c89_ctx)
         g->CurrentTable->TempData = temp_data;
         g->CurrentTable->DrawSplitter = &temp_data->DrawSplitter;
         outer_window->DC.CurrentTableIdx =
-            ImPool_ImGuiTable__GetIndex__9187fcfe0b(
+            imgui_table_pool_index(
                 &g->Tables, g->CurrentTable);
     }
     else
     {
         outer_window->DC.CurrentTableIdx = -1;
     }
-    imgui_i_im_gui_nav_update_current_window_is_scroll_pushable_x(
+    imgui_i_nav_update_current_window_is_scroll_pushable_x(
         imgui_c89_ctx);
 }
-}
 
-ImGuiOldColumns * imgui_i_im_gui_find_or_create_columns(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiID id)
+ImGuiOldColumns * imgui_i_find_or_create_columns(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiID id)
 {
-
-ImGuiOldColumns value;
-ImGuiOldColumns *columns;
-int n;
-for (n = 0; n < window->ColumnsStorage.Size; n++)
-{
-    columns = &window->ColumnsStorage.Data[n];
-    if (columns->ID == id)
-        return columns;
-}
-memset(&value, 0, sizeof(value));
-window->ColumnsStorage.Data = imgui_c89_vector_push_back(imgui_c89_ctx,
-    window->ColumnsStorage.Data, &window->ColumnsStorage.Size,
-    &window->ColumnsStorage.Capacity, sizeof(value), &value);
-columns = &window->ColumnsStorage.Data[window->ColumnsStorage.Size - 1];
-columns->ID = id;
-return columns;
+    ImGuiOldColumns value;
+    ImGuiOldColumns *columns;
+    int n;
+    /* Legacy column sets are few per window, so linear lookup is intentional. */
+    for (n = 0; n < window->ColumnsStorage.Size; n++)
+    {
+        columns = &window->ColumnsStorage.Data[n];
+        if (columns->ID == id)
+            return columns;
+    }
+    memset(&value, 0, sizeof(value));
+    window->ColumnsStorage.Data = imgui_c89_vector_push_back(imgui_c89_ctx,
+        window->ColumnsStorage.Data, &window->ColumnsStorage.Size,
+        &window->ColumnsStorage.Capacity, sizeof(value), &value);
+    columns = &window->ColumnsStorage.Data[window->ColumnsStorage.Size - 1];
+    columns->ID = id;
+    return columns;
 }
 
 int imgui_get_column_index(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiOldColumns *columns;
-columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
-return columns ? columns->Current : 0;
+    ImGuiOldColumns *columns;
+    columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+    return columns ? columns->Current : 0;
 }
 
-float imgui_i_im_gui_get_column_norm_from_offset(const ImGuiOldColumns * columns, float offset)
+float imgui_i_get_column_norm_from_offset(const ImGuiOldColumns * columns, float offset)
 {
-
-return offset / (columns->OffMaxX - columns->OffMinX);
+    return offset / (columns->OffMaxX - columns->OffMinX);
 }
 
 float imgui_get_column_offset(ImGuiContext *imgui_c89_ctx, int column_index)
 {
-
-ImGuiOldColumns *columns;
-float t;
-columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
-if (!columns)
-    return 0.0f;
-if (column_index < 0)
-    column_index = columns->Current;
-t = columns->Columns.Data[column_index].OffsetNorm;
-return columns->OffMinX + (columns->OffMaxX - columns->OffMinX) * t;
+    ImGuiOldColumns *columns;
+    float t;
+    columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+    if (!columns)
+        return 0.0f;
+    if (column_index < 0)
+        column_index = columns->Current;
+    if (!(column_index < columns->Columns.Size))
+        imgui_c89_assert_id(85);
+    t = columns->Columns.Data[column_index].OffsetNorm;
+    return columns->OffMinX + (columns->OffMaxX - columns->OffMinX) * t;
 }
 
-float imgui_i_im_gui_get_column_offset_from_norm(const ImGuiOldColumns * columns, float offset_norm)
+float imgui_i_get_column_offset_from_norm(const ImGuiOldColumns * columns, float offset_norm)
 {
-
-return offset_norm * (columns->OffMaxX - columns->OffMinX);
+    return offset_norm * (columns->OffMaxX - columns->OffMinX);
 }
 
 float imgui_get_column_width(ImGuiContext *imgui_c89_ctx, int column_index)
 {
-
-ImGuiOldColumns *columns;
-columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
-if (!columns)
-    return imgui_get_content_region_avail(imgui_c89_ctx).x;
-if (column_index < 0)
-    column_index = columns->Current;
-return imgui_i_im_gui_get_column_offset_from_norm(columns,
-    columns->Columns.Data[column_index + 1].OffsetNorm -
-    columns->Columns.Data[column_index].OffsetNorm);
+    ImGuiOldColumns *columns;
+    columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+    if (!columns)
+        return imgui_get_content_region_avail(imgui_c89_ctx).x;
+    if (column_index < 0)
+        column_index = columns->Current;
+    return imgui_i_get_column_offset_from_norm(columns,
+        columns->Columns.Data[column_index + 1].OffsetNorm -
+        columns->Columns.Data[column_index].OffsetNorm);
 }
 
 int imgui_get_columns_count(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiOldColumns *columns;
-columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
-return columns ? columns->Count : 1;
+    ImGuiOldColumns *columns;
+    columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+    return columns ? columns->Count : 1;
 }
 
-ImGuiID imgui_i_im_gui_get_columns_id(ImGuiContext *imgui_c89_ctx, const char * str_id, int columns_count)
+ImGuiID imgui_i_get_columns_id(ImGuiContext *imgui_c89_ctx, const char * str_id, int columns_count)
 {
-
-ImGuiWindow *window;
-ImGuiID id;
-window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
-imgui_push_id_int_none(imgui_c89_ctx, 0x11223347 + (str_id ? 0 : columns_count));
-id = imgui_i_im_gui_window_get_id_string_string(imgui_c89_ctx, window, str_id ? str_id : "columns", 0);
-imgui_pop_id(imgui_c89_ctx);
-return id;
+    ImGuiWindow *window;
+    ImGuiID id;
+    window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
+    /* Prefix the ID namespace and include the count when no explicit ID exists. */
+    imgui_push_id_int_none(imgui_c89_ctx, 0x11223347 + (str_id ? 0 : columns_count));
+    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, window, str_id ? str_id : "columns", 0);
+    imgui_pop_id(imgui_c89_ctx);
+    return id;
 }
 
 void imgui_next_column(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiWindow *window;
-ImGuiOldColumns *columns;
-ImGuiOldColumnData *column;
-float padding;
-float offset_0;
-float offset_1;
-window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
-columns = window->DC.CurrentColumns;
-if (window->SkipItems || !columns)
-    return;
-if (columns->Count == 1)
-{
+    ImGuiWindow *window;
+    ImGuiOldColumns *columns;
+    ImGuiOldColumnData *column;
+    float padding;
+    float offset_0;
+    float offset_1;
+    window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
+    columns = window->DC.CurrentColumns;
+    if (window->SkipItems || !columns)
+        return;
+    if (columns->Count == 1)
+    {
+        window->DC.CursorPos.x = (float)(int)(window->Pos.x +
+            window->DC.Indent.x + window->DC.ColumnsOffset.x);
+        if (columns->Current != 0)
+            imgui_c89_assert_id(92);
+        return;
+    }
+    if (++columns->Current == columns->Count)
+        columns->Current = 0;
+    imgui_pop_item_width(imgui_c89_ctx);
+    column = &columns->Columns.Data[columns->Current];
+    /* Avoid a PopClipRect()/SetCurrentChannel()/PushClipRect() sequence that
+     * would churn draw commands in the wrong channel. */
+    imgui_i_set_window_clip_rect_before_set_channel(window, &column->ClipRect);
+    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, &columns->Splitter, window->DrawList,
+        columns->Current + 1);
+    padding = imgui_c89_ctx->Style.ItemSpacing.x;
+    columns->LineMaxY = ImMax__3c7b1bb7d1(columns->LineMaxY, window->DC.CursorPos.y);
+    if (columns->Current)
+        window->DC.ColumnsOffset.x = imgui_get_column_offset(imgui_c89_ctx,
+            columns->Current) - window->DC.Indent.x + padding;
+    else
+    {
+        window->DC.ColumnsOffset.x = ImMax__3c7b1bb7d1(padding - window->WindowPadding.x,
+            0.0f);
+        window->DC.IsSameLine = 0;
+        columns->LineMinY = columns->LineMaxY;
+    }
     window->DC.CursorPos.x = (float)(int)(window->Pos.x +
         window->DC.Indent.x + window->DC.ColumnsOffset.x);
-    return;
+    window->DC.CursorPos.y = columns->LineMinY;
+    window->DC.CurrLineSize.x = window->DC.CurrLineSize.y = 0.0f;
+    window->DC.CurrLineTextBaseOffset = 0.0f;
+    offset_0 = imgui_get_column_offset(imgui_c89_ctx, columns->Current);
+    offset_1 = imgui_get_column_offset(imgui_c89_ctx, columns->Current + 1);
+    imgui_push_item_width(imgui_c89_ctx, (offset_1 - offset_0) * 0.65f);
+    window->WorkRect.Max.x = window->Pos.x + offset_1 - padding;
 }
-if (++columns->Current == columns->Count)
-    columns->Current = 0;
-imgui_pop_item_width(imgui_c89_ctx);
-column = &columns->Columns.Data[columns->Current];
-imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &column->ClipRect);
-imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, &columns->Splitter, window->DrawList,
-    columns->Current + 1);
-padding = imgui_c89_ctx->Style.ItemSpacing.x;
-columns->LineMaxY = ImMax__3c7b1bb7d1(columns->LineMaxY, window->DC.CursorPos.y);
-if (columns->Current)
-    window->DC.ColumnsOffset.x = imgui_get_column_offset(imgui_c89_ctx,
-        columns->Current) - window->DC.Indent.x + padding;
-else
+
+void imgui_i_pop_columns_background(ImGuiContext *imgui_c89_ctx)
 {
-    window->DC.ColumnsOffset.x = ImMax__3c7b1bb7d1(padding - window->WindowPadding.x,
-        0.0f);
-    window->DC.IsSameLine = 0;
-    columns->LineMinY = columns->LineMaxY;
-}
-window->DC.CursorPos.x = (float)(int)(window->Pos.x +
-    window->DC.Indent.x + window->DC.ColumnsOffset.x);
-window->DC.CursorPos.y = columns->LineMinY;
-window->DC.CurrLineSize.x = window->DC.CurrLineSize.y = 0.0f;
-window->DC.CurrLineTextBaseOffset = 0.0f;
-offset_0 = imgui_get_column_offset(imgui_c89_ctx, columns->Current);
-offset_1 = imgui_get_column_offset(imgui_c89_ctx, columns->Current + 1);
-imgui_push_item_width(imgui_c89_ctx, (offset_1 - offset_0) * 0.65f);
-window->WorkRect.Max.x = window->Pos.x + offset_1 - padding;
+    ImGuiWindow *window;
+    ImGuiOldColumns *columns;
+    window = imgui_c89_ctx->CurrentWindow;
+    columns = window->DC.CurrentColumns;
+    if (columns->Count == 1)
+        return;
+    /* Restore the cell clip without a redundant PopClipRect()/channel switch. */
+    imgui_i_set_window_clip_rect_before_set_channel(window, &columns->HostBackupClipRect);
+    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, &columns->Splitter, window->DrawList,
+        columns->Current + 1);
 }
 
-void imgui_i_im_gui_pop_columns_background(ImGuiContext *imgui_c89_ctx)
+void imgui_i_push_column_clip_rect(ImGuiContext *imgui_c89_ctx, int column_index)
 {
-
-ImGuiWindow *window;
-ImGuiOldColumns *columns;
-window = imgui_c89_ctx->CurrentWindow;
-columns = window->DC.CurrentColumns;
-if (columns->Count == 1)
-    return;
-imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &columns->HostBackupClipRect);
-imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, &columns->Splitter, window->DrawList,
-    columns->Current + 1);
+    ImGuiOldColumns *columns;
+    ImRect *rect;
+    columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+    if (column_index < 0)
+        column_index = columns->Current;
+    rect = &columns->Columns.Data[column_index].ClipRect;
+    imgui_push_clip_rect(imgui_c89_ctx, &rect->Min, &rect->Max, 0);
 }
 
-void imgui_i_im_gui_push_column_clip_rect(ImGuiContext *imgui_c89_ctx, int column_index)
+void imgui_i_push_columns_background(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiOldColumns *columns;
-ImRect *rect;
-columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
-if (column_index < 0)
-    column_index = columns->Current;
-rect = &columns->Columns.Data[column_index].ClipRect;
-imgui_push_clip_rect(imgui_c89_ctx, &rect->Min, &rect->Max, 0);
-}
-
-void imgui_i_im_gui_push_columns_background(ImGuiContext *imgui_c89_ctx)
-{
-
-ImGuiWindow *window;
-ImGuiOldColumns *columns;
-window = imgui_c89_ctx->CurrentWindow;
-columns = window->DC.CurrentColumns;
-if (columns->Count == 1)
-    return;
-columns->HostBackupClipRect = window->ClipRect;
-imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &columns->HostInitialClipRect);
-imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, &columns->Splitter, window->DrawList, 0);
+    ImGuiWindow *window;
+    ImGuiOldColumns *columns;
+    window = imgui_c89_ctx->CurrentWindow;
+    columns = window->DC.CurrentColumns;
+    if (columns->Count == 1)
+        return;
+    /* Preemptively overwrite the clip rectangle to avoid a redundant
+     * SetCurrentChannel()/PushClipRect() sequence. */
+    columns->HostBackupClipRect = window->ClipRect;
+    imgui_i_set_window_clip_rect_before_set_channel(window, &columns->HostInitialClipRect);
+    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, &columns->Splitter, window->DrawList, 0);
 }
 
 void imgui_set_column_offset(ImGuiContext *imgui_c89_ctx, int column_index, float offset)
 {
-
-ImGuiOldColumns *columns;
-float spacing;
-float width;
-float limit;
-int preserve;
-columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
-if (column_index < 0)
-    column_index = columns->Current;
-preserve = !(columns->Flags & ImGuiOldColumnFlags_NoPreserveWidths) &&
-    column_index < columns->Count - 1;
-width = preserve ? GetColumnWidthEx__b040b1a359(columns, column_index,
-    columns->IsBeingResized) : 0.0f;
-spacing = imgui_c89_ctx->Style.ColumnsMinSpacing;
-if (!(columns->Flags & ImGuiOldColumnFlags_NoForceWithinWindow))
-{
-    limit = columns->OffMaxX - spacing * (columns->Count - column_index);
-    offset = offset <= limit ? offset : limit;
-}
-columns->Columns.Data[column_index].OffsetNorm =
-    imgui_i_im_gui_get_column_norm_from_offset(columns, offset - columns->OffMinX);
-if (preserve)
-    imgui_set_column_offset(imgui_c89_ctx, column_index + 1,
-        offset + (spacing >= width ? spacing : width));
+    ImGuiOldColumns *columns;
+    float spacing;
+    float width;
+    float limit;
+    int preserve;
+    columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+    if (!columns)
+        imgui_c89_assert_id(86);
+    if (column_index < 0)
+        column_index = columns->Current;
+    if (!(column_index < columns->Columns.Size))
+        imgui_c89_assert_id(87);
+    preserve = !(columns->Flags & ImGuiOldColumnFlags_NoPreserveWidths) &&
+        column_index < columns->Count - 1;
+    width = preserve ? imgui_i_get_column_width_ex(columns, column_index,
+        columns->IsBeingResized) : 0.0f;
+    spacing = imgui_c89_ctx->Style.ColumnsMinSpacing;
+    if (!(columns->Flags & ImGuiOldColumnFlags_NoForceWithinWindow))
+    {
+        limit = columns->OffMaxX - spacing * (columns->Count - column_index);
+        offset = offset <= limit ? offset : limit;
+    }
+    columns->Columns.Data[column_index].OffsetNorm =
+        imgui_i_get_column_norm_from_offset(columns, offset - columns->OffMinX);
+    if (preserve)
+        imgui_set_column_offset(imgui_c89_ctx, column_index + 1,
+            offset + (spacing >= width ? spacing : width));
 }
 
 void imgui_set_column_width(ImGuiContext *imgui_c89_ctx, int column_index, float width)
 {
-
-ImGuiOldColumns *columns;
-columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
-if (column_index < 0)
-    column_index = columns->Current;
-imgui_set_column_offset(imgui_c89_ctx, column_index + 1,
-    imgui_get_column_offset(imgui_c89_ctx, column_index) + width);
+    ImGuiOldColumns *columns;
+    columns = imgui_c89_ctx->CurrentWindow->DC.CurrentColumns;
+    if (!columns)
+        imgui_c89_assert_id(88);
+    if (column_index < 0)
+        column_index = columns->Current;
+    imgui_set_column_offset(imgui_c89_ctx, column_index + 1,
+        imgui_get_column_offset(imgui_c89_ctx, column_index) + width);
 }
 
-IMGUI_C89_NOINLINE void imgui_i_im_gui_set_window_clip_rect_before_set_channel(ImGuiWindow * window, const ImRect * clip_rect)
+IMGUI_C89_NOINLINE void imgui_i_set_window_clip_rect_before_set_channel(ImGuiWindow * window, const ImRect * clip_rect)
 {
-
-ImVec4 v;
-v.x = clip_rect->Min.x;
-v.y = clip_rect->Min.y;
-v.z = clip_rect->Max.x;
-v.w = clip_rect->Max.y;
-window->ClipRect = *clip_rect;
-window->DrawList->_CmdHeader.ClipRect = v;
-window->DrawList->_ClipRectStack.Data[window->DrawList->_ClipRectStack.Size - 1] = v;
+    ImVec4 v;
+    v.x = clip_rect->Min.x;
+    v.y = clip_rect->Min.y;
+    v.z = clip_rect->Max.x;
+    v.w = clip_rect->Max.y;
+    window->ClipRect = *clip_rect;
+    window->DrawList->_CmdHeader.ClipRect = v;
+    window->DrawList->_ClipRectStack.Data[window->DrawList->_ClipRectStack.Size - 1] = v;
 }
 
 void imgui_table_angled_headers_row(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-ImGuiTableTempData *temp;
-ImGuiTableInstanceData *instance;
-ImGuiTableColumn *column;
-ImGuiTableHeaderData request;
-ImGuiID row_id;
-ImU32 header_bg;
-ImU32 text_color;
-int highlight;
-int order_n;
-int column_n;
-table = imgui_c89_ctx->CurrentTable;
-temp = table->TempData;
-temp->AngledHeadersRequests.Size = 0;
-ImVector_ImGuiTableHeaderData__reserve__19cc31f8cc(imgui_c89_ctx, &temp->AngledHeadersRequests,
-    table->ColumnsEnabledCount);
-row_id = imgui_i_im_gui_window_get_id_string_string(imgui_c89_ctx, imgui_c89_ctx->CurrentWindow,
-    "##AngledHeaders", 0);
-instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
-    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
-highlight = table->LastHeldHeaderColumn != -1 ?
-    table->LastHeldHeaderColumn : table->HighlightColumnHeader;
-if (highlight == -1 && table->HoveredColumnBody != -1 &&
-    instance->HoveredRowLast == 0 && table->HoveredColumnBorder == -1 &&
-    (imgui_c89_ctx->ActiveId == 0 || imgui_c89_ctx->ActiveId == row_id ||
-     table->IsActiveIdInTable || imgui_c89_ctx->DragDropActive))
-    highlight = table->HoveredColumnBody;
-header_bg = imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_TableHeaderBg, 1.0f);
-text_color = imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, 1.0f);
-for (order_n = 0; order_n < table->ColumnsCount; order_n++)
-{
-    if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
-          ((ImU32)1 << (order_n & 31))))
-        continue;
-    column_n = table->DisplayOrderToIndex.Data[order_n];
-    column = &table->Columns.Data[column_n];
-    if (!(column->Flags & ImGuiTableColumnFlags_AngledHeader))
-        continue;
-    request.Index = (ImGuiTableColumnIdx)column_n;
-    request.TextColor = text_color;
-    request.BgColor0 = header_bg;
-    request.BgColor1 = column_n == highlight ?
-        imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Header, 1.0f) : 0;
-    ImVector_ImGuiTableHeaderData__push_back__4901f7814e(imgui_c89_ctx, &temp->AngledHeadersRequests, &request);
+    ImGuiTable *table;
+    ImGuiTableTempData *temp;
+    ImGuiTableInstanceData *instance;
+    ImGuiTableColumn *column;
+    ImGuiTableHeaderData request;
+    ImGuiID row_id;
+    ImU32 header_bg;
+    ImU32 text_color;
+    int highlight;
+    int order_n;
+    int column_n;
+    table = imgui_c89_ctx->CurrentTable;
+    temp = table->TempData;
+    temp->AngledHeadersRequestsSize = 0;
+    temp->AngledHeadersRequests = imgui_c89_vector_reserve(
+        imgui_c89_ctx, temp->AngledHeadersRequests,
+        temp->AngledHeadersRequestsSize,
+        &temp->AngledHeadersRequestsCapacity, table->ColumnsEnabledCount,
+        sizeof(*temp->AngledHeadersRequests), 0);
+    /* Select the column whose angled header needs a highlight before building
+     * the left-to-right render request array. */
+    row_id = imgui_i_window_get_id_string_string(imgui_c89_ctx, imgui_c89_ctx->CurrentWindow,
+        "##AngledHeaders", 0);
+    instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
+        &table->InstanceDataExtra[table->InstanceCurrent - 1];
+    highlight = table->LastHeldHeaderColumn != -1 ?
+        table->LastHeldHeaderColumn : table->HighlightColumnHeader;
+    if (highlight == -1 && table->HoveredColumnBody != -1 &&
+        instance->HoveredRowLast == 0 && table->HoveredColumnBorder == -1 &&
+        (imgui_c89_ctx->ActiveId == 0 || imgui_c89_ctx->ActiveId == row_id ||
+         table->IsActiveIdInTable || imgui_c89_ctx->DragDropActive))
+        highlight = table->HoveredColumnBody;
+    header_bg = imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_TableHeaderBg, 1.0f);
+    text_color = imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, 1.0f);
+    for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+    {
+        if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
+              ((ImU32)1 << (order_n & 31))))
+            continue;
+        column_n = table->DisplayOrderToIndex[order_n];
+        column = &table->Columns[column_n];
+        if (!(column->Flags & ImGuiTableColumnFlags_AngledHeader))
+            continue;
+        request.Index = (ImGuiTableColumnIdx)column_n;
+        request.TextColor = text_color;
+        request.BgColor0 = header_bg;
+        request.BgColor1 = column_n == highlight ?
+            imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Header, 1.0f) : 0;
+        temp->AngledHeadersRequests = imgui_c89_vector_push_back(
+            imgui_c89_ctx, temp->AngledHeadersRequests,
+            &temp->AngledHeadersRequestsSize,
+            &temp->AngledHeadersRequestsCapacity,
+            sizeof(*temp->AngledHeadersRequests), &request);
+    }
+    /* TableAngledHeadersRowEx requires requests in display order. */
+    imgui_i_table_angled_headers_row_ex(imgui_c89_ctx, row_id, imgui_c89_ctx->Style.TableAngledHeadersAngle,
+        0.0f, temp->AngledHeadersRequests,
+        temp->AngledHeadersRequestsSize);
 }
-imgui_i_im_gui_table_angled_headers_row_ex(imgui_c89_ctx, row_id, imgui_c89_ctx->Style.TableAngledHeadersAngle,
-    0.0f, temp->AngledHeadersRequests.Data,
-    temp->AngledHeadersRequests.Size);
-}
 
-void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImGuiID row_id, float angle, float max_label_width, const ImGuiTableHeaderData * data, int data_count)
+void imgui_i_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImGuiID row_id, float angle, float max_label_width, const ImGuiTableHeaderData * data, int data_count)
 {
-
     ImGuiTable *table;
     ImGuiWindow *window;
     ImDrawList *draw_list;
@@ -1870,7 +1834,7 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
     ImU32 border_color;
     int vertex_begin;
     int vertex_end;
-    unsigned char flip;
+    int flip_label;
     int pass_n;
     int request_order;
     int column_n;
@@ -1901,15 +1865,26 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
     table = imgui_c89_ctx->CurrentTable;
     window = imgui_c89_ctx->CurrentWindow;
     draw_list = window->DrawList;
+    if (!table)
+    {
+        if (imgui_i_error_log(imgui_c89_ctx,
+                "Call should only be done while in BeginTable() scope!"))
+            imgui_c89_assert_id(76);
+        return;
+    }
+    if (table->CurrentRow != -1)
+        imgui_c89_assert_id(77);
     if (max_label_width == 0.0f)
-        max_label_width = imgui_i_im_gui_table_get_header_angled_max_label_width(
+        max_label_width = imgui_i_table_get_header_angled_max_label_width(
             imgui_c89_ctx);
 
-    flip = angle < 0.0f;
+    /* The public angle is expressed in -pi/2..+pi/2; convert it to the
+     * rotation basis used by the text and background geometry. */
+    flip_label = angle < 0.0f;
     angle -= 3.14159265358979323846f * 0.5f;
     cos_a = cosf(angle);
     sin_a = sinf(angle);
-    if (flip)
+    if (flip_label)
     {
         label_cos_a = cosf(angle + 3.14159265358979323846f);
         label_sin_a = sinf(angle + 3.14159265358979323846f);
@@ -1925,7 +1900,7 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
     header_height = imgui_c89_ctx->FontSize +
                     imgui_c89_ctx->Style.CellPadding.x * 2.0f;
     rotate_x = max_label_width;
-    rotate_y = flip ? header_height : -header_height;
+    rotate_y = flip_label ? header_height : -header_height;
     rotated.x = rotate_x * cos_a - rotate_y * sin_a;
     rotated.y = rotate_x * sin_a + rotate_y * cos_a;
     row_height = ImTrunc__ae7a4018f8(ImAbs__34413c361e(rotated.y));
@@ -1934,6 +1909,7 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
     angled_vector.x = unit_right.x * (row_height / -sin_a);
     angled_vector.y = unit_right.y * (row_height / -sin_a);
 
+    /* Publish angled-header metrics before TableNextRow() performs layout. */
     imgui_table_next_row(imgui_c89_ctx, ImGuiTableRowFlags_Headers,
                     row_height);
     imgui_table_next_column(imgui_c89_ctx);
@@ -1948,12 +1924,12 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
     clip_min_x = table->BgClipRect.Min.x;
     if (table->FreezeColumnsCount > 0)
     {
-        frozen_column_n = table->DisplayOrderToIndex.Data[
+        frozen_column_n = table->DisplayOrderToIndex[
             table->FreezeColumnsCount - 1];
         clip_min_x = clip_min_x >=
-                     table->Columns.Data[frozen_column_n].MaxX
+                     table->Columns[frozen_column_n].MaxX
                    ? clip_min_x
-                   : table->Columns.Data[frozen_column_n].MaxX;
+                   : table->Columns[frozen_column_n].MaxX;
     }
     imgui_table_set_bg_color(imgui_c89_ctx, ImGuiTableBgTarget_RowBg0,
                         0, -1);
@@ -1974,9 +1950,9 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
     clip_min.x = clip_min_x;
     clip_min.y = table->BgClipRect.Min.y;
     imgui_push_clip_rect(imgui_c89_ctx, &clip_min, &clip_max, 1);
-    imgui_i_im_gui_button_behavior(imgui_c89_ctx, &row_rect, row_id,
+    imgui_i_button_behavior(imgui_c89_ctx, &row_rect, row_id,
                       NULL, NULL, 0);
-    imgui_i_im_gui_keep_alive_id(imgui_c89_ctx, row_id);
+    imgui_i_keep_alive_id(imgui_c89_ctx, row_id);
 
     ascent_scaled = imgui_c89_ctx->FontBaked->Ascent *
                     imgui_c89_ctx->FontBakedScale;
@@ -1985,11 +1961,13 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
     line_offset_for_ascent_x = line_offset_for_ascent_x >= 0.0f
                              ? line_offset_for_ascent_x : 0.0f;
     line_offset_for_ascent_x /= -sin_a;
-    line_offset_for_ascent_x *= flip ? -1.0f : 1.0f;
+    line_offset_for_ascent_x *= flip_label ? -1.0f : 1.0f;
     padding = imgui_c89_ctx->Style.CellPadding;
     align = imgui_c89_ctx->Style.TableAngledHeadersTextAlign;
     max_x = -3.402823466e38f;
 
+    /* Draw backgrounds and rotated labels first, then borders so every
+     * separator remains visible over the fills. */
     for (pass_n = 0; pass_n < 2; ++pass_n)
     {
         for (request_order = 0;
@@ -1998,7 +1976,7 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
         {
             request = &data[request_order];
             column_n = request->Index;
-            column = &table->Columns.Data[column_n];
+            column = &table->Columns[column_n];
 
             points[0].x = column->MaxX;
             points[0].y = row_rect.Max.y;
@@ -2019,11 +1997,13 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
                     &points[2], &points[3], request->BgColor1);
                 max_x = max_x >= points[3].x ? max_x : points[3].x;
 
-                label = imgui_i_im_gui_table_get_column_name(table, column_n);
-                label_end = imgui_i_im_gui_find_rendered_text_end(label, NULL);
+                label = imgui_i_table_get_column_name(table, column_n);
+                label_end = imgui_i_find_rendered_text_end(label, NULL);
                 line_step = imgui_c89_ctx->FontSize / -sin_a;
                 line_count = imgui_i_im_text_count_lines(label, label_end);
-                current_line_offset = flip
+                /* Rotate multiline labels one line at a time so each line
+                 * follows its own horizontal header border. */
+                current_line_offset = flip_label
                     ? (float)(line_count - 1) * line_step : 0.0f;
                 align_space =
                     (column->MaxX - column->MinX) - padding.x * 2.0f -
@@ -2059,7 +2039,7 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
                     imgui_push_style_color_u32(
                         imgui_c89_ctx, ImGuiCol_Text,
                         request->TextColor);
-                    imgui_i_im_gui_render_text_ellipsis(
+                    imgui_i_render_text_ellipsis(
                         imgui_c89_ctx, draw_list,
                         &text_clip_rect.Min, &text_clip_rect.Max,
                         text_clip_rect.Max.x, label, line_end,
@@ -2073,16 +2053,16 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
                     available_width = available_width >= 0.0f
                                     ? available_width : 0.0f;
                     vertical_offset = available_width * align.y *
-                                      (flip ? -1.0f : 1.0f);
+                                      (flip_label ? -1.0f : 1.0f);
                     pivot_in.x =
                         window->ClipRect.Min.x - vertical_offset;
                     pivot_in.y = window->ClipRect.Min.y + text_size.y;
                     pivot_out.x = column->WorkMinX;
                     pivot_out.y = row_rect.Max.y;
-                    current_line_offset += flip ? -line_step : line_step;
+                    current_line_offset += flip_label ? -line_step : line_step;
                     pivot_out.x += unit_right.x * padding.y;
                     pivot_out.y += unit_right.y * padding.y;
-                    if (flip)
+                    if (flip_label)
                     {
                         extra_width = clip_width -
                             (clip_width - text_size.x > 0.0f ?
@@ -2090,10 +2070,10 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
                         pivot_out.x += unit_right.x * extra_width;
                         pivot_out.y += unit_right.y * extra_width;
                     }
-                    pivot_out.x += flip
+                    pivot_out.x += flip_label
                         ? current_line_offset + line_step
                         : current_line_offset;
-                    imgui_i_im_gui_shade_verts_transform_pos(
+                    imgui_i_shade_verts_transform_pos(
                         draw_list, vertex_begin, vertex_end, &pivot_in,
                         label_cos_a, label_sin_a, &pivot_out);
                     label = line_end + 1;
@@ -2107,7 +2087,7 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
                 line_p2.x = points[3].x -
                             1.0f * 0.5f;
                 line_p2.y = points[3].y;
-                border_color = TableGetColumnBorderCol__08e5751e75(
+                border_color = imgui_i_table_get_column_border_col(
                     imgui_c89_ctx, table, request_order, column_n);
                 imgui_draw_list_add_line(
                     imgui_c89_ctx, draw_list, &line_p1, &line_p2,
@@ -2119,971 +2099,985 @@ void imgui_i_im_gui_table_angled_headers_row_ex(ImGuiContext *imgui_c89_ctx, ImG
     imgui_pop_clip_rect(imgui_c89_ctx);
     imgui_pop_clip_rect(imgui_c89_ctx);
     extra_width = max_x -
-        table->Columns.Data[table->RightMostEnabledColumn].MaxX;
+        table->Columns[table->RightMostEnabledColumn].MaxX;
     extra_width = extra_width >= 0.0f ? extra_width : 0.0f;
     table->TempData->AngledHeadersExtraWidth = extra_width;
 }
 
-void imgui_i_im_gui_table_apply_external_unclip_rect(ImGuiTable * table, ImRect * rect)
+void imgui_i_table_apply_external_unclip_rect(ImGuiTable * table, ImRect * rect)
 {
-
-ImGuiTableColumn *column;
-int column_n;
-if (rect->Max.x < rect->Min.x || rect->Max.y < rect->Min.y)
-    return;
-for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-{
-    column = &table->Columns.Data[column_n];
-    if (!column->IsRequestOutput &&
-        column->MinX < rect->Max.x && column->MaxX > rect->Min.x &&
-        table->WorkRect.Min.y < rect->Max.y &&
-        3.402823466e38f > rect->Min.y)
-        column->IsRequestOutput = 1;
-}
-}
-
-void imgui_i_im_gui_table_apply_queued_requests(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiTableColumn *column;
-int n;
-if (table->InstanceCurrent == 0)
-{
-    if (table->ResizedColumn != -1 &&
-        table->ResizedColumnNextWidth != 3.402823466e38f)
-        imgui_i_im_gui_table_set_column_width(imgui_c89_ctx, table->ResizedColumn,
-            table->ResizedColumnNextWidth);
-    table->LastResizedColumn = table->ResizedColumn;
-    table->ResizedColumnNextWidth = 3.402823466e38f;
-    table->ResizedColumn = -1;
-    if (table->AutoFitSingleColumn != -1)
+    ImGuiTableColumn *column;
+    int column_n;
+    if (rect->Max.x < rect->Min.x || rect->Max.y < rect->Min.y)
+        return;
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        n = table->AutoFitSingleColumn;
-        imgui_i_im_gui_table_set_column_width(imgui_c89_ctx, n,
-            table->Columns.Data[n].WidthAuto);
-        table->AutoFitSingleColumn = -1;
+        column = &table->Columns[column_n];
+        if (!column->IsRequestOutput &&
+            column->MinX < rect->Max.x && column->MaxX > rect->Min.x &&
+            table->WorkRect.Min.y < rect->Max.y &&
+            3.402823466e38f > rect->Min.y)
+            column->IsRequestOutput = 1;
     }
 }
-if (table->InstanceCurrent == 0)
+
+void imgui_i_table_apply_queued_requests(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-    table->LastHeldHeaderColumn = table->HeldHeaderColumn;
-    table->HeldHeaderColumn = -1;
-    if (table->ReorderColumn != -1 && table->ReorderColumnDstOrder != -1)
+    ImGuiTableColumn *column;
+    int n;
+    if (table->InstanceCurrent == 0)
     {
-        imgui_i_im_gui_table_set_column_display_order(table, table->ReorderColumn,
-            table->ReorderColumnDstOrder);
-        table->ReorderColumnDstOrder = -1;
+        /* Resize and single-column auto-fit requests are consumed only by the
+         * first instance of a table. */
+        if (table->ResizedColumn != -1 &&
+            table->ResizedColumnNextWidth != 3.402823466e38f)
+            imgui_i_table_set_column_width(imgui_c89_ctx, table->ResizedColumn,
+                table->ResizedColumnNextWidth);
+        table->LastResizedColumn = table->ResizedColumn;
+        table->ResizedColumnNextWidth = 3.402823466e38f;
+        table->ResizedColumn = -1;
+        if (table->AutoFitSingleColumn != -1)
+        {
+            n = table->AutoFitSingleColumn;
+            imgui_i_table_set_column_width(imgui_c89_ctx, n,
+                table->Columns[n].WidthAuto);
+            table->AutoFitSingleColumn = -1;
+        }
     }
-    if (!imgui_c89_ctx->ActiveId)
-        table->ReorderColumn = -1;
-}
-if (table->IsResetDisplayOrderRequest)
-{
-    for (n = 0; n < table->ColumnsCount; n++)
-        table->DisplayOrderToIndex.Data[n] =
-            table->Columns.Data[n].DisplayOrder = (ImGuiTableColumnIdx)n;
-    table->IsResetDisplayOrderRequest = 0;
-    table->IsSettingsDirty = 1;
-}
-if (table->IsResetVisibilityRequest)
-{
-    for (n = 0; n < table->ColumnsCount; n++)
+    if (table->InstanceCurrent == 0)
     {
-        column = &table->Columns.Data[n];
-        column->IsUserEnabled = column->IsUserEnabledNextFrame =
-            (column->Flags & ImGuiTableColumnFlags_DefaultHide) ? 0 : 1;
+        table->LastHeldHeaderColumn = table->HeldHeaderColumn;
+        table->HeldHeaderColumn = -1;
+        if (table->ReorderColumn != -1 && table->ReorderColumnDstOrder != -1)
+        {
+            imgui_i_table_set_column_display_order(table, table->ReorderColumn,
+                table->ReorderColumnDstOrder);
+            table->ReorderColumnDstOrder = -1;
+        }
+        if (!imgui_c89_ctx->ActiveId)
+            table->ReorderColumn = -1;
     }
-    table->IsResetVisibilityRequest = 0;
-    table->IsSettingsDirty = 1;
-}
-}
-
-void imgui_i_im_gui_table_begin_cell(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int column_n)
-{
-
-ImGuiTableColumn *column;
-ImGuiWindow *window;
-float start_x;
-column = &table->Columns.Data[column_n];
-window = table->InnerWindow;
-table->CurrentColumn = column_n;
-start_x = column->WorkMinX;
-if (column->Flags & ImGuiTableColumnFlags_IndentEnable)
-    start_x += table->RowIndentOffsetX;
-window->DC.CursorPos.x = start_x;
-window->DC.CursorPos.y = table->RowPosY1 + table->RowCellPaddingY;
-window->DC.CursorMaxPos.x = start_x;
-window->DC.ColumnsOffset.x = start_x - window->Pos.x - window->DC.Indent.x;
-window->DC.CursorPosPrevLine.x = start_x;
-window->DC.CurrLineTextBaseOffset = table->RowTextBaseline;
-window->DC.NavLayerCurrent = (ImGuiNavLayer)column->NavLayerCurrent;
-window->WorkRect.Min.y = window->DC.CursorPos.y;
-window->WorkRect.Min.x = column->WorkMinX;
-window->WorkRect.Max.x = column->WorkMaxX;
-window->DC.ItemWidth = column->ItemWidth;
-window->SkipItems = column->IsSkipItems;
-if (column->IsSkipItems)
-{
-    imgui_c89_ctx->LastItemData.ID = 0;
-    imgui_c89_ctx->LastItemData.StatusFlags = 0;
-}
-if (table->Flags & ImGuiTableFlags_NoClip)
-    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-        2);
-else
-{
-    imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &column->ClipRect);
-    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-        column->DrawChannelCurrent);
-}
-if (imgui_c89_ctx->LogEnabled && !column->IsSkipItems)
-{
-    imgui_i_im_gui_log_rendered_text(imgui_c89_ctx, &window->DC.CursorPos, "|", 0);
-    imgui_c89_ctx->LogLinePosY = 3.402823466e38f;
-}
-}
-
-unsigned char imgui_i_im_gui_table_begin_context_menu_popup(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiID id;
-if (!table->IsContextPopupOpen || table->InstanceCurrent != table->InstanceInteracted)
-    return 0;
-id = imgui_i_im_hash_str("##ContextMenu", 0, table->ID);
-if (imgui_i_im_gui_begin_popup_ex(imgui_c89_ctx, id,
-    ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
-    return 1;
-table->IsContextPopupOpen = 0;
-return 0;
-}
-
-void imgui_i_im_gui_table_begin_init_memory(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int columns_count)
-{
-
-char *arena;
-size_t columns_bytes;
-size_t order_bytes;
-size_t cells_bytes;
-size_t bits_bytes;
-size_t order_off;
-size_t cells_off;
-size_t bits0_off;
-size_t bits1_off;
-size_t bits2_off;
-size_t total;
-columns_bytes = (size_t)columns_count * sizeof(ImGuiTableColumn);
-order_bytes = (size_t)columns_count * sizeof(ImGuiTableColumnIdx);
-cells_bytes = (size_t)columns_count * sizeof(ImGuiTableCellData);
-bits_bytes = (size_t)((columns_count + 31) >> 5) * sizeof(ImU32);
-order_off = (columns_bytes + 3) & ~(size_t)3;
-cells_off = (order_off + order_bytes + 3) & ~(size_t)3;
-bits0_off = (cells_off + cells_bytes + 3) & ~(size_t)3;
-bits1_off = bits0_off + bits_bytes;
-bits2_off = bits1_off + bits_bytes;
-total = bits2_off + bits_bytes;
-arena = (char *)imgui_mem_alloc(imgui_c89_ctx, total);
-table->RawData = arena;
-memset(arena, 0, total);
-table->Columns.Data = (ImGuiTableColumn *)arena;
-table->Columns.DataEnd = table->Columns.Data + columns_count;
-table->DisplayOrderToIndex.Data =
-    (ImGuiTableColumnIdx *)(arena + order_off);
-table->DisplayOrderToIndex.DataEnd =
-    table->DisplayOrderToIndex.Data + columns_count;
-table->RowCellData.Data = (ImGuiTableCellData *)(arena + cells_off);
-table->RowCellData.DataEnd = table->RowCellData.Data + columns_count;
-table->EnabledMaskByDisplayOrder = (ImU32 *)(arena + bits0_off);
-table->EnabledMaskByIndex = (ImU32 *)(arena + bits1_off);
-table->VisibleMaskByIndex = (ImU32 *)(arena + bits2_off);
-}
-
-void imgui_i_im_gui_table_begin_row(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiWindow *window;
-float next_y;
-window = table->InnerWindow;
-table->CurrentRow++;
-table->CurrentColumn = -1;
-table->RowBgColor[0] = table->RowBgColor[1] = (ImU32)1 << 24;
-table->RowCellDataCurrent = -1;
-table->IsInsideRow = 1;
-next_y = table->RowPosY2;
-if (table->CurrentRow == 0 && table->FreezeRowsCount > 0)
-    next_y = window->DC.CursorPos.y = table->OuterRect.Min.y;
-table->RowPosY1 = table->RowPosY2 = next_y;
-table->RowTextBaseline = 0.0f;
-table->RowIndentOffsetX = window->DC.Indent.x - table->HostIndentX;
-window->DC.PrevLineTextBaseOffset = 0.0f;
-window->DC.CursorPosPrevLine.x = window->DC.CursorPos.x;
-window->DC.CursorPosPrevLine.y = window->DC.CursorPos.y + table->RowCellPaddingY;
-window->DC.PrevLineSize.x = window->DC.PrevLineSize.y = 0.0f;
-window->DC.CurrLineSize.x = window->DC.CurrLineSize.y = 0.0f;
-window->DC.IsSameLine = window->DC.IsSetPos = 0;
-window->DC.CursorMaxPos.y = next_y;
-if (table->RowFlags & ImGuiTableRowFlags_Headers)
-{
-    imgui_table_set_bg_color(imgui_c89_ctx, ImGuiTableBgTarget_RowBg0,
-        imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_TableHeaderBg, 1.0f), -1);
-    if (table->CurrentRow == 0)
-        table->IsUsingHeaders = 1;
-}
-}
-
-float imgui_i_im_gui_table_calc_max_column_width(const ImGuiTable * table, int column_n)
-{
-
-const ImGuiTableColumn *column;
-float max_width;
-float min_distance;
-column = &table->Columns.Data[column_n];
-max_width = 3.402823466e38f;
-min_distance = table->MinColumnWidth + 2.0f * table->CellPaddingX + table->CellSpacingX1 + table->CellSpacingX2;
-if (table->Flags & ImGuiTableFlags_ScrollX)
-{
-    if (column->DisplayOrder < table->FreezeColumnsRequest)
-        max_width = table->InnerClipRect.Max.x - (table->FreezeColumnsRequest - column->DisplayOrder) * min_distance - column->MinX - table->OuterPaddingX - table->CellPaddingX - table->CellSpacingX2;
-}
-else if (!(table->Flags & ImGuiTableFlags_NoKeepColumnsVisible))
-    max_width = table->WorkRect.Max.x - (table->ColumnsEnabledCount - column->IndexWithinEnabledSet - 1) * min_distance - column->MinX - table->CellSpacingX2 - 2.0f * table->CellPaddingX - table->OuterPaddingX;
-return max_width;
-}
-
-void imgui_i_im_gui_table_draw_borders(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiWindow *window;
-ImDrawList *draw_list;
-ImGuiTableInstanceData *instance;
-ImGuiTableColumn *column;
-float base_y;
-float draw_y1;
-float draw_y2;
-float body_y2;
-float header_y2;
-float border_y;
-int order_n;
-int column_n;
-int resized;
-int hovered;
-int resizable;
-window = table->InnerWindow;
-if (table->OuterWindow->ClipRect.Min.x >= table->OuterRect.Max.x ||
-    table->OuterWindow->ClipRect.Max.x <= table->OuterRect.Min.x ||
-    table->OuterWindow->ClipRect.Min.y >= table->OuterRect.Max.y ||
-    table->OuterWindow->ClipRect.Max.y <= table->OuterRect.Min.y)
-    return;
-draw_list = window->DrawList;
-imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, draw_list, 0);
-imgui_draw_list_push_clip_rect(imgui_c89_ctx, draw_list, &table->Bg0ClipRectForDrawCmd.Min,
-    &table->Bg0ClipRectForDrawCmd.Max, 0);
-instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
-    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
-base_y = table->FreezeRowsCount >= 1 ?
-    table->InnerRect.Min.y : table->WorkRect.Min.y;
-draw_y1 = base_y + table->AngledHeadersHeight;
-if (draw_y1 < table->InnerRect.Min.y)
-    draw_y1 = table->InnerRect.Min.y;
-if (table->Flags & ImGuiTableFlags_BordersOuterH)
-    draw_y1 += 1.0f;
-body_y2 = table->InnerRect.Max.y;
-header_y2 = draw_y1;
-if (table->IsUsingHeaders)
-{
-    header_y2 = base_y + instance->LastTopHeadersRowHeight;
-    if (header_y2 > table->InnerRect.Max.y)
-        header_y2 = table->InnerRect.Max.y;
-}
-if (table->Flags & ImGuiTableFlags_BordersInnerV)
-    for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+    if (table->IsResetDisplayOrderRequest)
     {
-        if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
-              ((ImU32)1 << (order_n & 31))))
-            continue;
-        column_n = table->DisplayOrderToIndex.Data[order_n];
-        column = &table->Columns.Data[column_n];
-        resized = table->ResizedColumn == column_n &&
-            table->InstanceInteracted == table->InstanceCurrent;
-        hovered = table->HoveredColumnBorder == column_n;
-        resizable = !(column->Flags & (ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoDirectResize_));
-        if (column->MaxX > table->InnerClipRect.Max.x && !resized)
-            continue;
-        if (column->NextEnabledColumn == -1 && !resizable &&
-            ((table->Flags & ImGuiTableFlags_SizingMask_) != ImGuiTableFlags_SizingFixedSame ||
-             (table->Flags & ImGuiTableFlags_NoHostExtendX)))
-            continue;
-        if (column->MaxX <= column->ClipRect.Min.x)
-            continue;
-        draw_y2 = header_y2;
-        if (table->FreezeColumnsCount == order_n + 1 ||
-            ((table->Flags & ImGuiTableFlags_NoBordersInBodyUntilResize) &&
-             (hovered || resized)) ||
-            !(table->Flags & (ImGuiTableFlags_NoBordersInBodyUntilResize | ImGuiTableFlags_NoBordersInBody)))
-            draw_y2 = body_y2;
-        if (draw_y2 > draw_y1)
-            imgui_draw_list_add_line_v(imgui_c89_ctx, draw_list, column->MaxX,
-                draw_y1, draw_y2,
-                TableGetColumnBorderCol__08e5751e75(imgui_c89_ctx, table, order_n, column_n), 1.0f);
+        for (n = 0; n < table->ColumnsCount; n++)
+            table->DisplayOrderToIndex[n] =
+                table->Columns[n].DisplayOrder = (ImGuiTableColumnIdx)n;
+        table->IsResetDisplayOrderRequest = 0;
+        table->IsSettingsDirty = 1;
     }
-if (table->Flags & ImGuiTableFlags_BordersOuter)
-{
-    if ((table->Flags & ImGuiTableFlags_BordersOuter) == ImGuiTableFlags_BordersOuter)
-        imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, draw_list, &table->OuterRect.Min,
-            &table->OuterRect.Max, table->BorderColorStrong, 0.0f, 1.0f, 0);
-    else if (table->Flags & ImGuiTableFlags_BordersOuterV)
+    if (table->IsResetVisibilityRequest)
     {
-        imgui_draw_list_add_line_v(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
-            table->OuterRect.Min.y, table->OuterRect.Max.y,
-            table->BorderColorStrong, 1.0f);
-        imgui_draw_list_add_line_v(imgui_c89_ctx, draw_list, table->OuterRect.Max.x,
-            table->OuterRect.Min.y, table->OuterRect.Max.y,
-            table->BorderColorStrong, 1.0f);
+        for (n = 0; n < table->ColumnsCount; n++)
+        {
+            column = &table->Columns[n];
+            column->IsUserEnabled = column->IsUserEnabledNextFrame =
+                (column->Flags & ImGuiTableColumnFlags_DefaultHide) ? 0 : 1;
+        }
+        table->IsResetVisibilityRequest = 0;
+        table->IsSettingsDirty = 1;
     }
+}
+
+void imgui_i_table_begin_cell(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int column_n)
+{
+    ImGuiTableColumn *column;
+    ImGuiWindow *window;
+    float start_x;
+    column = &table->Columns[column_n];
+    window = table->InnerWindow;
+    table->CurrentColumn = column_n;
+    /* This is a hot path. The row locks the indent offset so every cell starts
+     * from the same row-wide indentation state. */
+    start_x = column->WorkMinX;
+    if (column->Flags & ImGuiTableColumnFlags_IndentEnable)
+        start_x += table->RowIndentOffsetX;
+    window->DC.CursorPos.x = start_x;
+    window->DC.CursorPos.y = table->RowPosY1 + table->RowCellPaddingY;
+    window->DC.CursorMaxPos.x = start_x;
+    window->DC.ColumnsOffset.x = start_x - window->Pos.x - window->DC.Indent.x;
+    window->DC.CursorPosPrevLine.x = start_x;
+    window->DC.CurrLineTextBaseOffset = table->RowTextBaseline;
+    window->DC.NavLayerCurrent = (ImGuiNavLayer)column->NavLayerCurrent;
+    window->WorkRect.Min.y = window->DC.CursorPos.y;
+    window->WorkRect.Min.x = column->WorkMinX;
+    window->WorkRect.Max.x = column->WorkMaxX;
+    window->DC.ItemWidth = column->ItemWidth;
+    window->SkipItems = column->IsSkipItems;
+    if (column->IsSkipItems)
+    {
+        imgui_c89_ctx->LastItemData.ID = 0;
+        imgui_c89_ctx->LastItemData.StatusFlags = 0;
+    }
+    if (table->Flags & ImGuiTableFlags_NoClip)
+        /* All unclipped table cells deliberately share one draw channel. */
+        imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+            2);
     else
     {
-        imgui_draw_list_add_line_h(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
-            table->OuterRect.Max.x, table->OuterRect.Min.y,
-            table->BorderColorStrong, 1.0f);
-        imgui_draw_list_add_line_h(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
-            table->OuterRect.Max.x, table->OuterRect.Max.y - 1.0f,
-            table->BorderColorStrong, 1.0f);
+        imgui_i_set_window_clip_rect_before_set_channel(window, &column->ClipRect);
+        imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+            column->DrawChannelCurrent);
     }
-}
-border_y = table->RowPosY2;
-if ((table->Flags & ImGuiTableFlags_BordersInnerH) &&
-    border_y < table->OuterRect.Max.y &&
-    border_y >= table->BgClipRect.Min.y && border_y < table->BgClipRect.Max.y)
-    imgui_draw_list_add_line_h(imgui_c89_ctx, draw_list, table->BorderX1,
-        table->BorderX2, border_y, table->BorderColorLight, 1.0f);
-imgui_draw_list_pop_clip_rect(imgui_c89_ctx, draw_list);
+    if (imgui_c89_ctx->LogEnabled && !column->IsSkipItems)
+    {
+        imgui_i_log_rendered_text(imgui_c89_ctx, &window->DC.CursorPos, "|", 0);
+        imgui_c89_ctx->LogLinePosY = 3.402823466e38f;
+    }
 }
 
-void imgui_i_im_gui_table_draw_default_context_menu(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, ImGuiTableFlags flags_for_section_to_display)
+unsigned char imgui_i_table_begin_context_menu_popup(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
+    ImGuiID id;
+    if (!table->IsContextPopupOpen || table->InstanceCurrent != table->InstanceInteracted)
+        return 0;
+    id = imgui_i_im_hash_str("##ContextMenu", 0, table->ID);
+    if (imgui_i_begin_popup_ex(imgui_c89_ctx, id,
+        ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
+        return 1;
+    table->IsContextPopupOpen = 0;
+    return 0;
+}
 
-ImGuiWindow *window;
-ImGuiTableColumn *context_column;
-ImGuiTableColumn *column;
-const char *label;
-const char *name;
-unsigned char want_separator;
-unsigned char can_resize;
-unsigned char menu_enabled;
-unsigned char is_reordering;
-int context_column_n;
-int src_order;
-int min_order;
-int max_order;
-int order_n;
-int column_n;
-int direction;
-int steps;
-int dst_order;
-float mouse_y;
-float amount;
-window = imgui_c89_ctx->CurrentWindow;
-if (window->SkipItems)
-    return;
-want_separator = 0;
-context_column_n = table->ContextPopupColumn;
-if (context_column_n < 0 || context_column_n >= table->ColumnsCount)
-    context_column_n = -1;
-context_column = context_column_n >= 0 ?
-    &table->Columns.Data[context_column_n] : 0;
-if (flags_for_section_to_display & ImGuiTableFlags_Resizable)
+void imgui_i_table_begin_init_memory(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int columns_count)
 {
-    if (context_column)
-    {
-        can_resize = !(context_column->Flags & ImGuiTableColumnFlags_NoResize) &&
-            context_column->IsEnabled;
-        label = ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableSizeOne);
-        if (imgui_menu_item_bool(imgui_c89_ctx, label, 0, 0, can_resize))
-            imgui_i_im_gui_table_set_column_width_auto_single(table, context_column_n);
-    }
-    label = table->ColumnsEnabledFixedCount == table->ColumnsEnabledCount &&
-        (table->Flags & ImGuiTableFlags_SizingMask_) != ImGuiTableFlags_SizingFixedSame ?
-        ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableSizeAllFit) :
-        ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableSizeAllDefault);
-    if (imgui_menu_item_bool(imgui_c89_ctx, label, 0, 0, 1))
-        imgui_i_im_gui_table_set_column_width_auto_all(table);
-    want_separator = 1;
+    char *arena;
+    size_t columns_bytes;
+    size_t order_bytes;
+    size_t cells_bytes;
+    size_t bits_bytes;
+    size_t order_off;
+    size_t cells_off;
+    size_t bits0_off;
+    size_t bits1_off;
+    size_t bits2_off;
+    size_t total;
+        /* Match the upstream packed arena's four-byte alignment. */
+    columns_bytes = (size_t)columns_count * sizeof(ImGuiTableColumn);
+    order_bytes = (size_t)columns_count * sizeof(ImGuiTableColumnIdx);
+    cells_bytes = (size_t)columns_count * sizeof(ImGuiTableCellData);
+    bits_bytes = (size_t)((columns_count + 31) >> 5) * sizeof(ImU32);
+    order_off = (columns_bytes + 3) & ~(size_t)3;
+    cells_off = (order_off + order_bytes + 3) & ~(size_t)3;
+    bits0_off = (cells_off + cells_bytes + 3) & ~(size_t)3;
+    bits1_off = bits0_off + bits_bytes;
+    bits2_off = bits1_off + bits_bytes;
+    total = bits2_off + bits_bytes;
+    arena = (char *)imgui_mem_alloc(imgui_c89_ctx, total);
+    table->RawData = arena;
+    memset(arena, 0, total);
+    table->Columns = (ImGuiTableColumn *)arena;
+    table->ColumnsEnd = table->Columns + columns_count;
+    table->DisplayOrderToIndex =
+        (ImGuiTableColumnIdx *)(arena + order_off);
+    table->DisplayOrderToIndexEnd =
+        table->DisplayOrderToIndex + columns_count;
+    table->RowCellData = (ImGuiTableCellData *)(arena + cells_off);
+    table->RowCellDataEnd = table->RowCellData + columns_count;
+    table->EnabledMaskByDisplayOrder = (ImU32 *)(arena + bits0_off);
+    table->EnabledMaskByIndex = (ImU32 *)(arena + bits1_off);
+    table->VisibleMaskByIndex = (ImU32 *)(arena + bits2_off);
 }
-if (flags_for_section_to_display & (ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
+
+void imgui_i_table_begin_row(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-    label = ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableReset);
-    if (imgui_begin_menu(imgui_c89_ctx, label, 1))
+    ImGuiWindow *window;
+    float next_y;
+    window = table->InnerWindow;
+    if (table->IsInsideRow)
+        imgui_c89_assert_id(44);
+    /* Start a new row and reset the line state shared by all of its cells. */
+    table->CurrentRow++;
+    table->CurrentColumn = -1;
+    table->RowBgColor[0] = table->RowBgColor[1] = (ImU32)1 << 24;
+    table->RowCellDataCurrent = -1;
+    table->IsInsideRow = 1;
+    next_y = table->RowPosY2;
+    if (table->CurrentRow == 0 && table->FreezeRowsCount > 0)
+        next_y = window->DC.CursorPos.y = table->OuterRect.Min.y;
+    table->RowPosY1 = table->RowPosY2 = next_y;
+    table->RowTextBaseline = 0.0f;
+    table->RowIndentOffsetX = window->DC.Indent.x - table->HostIndentX;
+    window->DC.PrevLineTextBaseOffset = 0.0f;
+    window->DC.CursorPosPrevLine.x = window->DC.CursorPos.x;
+    window->DC.CursorPosPrevLine.y = window->DC.CursorPos.y + table->RowCellPaddingY;
+    window->DC.PrevLineSize.x = window->DC.PrevLineSize.y = 0.0f;
+    window->DC.CurrLineSize.x = window->DC.CurrLineSize.y = 0.0f;
+    window->DC.IsSameLine = window->DC.IsSetPos = 0;
+    window->DC.CursorMaxPos.y = next_y;
+    if (table->RowFlags & ImGuiTableRowFlags_Headers)
     {
-        if ((flags_for_section_to_display & ImGuiTableFlags_Reorderable) &&
-            imgui_menu_item_bool(imgui_c89_ctx,
-                ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableResetOrder), 0, 0,
-                !table->IsDefaultDisplayOrder))
-            table->IsResetDisplayOrderRequest = 1;
-        if ((flags_for_section_to_display & ImGuiTableFlags_Hideable) &&
-            imgui_menu_item_bool(imgui_c89_ctx,
-                ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableResetVisibility), 0, 0,
-                !table->IsDefaultVisibility))
-            table->IsResetVisibilityRequest = 1;
-        imgui_end_menu(imgui_c89_ctx);
+        imgui_table_set_bg_color(imgui_c89_ctx, ImGuiTableBgTarget_RowBg0,
+            imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_TableHeaderBg, 1.0f), -1);
+        if (table->CurrentRow == 0)
+            table->IsUsingHeaders = 1;
     }
 }
-if (flags_for_section_to_display & ImGuiTableFlags_Hideable)
+
+float imgui_i_table_calc_max_column_width(const ImGuiTable * table, int column_n)
 {
-    if (want_separator)
-        imgui_separator(imgui_c89_ctx);
-    is_reordering = imgui_c89_ctx->ActiveId &&
-        imgui_c89_ctx->ActiveIdWindow == imgui_c89_ctx->CurrentWindow &&
-        table->ReorderColumn != -1 &&
-        imgui_c89_ctx->ActiveIdHasBeenEditedBefore;
-    src_order = is_reordering ?
-        table->Columns.Data[table->ReorderColumn].DisplayOrder : -1;
-    min_order = is_reordering ? TableGetMaxDisplayOrderAllowed__501237b51d(table, src_order, 0) : 0;
-    max_order = is_reordering ? TableGetMaxDisplayOrderAllowed__501237b51d(table, src_order,
-        table->ColumnsCount - 1) : table->ColumnsCount - 1;
-    imgui_push_item_flag(imgui_c89_ctx, ImGuiItemFlags_AutoClosePopups, 0);
-    for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+    const ImGuiTableColumn *column;
+    float max_width;
+    float min_distance;
+    column = &table->Columns[column_n];
+    max_width = 3.402823466e38f;
+    min_distance = table->MinColumnWidth + 2.0f * table->CellPaddingX + table->CellSpacingX1 + table->CellSpacingX2;
+    if (table->Flags & ImGuiTableFlags_ScrollX)
     {
-        column_n = table->DisplayOrderToIndex.Data[order_n];
-        column = &table->Columns.Data[column_n];
-        if (column->Flags & ImGuiTableColumnFlags_Disabled)
-            continue;
-        name = imgui_i_im_gui_table_get_column_name(table, column_n);
-        if (!name || !*name)
-            name = "<Unknown>";
-        menu_enabled = !(column->Flags & ImGuiTableColumnFlags_NoHide);
-        if (column->IsUserEnabled && table->ColumnsEnabledCount <= 1)
-            menu_enabled = 0;
-        if (is_reordering && (column->DisplayOrder < min_order ||
-            column->DisplayOrder > max_order))
-            menu_enabled = 0;
-        if (MenuItemForColumnReorder__e881d10945(imgui_c89_ctx, name,
-            column->IsUserEnabled, menu_enabled))
-            column->IsUserEnabledNextFrame = !column->IsUserEnabled;
-        if (imgui_is_item_active(imgui_c89_ctx) &&
-            imgui_is_mouse_dragging(imgui_c89_ctx, 0, -1.0f) &&
-            imgui_c89_ctx->ActiveIdSource == ImGuiInputSource_Mouse &&
-            (table->Flags & ImGuiTableFlags_Reorderable))
+        if (column->DisplayOrder < table->FreezeColumnsRequest)
+            max_width = table->InnerClipRect.Max.x - (table->FreezeColumnsRequest - column->DisplayOrder) * min_distance - column->MinX - table->OuterPaddingX - table->CellPaddingX - table->CellSpacingX2;
+    }
+    else if (!(table->Flags & ImGuiTableFlags_NoKeepColumnsVisible))
+        max_width = table->WorkRect.Max.x - (table->ColumnsEnabledCount - column->IndexWithinEnabledSet - 1) * min_distance - column->MinX - table->CellSpacingX2 - 2.0f * table->CellPaddingX - table->OuterPaddingX;
+    return max_width;
+}
+
+void imgui_i_table_draw_borders(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+{
+    ImGuiWindow *window;
+    ImDrawList *draw_list;
+    ImGuiTableInstanceData *instance;
+    ImGuiTableColumn *column;
+    float base_y;
+    float draw_y1;
+    float draw_y2;
+    float body_y2;
+    float header_y2;
+    float border_y;
+    int order_n;
+    int column_n;
+    int resized;
+    int hovered;
+    int resizable;
+    window = table->InnerWindow;
+    /* Avoid touching draw channels when the entire table is outside the host. */
+    if (table->OuterWindow->ClipRect.Min.x >= table->OuterRect.Max.x ||
+        table->OuterWindow->ClipRect.Max.x <= table->OuterRect.Min.x ||
+        table->OuterWindow->ClipRect.Min.y >= table->OuterRect.Max.y ||
+        table->OuterWindow->ClipRect.Max.y <= table->OuterRect.Min.y)
+        return;
+    draw_list = window->DrawList;
+    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, draw_list, 0);
+    imgui_draw_list_push_clip_rect(imgui_c89_ctx, draw_list, &table->Bg0ClipRectForDrawCmd.Min,
+        &table->Bg0ClipRectForDrawCmd.Max, 0);
+    instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
+        &table->InstanceDataExtra[table->InstanceCurrent - 1];
+    base_y = table->FreezeRowsCount >= 1 ?
+        table->InnerRect.Min.y : table->WorkRect.Min.y;
+    draw_y1 = base_y + table->AngledHeadersHeight;
+    if (draw_y1 < table->InnerRect.Min.y)
+        draw_y1 = table->InnerRect.Min.y;
+    if (table->Flags & ImGuiTableFlags_BordersOuterH)
+        draw_y1 += 1.0f;
+    body_y2 = table->InnerRect.Max.y;
+    header_y2 = draw_y1;
+    if (table->IsUsingHeaders)
+    {
+        header_y2 = base_y + instance->LastTopHeadersRowHeight;
+        if (header_y2 > table->InnerRect.Max.y)
+            header_y2 = table->InnerRect.Max.y;
+    }
+    /* Inner separators also carry resize hover/active feedback. */
+    if (table->Flags & ImGuiTableFlags_BordersInnerV)
+        for (order_n = 0; order_n < table->ColumnsCount; order_n++)
         {
-            imgui_c89_ctx->ActiveIdHasBeenEditedBefore = 1;
-            table->ReorderColumn = (ImGuiTableColumnIdx)column_n;
-            if (!imgui_is_item_hovered(imgui_c89_ctx, 0))
+            if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
+                  ((ImU32)1 << (order_n & 31))))
+                continue;
+            column_n = table->DisplayOrderToIndex[order_n];
+            column = &table->Columns[column_n];
+            resized = table->ResizedColumn == column_n &&
+                table->InstanceInteracted == table->InstanceCurrent;
+            hovered = table->HoveredColumnBorder == column_n;
+            resizable = !(column->Flags & (ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoDirectResize_));
+            if (column->MaxX > table->InnerClipRect.Max.x && !resized)
+                continue;
+            if (column->NextEnabledColumn == -1 && !resizable &&
+                ((table->Flags & ImGuiTableFlags_SizingMask_) != ImGuiTableFlags_SizingFixedSame ||
+                 (table->Flags & ImGuiTableFlags_NoHostExtendX)))
+                continue;
+            if (column->MaxX <= column->ClipRect.Min.x)
+                continue;
+            draw_y2 = header_y2;
+            if (table->FreezeColumnsCount == order_n + 1 ||
+                ((table->Flags & ImGuiTableFlags_NoBordersInBodyUntilResize) &&
+                 (hovered || resized)) ||
+                !(table->Flags & (ImGuiTableFlags_NoBordersInBodyUntilResize | ImGuiTableFlags_NoBordersInBody)))
+                draw_y2 = body_y2;
+            if (draw_y2 > draw_y1)
+                imgui_draw_list_add_line_v(imgui_c89_ctx, draw_list, column->MaxX,
+                    draw_y1, draw_y2,
+                    imgui_i_table_get_column_border_col(imgui_c89_ctx, table, order_n, column_n), 1.0f);
+        }
+    /* Draw the outer border in one command when both axes are enabled. */
+    if (table->Flags & ImGuiTableFlags_BordersOuter)
+    {
+        if ((table->Flags & ImGuiTableFlags_BordersOuter) == ImGuiTableFlags_BordersOuter)
+            imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, draw_list, &table->OuterRect.Min,
+                &table->OuterRect.Max, table->BorderColorStrong, 0.0f, 1.0f, 0);
+        else if (table->Flags & ImGuiTableFlags_BordersOuterV)
+        {
+            imgui_draw_list_add_line_v(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
+                table->OuterRect.Min.y, table->OuterRect.Max.y,
+                table->BorderColorStrong, 1.0f);
+            imgui_draw_list_add_line_v(imgui_c89_ctx, draw_list, table->OuterRect.Max.x,
+                table->OuterRect.Min.y, table->OuterRect.Max.y,
+                table->BorderColorStrong, 1.0f);
+        }
+        else
+        {
+            imgui_draw_list_add_line_h(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
+                table->OuterRect.Max.x, table->OuterRect.Min.y,
+                table->BorderColorStrong, 1.0f);
+            imgui_draw_list_add_line_h(imgui_c89_ctx, draw_list, table->OuterRect.Min.x,
+                table->OuterRect.Max.x, table->OuterRect.Max.y - 1.0f,
+                table->BorderColorStrong, 1.0f);
+        }
+    }
+    border_y = table->RowPosY2;
+    if ((table->Flags & ImGuiTableFlags_BordersInnerH) &&
+        border_y < table->OuterRect.Max.y &&
+        border_y >= table->BgClipRect.Min.y && border_y < table->BgClipRect.Max.y)
+        imgui_draw_list_add_line_h(imgui_c89_ctx, draw_list, table->BorderX1,
+            table->BorderX2, border_y, table->BorderColorLight, 1.0f);
+    imgui_draw_list_pop_clip_rect(imgui_c89_ctx, draw_list);
+}
+
+void imgui_i_table_draw_default_context_menu(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, ImGuiTableFlags flags_for_section_to_display)
+{
+    ImGuiWindow *window;
+    ImGuiTableColumn *context_column;
+    ImGuiTableColumn *column;
+    const char *label;
+    const char *name;
+    unsigned char want_separator;
+    unsigned char can_resize;
+    unsigned char menu_enabled;
+    unsigned char is_reordering;
+    int context_column_n;
+    int src_order;
+    int min_order;
+    int max_order;
+    int order_n;
+    int column_n;
+    int direction;
+    int steps;
+    int dst_order;
+    float mouse_y;
+    float amount;
+    window = imgui_c89_ctx->CurrentWindow;
+    if (window->SkipItems)
+        return;
+    want_separator = 0;
+    context_column_n = table->ContextPopupColumn;
+    if (context_column_n < 0 || context_column_n >= table->ColumnsCount)
+        context_column_n = -1;
+    context_column = context_column_n >= 0 ?
+        &table->Columns[context_column_n] : 0;
+    if (flags_for_section_to_display & ImGuiTableFlags_Resizable)
+    {
+        if (context_column)
+        {
+            can_resize = !(context_column->Flags & ImGuiTableColumnFlags_NoResize) &&
+                context_column->IsEnabled;
+            label = ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableSizeOne);
+            if (imgui_menu_item_bool(imgui_c89_ctx, label, 0, 0, can_resize))
+                imgui_i_table_set_column_width_auto_single(table, context_column_n);
+        }
+        label = table->ColumnsEnabledFixedCount == table->ColumnsEnabledCount &&
+            (table->Flags & ImGuiTableFlags_SizingMask_) != ImGuiTableFlags_SizingFixedSame ?
+            ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableSizeAllFit) :
+            ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableSizeAllDefault);
+        if (imgui_menu_item_bool(imgui_c89_ctx, label, 0, 0, 1))
+            imgui_i_table_set_column_width_auto_all(table);
+        want_separator = 1;
+    }
+    if (flags_for_section_to_display & (ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
+    {
+        label = ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableReset);
+        if (imgui_begin_menu(imgui_c89_ctx, label, 1))
+        {
+            if ((flags_for_section_to_display & ImGuiTableFlags_Reorderable) &&
+                imgui_menu_item_bool(imgui_c89_ctx,
+                    ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableResetOrder), 0, 0,
+                    !table->IsDefaultDisplayOrder))
+                table->IsResetDisplayOrderRequest = 1;
+            if ((flags_for_section_to_display & ImGuiTableFlags_Hideable) &&
+                imgui_menu_item_bool(imgui_c89_ctx,
+                    ImGui_LocalizeGetMsg__d57d7d5e4e(imgui_c89_ctx, ImGuiLocKey_TableResetVisibility), 0, 0,
+                    !table->IsDefaultVisibility))
+                table->IsResetVisibilityRequest = 1;
+            imgui_end_menu(imgui_c89_ctx);
+        }
+    }
+    if (flags_for_section_to_display & ImGuiTableFlags_Hideable)
+    {
+        if (want_separator)
+            imgui_separator(imgui_c89_ctx);
+        is_reordering = imgui_c89_ctx->ActiveId &&
+            imgui_c89_ctx->ActiveIdWindow == imgui_c89_ctx->CurrentWindow &&
+            table->ReorderColumn != -1 &&
+            imgui_c89_ctx->ActiveIdHasBeenEditedBefore;
+        src_order = is_reordering ?
+            table->Columns[table->ReorderColumn].DisplayOrder : -1;
+        min_order = is_reordering ? imgui_i_table_get_max_display_order_allowed(table, src_order, 0) : 0;
+        max_order = is_reordering ? imgui_i_table_get_max_display_order_allowed(table, src_order,
+            table->ColumnsCount - 1) : table->ColumnsCount - 1;
+        imgui_push_item_flag(imgui_c89_ctx, ImGuiItemFlags_AutoClosePopups, 0);
+        for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+        {
+            column_n = table->DisplayOrderToIndex[order_n];
+            column = &table->Columns[column_n];
+            if (column->Flags & ImGuiTableColumnFlags_Disabled)
+                continue;
+            name = imgui_i_table_get_column_name(table, column_n);
+            if (!name || !*name)
+                name = "<Unknown>";
+            menu_enabled = !(column->Flags & ImGuiTableColumnFlags_NoHide);
+            if (column->IsUserEnabled && table->ColumnsEnabledCount <= 1)
+                menu_enabled = 0;
+            if (is_reordering && (column->DisplayOrder < min_order ||
+                column->DisplayOrder > max_order))
+                menu_enabled = 0;
+            if (imgui_i_menu_item_for_column_reorder(imgui_c89_ctx, name,
+                column->IsUserEnabled, menu_enabled))
+                column->IsUserEnabledNextFrame = !column->IsUserEnabled;
+            if (imgui_is_item_active(imgui_c89_ctx) &&
+                imgui_is_mouse_dragging(imgui_c89_ctx, 0, -1.0f) &&
+                imgui_c89_ctx->ActiveIdSource == ImGuiInputSource_Mouse &&
+                (table->Flags & ImGuiTableFlags_Reorderable))
             {
-                mouse_y = imgui_c89_ctx->IO.MousePos.y;
-                direction = mouse_y <
-                    (imgui_c89_ctx->LastItemData.Rect.Min.y +
-                     imgui_c89_ctx->LastItemData.Rect.Max.y) * 0.5f ? -1 : 1;
-                amount = (direction < 0 ?
-                    imgui_c89_ctx->LastItemData.Rect.Min.y - mouse_y :
-                    mouse_y - imgui_c89_ctx->LastItemData.Rect.Max.y) /
-                    (imgui_c89_ctx->LastItemData.Rect.Max.y -
-                     imgui_c89_ctx->LastItemData.Rect.Min.y);
-                steps = (int)amount;
-                if ((float)steps < amount)
-                    steps++;
-                dst_order = column->DisplayOrder + steps * direction;
-                imgui_i_im_gui_table_queue_set_column_display_order(table, column_n, dst_order);
+                imgui_c89_ctx->ActiveIdHasBeenEditedBefore = 1;
+                table->ReorderColumn = (ImGuiTableColumnIdx)column_n;
+                if (!imgui_is_item_hovered(imgui_c89_ctx, 0))
+                {
+                    mouse_y = imgui_c89_ctx->IO.MousePos.y;
+                    direction = mouse_y <
+                        (imgui_c89_ctx->LastItemData.Rect.Min.y +
+                         imgui_c89_ctx->LastItemData.Rect.Max.y) * 0.5f ? -1 : 1;
+                    amount = (direction < 0 ?
+                        imgui_c89_ctx->LastItemData.Rect.Min.y - mouse_y :
+                        mouse_y - imgui_c89_ctx->LastItemData.Rect.Max.y) /
+                        (imgui_c89_ctx->LastItemData.Rect.Max.y -
+                         imgui_c89_ctx->LastItemData.Rect.Min.y);
+                    steps = (int)amount;
+                    if ((float)steps < amount)
+                        steps++;
+                    dst_order = column->DisplayOrder + steps * direction;
+                    imgui_i_table_queue_set_column_display_order(table, column_n, dst_order);
+                }
             }
         }
+        imgui_pop_item_flag(imgui_c89_ctx);
     }
-    imgui_pop_item_flag(imgui_c89_ctx);
-}
 }
 
-void imgui_i_im_gui_table_end_cell(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+void imgui_i_table_end_cell(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-
-ImGuiTableColumn *column;
-ImGuiWindow *window;
-float *max_x;
-float y;
-column = &table->Columns.Data[table->CurrentColumn];
-window = table->InnerWindow;
-if (window->DC.IsSetPos)
-    imgui_i_im_gui_error_check_using_set_cursor_pos_to_extend_parent_boundaries(imgui_c89_ctx);
-if (table->RowFlags & ImGuiTableRowFlags_Headers)
-    max_x = &column->ContentMaxXHeadersUsed;
-else if (table->IsUnfrozenRows)
-    max_x = &column->ContentMaxXUnfrozen;
-else
-    max_x = &column->ContentMaxXFrozen;
-if (*max_x < window->DC.CursorMaxPos.x)
-    *max_x = window->DC.CursorMaxPos.x;
-if (column->IsEnabled)
-{
-    y = window->DC.CursorMaxPos.y + table->RowCellPaddingY;
-    if (table->RowPosY2 < y)
-        table->RowPosY2 = y;
-}
-column->ItemWidth = window->DC.ItemWidth;
-if (table->RowTextBaseline < window->DC.PrevLineTextBaseOffset)
-    table->RowTextBaseline = window->DC.PrevLineTextBaseOffset;
-}
-
-void imgui_i_im_gui_table_end_row(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiWindow *window;
-ImGuiTableInstanceData *instance;
-ImGuiTableCellData *cell;
-ImGuiTableColumn *column;
-ImRect rect;
-float bg_y1;
-float bg_y2;
-float y0;
-float row_height;
-ImU32 bg0;
-ImU32 bg1;
-ImU32 top_border;
-int unfreeze;
-int unfreeze_request;
-int draw_cells;
-int column_n;
-int cell_n;
-window = imgui_c89_ctx->CurrentWindow;
-if (table->CurrentColumn != -1)
-{
-    imgui_i_im_gui_table_end_cell(imgui_c89_ctx, table);
-    table->CurrentColumn = -1;
-}
-if (imgui_c89_ctx->LogEnabled)
-    imgui_i_im_gui_log_rendered_text(imgui_c89_ctx, 0, "|", 0);
-window->DC.CursorPos.y = table->RowPosY2;
-bg_y1 = table->RowPosY1;
-bg_y2 = table->RowPosY2;
-unfreeze = table->CurrentRow + 1 == table->FreezeRowsCount;
-unfreeze_request = table->CurrentRow + 1 == table->FreezeRowsRequest;
-instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
-    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
-if ((table->RowFlags & ImGuiTableRowFlags_Headers) &&
-    (table->CurrentRow == 0 || (table->LastRowFlags & ImGuiTableRowFlags_Headers)))
-    instance->LastTopHeadersRowHeight += bg_y2 - bg_y1;
-if (bg_y2 >= table->InnerClipRect.Min.y &&
-    bg_y1 <= table->InnerClipRect.Max.y)
-{
-    if (table->HoveredColumnBody != -1 &&
-        imgui_c89_ctx->IO.MousePos.y >= bg_y1 &&
-        imgui_c89_ctx->IO.MousePos.y < bg_y2 &&
-        instance->HoveredRowNext < 0)
-        instance->HoveredRowNext = table->CurrentRow;
-    bg0 = bg1 = 0;
-    if (table->RowBgColor[0] != ((ImU32)1 << 24))
-        bg0 = table->RowBgColor[0];
-    else if (table->Flags & ImGuiTableFlags_RowBg)
-        bg0 = imgui_get_color_u32_col_float(imgui_c89_ctx,
-            table->RowBgColorCounter & 1 ? ImGuiCol_TableRowBgAlt : ImGuiCol_TableRowBg,
-            1.0f);
-    if (table->RowBgColor[1] != ((ImU32)1 << 24))
-        bg1 = table->RowBgColor[1];
-    top_border = 0;
-    if (table->CurrentRow > 0 && (table->Flags & ImGuiTableFlags_BordersInnerH))
-        top_border = table->LastRowFlags & ImGuiTableRowFlags_Headers ?
-            table->BorderColorStrong : table->BorderColorLight;
-    draw_cells = table->RowCellDataCurrent >= 0;
-    if (bg0 || bg1 || top_border || unfreeze || draw_cells)
+    ImGuiTableColumn *column;
+    ImGuiWindow *window;
+    float *max_x;
+    float y;
+    column = &table->Columns[table->CurrentColumn];
+    window = table->InnerWindow;
+    if (window->DC.IsSetPos)
+        imgui_i_error_check_using_set_cursor_pos_to_extend_parent_boundaries(imgui_c89_ctx);
+    /* Record content extent in the header, frozen, or unfrozen accumulator that
+     * owns this cell. */
+    if (table->RowFlags & ImGuiTableRowFlags_Headers)
+        max_x = &column->ContentMaxXHeadersUsed;
+    else if (table->IsUnfrozenRows)
+        max_x = &column->ContentMaxXUnfrozen;
+    else
+        max_x = &column->ContentMaxXFrozen;
+    if (*max_x < window->DC.CursorMaxPos.x)
+        *max_x = window->DC.CursorMaxPos.x;
+    if (column->IsEnabled)
     {
-        if (!(table->Flags & ImGuiTableFlags_NoClip))
+        y = window->DC.CursorMaxPos.y + table->RowCellPaddingY;
+        if (table->RowPosY2 < y)
+            table->RowPosY2 = y;
+    }
+    column->ItemWidth = window->DC.ItemWidth;
+    /* The row uses the greatest cell baseline so later cells remain aligned. */
+    if (table->RowTextBaseline < window->DC.PrevLineTextBaseOffset)
+        table->RowTextBaseline = window->DC.PrevLineTextBaseOffset;
+}
+
+void imgui_i_table_end_row(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+{
+    ImGuiWindow *window;
+    ImGuiTableInstanceData *instance;
+    ImGuiTableCellData *cell;
+    ImGuiTableColumn *column;
+    ImRect rect;
+    float bg_y1;
+    float bg_y2;
+    float y0;
+    float row_height;
+    ImU32 bg0;
+    ImU32 bg1;
+    ImU32 top_border;
+    int unfreeze_rows_actual;
+    int unfreeze_rows_request;
+    int draw_cells;
+    int column_n;
+    int cell_n;
+    window = imgui_c89_ctx->CurrentWindow;
+    if (window != table->InnerWindow)
+        imgui_c89_assert_id(45);
+    if (!table->IsInsideRow)
+        imgui_c89_assert_id(46);
+    if (table->CurrentColumn != -1)
+    {
+        imgui_i_table_end_cell(imgui_c89_ctx, table);
+        table->CurrentColumn = -1;
+    }
+    if (imgui_c89_ctx->LogEnabled)
+        imgui_i_log_rendered_text(imgui_c89_ctx, 0, "|", 0);
+    window->DC.CursorPos.y = table->RowPosY2;
+    bg_y1 = table->RowPosY1;
+    bg_y2 = table->RowPosY2;
+    unfreeze_rows_actual = table->CurrentRow + 1 == table->FreezeRowsCount;
+    unfreeze_rows_request = table->CurrentRow + 1 == table->FreezeRowsRequest;
+    instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
+        &table->InstanceDataExtra[table->InstanceCurrent - 1];
+    if ((table->RowFlags & ImGuiTableRowFlags_Headers) &&
+        (table->CurrentRow == 0 || (table->LastRowFlags & ImGuiTableRowFlags_Headers)))
+        instance->LastTopHeadersRowHeight += bg_y2 - bg_y1;
+    if (bg_y2 >= table->InnerClipRect.Min.y &&
+        bg_y1 <= table->InnerClipRect.Max.y)
+    {
+        if (table->HoveredColumnBody != -1 &&
+            imgui_c89_ctx->IO.MousePos.y >= bg_y1 &&
+            imgui_c89_ctx->IO.MousePos.y < bg_y2 &&
+            instance->HoveredRowNext < 0)
+            instance->HoveredRowNext = table->CurrentRow;
+        bg0 = bg1 = 0;
+        if (table->RowBgColor[0] != ((ImU32)1 << 24))
+            bg0 = table->RowBgColor[0];
+        else if (table->Flags & ImGuiTableFlags_RowBg)
+            bg0 = imgui_get_color_u32_col_float(imgui_c89_ctx,
+                table->RowBgColorCounter & 1 ? ImGuiCol_TableRowBgAlt : ImGuiCol_TableRowBg,
+                1.0f);
+        if (table->RowBgColor[1] != ((ImU32)1 << 24))
+            bg1 = table->RowBgColor[1];
+        top_border = 0;
+        if (table->CurrentRow > 0 && (table->Flags & ImGuiTableFlags_BordersInnerH))
+            top_border = table->LastRowFlags & ImGuiTableRowFlags_Headers ?
+                table->BorderColorStrong : table->BorderColorLight;
+        draw_cells = table->RowCellDataCurrent >= 0;
+        /* Background layers share the table background channel. */
+        if (bg0 || bg1 || top_border || unfreeze_rows_actual || draw_cells)
         {
-            window->DrawList->_CmdHeader.ClipRect.x = table->Bg0ClipRectForDrawCmd.Min.x;
-            window->DrawList->_CmdHeader.ClipRect.y = table->Bg0ClipRectForDrawCmd.Min.y;
-            window->DrawList->_CmdHeader.ClipRect.z = table->Bg0ClipRectForDrawCmd.Max.x;
-            window->DrawList->_CmdHeader.ClipRect.w = table->Bg0ClipRectForDrawCmd.Max.y;
+            if (!(table->Flags & ImGuiTableFlags_NoClip))
+            {
+                window->DrawList->_CmdHeader.ClipRect.x = table->Bg0ClipRectForDrawCmd.Min.x;
+                window->DrawList->_CmdHeader.ClipRect.y = table->Bg0ClipRectForDrawCmd.Min.y;
+                window->DrawList->_CmdHeader.ClipRect.z = table->Bg0ClipRectForDrawCmd.Max.x;
+                window->DrawList->_CmdHeader.ClipRect.w = table->Bg0ClipRectForDrawCmd.Max.y;
+            }
+            imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList, 0);
         }
-        imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList, 0);
-    }
-    if (bg0 || bg1)
-    {
-        rect.Min.x = table->WorkRect.Min.x > table->BgClipRect.Min.x ?
-            table->WorkRect.Min.x : table->BgClipRect.Min.x;
-        rect.Min.y = bg_y1 > table->BgClipRect.Min.y ?
-            bg_y1 : table->BgClipRect.Min.y;
-        rect.Max.x = table->WorkRect.Max.x < table->BgClipRect.Max.x ?
-            table->WorkRect.Max.x : table->BgClipRect.Max.x;
-        rect.Max.y = bg_y2 < table->BgClipRect.Max.y ?
-            bg_y2 : table->BgClipRect.Max.y;
-        if (rect.Min.y < rect.Max.y)
+        if (bg0 || bg1)
         {
-            if (bg0)
-                imgui_draw_list_add_rect_filled(imgui_c89_ctx, window->DrawList,
-                    &rect.Min, &rect.Max, bg0, 0.0f, 0);
-            if (bg1)
-                imgui_draw_list_add_rect_filled(imgui_c89_ctx, window->DrawList,
-                    &rect.Min, &rect.Max, bg1, 0.0f, 0);
+            rect.Min.x = table->WorkRect.Min.x > table->BgClipRect.Min.x ?
+                table->WorkRect.Min.x : table->BgClipRect.Min.x;
+            rect.Min.y = bg_y1 > table->BgClipRect.Min.y ?
+                bg_y1 : table->BgClipRect.Min.y;
+            rect.Max.x = table->WorkRect.Max.x < table->BgClipRect.Max.x ?
+                table->WorkRect.Max.x : table->BgClipRect.Max.x;
+            rect.Max.y = bg_y2 < table->BgClipRect.Max.y ?
+                bg_y2 : table->BgClipRect.Max.y;
+            if (rect.Min.y < rect.Max.y)
+            {
+                if (bg0)
+                    imgui_draw_list_add_rect_filled(imgui_c89_ctx, window->DrawList,
+                        &rect.Min, &rect.Max, bg0, 0.0f, 0);
+                if (bg1)
+                    imgui_draw_list_add_rect_filled(imgui_c89_ctx, window->DrawList,
+                        &rect.Min, &rect.Max, bg1, 0.0f, 0);
+            }
         }
+        for (cell_n = 0; cell_n <= table->RowCellDataCurrent; cell_n++)
+        {
+            cell = &table->RowCellData[cell_n];
+            column = &table->Columns[cell->Column];
+            rect.Min.x = column->MinX > table->WorkRect.Min.x ?
+                column->MinX : table->WorkRect.Min.x;
+            rect.Min.y = bg_y1;
+            rect.Max.x = column->MaxX < table->WorkRect.Max.x ?
+                column->MaxX : table->WorkRect.Max.x;
+            rect.Max.y = bg_y2;
+            if (rect.Min.x < table->BgClipRect.Min.x)
+                rect.Min.x = table->BgClipRect.Min.x;
+            if (rect.Min.y < table->BgClipRect.Min.y)
+                rect.Min.y = table->BgClipRect.Min.y;
+            if (rect.Max.x > table->BgClipRect.Max.x)
+                rect.Max.x = table->BgClipRect.Max.x;
+            if (rect.Max.y > table->BgClipRect.Max.y)
+                rect.Max.y = table->BgClipRect.Max.y;
+            if (rect.Min.x < column->ClipRect.Min.x)
+                rect.Min.x = column->ClipRect.Min.x;
+            if (rect.Max.x > column->MaxX)
+                rect.Max.x = column->MaxX;
+            if (rect.Min.y < rect.Max.y)
+                imgui_draw_list_add_rect_filled(imgui_c89_ctx, window->DrawList,
+                    &rect.Min, &rect.Max, cell->BgColor, 0.0f, 0);
+        }
+        if (top_border && bg_y1 >= table->BgClipRect.Min.y &&
+            bg_y1 < table->BgClipRect.Max.y)
+            imgui_draw_list_add_line_h(imgui_c89_ctx, window->DrawList, table->BorderX1,
+                table->BorderX2, bg_y1, top_border, 1.0f);
+        if (unfreeze_rows_actual && bg_y2 >= table->BgClipRect.Min.y &&
+            bg_y2 < table->BgClipRect.Max.y)
+            imgui_draw_list_add_line_h(imgui_c89_ctx, window->DrawList, table->BorderX1,
+                table->BorderX2, bg_y2, table->BorderColorStrong, 1.0f);
     }
-    for (cell_n = 0; cell_n <= table->RowCellDataCurrent; cell_n++)
+    /* End frozen rows here, rather than in TableBeginRow(), so the list clipper
+     * observes the completed row before the cursor is teleported. */
+    if (unfreeze_rows_request)
     {
-        cell = &table->RowCellData.Data[cell_n];
-        column = &table->Columns.Data[cell->Column];
-        rect.Min.x = column->MinX > table->WorkRect.Min.x ?
-            column->MinX : table->WorkRect.Min.x;
-        rect.Min.y = bg_y1;
-        rect.Max.x = column->MaxX < table->WorkRect.Max.x ?
-            column->MaxX : table->WorkRect.Max.x;
-        rect.Max.y = bg_y2;
-        if (rect.Min.x < table->BgClipRect.Min.x)
-            rect.Min.x = table->BgClipRect.Min.x;
-        if (rect.Min.y < table->BgClipRect.Min.y)
-            rect.Min.y = table->BgClipRect.Min.y;
-        if (rect.Max.x > table->BgClipRect.Max.x)
-            rect.Max.x = table->BgClipRect.Max.x;
-        if (rect.Max.y > table->BgClipRect.Max.y)
-            rect.Max.y = table->BgClipRect.Max.y;
-        if (rect.Min.x < column->ClipRect.Min.x)
-            rect.Min.x = column->ClipRect.Min.x;
-        if (rect.Max.x > column->MaxX)
-            rect.Max.x = column->MaxX;
-        if (rect.Min.y < rect.Max.y)
-            imgui_draw_list_add_rect_filled(imgui_c89_ctx, window->DrawList,
-                &rect.Min, &rect.Max, cell->BgColor, 0.0f, 0);
-    }
-    if (top_border && bg_y1 >= table->BgClipRect.Min.y &&
-        bg_y1 < table->BgClipRect.Max.y)
-        imgui_draw_list_add_line_h(imgui_c89_ctx, window->DrawList, table->BorderX1,
-            table->BorderX2, bg_y1, top_border, 1.0f);
-    if (unfreeze && bg_y2 >= table->BgClipRect.Min.y &&
-        bg_y2 < table->BgClipRect.Max.y)
-        imgui_draw_list_add_line_h(imgui_c89_ctx, window->DrawList, table->BorderX1,
-            table->BorderX2, bg_y2, table->BorderColorStrong, 1.0f);
-}
-if (unfreeze_request)
-{
-    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-        table->Columns.Data[column_n].NavLayerCurrent = table->NavLayer;
-    y0 = table->RowPosY2 + 1.0f;
-    if (y0 < table->InnerClipRect.Min.y)
-        y0 = table->InnerClipRect.Min.y;
-    instance->LastFrozenHeight = y0 - table->OuterRect.Min.y;
-    if (unfreeze)
-    {
-        table->IsUnfrozenRows = 1;
-        if (y0 > table->InnerClipRect.Max.y)
-            y0 = table->InnerClipRect.Max.y;
-        table->BgClipRect.Min.y = table->Bg2ClipRectForDrawCmd.Min.y = y0;
-        table->BgClipRect.Max.y = table->Bg2ClipRectForDrawCmd.Max.y =
-            table->InnerClipRect.Max.y;
-        table->Bg2DrawChannelCurrent = table->Bg2DrawChannelUnfrozen;
-        row_height = table->RowPosY2 - table->RowPosY1;
-        table->RowPosY2 = window->DC.CursorPos.y =
-            table->WorkRect.Min.y + table->RowPosY2 - table->OuterRect.Min.y;
-        table->RowPosY1 = table->RowPosY2 - row_height;
+        if (!(table->FreezeRowsRequest > 0))
+            imgui_c89_assert_id(47);
         for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+            table->Columns[column_n].NavLayerCurrent = table->NavLayer;
+        y0 = table->RowPosY2 + 1.0f;
+        if (y0 < table->InnerClipRect.Min.y)
+            y0 = table->InnerClipRect.Min.y;
+        instance->LastFrozenHeight = y0 - table->OuterRect.Min.y;
+        if (unfreeze_rows_actual)
         {
-            column = &table->Columns.Data[column_n];
-            column->DrawChannelCurrent = column->DrawChannelUnfrozen;
-            column->ClipRect.Min.y = y0;
+            if (table->IsUnfrozenRows)
+                imgui_c89_assert_id(48);
+            table->IsUnfrozenRows = 1;
+            if (y0 > table->InnerClipRect.Max.y)
+                y0 = table->InnerClipRect.Max.y;
+            table->BgClipRect.Min.y = table->Bg2ClipRectForDrawCmd.Min.y = y0;
+            table->BgClipRect.Max.y = table->Bg2ClipRectForDrawCmd.Max.y =
+                table->InnerClipRect.Max.y;
+            if (!(table->Bg2ClipRectForDrawCmd.Min.y <=
+                  table->Bg2ClipRectForDrawCmd.Max.y))
+                imgui_c89_assert_id(49);
+            table->Bg2DrawChannelCurrent = table->Bg2DrawChannelUnfrozen;
+            row_height = table->RowPosY2 - table->RowPosY1;
+            table->RowPosY2 = window->DC.CursorPos.y =
+                table->WorkRect.Min.y + table->RowPosY2 - table->OuterRect.Min.y;
+            table->RowPosY1 = table->RowPosY2 - row_height;
+            for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+            {
+                column = &table->Columns[column_n];
+                column->DrawChannelCurrent = column->DrawChannelUnfrozen;
+                column->ClipRect.Min.y = y0;
+            }
+            imgui_i_set_window_clip_rect_before_set_channel(window, &table->Columns[0].ClipRect);
+            imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+                table->Columns[0].DrawChannelCurrent);
         }
-        imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &table->Columns.Data[0].ClipRect);
-        imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-            table->Columns.Data[0].DrawChannelCurrent);
     }
-}
-if (!(table->RowFlags & ImGuiTableRowFlags_Headers))
-    table->RowBgColorCounter++;
-table->IsInsideRow = 0;
-}
-
-ImGuiTable * imgui_i_im_gui_table_find_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
-{
-
-return ImPool_ImGuiTable__GetByKey__b9c786232c(&imgui_c89_ctx->Tables, id);
+    if (!(table->RowFlags & ImGuiTableRowFlags_Headers))
+        table->RowBgColorCounter++;
+    table->IsInsideRow = 0;
 }
 
-void imgui_i_im_gui_table_fix_column_sort_direction(ImGuiTable * table, ImGuiTableColumn * column)
+ImGuiTable * imgui_i_table_find_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
-
-if (column->SortOrder == -1 ||
-    (column->SortDirectionsAvailMask & (1 << column->SortDirection)))
-    return;
-column->SortDirection = (ImU8)TableGetColumnAvailSortDirection__ccd2c84aa9(column, 0);
-table->IsSortSpecsDirty = 1;
+    return imgui_table_pool_find(&imgui_c89_ctx->Tables, id);
 }
 
-void imgui_i_im_gui_table_fix_display_order(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+void imgui_i_table_fix_column_sort_direction(ImGuiTable * table, ImGuiTableColumn * column)
 {
-
-ImGuiTableFixDisplayOrderColumnData *order;
-int n;
-int index;
-ImVector_char__reserve__a13dbd8026(imgui_c89_ctx, &imgui_c89_ctx->TempBuffer, (int)(sizeof(*order) * table->ColumnsCount));
-order = (ImGuiTableFixDisplayOrderColumnData *)(void *)imgui_c89_ctx->TempBuffer.Data;
-for (n = 0; n < table->ColumnsCount; n++)
-{
-    order[n].Idx = (ImGuiTableColumnIdx)n;
-    order[n].Table = table;
-}
-ImQsort__c5a9d8474e(order, (size_t)table->ColumnsCount, sizeof(*order), TableFixDisplayOrderComparer__4f18b3bf60);
-for (n = 0; n < table->ColumnsCount; n++)
-    table->Columns.Data[order[n].Idx].DisplayOrder = (ImGuiTableColumnIdx)n;
-for (index = 0; index < table->ColumnsCount; index++)
-    table->DisplayOrderToIndex.Data[table->Columns.Data[index].DisplayOrder] = (ImGuiTableColumnIdx)index;
+    if (column->SortOrder == -1 ||
+        (column->SortDirectionsAvailMask & (1 << column->SortDirection)))
+        return;
+    column->SortDirection = (ImU8)imgui_i_table_get_column_avail_sort_direction(column, 0);
+    table->IsSortSpecsDirty = 1;
 }
 
-void imgui_i_im_gui_table_gc_compact_settings(ImGuiContext *imgui_c89_ctx)
+void imgui_i_table_fix_display_order(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-
-ImChunkStream_ImGuiTableSettings compact;
-ImGuiTableSettings *settings;
-ImGuiTable *table;
-size_t bytes;
-int required;
-int table_n;
-required = 0;
-settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&imgui_c89_ctx->SettingsTables);
-while (settings)
-{
-    if (settings->ID)
-        required += (int)TableSettingsCalcChunkSize__760aeea963(settings->ColumnsCount);
-    settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&imgui_c89_ctx->SettingsTables, settings);
-}
-if (required == imgui_c89_ctx->SettingsTables.Buf.Size)
-    return;
-memset(&compact, 0, sizeof(compact));
-ImVector_char__reserve__a13dbd8026(imgui_c89_ctx, &compact.Buf, required);
-settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&imgui_c89_ctx->SettingsTables);
-while (settings)
-{
-    if (settings->ID)
+    ImGuiTableFixDisplayOrderColumnData *order;
+    int n;
+    int index;
+    ImVector_char__reserve__a13dbd8026(imgui_c89_ctx, &imgui_c89_ctx->TempBuffer, (int)(sizeof(*order) * table->ColumnsCount));
+    order = (ImGuiTableFixDisplayOrderColumnData *)(void *)imgui_c89_ctx->TempBuffer.Data;
+    for (n = 0; n < table->ColumnsCount; n++)
     {
-        bytes = TableSettingsCalcChunkSize__760aeea963(settings->ColumnsCount);
-        memcpy(ImChunkStream_ImGuiTableSettings__alloc_chunk__ebcbcf6a7c(imgui_c89_ctx, &compact, bytes), settings, bytes);
+        order[n].Idx = (ImGuiTableColumnIdx)n;
+        order[n].Table = table;
     }
-    settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&imgui_c89_ctx->SettingsTables, settings);
+    ImQsort__c5a9d8474e(order, (size_t)table->ColumnsCount, sizeof(*order), imgui_i_table_fix_display_order_comparer);
+    for (n = 0; n < table->ColumnsCount; n++)
+        table->Columns[order[n].Idx].DisplayOrder = (ImGuiTableColumnIdx)n;
+    for (index = 0; index < table->ColumnsCount; index++)
+        table->DisplayOrderToIndex[table->Columns[index].DisplayOrder] = (ImGuiTableColumnIdx)index;
 }
-ImChunkStream_ImGuiTableSettings__swap__09219107fa(&imgui_c89_ctx->SettingsTables, &compact);
-for (table_n = 0; table_n < ImPool_ImGuiTable__GetMapSize__2b91536528(&imgui_c89_ctx->Tables); table_n++)
+
+void imgui_i_table_gc_compact_settings(ImGuiContext *imgui_c89_ctx)
 {
-    table = ImPool_ImGuiTable__TryGetMapData__3e6c159dd7(&imgui_c89_ctx->Tables, table_n);
-    if (table)
-        table->SettingsOffset = -1;
-}
-ImVector_char__dtor_ImVector__0fbf250d7d(imgui_c89_ctx, &compact.Buf);
+    ImChunkStream_ImGuiTableSettings compact;
+    ImGuiTableSettings *settings;
+    ImGuiTable *table;
+    size_t bytes;
+    int required;
+    int table_n;
+    required = 0;
+    settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&imgui_c89_ctx->SettingsTables);
+    while (settings)
+    {
+        if (settings->ID)
+            required += (int)imgui_i_table_settings_calc_chunk_size(settings->ColumnsCount);
+        settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&imgui_c89_ctx->SettingsTables, settings);
+    }
+    if (required == imgui_c89_ctx->SettingsTables.Buf.Size)
+        return;
+    memset(&compact, 0, sizeof(compact));
+    ImVector_char__reserve__a13dbd8026(imgui_c89_ctx, &compact.Buf, required);
+    settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&imgui_c89_ctx->SettingsTables);
+    while (settings)
+    {
+        if (settings->ID)
+        {
+            bytes = imgui_i_table_settings_calc_chunk_size(settings->ColumnsCount);
+            memcpy(ImChunkStream_ImGuiTableSettings__alloc_chunk__ebcbcf6a7c(imgui_c89_ctx, &compact, bytes), settings, bytes);
+        }
+        settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&imgui_c89_ctx->SettingsTables, settings);
+    }
+    ImChunkStream_ImGuiTableSettings__swap__09219107fa(&imgui_c89_ctx->SettingsTables, &compact);
+    for (table_n = 0; table_n < imgui_table_pool_map_size(&imgui_c89_ctx->Tables); table_n++)
+    {
+        table = imgui_table_pool_map_at(&imgui_c89_ctx->Tables, table_n);
+        if (table)
+            table->SettingsOffset = -1;
+    }
+    ImVector_char__dtor_ImVector__0fbf250d7d(imgui_c89_ctx, &compact.Buf);
 }
 
-void imgui_i_im_gui_table_gc_compact_transient_buffers_table_pointer(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+void imgui_i_table_gc_compact_transient_buffers_table_pointer(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-
-int n;
-table->SortSpecs.Specs = 0;
-ImVector_ImGuiTableColumnSortSpecs__clear__dc4c85f565(imgui_c89_ctx, &table->SortSpecsMulti);
-table->IsSortSpecsDirty = 1;
-imgui_text_buffer_clear(imgui_c89_ctx, &table->ColumnsNames);
-table->MemoryCompacted = 1;
-for (n = 0; n < table->ColumnsCount; n++)
-    ImSpan_ImGuiTableColumn__operator____727a2e81c1(&table->Columns, n)->NameOffset = -1;
-imgui_c89_ctx->TablesLastTimeActive.Data[ImPool_ImGuiTable__GetIndex__9187fcfe0b(&imgui_c89_ctx->Tables, table)] = -1.0f;
+    int n;
+    if (table->MemoryCompacted)
+        imgui_c89_assert_id(82);
+    table->SortSpecs.Specs = 0;
+    imgui_c89_vector_clear(imgui_c89_ctx, (void **)&table->SortSpecsMulti,
+        &table->SortSpecsMultiSize, &table->SortSpecsMultiCapacity);
+    table->IsSortSpecsDirty = 1;
+    imgui_text_buffer_clear(imgui_c89_ctx, &table->ColumnsNames);
+    table->MemoryCompacted = 1;
+    for (n = 0; n < table->ColumnsCount; n++)
+        table->Columns[n].NameOffset = -1;
+    imgui_c89_ctx->TablesLastTimeActive.Data[imgui_table_pool_index(&imgui_c89_ctx->Tables, table)] = -1.0f;
 }
 
-void imgui_i_im_gui_table_gc_compact_transient_buffers_table_temp_data_pointer(ImGuiContext *imgui_c89_ctx, ImGuiTableTempData * temp_data)
+void imgui_i_table_gc_compact_transient_buffers_table_temp_data_pointer(ImGuiContext *imgui_c89_ctx, ImGuiTableTempData * temp_data)
 {
-
-ImVector_ImGuiTableHeaderData__clear__e936969283(imgui_c89_ctx, &temp_data->AngledHeadersRequests);
-imgui_draw_list_splitter_clear_free_memory(imgui_c89_ctx, &temp_data->DrawSplitter);
-temp_data->LastTimeActive = -1.0f;
+    imgui_c89_vector_clear(imgui_c89_ctx,
+        (void **)&temp_data->AngledHeadersRequests,
+        &temp_data->AngledHeadersRequestsSize,
+        &temp_data->AngledHeadersRequestsCapacity);
+    imgui_draw_list_splitter_clear_free_memory(imgui_c89_ctx, &temp_data->DrawSplitter);
+    temp_data->LastTimeActive = -1.0f;
 }
 
-ImGuiTableSettings * imgui_i_im_gui_table_get_bound_settings(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+ImGuiTableSettings * imgui_i_table_get_bound_settings(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-
-ImGuiTableSettings *settings;
-if (table->SettingsOffset == -1)
-    return 0;
-settings = ImChunkStream_ImGuiTableSettings__ptr_from_offset__d5fdd2f08e(&imgui_c89_ctx->SettingsTables, table->SettingsOffset);
-return settings;
+    ImGuiTableSettings *settings;
+    if (table->SettingsOffset == -1)
+        return 0;
+    settings = ImChunkStream_ImGuiTableSettings__ptr_from_offset__d5fdd2f08e(&imgui_c89_ctx->SettingsTables, table->SettingsOffset);
+    if (settings->ID != table->ID)
+        imgui_c89_assert_id(79);
+    return settings;
 }
 
-ImRect imgui_i_im_gui_table_get_cell_bg_rect(const ImGuiTable * table, int column_n)
+ImRect imgui_i_table_get_cell_bg_rect(const ImGuiTable * table, int column_n)
 {
-
-const ImGuiTableColumn *column;
-ImRect rect;
-column = &table->Columns.Data[column_n];
-rect.Min.x = column->MinX > table->WorkRect.Min.x ? column->MinX : table->WorkRect.Min.x;
-rect.Min.y = table->RowPosY1;
-rect.Max.x = column->MaxX < table->WorkRect.Max.x ? column->MaxX : table->WorkRect.Max.x;
-rect.Max.y = table->RowPosY2;
-return rect;
+    const ImGuiTableColumn *column;
+    ImRect rect;
+    column = &table->Columns[column_n];
+    /* Row height is only final after TableEndRow(); before then Max.y reflects
+     * the minimum or the height accumulated so far. */
+    rect.Min.x = column->MinX > table->WorkRect.Min.x ? column->MinX : table->WorkRect.Min.x;
+    rect.Min.y = table->RowPosY1;
+    rect.Max.x = column->MaxX < table->WorkRect.Max.x ? column->MaxX : table->WorkRect.Max.x;
+    rect.Max.y = table->RowPosY2;
+    return rect;
 }
 
 int imgui_table_get_column_count(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-return table ? table->ColumnsCount : 0;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    return table ? table->ColumnsCount : 0;
 }
 
 ImGuiTableColumnFlags imgui_table_get_column_flags(ImGuiContext *imgui_c89_ctx, int column_n)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-    return ImGuiTableColumnFlags_None;
-if (column_n < 0)
-    column_n = table->CurrentColumn;
-if (column_n == table->ColumnsCount)
-    return table->HoveredColumnBody == column_n ? ImGuiTableColumnFlags_IsHovered : ImGuiTableColumnFlags_None;
-return table->Columns.Data[column_n].Flags;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
+        return ImGuiTableColumnFlags_None;
+    if (column_n < 0)
+        column_n = table->CurrentColumn;
+    /* One extra index represents the unused area to the right of the table. */
+    if (column_n == table->ColumnsCount)
+        return table->HoveredColumnBody == column_n ? ImGuiTableColumnFlags_IsHovered : ImGuiTableColumnFlags_None;
+    return table->Columns[column_n].Flags;
 }
 
 int imgui_table_get_column_index(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-return table ? table->CurrentColumn : 0;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    return table ? table->CurrentColumn : 0;
 }
 
-IMGUI_C89_NOINLINE const char * imgui_i_im_gui_table_get_column_name(const ImGuiTable * table, int column_n)
+IMGUI_C89_NOINLINE const char * imgui_i_table_get_column_name(const ImGuiTable * table, int column_n)
 {
-
-const ImGuiTableColumn *column;
-if (!table->IsLayoutLocked && column_n >= table->DeclColumnsCount)
-    return "";
-column = &table->Columns.Data[column_n];
-return column->NameOffset == -1 ? "" : table->ColumnsNames.Buf.Data + column->NameOffset;
+    const ImGuiTableColumn *column;
+    if (!table->IsLayoutLocked && column_n >= table->DeclColumnsCount)
+        return "";
+    column = &table->Columns[column_n];
+    return column->NameOffset == -1 ? "" : table->ColumnsNames.Buf.Data + column->NameOffset;
 }
 
 IMGUI_C89_NOINLINE const char * imgui_table_get_column_name(ImGuiContext *imgui_c89_ctx, int column_n)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-    return 0;
-if (column_n < 0)
-    column_n = table->CurrentColumn;
-return imgui_i_im_gui_table_get_column_name(table, column_n);
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
+        return 0;
+    if (column_n < 0)
+        column_n = table->CurrentColumn;
+    return imgui_i_table_get_column_name(table, column_n);
 }
 
-ImGuiSortDirection imgui_i_im_gui_table_get_column_next_sort_direction(ImGuiTableColumn * column)
+ImGuiSortDirection imgui_i_table_get_column_next_sort_direction(ImGuiTableColumn * column)
 {
-
-int n;
-if (column->SortOrder == -1)
-    return TableGetColumnAvailSortDirection__ccd2c84aa9(column, 0);
-for (n = 0; n < 3; n++)
-    if (column->SortDirection == TableGetColumnAvailSortDirection__ccd2c84aa9(column, n))
-        return TableGetColumnAvailSortDirection__ccd2c84aa9(column, (n + 1) % column->SortDirectionsAvailCount);
-return ImGuiSortDirection_None;
+    int n;
+    if (!(column->SortDirectionsAvailCount > 0))
+        imgui_c89_assert_id(66);
+    if (column->SortOrder == -1)
+        return imgui_i_table_get_column_avail_sort_direction(column, 0);
+    for (n = 0; n < 3; n++)
+        if (column->SortDirection == imgui_i_table_get_column_avail_sort_direction(column, n))
+            return imgui_i_table_get_column_avail_sort_direction(column, (n + 1) % column->SortDirectionsAvailCount);
+    imgui_c89_assert_id(67);
+    return ImGuiSortDirection_None;
 }
 
-ImGuiID imgui_i_im_gui_table_get_column_resize_id(ImGuiTable * table, int column_n, int instance_no)
+ImGuiID imgui_i_table_get_column_resize_id(ImGuiTable * table, int column_n, int instance_no)
 {
-
-ImGuiTableInstanceData *instance;
-instance = instance_no == 0 ? &table->InstanceDataFirst : &table->InstanceDataExtra.Data[instance_no - 1];
-return instance->TableInstanceID + 1 + column_n;
+    ImGuiTableInstanceData *instance;
+    if (!(column_n >= 0 && column_n < table->ColumnsCount))
+        imgui_c89_assert_id(39);
+    instance = instance_no == 0 ? &table->InstanceDataFirst : &table->InstanceDataExtra[instance_no - 1];
+    return instance->TableInstanceID + 1 + column_n;
 }
 
-float imgui_i_im_gui_table_get_column_width_auto(ImGuiTable * table, ImGuiTableColumn * column)
+float imgui_i_table_get_column_width_auto(ImGuiTable * table, ImGuiTableColumn * column)
 {
-
-float body_width;
-float header_width;
-float width;
-body_width = (column->ContentMaxXFrozen > column->ContentMaxXUnfrozen ? column->ContentMaxXFrozen : column->ContentMaxXUnfrozen) - column->WorkMinX;
-header_width = column->ContentMaxXHeadersIdeal - column->WorkMinX;
-width = body_width;
-if (!(column->Flags & ImGuiTableColumnFlags_NoHeaderWidth) && header_width > width)
-    width = header_width;
-if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) && column->InitStretchWeightOrWidth > 0.0f)
-    if (!(table->Flags & ImGuiTableFlags_Resizable) || (column->Flags & ImGuiTableColumnFlags_NoResize))
-        width = column->InitStretchWeightOrWidth;
-return width > table->MinColumnWidth ? width : table->MinColumnWidth;
+    float body_width;
+    float header_width;
+    float width;
+    body_width = (column->ContentMaxXFrozen > column->ContentMaxXUnfrozen ? column->ContentMaxXFrozen : column->ContentMaxXUnfrozen) - column->WorkMinX;
+    header_width = column->ContentMaxXHeadersIdeal - column->WorkMinX;
+    width = body_width;
+    if (!(column->Flags & ImGuiTableColumnFlags_NoHeaderWidth) && header_width > width)
+        width = header_width;
+    if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) && column->InitStretchWeightOrWidth > 0.0f)
+        if (!(table->Flags & ImGuiTableFlags_Resizable) || (column->Flags & ImGuiTableColumnFlags_NoResize))
+            width = column->InitStretchWeightOrWidth;
+    return width > table->MinColumnWidth ? width : table->MinColumnWidth;
 }
 
-float imgui_i_im_gui_table_get_header_angled_max_label_width(ImGuiContext *imgui_c89_ctx)
+float imgui_i_table_get_header_angled_max_label_width(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-float width;
-int column_n;
-table = imgui_c89_ctx->CurrentTable;
-width = 0.0f;
-for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-    if ((table->EnabledMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))) != 0 && (table->Columns.Data[column_n].Flags & ImGuiTableColumnFlags_AngledHeader))
-    {
-        ImVec2 size;
-        size = imgui_calc_text_size(imgui_c89_ctx, imgui_i_im_gui_table_get_column_name(table, column_n), 0, 1, 0.0f);
-        if (size.x > width)
-            width = size.x;
-    }
-return width + imgui_c89_ctx->Style.CellPadding.y * 2.0f;
+    ImGuiTable *table;
+    float width;
+    int column_n;
+    table = imgui_c89_ctx->CurrentTable;
+    width = 0.0f;
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+        if ((table->EnabledMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))) != 0 && (table->Columns[column_n].Flags & ImGuiTableColumnFlags_AngledHeader))
+        {
+            ImVec2 size;
+            size = imgui_calc_text_size(imgui_c89_ctx, imgui_i_table_get_column_name(table, column_n), 0, 1, 0.0f);
+            if (size.x > width)
+                width = size.x;
+        }
+    return width + imgui_c89_ctx->Style.CellPadding.y * 2.0f;
 }
 
-float imgui_i_im_gui_table_get_header_row_height(ImGuiContext *imgui_c89_ctx)
+float imgui_i_table_get_header_row_height(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-float height;
-int column_n;
-table = imgui_c89_ctx->CurrentTable;
-height = imgui_c89_ctx->FontSize;
-for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-    if ((table->EnabledMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))) != 0 && !(table->Columns.Data[column_n].Flags & ImGuiTableColumnFlags_NoHeaderLabel))
-    {
-        ImVec2 size;
-        size = imgui_calc_text_size(imgui_c89_ctx, imgui_i_im_gui_table_get_column_name(table, column_n), 0, 0, 0.0f);
-        if (size.y > height)
-            height = size.y;
-    }
-return height + imgui_c89_ctx->Style.CellPadding.y * 2.0f;
+    ImGuiTable *table;
+    float height;
+    int column_n;
+    table = imgui_c89_ctx->CurrentTable;
+    height = imgui_c89_ctx->FontSize;
+    /* Handle the rare case of labels with unequal multiline heights so the
+     * shorter headers still receive hover/input over the full header row. */
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+        if ((table->EnabledMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))) != 0 && !(table->Columns[column_n].Flags & ImGuiTableColumnFlags_NoHeaderLabel))
+        {
+            ImVec2 size;
+            size = imgui_calc_text_size(imgui_c89_ctx, imgui_i_table_get_column_name(table, column_n), 0, 0, 0.0f);
+            if (size.y > height)
+                height = size.y;
+        }
+    return height + imgui_c89_ctx->Style.CellPadding.y * 2.0f;
 }
 
 int imgui_table_get_hovered_column(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-return table ? (int)table->HoveredColumnBody : -1;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    return table ? (int)table->HoveredColumnBody : -1;
 }
 
-int imgui_i_im_gui_table_get_hovered_row(ImGuiContext *imgui_c89_ctx)
+int imgui_i_table_get_hovered_row(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-ImGuiTableInstanceData *instance;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-    return -1;
-instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst : &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
-return instance->HoveredRowLast;
+    ImGuiTable *table;
+    ImGuiTableInstanceData *instance;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
+        return -1;
+    /* HoveredRowLast intentionally has one frame of latency. */
+    instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst : &table->InstanceDataExtra[table->InstanceCurrent - 1];
+    return instance->HoveredRowLast;
 }
 
 int imgui_table_get_row_index(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-return table ? table->CurrentRow : 0;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    return table ? table->CurrentRow : 0;
 }
 
 ImGuiTableSortSpecs * imgui_table_get_sort_specs(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table || !(table->Flags & ImGuiTableFlags_Sortable))
-    return 0;
-if (!table->IsLayoutLocked)
-    imgui_i_im_gui_table_update_layout(imgui_c89_ctx, table);
-imgui_i_im_gui_table_sort_specs_build(imgui_c89_ctx, table);
-return &table->SortSpecs;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table || !(table->Flags & ImGuiTableFlags_Sortable))
+        return 0;
+    if (!table->IsLayoutLocked)
+        imgui_i_table_update_layout(imgui_c89_ctx, table);
+    imgui_i_table_sort_specs_build(imgui_c89_ctx, table);
+    return &table->SortSpecs;
 }
 
 void imgui_table_header(ImGuiContext *imgui_c89_ctx, const char * label)
 {
-
     ImGuiContext *ctx;
     ImGuiWindow *window;
     ImGuiTable *table;
     ImGuiTableColumn *column;
     ImRect cell_rect;
     ImRect bb;
-    ImVec2 label_size_value;
-    ImVec2 vector_value;
-    ImVec2 label_pos_value;
-    ImVec2 pos_max_value;
+    ImVec2 label_size;
+    ImVec2 temp_vec;
+    ImVec2 label_pos;
+    ImVec2 label_max;
     ImGuiID id;
     ImU32 color;
     ImGuiCol style_color;
@@ -3105,33 +3099,44 @@ void imgui_table_header(ImGuiContext *imgui_c89_ctx, const char * label)
     float ellipsis_max_x;
     float sort_x;
     float sort_y;
-    unsigned char sort_arrow;
+    int sort_arrow;
     unsigned char hovered;
     unsigned char held;
-    unsigned char pressed;
-    unsigned char highlight;
-    unsigned char text_clipped;
+    int pressed;
+    int highlight;
+    int text_clipped;
 
     ctx = imgui_c89_ctx;
     window = ctx->CurrentWindow;
     if (window->SkipItems)
         return;
     table = ctx->CurrentTable;
+    if (!table)
+    {
+        if (imgui_i_error_log(ctx,
+                "Call should only be done while in BeginTable() scope!"))
+            imgui_c89_assert_id(74);
+        return;
+    }
+    if (table->CurrentColumn == -1)
+        imgui_c89_assert_id(75);
     column_n = table->CurrentColumn;
-    column = &table->Columns.Data[column_n];
+    column = &table->Columns[column_n];
     if (label == 0)
         label = "";
-    label_end = imgui_i_im_gui_find_rendered_text_end(label, 0);
-    label_size_value = imgui_calc_text_size(ctx, label, label_end, 0, -1.0f);
+    label_end = imgui_i_find_rendered_text_end(label, 0);
+    label_size = imgui_calc_text_size(ctx, label, label_end, 0, -1.0f);
     label_pos_x = window->DC.CursorPos.x;
     label_pos_y = window->DC.CursorPos.y;
-    cell_rect = imgui_i_im_gui_table_get_cell_bg_rect(table, column_n);
+    cell_rect = imgui_i_table_get_cell_bg_rect(table, column_n);
     cell_min_x = cell_rect.Min.x;
     cell_min_y = cell_rect.Min.y;
     cell_max_x = cell_rect.Max.x;
     cell_max_y = cell_rect.Max.y;
+    /* CPU-clipping labels allows the header cells to merge into one draw
+     * call; do not publish their unclipped width through CursorMaxPos. */
     label_height = ImMax__3c7b1bb7d1(
-        label_size_value.y,
+        label_size.y,
         table->RowMinHeight - table->RowCellPaddingY * 2.0f);
     arrow_width = 0.0f;
     sort_text_width = 0.0f;
@@ -3143,16 +3148,16 @@ void imgui_table_header(ImGuiContext *imgui_c89_ctx, const char * label)
         (column->Flags & ImGuiTableColumnFlags_NoSort) == 0) {
         arrow_width = ImTrunc__ae7a4018f8(ctx->FontSize * arrow_scale +
                              ctx->Style.FramePadding.x);
-        sort_arrow = (unsigned char)(column->SortOrder != -1);
+        sort_arrow = column->SortOrder != -1;
         if (column->SortOrder > 0) {
             imgui_i_im_format_string(suffix, sizeof(suffix), "%d",
                             column->SortOrder + 1);
-            vector_value = imgui_calc_text_size(ctx, suffix, 0, 0, -1.0f);
-            sort_text_width = ctx->Style.ItemInnerSpacing.x + vector_value.x;
+            temp_vec = imgui_calc_text_size(ctx, suffix, 0, 0, -1.0f);
+            sort_text_width = ctx->Style.ItemInnerSpacing.x + temp_vec.x;
         }
     }
 
-    max_pos_x = label_pos_x + label_size_value.x +
+    max_pos_x = label_pos_x + label_size.x +
         arrow_width + sort_text_width;
     column->ContentMaxXHeadersUsed = ImMax__3c7b1bb7d1(
         column->ContentMaxXHeadersUsed,
@@ -3160,23 +3165,25 @@ void imgui_table_header(ImGuiContext *imgui_c89_ctx, const char * label)
     column->ContentMaxXHeadersIdeal = ImMax__3c7b1bb7d1(
         column->ContentMaxXHeadersIdeal, max_pos_x);
 
-    id = imgui_i_im_gui_window_get_id_string_string(ctx, window, label, 0);
+    id = imgui_i_window_get_id_string_string(ctx, window, label, 0);
     bb.Min.x = cell_min_x;
     bb.Min.y = cell_min_y;
     bb.Max.x = cell_max_x;
     bb.Max.y = ImMax__3c7b1bb7d1(
         cell_max_y,
         cell_min_y + label_height + ctx->Style.CellPadding.y * 2.0f);
-    vector_value.x = 0.0f;
-    vector_value.y = label_height;
-    imgui_i_im_gui_item_size(ctx, &vector_value, 0.0f);
-    if (!imgui_i_im_gui_item_add(ctx, &bb, id, 0, 0))
+    temp_vec.x = 0.0f;
+    temp_vec.y = label_height;
+    imgui_i_item_size(ctx, &temp_vec, 0.0f);
+    if (!imgui_i_item_add(ctx, &bb, id, 0, 0))
         return;
 
-    highlight = (unsigned char)(table->HighlightColumnHeader == column_n);
+    /* Allow overlap because this behavior covers the whole cell while users
+     * may still submit later items in their custom header. */
+    highlight = table->HighlightColumnHeader == column_n;
     hovered = 0;
     held = 0;
-    pressed = imgui_i_im_gui_button_behavior(
+    pressed = imgui_i_button_behavior(
         ctx, &bb, id, &hovered, &held, ImGuiButtonFlags_AllowOverlap);
     if (held || hovered || highlight) {
         style_color = held ? ImGuiCol_HeaderActive :
@@ -3189,7 +3196,7 @@ void imgui_table_header(ImGuiContext *imgui_c89_ctx, const char * label)
         imgui_table_set_bg_color(
             ctx, ImGuiTableBgTarget_CellBg, color, table->CurrentColumn);
     }
-    imgui_i_im_gui_render_nav_cursor(ctx, &bb, id, ImGuiNavRenderCursorFlags_Compact, 0.0f);
+    imgui_i_render_nav_cursor(ctx, &bb, id, ImGuiNavRenderCursorFlags_Compact, 0.0f);
     if (held)
         table->HeldHeaderColumn = (ImGuiTableColumnIdx)column_n;
     window->DC.CursorPos.y -= ctx->Style.ItemSpacing.y * 0.5f;
@@ -3200,16 +3207,16 @@ void imgui_table_header(ImGuiContext *imgui_c89_ctx, const char * label)
         if (ctx->IO.MouseDelta.x < 0.0f &&
             ctx->IO.MousePos.x < cell_min_x &&
             column->PrevEnabledColumn != -1) {
-            imgui_i_im_gui_table_queue_set_column_display_order(
+            imgui_i_table_queue_set_column_display_order(
                 table, column_n,
-                table->Columns.Data[column->PrevEnabledColumn].DisplayOrder);
+                table->Columns[column->PrevEnabledColumn].DisplayOrder);
         }
         if (ctx->IO.MouseDelta.x > 0.0f &&
             ctx->IO.MousePos.x > cell_max_x &&
             column->NextEnabledColumn != -1) {
-            imgui_i_im_gui_table_queue_set_column_display_order(
+            imgui_i_table_queue_set_column_display_order(
                 table, column_n,
-                table->Columns.Data[column->NextEnabledColumn].DisplayOrder);
+                table->Columns[column->NextEnabledColumn].DisplayOrder);
         }
     }
 
@@ -3225,1281 +3232,1386 @@ void imgui_table_header(ImGuiContext *imgui_c89_ctx, const char * label)
             if (column->SortOrder > 0) {
                 color = imgui_get_color_u32_col_float(ctx, ImGuiCol_Text, 0.70f);
                 imgui_push_style_color_u32(ctx, ImGuiCol_Text, color);
-                vector_value.x = sort_x + ctx->Style.ItemInnerSpacing.x;
-                vector_value.y = sort_y;
-                imgui_i_im_gui_render_text(ctx, vector_value, suffix, 0, 0);
+                temp_vec.x = sort_x + ctx->Style.ItemInnerSpacing.x;
+                temp_vec.y = sort_y;
+                imgui_i_render_text(ctx, temp_vec, suffix, 0, 0);
                 imgui_pop_style_color(ctx, 1);
                 sort_x += sort_text_width;
             }
-            vector_value.x = sort_x;
-            vector_value.y = sort_y;
+            temp_vec.x = sort_x;
+            temp_vec.y = sort_y;
             color = imgui_get_color_u32_col_float(ctx, ImGuiCol_Text, 1.0f);
-            imgui_i_im_gui_render_arrow(
-                ctx, window->DrawList, vector_value, color,
+            imgui_i_render_arrow(
+                ctx, window->DrawList, temp_vec, color,
                 column->SortDirection == ImGuiSortDirection_Ascending
                     ? ImGuiDir_Up : ImGuiDir_Down,
                 arrow_scale);
         }
         if (pressed && table->ReorderColumn != column_n) {
-            next_direction = imgui_i_im_gui_table_get_column_next_sort_direction(column);
-            imgui_i_im_gui_table_set_column_sort_direction(
+            next_direction = imgui_i_table_get_column_next_sort_direction(column);
+            imgui_i_table_set_column_sort_direction(
                 ctx, column_n, next_direction, ctx->IO.KeyShift);
         }
     }
 
-    label_pos_value.x = label_pos_x;
-    label_pos_value.y = label_pos_y;
-    pos_max_value.x = ellipsis_max_x;
-    pos_max_value.y = bb.Max.y;
-    imgui_i_im_gui_render_text_ellipsis(
-        ctx, window->DrawList, &label_pos_value, &pos_max_value,
-        ellipsis_max_x, label, label_end, &label_size_value);
-    text_clipped = (unsigned char)(
-        label_size_value.x > ellipsis_max_x - label_pos_x);
+    /* Only reserve sort-indicator space when an indicator is visible. */
+    label_pos.x = label_pos_x;
+    label_pos.y = label_pos_y;
+    label_max.x = ellipsis_max_x;
+    label_max.y = bb.Max.y;
+    imgui_i_render_text_ellipsis(
+        ctx, window->DrawList, &label_pos, &label_max,
+        ellipsis_max_x, label, label_end, &label_size);
+    text_clipped = label_size.x > ellipsis_max_x - label_pos_x;
     if (text_clipped && hovered && ctx->ActiveId == 0)
-        imgui_i_im_gui_set_item_tooltip(
+        imgui_i_set_item_tooltip(
             ctx, "%.*s", (int)(label_end - label), label);
-    if (imgui_i_im_gui_is_popup_open_request_for_item(ctx, ImGuiPopupFlags_None, id))
-        imgui_i_im_gui_table_open_context_menu(ctx, column_n);
+    /* Keep the popup alive even if its column becomes hidden. */
+    if (imgui_i_is_popup_open_request_for_item(ctx, ImGuiPopupFlags_None, id))
+        imgui_i_table_open_context_menu(ctx, column_n);
     /* optional Test Engine item metadata */
 }
 
 void imgui_table_headers_row(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-ImGuiTableColumn *column;
-const char *name;
-float row_height;
-float row_y1;
-int column_n;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-{
-    imgui_i_im_gui_error_log(imgui_c89_ctx,
-        "Call should only be done while in BeginTable() scope!");
-    return;
+    ImGuiTable *table;
+    ImGuiTableColumn *column;
+    const char *name;
+    float row_height;
+    float row_y1;
+    int column_n;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
+    {
+        if (imgui_i_error_log(imgui_c89_ctx,
+                "Call should only be done while in BeginTable() scope!"))
+            imgui_c89_assert_id(73);
+        return;
+    }
+    if (!table->IsLayoutLocked)
+        /* Layout is forced here only to make this convenience helper easier to
+         * debug-step; custom header rows can rely on TableNextRow(). */
+        imgui_i_table_update_layout(imgui_c89_ctx, table);
+    row_height = imgui_i_table_get_header_row_height(imgui_c89_ctx);
+    imgui_table_next_row(imgui_c89_ctx, ImGuiTableRowFlags_Headers, row_height);
+    row_y1 = imgui_c89_ctx->CurrentWindow->DC.CursorPos.y;
+    if (table->HostSkipItems)
+        return;
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+    {
+        if (!imgui_table_set_column_index(imgui_c89_ctx, column_n) &&
+            table->LastHeldHeaderColumn != column_n)
+            continue;
+        column = &table->Columns[column_n];
+        name = "";
+        if (!(column->Flags & ImGuiTableColumnFlags_NoHeaderLabel) && column->NameOffset >= 0)
+            name = table->ColumnsNames.Buf.Data + column->NameOffset;
+        /* The per-column ID keeps empty and unnamed headers addressable. */
+        imgui_push_id_int_none(imgui_c89_ctx, column_n);
+        imgui_table_header(imgui_c89_ctx, name);
+        imgui_pop_id(imgui_c89_ctx);
+    }
+    /* The unused section to the right of the last column owns a table-wide menu. */
+    if (imgui_is_mouse_released(imgui_c89_ctx, 1) &&
+        table->HoveredColumnBody == table->ColumnsCount &&
+        imgui_c89_ctx->IO.MousePos.y >= row_y1 &&
+        imgui_c89_ctx->IO.MousePos.y < row_y1 + row_height)
+        imgui_i_table_open_context_menu(imgui_c89_ctx, table->ColumnsCount);
 }
-if (!table->IsLayoutLocked)
-    imgui_i_im_gui_table_update_layout(imgui_c89_ctx, table);
-row_height = imgui_i_im_gui_table_get_header_row_height(imgui_c89_ctx);
-imgui_table_next_row(imgui_c89_ctx, ImGuiTableRowFlags_Headers, row_height);
-row_y1 = imgui_c89_ctx->CurrentWindow->DC.CursorPos.y;
-if (table->HostSkipItems)
-    return;
-for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+
+void imgui_i_table_init_column_defaults(ImGuiTable * table, ImGuiTableColumn * column, ImGuiTableColumnFlags init_mask)
 {
-    if (!imgui_table_set_column_index(imgui_c89_ctx, column_n) &&
-        table->LastHeldHeaderColumn != column_n)
-        continue;
-    column = &table->Columns.Data[column_n];
-    name = "";
-    if (!(column->Flags & ImGuiTableColumnFlags_NoHeaderLabel) && column->NameOffset >= 0)
-        name = table->ColumnsNames.Buf.Data + column->NameOffset;
-    imgui_push_id_int_none(imgui_c89_ctx, column_n);
-    imgui_table_header(imgui_c89_ctx, name);
-    imgui_pop_id(imgui_c89_ctx);
-}
-if (imgui_is_mouse_released(imgui_c89_ctx, 1) &&
-    table->HoveredColumnBody == table->ColumnsCount &&
-    imgui_c89_ctx->IO.MousePos.y >= row_y1 &&
-    imgui_c89_ctx->IO.MousePos.y < row_y1 + row_height)
-    imgui_i_im_gui_table_open_context_menu(imgui_c89_ctx, table->ColumnsCount);
+    ImGuiTableColumnFlags flags;
+    float value;
+    flags = column->Flags;
+    if (init_mask & ImGuiTableFlags_Resizable)
+    {
+        value = column->InitStretchWeightOrWidth;
+        column->WidthRequest = (flags & ImGuiTableColumnFlags_WidthFixed) && value > 0.0f ? value : -1.0f;
+        column->StretchWeight = (flags & ImGuiTableColumnFlags_WidthStretch) && value > 0.0f ? value : -1.0f;
+        if (value > 0.0f)
+            /* An explicit width or weight disables automatic fitting. */
+            column->AutoFitQueue = 0;
+    }
+    if (init_mask & ImGuiTableFlags_Reorderable)
+        column->DisplayOrder = (ImGuiTableColumnIdx)
+            (table->Flags & ImGuiTableFlags_Reorderable ? -1 : column - table->Columns);
+    if (init_mask & ImGuiTableFlags_Hideable)
+        column->IsUserEnabled = column->IsUserEnabledNextFrame =
+            (flags & ImGuiTableColumnFlags_DefaultHide) ? 0 : 1;
+    if (init_mask & ImGuiTableFlags_Sortable)
+    {
+        column->SortOrder = flags & ImGuiTableColumnFlags_DefaultSort ? 0 : -1;
+        column->SortDirection = (ImU8)(flags & ImGuiTableColumnFlags_DefaultSort ?
+            (flags & ImGuiTableColumnFlags_PreferSortDescending ? ImGuiSortDirection_Descending : ImGuiSortDirection_Ascending) : ImGuiSortDirection_None);
+    }
 }
 
-void imgui_i_im_gui_table_init_column_defaults(ImGuiTable * table, ImGuiTableColumn * column, ImGuiTableColumnFlags init_mask)
+void imgui_i_table_load_settings(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
+    ImGuiTableSettings *settings;
+    if (table->Flags & ImGuiTableFlags_NoSavedSettings)
+    {
+        table->IsSettingsRequestLoad = 0;
+        return;
+    }
+    if (table->SettingsOffset == -1)
+    {
+        settings = imgui_i_table_settings_find_by_id(imgui_c89_ctx, table->ID);
+        if (!settings)
+            return;
+        if (settings->ColumnsCount != table->ColumnsCount)
+            table->IsSettingsDirty = 1;
+        table->SettingsOffset = ImChunkStream_ImGuiTableSettings__offset_from_ptr__6ff582cefd(&imgui_c89_ctx->SettingsTables, settings);
+    }
+    else
+        settings = imgui_i_table_get_bound_settings(imgui_c89_ctx, table);
+    table->SettingsLoadedFlags = settings->SaveFlags;
+    table->RefScale = settings->RefScale;
+    settings->LastUsedDate = imgui_c89_ctx->SessionDate;
+}
 
-ImGuiTableColumnFlags flags;
-float value;
-flags = column->Flags;
-if (init_mask & ImGuiTableFlags_Resizable)
+void imgui_i_table_load_settings_for_column(ImGuiTableColumn * column, ImGuiTableColumnSettings * column_settings, ImGuiTableFlags load_flags)
 {
-    value = column->InitStretchWeightOrWidth;
-    column->WidthRequest = (flags & ImGuiTableColumnFlags_WidthFixed) && value > 0.0f ? value : -1.0f;
-    column->StretchWeight = (flags & ImGuiTableColumnFlags_WidthStretch) && value > 0.0f ? value : -1.0f;
-    if (value > 0.0f)
+    column->IsLoadedSettings = 1;
+    column_settings->IsLoaded = 1;
+    if (load_flags & ImGuiTableFlags_Resizable)
+    {
+        if (column_settings->IsStretch)
+            column->StretchWeight = column_settings->WidthOrWeight;
+        else
+            column->WidthRequest = column_settings->WidthOrWeight;
         column->AutoFitQueue = 0;
-}
-if (init_mask & ImGuiTableFlags_Reorderable)
-    column->DisplayOrder = (ImGuiTableColumnIdx)
-        (table->Flags & ImGuiTableFlags_Reorderable ? -1 : column - table->Columns.Data);
-if (init_mask & ImGuiTableFlags_Hideable)
-    column->IsUserEnabled = column->IsUserEnabledNextFrame =
-        (flags & ImGuiTableColumnFlags_DefaultHide) ? 0 : 1;
-if (init_mask & ImGuiTableFlags_Sortable)
-{
-    column->SortOrder = flags & ImGuiTableColumnFlags_DefaultSort ? 0 : -1;
-    column->SortDirection = (ImU8)(flags & ImGuiTableColumnFlags_DefaultSort ?
-        (flags & ImGuiTableColumnFlags_PreferSortDescending ? ImGuiSortDirection_Descending : ImGuiSortDirection_Ascending) : ImGuiSortDirection_None);
-}
+    }
+    column->DisplayOrder = (load_flags & ImGuiTableFlags_Reorderable) ? column_settings->DisplayOrder : column_settings->Index;
+    if ((load_flags & ImGuiTableFlags_Hideable) && column_settings->IsEnabled != -1)
+        column->IsUserEnabled = column->IsUserEnabledNextFrame = column_settings->IsEnabled == 1;
+    column->SortOrder = column_settings->SortOrder;
+    column->SortDirection = column_settings->SortDirection;
 }
 
-void imgui_i_im_gui_table_load_settings(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+void imgui_i_table_load_settings_for_columns(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-
-ImGuiTableSettings *settings;
-if (table->Flags & ImGuiTableFlags_NoSavedSettings)
-{
-    table->IsSettingsRequestLoad = 0;
-    return;
-}
-if (table->SettingsOffset == -1)
-{
-    settings = imgui_i_im_gui_table_settings_find_by_id(imgui_c89_ctx, table->ID);
+    ImGuiTableSettings *settings;
+    ImGuiTableColumnSettings *saved;
+    ImGuiTableColumn *column;
+    int matches;
+    int n;
+    int column_n;
+    int dst;
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+        table->Columns[column_n].IsLoadedSettings = 0;
+    settings = imgui_i_table_get_bound_settings(imgui_c89_ctx, table);
     if (!settings)
         return;
-    if (settings->ColumnsCount != table->ColumnsCount)
-        table->IsSettingsDirty = 1;
-    table->SettingsOffset = ImChunkStream_ImGuiTableSettings__offset_from_ptr__6ff582cefd(&imgui_c89_ctx->SettingsTables, settings);
-}
-else
-    settings = imgui_i_im_gui_table_get_bound_settings(imgui_c89_ctx, table);
-table->SettingsLoadedFlags = settings->SaveFlags;
-table->RefScale = settings->RefScale;
-settings->LastUsedDate = imgui_c89_ctx->SessionDate;
-}
-
-void imgui_i_im_gui_table_load_settings_for_column(ImGuiTableColumn * column, ImGuiTableColumnSettings * column_settings, ImGuiTableFlags load_flags)
-{
-
-column->IsLoadedSettings = 1;
-column_settings->IsLoaded = 1;
-if (load_flags & ImGuiTableFlags_Resizable)
-{
-    if (column_settings->IsStretch)
-        column->StretchWeight = column_settings->WidthOrWeight;
-    else
-        column->WidthRequest = column_settings->WidthOrWeight;
-    column->AutoFitQueue = 0;
-}
-column->DisplayOrder = (load_flags & ImGuiTableFlags_Reorderable) ? column_settings->DisplayOrder : column_settings->Index;
-if ((load_flags & ImGuiTableFlags_Hideable) && column_settings->IsEnabled != -1)
-    column->IsUserEnabled = column->IsUserEnabledNextFrame = column_settings->IsEnabled == 1;
-column->SortOrder = column_settings->SortOrder;
-column->SortDirection = column_settings->SortDirection;
-}
-
-void imgui_i_im_gui_table_load_settings_for_columns(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiTableSettings *settings;
-ImGuiTableColumnSettings *saved;
-ImGuiTableColumn *column;
-int matches;
-int n;
-int column_n;
-int dst;
-for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-    table->Columns.Data[column_n].IsLoadedSettings = 0;
-settings = imgui_i_im_gui_table_get_bound_settings(imgui_c89_ctx, table);
-if (!settings)
-    return;
-table->SettingsLoadedFlags |= ImGuiTableFlags_Reorderable;
-saved = (ImGuiTableColumnSettings *)(settings + 1);
-matches = 0;
-while (matches < table->ColumnsCount && matches < settings->ColumnsCount && saved[matches].ID == table->Columns.Data[matches].ID)
-{
-    imgui_i_im_gui_table_load_settings_for_column(&table->Columns.Data[matches], &saved[matches], settings->SaveFlags);
-    matches++;
-}
-if (matches == settings->ColumnsCount)
-    return;
-for (n = matches; n < settings->ColumnsCount; n++)
-    saved[n].IsLoaded = 0;
-for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-{
-    column = &table->Columns.Data[column_n];
-    if (!column->ID || column->IsLoadedSettings)
-        continue;
+    table->SettingsLoadedFlags |= ImGuiTableFlags_Reorderable;
+    saved = (ImGuiTableColumnSettings *)(settings + 1);
+    matches = 0;
+    while (matches < table->ColumnsCount && matches < settings->ColumnsCount && saved[matches].ID == table->Columns[matches].ID)
+    {
+        imgui_i_table_load_settings_for_column(&table->Columns[matches], &saved[matches], settings->SaveFlags);
+        matches++;
+    }
+    if (matches == settings->ColumnsCount)
+        return;
     for (n = matches; n < settings->ColumnsCount; n++)
-        if (!saved[n].IsLoaded && saved[n].ID == column->ID)
-        {
-            imgui_i_im_gui_table_load_settings_for_column(column, &saved[n], settings->SaveFlags);
-            break;
-        }
-}
-dst = 0;
-for (n = matches; n < settings->ColumnsCount; n++)
-    if (!saved[n].IsLoaded)
+        saved[n].IsLoaded = 0;
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
-        while (dst < table->ColumnsCount && table->Columns.Data[dst].IsLoadedSettings)
-            dst++;
-        if (dst == table->ColumnsCount)
-            break;
-        imgui_i_im_gui_table_load_settings_for_column(&table->Columns.Data[dst++], &saved[n], settings->SaveFlags);
-    }
-}
-
-void imgui_i_im_gui_table_merge_draw_channels(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-struct MergeGroup
-{
-    ImRect ClipRect;
-    int ChannelsCount;
-    ImU32 *ChannelsMask;
-};
-ImDrawListSplitter *splitter;
-struct MergeGroup groups[4];
-struct MergeGroup *group;
-ImGuiTableColumn *column;
-ImDrawChannel *channel;
-ImDrawChannel *dst;
-ImDrawCmd *cmd;
-ImU32 *remaining;
-ImU32 bit;
-ImRect clip;
-int freeze_v;
-int freeze_h;
-int mask_bytes;
-int mask_words;
-int group_mask;
-int column_n;
-int sub_n;
-int sub_count;
-int channel_n;
-int group_n;
-int word_n;
-int merge_count;
-int remaining_count;
-float content_max_x;
-splitter = table->DrawSplitter;
-freeze_v = table->FreezeRowsCount > 0;
-freeze_h = table->FreezeColumnsCount > 0;
-mask_bytes = ((4 + table->ColumnsCount * 2 + 31) >> 5) * 4;
-mask_words = mask_bytes >> 2;
-ImVector_char__reserve__a13dbd8026(imgui_c89_ctx, &imgui_c89_ctx->TempBuffer, mask_bytes * 5);
-memset(imgui_c89_ctx->TempBuffer.Data, 0, (size_t)mask_bytes * 5);
-for (group_n = 0; group_n < 4; group_n++)
-{
-    groups[group_n].ChannelsCount = 0;
-    groups[group_n].ChannelsMask = (ImU32 *)(void *)
-        (imgui_c89_ctx->TempBuffer.Data + mask_bytes * group_n);
-}
-remaining = (ImU32 *)(void *)
-    (imgui_c89_ctx->TempBuffer.Data + mask_bytes * 4);
-group_mask = 0;
-sub_count = freeze_v ? 2 : 1;
-for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-{
-    if (!(table->VisibleMaskByIndex[column_n >> 5] &
-          ((ImU32)1 << (column_n & 31))))
-        continue;
-    column = &table->Columns.Data[column_n];
-    for (sub_n = 0; sub_n < sub_count; sub_n++)
-    {
-        channel_n = sub_n == 0 ?
-            column->DrawChannelFrozen : column->DrawChannelUnfrozen;
-        channel = &splitter->_Channels.Data[channel_n];
-        if (channel->_CmdBuffer.Size > 0)
-        {
-            cmd = &channel->_CmdBuffer.Data[channel->_CmdBuffer.Size - 1];
-            if (cmd->ElemCount == 0 && !cmd->UserCallback)
-                channel->_CmdBuffer.Size--;
-        }
-        if (channel->_CmdBuffer.Size != 1)
+        column = &table->Columns[column_n];
+        if (!column->ID || column->IsLoadedSettings)
             continue;
-        if (!(column->Flags & ImGuiTableColumnFlags_NoClip))
-        {
-            if (!freeze_v)
+        for (n = matches; n < settings->ColumnsCount; n++)
+            if (!saved[n].IsLoaded && saved[n].ID == column->ID)
             {
-                content_max_x = column->ContentMaxXUnfrozen;
-                if (content_max_x < column->ContentMaxXHeadersUsed)
-                    content_max_x = column->ContentMaxXHeadersUsed;
+                imgui_i_table_load_settings_for_column(column, &saved[n], settings->SaveFlags);
+                break;
             }
-            else if (sub_n == 0)
-            {
-                content_max_x = column->ContentMaxXFrozen;
-                if (content_max_x < column->ContentMaxXHeadersUsed)
-                    content_max_x = column->ContentMaxXHeadersUsed;
-            }
-            else
-                content_max_x = column->ContentMaxXUnfrozen;
-            if (content_max_x > column->ClipRect.Max.x)
-                continue;
-        }
-        group_n = (freeze_h && column_n < table->FreezeColumnsCount ? 0 : 1) +
-            (freeze_v && sub_n == 0 ? 0 : 2);
-        group = &groups[group_n];
-        if (group->ChannelsCount == 0)
-        {
-            group->ClipRect.Min.x = group->ClipRect.Min.y = 3.402823466e38f;
-            group->ClipRect.Max.x = group->ClipRect.Max.y = -3.402823466e38f;
-        }
-        group->ChannelsMask[channel_n >> 5] |=
-            (ImU32)1 << (channel_n & 31);
-        group->ChannelsCount++;
-        cmd = &channel->_CmdBuffer.Data[0];
-        if (group->ClipRect.Min.x > cmd->ClipRect.x)
-            group->ClipRect.Min.x = cmd->ClipRect.x;
-        if (group->ClipRect.Min.y > cmd->ClipRect.y)
-            group->ClipRect.Min.y = cmd->ClipRect.y;
-        if (group->ClipRect.Max.x < cmd->ClipRect.z)
-            group->ClipRect.Max.x = cmd->ClipRect.z;
-        if (group->ClipRect.Max.y < cmd->ClipRect.w)
-            group->ClipRect.Max.y = cmd->ClipRect.w;
-        group_mask |= 1 << group_n;
     }
-    column->DrawChannelCurrent = (ImGuiTableDrawChannelIdx)-1;
+    dst = 0;
+    for (n = matches; n < settings->ColumnsCount; n++)
+        if (!saved[n].IsLoaded)
+        {
+            while (dst < table->ColumnsCount && table->Columns[dst].IsLoadedSettings)
+                dst++;
+            if (dst == table->ColumnsCount)
+                break;
+            imgui_i_table_load_settings_for_column(&table->Columns[dst++], &saved[n], settings->SaveFlags);
+        }
 }
-if (!group_mask)
-    return;
-ImVector_ImDrawChannel__resize__b5c8399512(imgui_c89_ctx, &imgui_c89_ctx->DrawChannelsTempMergeBuffer,
-    splitter->_Count - 2);
-dst = imgui_c89_ctx->DrawChannelsTempMergeBuffer.Data;
-for (channel_n = 2; channel_n < splitter->_Count; channel_n++)
-    remaining[channel_n >> 5] |= (ImU32)1 << (channel_n & 31);
-channel_n = table->Bg2DrawChannelUnfrozen;
-remaining[channel_n >> 5] &= ~((ImU32)1 << (channel_n & 31));
-remaining_count = splitter->_Count - (freeze_v ? 3 : 2);
-for (group_n = 0; group_n < 4; group_n++)
+
+void imgui_i_table_merge_draw_channels(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-    group = &groups[group_n];
-    merge_count = group->ChannelsCount;
-    if (merge_count)
+    struct MergeGroup
     {
-        clip = group->ClipRect;
-        if (((group_n & 1) == 0 || !freeze_h) &&
-            clip.Min.x > table->HostClipRect.Min.x)
-            clip.Min.x = table->HostClipRect.Min.x;
-        if (((group_n & 2) == 0 || !freeze_v) &&
-            clip.Min.y > table->HostClipRect.Min.y)
-            clip.Min.y = table->HostClipRect.Min.y;
-        if ((group_n & 1) && clip.Max.x < table->HostClipRect.Max.x)
-            clip.Max.x = table->HostClipRect.Max.x;
-        if ((group_n & 2) && !(table->Flags & ImGuiTableFlags_NoHostExtendY) &&
-            clip.Max.y < table->HostClipRect.Max.y)
-            clip.Max.y = table->HostClipRect.Max.y;
-        remaining_count -= merge_count;
-        for (word_n = 0; word_n < mask_words; word_n++)
-            remaining[word_n] &= ~group->ChannelsMask[word_n];
-        for (channel_n = 0;
-             channel_n < splitter->_Count && merge_count;
-             channel_n++)
-        {
-            bit = (ImU32)1 << (channel_n & 31);
-            if (!(group->ChannelsMask[channel_n >> 5] & bit))
-                continue;
-            group->ChannelsMask[channel_n >> 5] &= ~bit;
-            merge_count--;
-            channel = &splitter->_Channels.Data[channel_n];
-            cmd = &channel->_CmdBuffer.Data[0];
-            cmd->ClipRect.x = clip.Min.x;
-            cmd->ClipRect.y = clip.Min.y;
-            cmd->ClipRect.z = clip.Max.x;
-            cmd->ClipRect.w = clip.Max.y;
-            memcpy(dst++, channel, sizeof(*channel));
-        }
+        ImRect ClipRect;
+        int ChannelsCount;
+        ImU32 *ChannelsMask;
+    };
+    ImDrawListSplitter *splitter;
+    struct MergeGroup groups[4];
+    struct MergeGroup *group;
+    ImGuiTableColumn *column;
+    ImDrawChannel *channel;
+    ImDrawChannel *dst;
+    ImDrawCmd *cmd;
+    ImU32 *remaining;
+    ImU32 bit;
+    ImRect clip;
+    int freeze_v;
+    int freeze_h;
+    int max_draw_channels;
+    int mask_bytes;
+    int mask_words;
+    int group_mask;
+    int column_n;
+    int sub_n;
+    int sub_count;
+    int channel_n;
+    int group_n;
+    int word_n;
+    int merge_count;
+    int remaining_count;
+    float content_max_x;
+    splitter = table->DrawSplitter;
+    if (!(splitter->_Current == 0))
+        imgui_c89_assert_id(60);
+    freeze_v = table->FreezeRowsCount > 0;
+    freeze_h = table->FreezeColumnsCount > 0;
+    /* Four freeze groups share four masks plus one remaining-channel mask. */
+    max_draw_channels = 4 + table->ColumnsCount * 2;
+    mask_bytes = ((max_draw_channels + 31) >> 5) * sizeof(ImU32);
+    mask_words = mask_bytes / (int)sizeof(ImU32);
+    ImVector_char__reserve__a13dbd8026(imgui_c89_ctx, &imgui_c89_ctx->TempBuffer, mask_bytes * 5);
+    memset(imgui_c89_ctx->TempBuffer.Data, 0, (size_t)mask_bytes * 5);
+    for (group_n = 0; group_n < 4; group_n++)
+    {
+        groups[group_n].ChannelsCount = 0;
+        groups[group_n].ChannelsMask = (ImU32 *)(void *)
+            (imgui_c89_ctx->TempBuffer.Data + mask_bytes * group_n);
     }
-    if (group_n == 1 && freeze_v)
-        memcpy(dst++, &splitter->_Channels.Data[table->Bg2DrawChannelUnfrozen],
-            sizeof(*dst));
-}
-for (channel_n = 0;
-     channel_n < splitter->_Count && remaining_count;
-     channel_n++)
-{
-    bit = (ImU32)1 << (channel_n & 31);
-    if (!(remaining[channel_n >> 5] & bit))
-        continue;
-    memcpy(dst++, &splitter->_Channels.Data[channel_n], sizeof(*dst));
-    remaining_count--;
-}
-memcpy(splitter->_Channels.Data + 2,
-    imgui_c89_ctx->DrawChannelsTempMergeBuffer.Data,
-    (size_t)(splitter->_Count - 2) * sizeof(*dst));
+    remaining = (ImU32 *)(void *)
+        (imgui_c89_ctx->TempBuffer.Data + mask_bytes * 4);
+    group_mask = 0;
+    /* First identify column channels whose single draw command can be merged. */
+    sub_count = freeze_v ? 2 : 1;
+    for (column_n = 0; column_n < table->ColumnsCount; column_n++)
+    {
+        if (!(table->VisibleMaskByIndex[column_n >> 5] &
+              ((ImU32)1 << (column_n & 31))))
+            continue;
+        column = &table->Columns[column_n];
+        for (sub_n = 0; sub_n < sub_count; sub_n++)
+        {
+            channel_n = sub_n == 0 ?
+                column->DrawChannelFrozen : column->DrawChannelUnfrozen;
+            channel = &splitter->_Channels.Data[channel_n];
+            if (channel->_CmdBuffer.Size > 0)
+            {
+                cmd = &channel->_CmdBuffer.Data[channel->_CmdBuffer.Size - 1];
+                if (cmd->ElemCount == 0 && !cmd->UserCallback)
+                    channel->_CmdBuffer.Size--;
+            }
+            if (channel->_CmdBuffer.Size != 1)
+                continue;
+            if (!(column->Flags & ImGuiTableColumnFlags_NoClip))
+            {
+                if (!freeze_v)
+                {
+                    content_max_x = column->ContentMaxXUnfrozen;
+                    if (content_max_x < column->ContentMaxXHeadersUsed)
+                        content_max_x = column->ContentMaxXHeadersUsed;
+                }
+                else if (sub_n == 0)
+                {
+                    content_max_x = column->ContentMaxXFrozen;
+                    if (content_max_x < column->ContentMaxXHeadersUsed)
+                        content_max_x = column->ContentMaxXHeadersUsed;
+                }
+                else
+                    content_max_x = column->ContentMaxXUnfrozen;
+                if (content_max_x > column->ClipRect.Max.x)
+                    continue;
+            }
+            group_n = (freeze_h && column_n < table->FreezeColumnsCount ? 0 : 1) +
+                (freeze_v && sub_n == 0 ? 0 : 2);
+            if (!(channel_n < max_draw_channels))
+                imgui_c89_assert_id(61);
+            group = &groups[group_n];
+            if (group->ChannelsCount == 0)
+            {
+                group->ClipRect.Min.x = group->ClipRect.Min.y = 3.402823466e38f;
+                group->ClipRect.Max.x = group->ClipRect.Max.y = -3.402823466e38f;
+            }
+            group->ChannelsMask[channel_n >> 5] |=
+                (ImU32)1 << (channel_n & 31);
+            group->ChannelsCount++;
+            cmd = &channel->_CmdBuffer.Data[0];
+            if (group->ClipRect.Min.x > cmd->ClipRect.x)
+                group->ClipRect.Min.x = cmd->ClipRect.x;
+            if (group->ClipRect.Min.y > cmd->ClipRect.y)
+                group->ClipRect.Min.y = cmd->ClipRect.y;
+            if (group->ClipRect.Max.x < cmd->ClipRect.z)
+                group->ClipRect.Max.x = cmd->ClipRect.z;
+            if (group->ClipRect.Max.y < cmd->ClipRect.w)
+                group->ClipRect.Max.y = cmd->ClipRect.w;
+            group_mask |= 1 << group_n;
+        }
+        column->DrawChannelCurrent = (ImGuiTableDrawChannelIdx)-1;
+    }
+    if (!group_mask)
+        return;
+    /* Rewrite movable channels after the two fixed leading background channels. */
+    ImVector_ImDrawChannel__resize__b5c8399512(imgui_c89_ctx, &imgui_c89_ctx->DrawChannelsTempMergeBuffer,
+        splitter->_Count - 2);
+    dst = imgui_c89_ctx->DrawChannelsTempMergeBuffer.Data;
+    for (channel_n = 2; channel_n < splitter->_Count; channel_n++)
+        remaining[channel_n >> 5] |= (ImU32)1 << (channel_n & 31);
+    channel_n = table->Bg2DrawChannelUnfrozen;
+    remaining[channel_n >> 5] &= ~((ImU32)1 << (channel_n & 31));
+    if (!(!freeze_v || table->Bg2DrawChannelUnfrozen != 1))
+        imgui_c89_assert_id(62);
+    remaining_count = splitter->_Count - (freeze_v ? 3 : 2);
+    for (group_n = 0; group_n < 4; group_n++)
+    {
+        group = &groups[group_n];
+        merge_count = group->ChannelsCount;
+        if (merge_count)
+        {
+            clip = group->ClipRect;
+            if (((group_n & 1) == 0 || !freeze_h) &&
+                clip.Min.x > table->HostClipRect.Min.x)
+                clip.Min.x = table->HostClipRect.Min.x;
+            if (((group_n & 2) == 0 || !freeze_v) &&
+                clip.Min.y > table->HostClipRect.Min.y)
+                clip.Min.y = table->HostClipRect.Min.y;
+            if ((group_n & 1) && clip.Max.x < table->HostClipRect.Max.x)
+                clip.Max.x = table->HostClipRect.Max.x;
+            if ((group_n & 2) && !(table->Flags & ImGuiTableFlags_NoHostExtendY) &&
+                clip.Max.y < table->HostClipRect.Max.y)
+                clip.Max.y = table->HostClipRect.Max.y;
+            remaining_count -= merge_count;
+            for (word_n = 0; word_n < mask_words; word_n++)
+                remaining[word_n] &= ~group->ChannelsMask[word_n];
+            for (channel_n = 0;
+                 channel_n < splitter->_Count && merge_count;
+                 channel_n++)
+            {
+                bit = (ImU32)1 << (channel_n & 31);
+                if (!(group->ChannelsMask[channel_n >> 5] & bit))
+                    continue;
+                group->ChannelsMask[channel_n >> 5] &= ~bit;
+                merge_count--;
+                channel = &splitter->_Channels.Data[channel_n];
+                cmd = &channel->_CmdBuffer.Data[0];
+                if (!(channel->_CmdBuffer.Size == 1 &&
+                      cmd->ClipRect.x >= clip.Min.x &&
+                      cmd->ClipRect.y >= clip.Min.y &&
+                      cmd->ClipRect.z <= clip.Max.x &&
+                      cmd->ClipRect.w <= clip.Max.y))
+                    imgui_c89_assert_id(63);
+                cmd->ClipRect.x = clip.Min.x;
+                cmd->ClipRect.y = clip.Min.y;
+                cmd->ClipRect.z = clip.Max.x;
+                cmd->ClipRect.w = clip.Max.y;
+                memcpy(dst++, channel, sizeof(*channel));
+            }
+        }
+        if (group_n == 1 && freeze_v)
+            memcpy(dst++, &splitter->_Channels.Data[table->Bg2DrawChannelUnfrozen],
+                sizeof(*dst));
+    }
+    for (channel_n = 0;
+         channel_n < splitter->_Count && remaining_count;
+         channel_n++)
+    {
+        bit = (ImU32)1 << (channel_n & 31);
+        if (!(remaining[channel_n >> 5] & bit))
+            continue;
+        memcpy(dst++, &splitter->_Channels.Data[channel_n], sizeof(*dst));
+        remaining_count--;
+    }
+    if (!(dst == imgui_c89_ctx->DrawChannelsTempMergeBuffer.Data +
+                 imgui_c89_ctx->DrawChannelsTempMergeBuffer.Size))
+        imgui_c89_assert_id(64);
+    memcpy(splitter->_Channels.Data + 2,
+        imgui_c89_ctx->DrawChannelsTempMergeBuffer.Data,
+        (size_t)(splitter->_Count - 2) * sizeof(*dst));
 }
 
 unsigned char imgui_table_next_column(ImGuiContext *imgui_c89_ctx)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-    return 0;
-if (table->IsInsideRow && table->CurrentColumn + 1 < table->ColumnsCount)
-{
-    if (table->CurrentColumn != -1)
-        imgui_i_im_gui_table_end_cell(imgui_c89_ctx, table);
-    imgui_i_im_gui_table_begin_cell(imgui_c89_ctx, table, table->CurrentColumn + 1);
-}
-else
-{
-    imgui_table_next_row(imgui_c89_ctx, 0, 0.0f);
-    imgui_i_im_gui_table_begin_cell(imgui_c89_ctx, table, 0);
-}
-return table->Columns.Data[table->CurrentColumn].IsRequestOutput;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
+        return 0;
+    if (table->IsInsideRow && table->CurrentColumn + 1 < table->ColumnsCount)
+    {
+        if (table->CurrentColumn != -1)
+            imgui_i_table_end_cell(imgui_c89_ctx, table);
+        imgui_i_table_begin_cell(imgui_c89_ctx, table, table->CurrentColumn + 1);
+    }
+    else
+    {
+        imgui_table_next_row(imgui_c89_ctx, 0, 0.0f);
+        imgui_i_table_begin_cell(imgui_c89_ctx, table, 0);
+    }
+    return table->Columns[table->CurrentColumn].IsRequestOutput;
 }
 
 void imgui_table_next_row(ImGuiContext *imgui_c89_ctx, ImGuiTableRowFlags row_flags, float row_min_height)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table->IsLayoutLocked)
-    imgui_i_im_gui_table_update_layout(imgui_c89_ctx, table);
-if (table->IsInsideRow)
-    imgui_i_im_gui_table_end_row(imgui_c89_ctx, table);
-table->LastRowFlags = table->RowFlags;
-table->RowFlags = row_flags;
-table->RowCellPaddingY = imgui_c89_ctx->Style.CellPadding.y;
-table->RowMinHeight = row_min_height;
-imgui_i_im_gui_table_begin_row(imgui_c89_ctx, table);
-table->RowPosY2 += table->RowCellPaddingY * 2.0f;
-if (table->RowPosY2 < table->RowPosY1 + row_min_height)
-    table->RowPosY2 = table->RowPosY1 + row_min_height;
-table->InnerWindow->SkipItems = 1;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table->IsLayoutLocked)
+        imgui_i_table_update_layout(imgui_c89_ctx, table);
+    if (table->IsInsideRow)
+        imgui_i_table_end_row(imgui_c89_ctx, table);
+    table->LastRowFlags = table->RowFlags;
+    table->RowFlags = row_flags;
+    table->RowCellPaddingY = imgui_c89_ctx->Style.CellPadding.y;
+    table->RowMinHeight = row_min_height;
+    imgui_i_table_begin_row(imgui_c89_ctx, table);
+    /* A minimum height is honored, but a maximum would require a distinct
+     * clipping rectangle for every cell. */
+    table->RowPosY2 += table->RowCellPaddingY * 2.0f;
+    if (table->RowPosY2 < table->RowPosY1 + row_min_height)
+        table->RowPosY2 = table->RowPosY1 + row_min_height;
+    /* Output stays disabled until the caller selects a column. */
+    table->InnerWindow->SkipItems = 1;
 }
 
-void imgui_i_im_gui_table_open_context_menu(ImGuiContext *imgui_c89_ctx, int column_n)
+void imgui_i_table_open_context_menu(ImGuiContext *imgui_c89_ctx, int column_n)
 {
-
-ImGuiTable *table;
-ImGuiID id;
-table = imgui_c89_ctx->CurrentTable;
-if (column_n == -1 && table->CurrentColumn != -1)
-    column_n = table->CurrentColumn;
-if (column_n == table->ColumnsCount)
-    column_n = -1;
-if (table->Flags & (ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
-{
-    table->IsContextPopupOpen = 1;
-    table->ContextPopupColumn = (ImGuiTableColumnIdx)column_n;
-    table->InstanceInteracted = table->InstanceCurrent;
-    id = imgui_i_im_hash_str("##ContextMenu", 0, table->ID);
-    imgui_i_im_gui_open_popup_ex(imgui_c89_ctx, id, ImGuiPopupFlags_None);
-}
-}
-
-void imgui_i_im_gui_table_pop_background_channel(ImGuiContext *imgui_c89_ctx)
-{
-
-ImGuiWindow *window;
-ImGuiTable *table;
-window = imgui_c89_ctx->CurrentWindow;
-table = imgui_c89_ctx->CurrentTable;
-imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &table->HostBackupInnerClipRect);
-imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-              table->Columns.Data[table->CurrentColumn].DrawChannelCurrent);
-}
-
-void imgui_i_im_gui_table_pop_column_channel(ImGuiContext *imgui_c89_ctx)
-{
-
-ImGuiWindow *window;
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if ((table->Flags & ImGuiTableFlags_NoClip) || table->CurrentColumn == -1)
-    return;
-window = imgui_c89_ctx->CurrentWindow;
-imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &table->Columns.Data[table->CurrentColumn].ClipRect);
-imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-              table->Columns.Data[table->CurrentColumn].DrawChannelCurrent);
-}
-
-void imgui_i_im_gui_table_push_background_channel(ImGuiContext *imgui_c89_ctx)
-{
-
-ImGuiWindow *window;
-ImGuiTable *table;
-window = imgui_c89_ctx->CurrentWindow;
-table = imgui_c89_ctx->CurrentTable;
-table->HostBackupInnerClipRect = window->ClipRect;
-imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &table->Bg2ClipRectForDrawCmd);
-imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-              table->Bg2DrawChannelCurrent);
-}
-
-void imgui_i_im_gui_table_push_column_channel(ImGuiContext *imgui_c89_ctx, int column_n)
-{
-
-ImGuiWindow *window;
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (table->Flags & ImGuiTableFlags_NoClip)
-    return;
-window = imgui_c89_ctx->CurrentWindow;
-imgui_i_im_gui_set_window_clip_rect_before_set_channel(window, &table->Columns.Data[column_n].ClipRect);
-imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
-              table->Columns.Data[column_n].DrawChannelCurrent);
-}
-
-void imgui_i_im_gui_table_queue_set_column_display_order(ImGuiTable * table, int column_n, int dst_order)
-{
-
-int src_order;
-src_order = table->Columns.Data[column_n].DisplayOrder;
-table->ReorderColumn = (ImGuiTableColumnIdx)column_n;
-table->ReorderColumnDstOrder = (ImGuiTableColumnIdx)-1;
-dst_order = TableGetMaxDisplayOrderAllowed__501237b51d(table, src_order, dst_order);
-if (table->IsLayoutLocked && dst_order == src_order)
-    return;
-table->ReorderColumnDstOrder = (ImGuiTableColumnIdx)dst_order;
-}
-
-void imgui_i_im_gui_table_reconcile_columns(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-ImGuiTableTempData *temp_data;
-ImGuiTableColumn *src_begin;
-ImGuiTableColumn *src_end;
-ImGuiTableColumn *src;
-ImGuiTableColumn *dst;
-ImGuiTableReconcileColumnData *requests;
-ImGuiTableReconcileColumnData *request;
-int request_count;
-int request_n;
-int named_match_count;
-int dst_request_n;
-
-temp_data = table->TempData;
-if (imgui_c89_ctx->DebugLogFlags & ImGuiDebugLogFlags_EventTable)
-    imgui_i_im_gui_debug_log(imgui_c89_ctx,
-               "[table] Reconcile columns for table 0x%08X\n", table->ID);
-if (temp_data->OldColumnsData.Data != temp_data->OldColumnsData.DataEnd)
-{
-    src_begin = temp_data->OldColumnsData.Data;
-    src_end = temp_data->OldColumnsData.DataEnd;
-}
-else
-{
-    src_begin = table->Columns.Data;
-    src_end = table->Columns.DataEnd;
-}
-
-requests = temp_data->ReconcileColumnsRequests.Data;
-request_count = temp_data->ReconcileColumnsRequests.Size;
-named_match_count = 0;
-for (request_n = 0; request_n < request_count; request_n++)
-{
-    request = requests + request_n;
-    if (request->ID == 0)
-        continue;
-    for (src = src_begin; src != src_end; src++)
+    ImGuiTable *table;
+    ImGuiID id;
+    table = imgui_c89_ctx->CurrentTable;
+    if (column_n == -1 && table->CurrentColumn != -1)
+        column_n = table->CurrentColumn;
+    if (column_n == table->ColumnsCount)
+        column_n = -1;
+    if (!(column_n >= -1 && column_n < table->ColumnsCount))
+        imgui_c89_assert_id(78);
+    if (table->Flags & (ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable))
     {
-        if (src->ID == request->ID && src->IsNeedReconcileSrc)
+        table->IsContextPopupOpen = 1;
+        table->ContextPopupColumn = (ImGuiTableColumnIdx)column_n;
+        table->InstanceInteracted = table->InstanceCurrent;
+        id = imgui_i_im_hash_str("##ContextMenu", 0, table->ID);
+        imgui_i_open_popup_ex(imgui_c89_ctx, id, ImGuiPopupFlags_None);
+    }
+}
+
+void imgui_i_table_pop_background_channel(ImGuiContext *imgui_c89_ctx)
+{
+    ImGuiWindow *window;
+    ImGuiTable *table;
+    window = imgui_c89_ctx->CurrentWindow;
+    table = imgui_c89_ctx->CurrentTable;
+    /* Restore both clip state and the current column's draw channel directly. */
+    imgui_i_set_window_clip_rect_before_set_channel(window, &table->HostBackupInnerClipRect);
+    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+                  table->Columns[table->CurrentColumn].DrawChannelCurrent);
+}
+
+void imgui_i_table_pop_column_channel(ImGuiContext *imgui_c89_ctx)
+{
+    ImGuiWindow *window;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if ((table->Flags & ImGuiTableFlags_NoClip) || table->CurrentColumn == -1)
+        return;
+    window = imgui_c89_ctx->CurrentWindow;
+    imgui_i_set_window_clip_rect_before_set_channel(window, &table->Columns[table->CurrentColumn].ClipRect);
+    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+                  table->Columns[table->CurrentColumn].DrawChannelCurrent);
+}
+
+void imgui_i_table_push_background_channel(ImGuiContext *imgui_c89_ctx)
+{
+    ImGuiWindow *window;
+    ImGuiTable *table;
+    window = imgui_c89_ctx->CurrentWindow;
+    table = imgui_c89_ctx->CurrentTable;
+    /* Avoid the regular PushClipRect/SetCurrentChannel pair on this hot path. */
+    table->HostBackupInnerClipRect = window->ClipRect;
+    imgui_i_set_window_clip_rect_before_set_channel(window, &table->Bg2ClipRectForDrawCmd);
+    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+                  table->Bg2DrawChannelCurrent);
+}
+
+void imgui_i_table_push_column_channel(ImGuiContext *imgui_c89_ctx, int column_n)
+{
+    ImGuiWindow *window;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (table->Flags & ImGuiTableFlags_NoClip)
+        return;
+    window = imgui_c89_ctx->CurrentWindow;
+    imgui_i_set_window_clip_rect_before_set_channel(window, &table->Columns[column_n].ClipRect);
+    imgui_draw_list_splitter_set_current_channel(imgui_c89_ctx, table->DrawSplitter, window->DrawList,
+                  table->Columns[column_n].DrawChannelCurrent);
+}
+
+void imgui_i_table_queue_set_column_display_order(ImGuiTable * table, int column_n, int dst_order)
+{
+    int src_order;
+    src_order = table->Columns[column_n].DisplayOrder;
+    table->ReorderColumn = (ImGuiTableColumnIdx)column_n;
+    table->ReorderColumnDstOrder = (ImGuiTableColumnIdx)-1;
+    dst_order = imgui_i_table_get_max_display_order_allowed(table, src_order, dst_order);
+    if (table->IsLayoutLocked && dst_order == src_order)
+        return;
+    table->ReorderColumnDstOrder = (ImGuiTableColumnIdx)dst_order;
+}
+
+void imgui_i_table_reconcile_columns(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+{
+    ImGuiTableTempData *temp_data;
+    ImGuiTableColumn *src_begin;
+    ImGuiTableColumn *src_end;
+    ImGuiTableColumn *src;
+    ImGuiTableColumn *dst;
+    ImGuiTableReconcileColumnData *requests;
+    ImGuiTableReconcileColumnData *request;
+    int request_count;
+    int request_n;
+    int named_match_count;
+    int dst_request_n;
+
+    temp_data = table->TempData;
+    if (imgui_c89_ctx->DebugLogFlags & ImGuiDebugLogFlags_EventTable)
+        imgui_i_debug_log(imgui_c89_ctx,
+                   "[table] Reconcile columns for table 0x%08X\n", table->ID);
+    if (temp_data->OldColumnsData != temp_data->OldColumnsDataEnd)
+    {
+        src_begin = temp_data->OldColumnsData;
+        src_end = temp_data->OldColumnsDataEnd;
+    }
+    else
+    {
+        src_begin = table->Columns;
+        src_end = table->ColumnsEnd;
+    }
+
+    requests = temp_data->ReconcileColumnsRequests;
+    request_count = temp_data->ReconcileColumnsRequestsSize;
+    named_match_count = 0;
+    /* First preserve named columns by stable ID. */
+    for (request_n = 0; request_n < request_count; request_n++)
+    {
+        request = requests + request_n;
+        if (request->ID == 0)
+            continue;
+        for (src = src_begin; src != src_end; src++)
         {
-            dst = table->Columns.Data + request->ColumnNewIdx;
+            if (src->ID == request->ID && src->IsNeedReconcileSrc)
+            {
+                dst = table->Columns + request->ColumnNewIdx;
+                if (!(src->IsNeedReconcileSrc && dst->IsNeedReconcileDst))
+                    imgui_c89_assert_id(30);
+                src->IsNeedReconcileSrc = 0;
+                dst->IsNeedReconcileDst = 0;
+                request->ColumnOldIdx = (ImGuiTableColumnIdx)(src - src_begin);
+                request->ColumnOldData = *src;
+                named_match_count++;
+                break;
+            }
+        }
+    }
+
+    /* Match remaining unnamed or unmatched columns sequentially. */
+    if (named_match_count != request_count)
+    {
+        dst_request_n = 0;
+        for (src = src_begin; src != src_end; src++)
+        {
+            if (!src->IsNeedReconcileSrc)
+                continue;
+            while (dst_request_n < request_count &&
+                   requests[dst_request_n].ColumnOldIdx != (ImGuiTableColumnIdx)-1)
+                dst_request_n++;
+            if (dst_request_n == request_count)
+                break;
+            request = requests + dst_request_n;
+            dst = table->Columns + request->ColumnNewIdx;
+            if (!(src->IsNeedReconcileSrc && dst->IsNeedReconcileDst))
+                imgui_c89_assert_id(31);
             src->IsNeedReconcileSrc = 0;
             dst->IsNeedReconcileDst = 0;
             request->ColumnOldIdx = (ImGuiTableColumnIdx)(src - src_begin);
             request->ColumnOldData = *src;
-            named_match_count++;
-            break;
         }
     }
-}
 
-if (named_match_count != request_count)
-{
-    dst_request_n = 0;
-    for (src = src_begin; src != src_end; src++)
+    /* Apply from temporary copies so source and destination spans may alias. */
+    for (request_n = 0; request_n < request_count; request_n++)
     {
-        if (!src->IsNeedReconcileSrc)
-            continue;
-        while (dst_request_n < request_count &&
-               requests[dst_request_n].ColumnOldIdx != (ImGuiTableColumnIdx)-1)
-            dst_request_n++;
-        if (dst_request_n == request_count)
-            break;
-        request = requests + dst_request_n;
-        dst = table->Columns.Data + request->ColumnNewIdx;
-        src->IsNeedReconcileSrc = 0;
-        dst->IsNeedReconcileDst = 0;
-        request->ColumnOldIdx = (ImGuiTableColumnIdx)(src - src_begin);
-        request->ColumnOldData = *src;
+        request = requests + request_n;
+        table->Columns[request->ColumnNewIdx] = request->ColumnOldData;
+        imgui_i_table_setup_column_apply(imgui_c89_ctx, table, request->ColumnNewIdx,
+                             request->ID, request->NameOffset, request->Flags,
+                             request->InitWidthOrWeight, request->UserData);
+        if (imgui_c89_ctx->DebugLogFlags & ImGuiDebugLogFlags_EventTable)
+            imgui_i_debug_log(imgui_c89_ctx,
+                       "[table] - old %d -> new %d \"%s\"\n",
+                       request->ColumnOldIdx, request->ColumnNewIdx,
+                       imgui_i_table_get_column_name(table, request->ColumnNewIdx));
     }
+
+    imgui_i_table_fix_display_order(imgui_c89_ctx, table);
+    table->IsSettingsDirty = 1;
+    table->IsReconcileMode = 0;
+    temp_data->ReconcileColumnsRequestsSize = 0;
 }
 
-for (request_n = 0; request_n < request_count; request_n++)
+void imgui_i_table_remove(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-    request = requests + request_n;
-    table->Columns.Data[request->ColumnNewIdx] = request->ColumnOldData;
-    TableSetupColumnApply__7f77d8a256(imgui_c89_ctx, table, request->ColumnNewIdx,
-                         request->ID, request->NameOffset, request->Flags,
-                         request->InitWidthOrWeight, request->UserData);
-    if (imgui_c89_ctx->DebugLogFlags & ImGuiDebugLogFlags_EventTable)
-        imgui_i_im_gui_debug_log(imgui_c89_ctx,
-                   "[table] - old %d -> new %d \"%s\"\n",
-                   request->ColumnOldIdx, request->ColumnNewIdx,
-                   imgui_i_im_gui_table_get_column_name(table, request->ColumnNewIdx));
+    int index;
+    index = imgui_table_pool_index(&imgui_c89_ctx->Tables, table);
+    imgui_table_pool_remove(imgui_c89_ctx, &imgui_c89_ctx->Tables, table->ID, table);
+    imgui_c89_ctx->TablesLastTimeActive.Data[index] = -1.0f;
 }
 
-imgui_i_im_gui_table_fix_display_order(imgui_c89_ctx, table);
-table->IsSettingsDirty = 1;
-table->IsReconcileMode = 0;
-temp_data->ReconcileColumnsRequests.Size = 0;
-}
-
-void imgui_i_im_gui_table_remove(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+void imgui_i_table_reset_settings(ImGuiTable * table)
 {
-
-int index;
-index = ImPool_ImGuiTable__GetIndex__9187fcfe0b(&imgui_c89_ctx->Tables, table);
-ImPool_ImGuiTable__Remove__de4b7a8310(imgui_c89_ctx, &imgui_c89_ctx->Tables, table->ID, table);
-imgui_c89_ctx->TablesLastTimeActive.Data[index] = -1.0f;
+    table->IsInitializing = table->IsSettingsDirty = 1;
+    table->IsResetAllRequest = 0;
+    table->IsSettingsRequestLoad = 0;
+    table->SettingsLoadedFlags = ImGuiTableFlags_None;
 }
 
-void imgui_i_im_gui_table_reset_settings(ImGuiTable * table)
+void imgui_i_table_save_settings(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-
-table->IsInitializing = table->IsSettingsDirty = 1;
-table->IsResetAllRequest = 0;
-table->IsSettingsRequestLoad = 0;
-table->SettingsLoadedFlags = ImGuiTableFlags_None;
-}
-
-void imgui_i_im_gui_table_save_settings(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiTableSettings *settings;
-ImGuiTableColumnSettings *saved;
-ImGuiTableColumn *column;
-float width;
-int save_ref_scale;
-int n;
-table->IsSettingsDirty = 0;
-if (table->Flags & ImGuiTableFlags_NoSavedSettings)
-    return;
-settings = imgui_i_im_gui_table_get_bound_settings(imgui_c89_ctx, table);
-if (settings && settings->ColumnsCountMax < table->ColumnsCount)
-{
-    settings->ID = 0;
-    settings = 0;
-}
-if (!settings)
-{
-    settings = imgui_i_im_gui_table_settings_create(imgui_c89_ctx, table->ID, table->ColumnsCount);
-    table->SettingsOffset = ImChunkStream_ImGuiTableSettings__offset_from_ptr__6ff582cefd(&imgui_c89_ctx->SettingsTables, settings);
-}
-settings->ColumnsCount = (ImGuiTableColumnIdx)table->ColumnsCount;
-settings->LastUsedDate = imgui_c89_ctx->SessionDate;
-saved = (ImGuiTableColumnSettings *)(settings + 1);
-column = table->Columns.Data;
-save_ref_scale = 0;
-settings->SaveFlags = ImGuiTableFlags_None;
-for (n = 0; n < table->ColumnsCount; n++, column++, saved++)
-{
-    width = (column->Flags & ImGuiTableColumnFlags_WidthStretch) ? column->StretchWeight : column->WidthRequest;
-    saved->ID = column->ID;
-    saved->WidthOrWeight = width;
-    saved->Index = (ImGuiTableColumnIdx)n;
-    saved->DisplayOrder = column->DisplayOrder;
-    saved->SortOrder = column->SortOrder;
-    saved->SortDirection = column->SortDirection;
-    saved->IsEnabled = column->IsUserEnabled;
-    saved->IsStretch = (column->Flags & ImGuiTableColumnFlags_WidthStretch) != 0;
-    save_ref_scale |= !saved->IsStretch;
-    if (width != column->InitStretchWeightOrWidth)
-        settings->SaveFlags |= ImGuiTableFlags_Resizable;
-    if (column->DisplayOrder != n)
-        settings->SaveFlags |= ImGuiTableFlags_Reorderable;
-    if (column->SortOrder != -1)
-        settings->SaveFlags |= ImGuiTableFlags_Sortable;
-    if (column->IsUserEnabled != !(column->Flags & ImGuiTableColumnFlags_DefaultHide))
-        settings->SaveFlags |= ImGuiTableFlags_Hideable;
-}
-settings->SaveFlags &= table->Flags;
-settings->RefScale = save_ref_scale ? table->RefScale : 0.0f;
-imgui_i_im_gui_mark_ini_settings_dirty_void(imgui_c89_ctx);
+    ImGuiTableSettings *settings;
+    ImGuiTableColumnSettings *saved;
+    ImGuiTableColumn *column;
+    float width;
+    int save_ref_scale;
+    int n;
+    table->IsSettingsDirty = 0;
+    if (table->Flags & ImGuiTableFlags_NoSavedSettings)
+        return;
+    settings = imgui_i_table_get_bound_settings(imgui_c89_ctx, table);
+    if (settings && settings->ColumnsCountMax < table->ColumnsCount)
+    {
+        settings->ID = 0;
+        settings = 0;
+    }
+    if (!settings)
+    {
+        settings = imgui_i_table_settings_create(imgui_c89_ctx, table->ID, table->ColumnsCount);
+        table->SettingsOffset = ImChunkStream_ImGuiTableSettings__offset_from_ptr__6ff582cefd(&imgui_c89_ctx->SettingsTables, settings);
+    }
+    settings->ColumnsCount = (ImGuiTableColumnIdx)table->ColumnsCount;
+    settings->LastUsedDate = imgui_c89_ctx->SessionDate;
+    if (settings->ID != table->ID)
+        imgui_c89_assert_id(80);
+    if (!(settings->ColumnsCount == table->ColumnsCount &&
+          settings->ColumnsCountMax >= settings->ColumnsCount))
+        imgui_c89_assert_id(81);
+    saved = (ImGuiTableColumnSettings *)(settings + 1);
+    column = table->Columns;
+    save_ref_scale = 0;
+    settings->SaveFlags = ImGuiTableFlags_None;
+    for (n = 0; n < table->ColumnsCount; n++, column++, saved++)
+    {
+        width = (column->Flags & ImGuiTableColumnFlags_WidthStretch) ? column->StretchWeight : column->WidthRequest;
+        saved->ID = column->ID;
+        saved->WidthOrWeight = width;
+        saved->Index = (ImGuiTableColumnIdx)n;
+        saved->DisplayOrder = column->DisplayOrder;
+        saved->SortOrder = column->SortOrder;
+        saved->SortDirection = column->SortDirection;
+        saved->IsEnabled = column->IsUserEnabled;
+        saved->IsStretch = (column->Flags & ImGuiTableColumnFlags_WidthStretch) != 0;
+        save_ref_scale |= !saved->IsStretch;
+        if (width != column->InitStretchWeightOrWidth)
+            settings->SaveFlags |= ImGuiTableFlags_Resizable;
+        if (column->DisplayOrder != n)
+            settings->SaveFlags |= ImGuiTableFlags_Reorderable;
+        if (column->SortOrder != -1)
+            settings->SaveFlags |= ImGuiTableFlags_Sortable;
+        if (column->IsUserEnabled != !(column->Flags & ImGuiTableColumnFlags_DefaultHide))
+            settings->SaveFlags |= ImGuiTableFlags_Hideable;
+    }
+    settings->SaveFlags &= table->Flags;
+    settings->RefScale = save_ref_scale ? table->RefScale : 0.0f;
+    imgui_i_mark_ini_settings_dirty_void(imgui_c89_ctx);
 }
 
 void imgui_table_set_bg_color(ImGuiContext *imgui_c89_ctx, ImGuiTableBgTarget target, ImU32 color, int column_n)
 {
-
-ImGuiTableCellData *cell;
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-{
-    imgui_i_im_gui_error_log(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
-    return;
-}
-if (color == ((ImU32)1 << 24))
-    color = 0;
-if (target == ImGuiTableBgTarget_CellBg)
-{
-    if (table->RowPosY1 > table->InnerClipRect.Max.y)
+    ImGuiTableCellData *cell;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
+    {
+        imgui_i_error_log(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
         return;
-    if (column_n == -1)
-        column_n = table->CurrentColumn;
-    if (!(table->VisibleMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))))
-        return;
-    if (table->RowCellDataCurrent < 0 ||
-        table->RowCellData.Data[table->RowCellDataCurrent].Column != column_n)
-        table->RowCellDataCurrent++;
-    cell = &table->RowCellData.Data[table->RowCellDataCurrent];
-    cell->BgColor = color;
-    cell->Column = (ImGuiTableColumnIdx)column_n;
-}
-else if (target == ImGuiTableBgTarget_RowBg0 || target == ImGuiTableBgTarget_RowBg1)
-{
-    if (table->RowPosY1 > table->InnerClipRect.Max.y)
-        return;
-    table->RowBgColor[target == ImGuiTableBgTarget_RowBg1] = color;
-}
+    }
+    if (target == ImGuiTableBgTarget_None)
+        imgui_c89_assert_id(41);
+    if (color == ((ImU32)1 << 24))
+        color = 0;
+    if (target == ImGuiTableBgTarget_CellBg)
+    {
+        if (table->RowPosY1 > table->InnerClipRect.Max.y)
+            return;
+        if (column_n == -1)
+            column_n = table->CurrentColumn;
+        if (!(table->VisibleMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))))
+            return;
+        if (table->RowCellDataCurrent < 0 ||
+            table->RowCellData[table->RowCellDataCurrent].Column != column_n)
+            table->RowCellDataCurrent++;
+        cell = &table->RowCellData[table->RowCellDataCurrent];
+        cell->BgColor = color;
+        cell->Column = (ImGuiTableColumnIdx)column_n;
+    }
+    else if (target == ImGuiTableBgTarget_RowBg0 || target == ImGuiTableBgTarget_RowBg1)
+    {
+        if (table->RowPosY1 > table->InnerClipRect.Max.y)
+            return;
+        if (column_n != -1)
+            imgui_c89_assert_id(42);
+        table->RowBgColor[target == ImGuiTableBgTarget_RowBg1] = color;
+    }
+    else
+        imgui_c89_assert_id(43);
 }
 
-void imgui_i_im_gui_table_set_column_display_order(ImGuiTable * table, int column_n, int dst_order)
+void imgui_i_table_set_column_display_order(ImGuiTable * table, int column_n, int dst_order)
 {
-
-ImGuiTableColumn *column;
-int src_order;
-int direction;
-int order;
-int n;
-column = &table->Columns.Data[column_n];
-src_order = column->DisplayOrder;
-if (src_order == dst_order)
-    return;
-direction = dst_order < src_order ? -1 : 1;
-column->DisplayOrder = (ImGuiTableColumnIdx)dst_order;
-for (order = src_order + direction; order != dst_order + direction;
-     order += direction)
-    table->Columns.Data[table->DisplayOrderToIndex.Data[order]].DisplayOrder -=
-        (ImGuiTableColumnIdx)direction;
-for (n = 0; n < table->ColumnsCount; n++)
-{
-    column = &table->Columns.Data[n];
-    table->DisplayOrderToIndex.Data[column->DisplayOrder] =
-        (ImGuiTableColumnIdx)n;
-}
-table->IsSettingsDirty = 1;
+    ImGuiTableColumn *column;
+    int src_order;
+    int direction;
+    int order;
+    int n;
+    if (!(column_n >= 0 && column_n < table->ColumnsCount))
+        imgui_c89_assert_id(8);
+    if (!(dst_order >= 0 && dst_order < table->ColumnsCount))
+        imgui_c89_assert_id(9);
+    column = &table->Columns[column_n];
+    src_order = column->DisplayOrder;
+    if (src_order == dst_order)
+        return;
+    direction = dst_order < src_order ? -1 : 1;
+    column->DisplayOrder = (ImGuiTableColumnIdx)dst_order;
+    for (order = src_order + direction; order != dst_order + direction;
+         order += direction)
+        table->Columns[table->DisplayOrderToIndex[order]].DisplayOrder -=
+            (ImGuiTableColumnIdx)direction;
+    for (n = 0; n < table->ColumnsCount; n++)
+    {
+        column = &table->Columns[n];
+        table->DisplayOrderToIndex[column->DisplayOrder] =
+            (ImGuiTableColumnIdx)n;
+    }
+    table->IsSettingsDirty = 1;
 }
 
 void imgui_table_set_column_enabled(ImGuiContext *imgui_c89_ctx, int column_n, unsigned char enabled)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-{
-    imgui_i_im_gui_error_log(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
-    return;
-}
-if (column_n < 0)
-    column_n = table->CurrentColumn;
-table->Columns.Data[column_n].IsUserEnabledNextFrame = enabled;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
+    {
+        imgui_i_error_log(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
+        return;
+    }
+    if (!(table->Flags & ImGuiTableFlags_Hideable))
+        imgui_c89_assert_id(37);
+    if (column_n < 0)
+        column_n = table->CurrentColumn;
+    if (!(column_n >= 0 && column_n < table->ColumnsCount))
+        imgui_c89_assert_id(38);
+    table->Columns[column_n].IsUserEnabledNextFrame = enabled;
 }
 
 unsigned char imgui_table_set_column_index(ImGuiContext *imgui_c89_ctx, int column_n)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-    return 0;
-if (table->CurrentColumn != column_n)
-{
-    if (table->CurrentColumn != -1)
-        imgui_i_im_gui_table_end_cell(imgui_c89_ctx, table);
-    if (column_n < 0 || column_n >= table->ColumnsCount)
-    {
-        imgui_i_im_gui_error_log(imgui_c89_ctx, "TableSetColumnIndex() invalid column index!");
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
         return 0;
-    }
-    imgui_i_im_gui_table_begin_cell(imgui_c89_ctx, table, column_n);
-}
-return table->Columns.Data[column_n].IsRequestOutput;
-}
-
-void imgui_i_im_gui_table_set_column_sort_direction(ImGuiContext *imgui_c89_ctx, int column_n, ImGuiSortDirection sort_direction, unsigned char append_to_sort_specs)
-{
-
-ImGuiTable *table;
-ImGuiTableColumn *column;
-ImGuiTableColumn *other;
-ImGuiTableColumnIdx max_order;
-int n;
-table = imgui_c89_ctx->CurrentTable;
-if (!(table->Flags & ImGuiTableFlags_SortMulti))
-    append_to_sort_specs = 0;
-max_order = 0;
-if (append_to_sort_specs)
-    for (n = 0; n < table->ColumnsCount; n++)
-        if (max_order < table->Columns.Data[n].SortOrder)
-            max_order = table->Columns.Data[n].SortOrder;
-column = &table->Columns.Data[column_n];
-column->SortDirection = (ImU8)sort_direction;
-if (sort_direction == ImGuiSortDirection_None)
-    column->SortOrder = -1;
-else if (column->SortOrder == -1 || !append_to_sort_specs)
-    column->SortOrder = append_to_sort_specs ? (ImGuiTableColumnIdx)(max_order + 1) : 0;
-for (n = 0; n < table->ColumnsCount; n++)
-{
-    other = &table->Columns.Data[n];
-    if (other != column && !append_to_sort_specs)
-        other->SortOrder = -1;
-    imgui_i_im_gui_table_fix_column_sort_direction(table, other);
-}
-table->IsSettingsDirty = 1;
-table->IsSortSpecsDirty = 1;
-}
-
-void imgui_i_im_gui_table_set_column_width(ImGuiContext *imgui_c89_ctx, int column_n, float width)
-{
-
-ImGuiTable *table;
-ImGuiTableColumn *column;
-ImGuiTableColumn *neighbor;
-float min_width;
-float max_width;
-float neighbor_width;
-table = imgui_c89_ctx->CurrentTable;
-column = &table->Columns.Data[column_n];
-min_width = table->MinColumnWidth;
-max_width = column->WidthMax > min_width ? column->WidthMax : min_width;
-if (width < min_width)
-    width = min_width;
-else if (width > max_width)
-    width = max_width;
-if (width == column->WidthGiven || width == column->WidthRequest)
-    return;
-neighbor = column->NextEnabledColumn == -1 ? 0 :
-    &table->Columns.Data[column->NextEnabledColumn];
-if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) &&
-    (!neighbor || table->LeftMostStretchedColumn == -1 ||
-     table->Columns.Data[table->LeftMostStretchedColumn].DisplayOrder >= column->DisplayOrder))
-{
-    column->WidthRequest = width;
-    table->IsSettingsDirty = 1;
-    return;
-}
-if (!neighbor && column->PrevEnabledColumn != -1)
-    neighbor = &table->Columns.Data[column->PrevEnabledColumn];
-if (!neighbor)
-    return;
-neighbor_width = neighbor->WidthRequest - (width - column->WidthRequest);
-if (neighbor_width < min_width)
-    neighbor_width = min_width;
-width = column->WidthRequest + neighbor->WidthRequest - neighbor_width;
-column->WidthRequest = width;
-neighbor->WidthRequest = neighbor_width;
-if ((column->Flags | neighbor->Flags) & ImGuiTableColumnFlags_WidthStretch)
-    imgui_i_im_gui_table_update_columns_weight_from_width(table);
-table->IsSettingsDirty = 1;
-}
-
-void imgui_i_im_gui_table_set_column_width_auto_all(ImGuiTable * table)
-{
-
-ImGuiTableColumn *column;
-int n;
-for (n = 0; n < table->ColumnsCount; n++)
-{
-    column = &table->Columns.Data[n];
-    if (!column->IsEnabled && !(column->Flags & ImGuiTableColumnFlags_WidthStretch))
-        continue;
-    column->CannotSkipItemsQueue = 1;
-    column->AutoFitQueue = 2;
-}
-}
-
-void imgui_i_im_gui_table_set_column_width_auto_single(ImGuiTable * table, int column_n)
-{
-
-ImGuiTableColumn *column;
-column = &table->Columns.Data[column_n];
-if (!column->IsEnabled)
-    return;
-column->CannotSkipItemsQueue = 1;
-table->AutoFitSingleColumn = (ImGuiTableColumnIdx)column_n;
-}
-
-void imgui_i_im_gui_table_settings_add_settings_handler(ImGuiContext *imgui_c89_ctx)
-{
-
-ImGuiSettingsHandler handler;
-memset(&handler, 0, sizeof(handler));
-handler.TypeName = "Table";
-handler.TypeHash = imgui_i_im_hash_str("Table", 0, 0);
-handler.ClearAllFn = TableSettingsHandler_ClearAll__7504c1753b;
-handler.CleanupFn = TableSettingsHandler_Cleanup__1928564537;
-handler.ReadOpenFn = TableSettingsHandler_ReadOpen__cb3642ee3f;
-handler.ReadLineFn = TableSettingsHandler_ReadLine__a95685e3ec;
-handler.ApplyAllFn = TableSettingsHandler_ApplyAll__1d802ec58a;
-handler.WriteAllFn = TableSettingsHandler_WriteAll__f87e4dd34e;
-imgui_i_im_gui_add_settings_handler(imgui_c89_ctx, &handler);
-}
-
-ImGuiTableSettings * imgui_i_im_gui_table_settings_create(ImGuiContext *imgui_c89_ctx, ImGuiID id, int columns_count)
-{
-
-ImGuiTableSettings *settings;
-int capacity;
-settings = imgui_i_im_gui_table_settings_find_by_id(imgui_c89_ctx, id);
-if (settings)
-{
-    capacity = settings->ColumnsCountMax;
-    if (capacity >= columns_count)
+    if (table->CurrentColumn != column_n)
     {
-        TableSettingsInit__26cd849599(settings, id, columns_count, capacity);
-        return settings;
+        if (table->CurrentColumn != -1)
+            imgui_i_table_end_cell(imgui_c89_ctx, table);
+        if (column_n < 0 || column_n >= table->ColumnsCount)
+        {
+            if (imgui_i_error_log(imgui_c89_ctx,
+                    "TableSetColumnIndex() invalid column index!"))
+                imgui_c89_assert_id(50);
+            return 0;
+        }
+        imgui_i_table_begin_cell(imgui_c89_ctx, table, column_n);
     }
-    settings->ID = 0;
-}
-settings = ImChunkStream_ImGuiTableSettings__alloc_chunk__ebcbcf6a7c(imgui_c89_ctx, &imgui_c89_ctx->SettingsTables, TableSettingsCalcChunkSize__760aeea963(columns_count));
-TableSettingsInit__26cd849599(settings, id, columns_count, columns_count);
-return settings;
+    return table->Columns[column_n].IsRequestOutput;
 }
 
-ImGuiTableSettings * imgui_i_im_gui_table_settings_find_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+void imgui_i_table_set_column_sort_direction(ImGuiContext *imgui_c89_ctx, int column_n, ImGuiSortDirection sort_direction, unsigned char append_to_sort_specs)
 {
-
-ImGuiTableSettings *settings;
-settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&imgui_c89_ctx->SettingsTables);
-while (settings)
-{
-    if (settings->ID == id)
-        return settings;
-    settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&imgui_c89_ctx->SettingsTables, settings);
+    ImGuiTable *table;
+    ImGuiTableColumn *column;
+    ImGuiTableColumn *other;
+    ImGuiTableColumnIdx max_order;
+    int n;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!(table->Flags & ImGuiTableFlags_SortMulti))
+        append_to_sort_specs = 0;
+    if (!(table->Flags & ImGuiTableFlags_SortTristate) && sort_direction == ImGuiSortDirection_None)
+        imgui_c89_assert_id(68);
+    max_order = 0;
+    if (append_to_sort_specs)
+        for (n = 0; n < table->ColumnsCount; n++)
+            if (max_order < table->Columns[n].SortOrder)
+                max_order = table->Columns[n].SortOrder;
+    column = &table->Columns[column_n];
+    column->SortDirection = (ImU8)sort_direction;
+    if (sort_direction == ImGuiSortDirection_None)
+        column->SortOrder = -1;
+    else if (column->SortOrder == -1 || !append_to_sort_specs)
+        column->SortOrder = append_to_sort_specs ? (ImGuiTableColumnIdx)(max_order + 1) : 0;
+    for (n = 0; n < table->ColumnsCount; n++)
+    {
+        other = &table->Columns[n];
+        if (other != column && !append_to_sort_specs)
+            other->SortOrder = -1;
+        imgui_i_table_fix_column_sort_direction(table, other);
+    }
+    table->IsSettingsDirty = 1;
+    table->IsSortSpecsDirty = 1;
 }
-return 0;
+
+void imgui_i_table_set_column_width(ImGuiContext *imgui_c89_ctx, int column_n, float width)
+{
+    ImGuiTable *table;
+    ImGuiTableColumn *column;
+    ImGuiTableColumn *neighbor;
+    float min_width;
+    float max_width;
+    float neighbor_width;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!(table != NULL && table->IsLayoutLocked == 0))
+        imgui_c89_assert_id(51);
+    if (!(column_n >= 0 && column_n < table->ColumnsCount))
+        imgui_c89_assert_id(52);
+    column = &table->Columns[column_n];
+    if (!(table->MinColumnWidth > 0.0f))
+        imgui_c89_assert_id(53);
+    min_width = table->MinColumnWidth;
+    max_width = column->WidthMax > min_width ? column->WidthMax : min_width;
+    if (width < min_width)
+        width = min_width;
+    else if (width > max_width)
+        width = max_width;
+    if (width == column->WidthGiven || width == column->WidthRequest)
+        return;
+    neighbor = column->NextEnabledColumn == -1 ? 0 :
+        &table->Columns[column->NextEnabledColumn];
+    /* Mixed fixed/stretch layouts resize an enabled neighbor so the pair keeps
+     * the same total requested width. */
+    if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) &&
+        (!neighbor || table->LeftMostStretchedColumn == -1 ||
+         table->Columns[table->LeftMostStretchedColumn].DisplayOrder >= column->DisplayOrder))
+    {
+        column->WidthRequest = width;
+        table->IsSettingsDirty = 1;
+        return;
+    }
+    if (!neighbor && column->PrevEnabledColumn != -1)
+        neighbor = &table->Columns[column->PrevEnabledColumn];
+    if (!neighbor)
+        return;
+    neighbor_width = neighbor->WidthRequest - (width - column->WidthRequest);
+    if (neighbor_width < min_width)
+        neighbor_width = min_width;
+    width = column->WidthRequest + neighbor->WidthRequest - neighbor_width;
+    if (!(width > 0.0f && neighbor_width > 0.0f))
+        imgui_c89_assert_id(54);
+    column->WidthRequest = width;
+    neighbor->WidthRequest = neighbor_width;
+    if ((column->Flags | neighbor->Flags) & ImGuiTableColumnFlags_WidthStretch)
+        imgui_i_table_update_columns_weight_from_width(table);
+    table->IsSettingsDirty = 1;
+}
+
+void imgui_i_table_set_column_width_auto_all(ImGuiTable * table)
+{
+    ImGuiTableColumn *column;
+    int n;
+    for (n = 0; n < table->ColumnsCount; n++)
+    {
+        column = &table->Columns[n];
+        if (!column->IsEnabled && !(column->Flags & ImGuiTableColumnFlags_WidthStretch))
+            continue;
+        column->CannotSkipItemsQueue = 1;
+        column->AutoFitQueue = 2;
+    }
+}
+
+void imgui_i_table_set_column_width_auto_single(ImGuiTable * table, int column_n)
+{
+    ImGuiTableColumn *column;
+    column = &table->Columns[column_n];
+    if (!column->IsEnabled)
+        return;
+    column->CannotSkipItemsQueue = 1;
+    table->AutoFitSingleColumn = (ImGuiTableColumnIdx)column_n;
+}
+
+void imgui_i_table_settings_add_settings_handler(ImGuiContext *imgui_c89_ctx)
+{
+    ImGuiSettingsHandler handler;
+    memset(&handler, 0, sizeof(handler));
+    handler.TypeName = "Table";
+    handler.TypeHash = imgui_i_im_hash_str("Table", 0, 0);
+    handler.ClearAllFn = imgui_i_table_settings_handler_clear_all;
+    handler.CleanupFn = imgui_i_table_settings_handler_cleanup;
+    handler.ReadOpenFn = imgui_i_table_settings_handler_read_open;
+    handler.ReadLineFn = imgui_i_table_settings_handler_read_line;
+    handler.ApplyAllFn = imgui_i_table_settings_handler_apply_all;
+    handler.WriteAllFn = imgui_i_table_settings_handler_write_all;
+    imgui_i_add_settings_handler(imgui_c89_ctx, &handler);
+}
+
+ImGuiTableSettings * imgui_i_table_settings_create(ImGuiContext *imgui_c89_ctx, ImGuiID id, int columns_count)
+{
+    ImGuiTableSettings *settings;
+    int capacity;
+    settings = imgui_i_table_settings_find_by_id(imgui_c89_ctx, id);
+    if (settings)
+    {
+        capacity = settings->ColumnsCountMax;
+        if (capacity >= columns_count)
+        {
+            imgui_i_table_settings_init(settings, id, columns_count, capacity);
+            return settings;
+        }
+        settings->ID = 0;
+    }
+    settings = ImChunkStream_ImGuiTableSettings__alloc_chunk__ebcbcf6a7c(imgui_c89_ctx, &imgui_c89_ctx->SettingsTables, imgui_i_table_settings_calc_chunk_size(columns_count));
+    imgui_i_table_settings_init(settings, id, columns_count, columns_count);
+    return settings;
+}
+
+ImGuiTableSettings * imgui_i_table_settings_find_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+{
+    ImGuiTableSettings *settings;
+    settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&imgui_c89_ctx->SettingsTables);
+    while (settings)
+    {
+        if (settings->ID == id)
+            return settings;
+        settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&imgui_c89_ctx->SettingsTables, settings);
+    }
+    return 0;
 }
 
 void imgui_table_setup_column(ImGuiContext *imgui_c89_ctx, const char * label, ImGuiTableColumnFlags flags, float init_width_or_weight, ImGuiID user_data)
 {
-
-ImGuiTableReconcileColumnData request;
-ImGuiTableReconcileColumnData *reconcile;
-ImGuiTableColumn *column;
-ImGuiTable *table;
-ImGuiID id;
-ImS16 name_offset;
-int index;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-{
-    imgui_i_im_gui_error_log(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
-    return;
-}
-if (table->DeclColumnsCount >= table->ColumnsCount)
-{
-    imgui_i_im_gui_error_log(imgui_c89_ctx, "TableSetupColumn(): called too many times!");
-    return;
-}
-if (table->IsLayoutLocked)
-{
-    imgui_i_im_gui_error_log(imgui_c89_ctx, "TableSetupColumn(): need to call before first row!");
-    return;
-}
-name_offset = -1;
-id = 0;
-if (label && *label)
-{
-    name_offset = (ImS16)imgui_text_buffer_size(&table->ColumnsNames);
-    imgui_text_buffer_append(imgui_c89_ctx, &table->ColumnsNames, label, label + strlen(label) + 1);
-    id = imgui_i_im_hash_str(label, 0, 0);
-}
-index = table->DeclColumnsCount++;
-column = &table->Columns.Data[index];
-if (!table->IsReconcileMode && column->ID != id)
-{
-    table->IsReconcileMode = 1;
-    ImVector_ImGuiTableReconcileColumnData__reserve__2c73d7c217(imgui_c89_ctx, &table->TempData->ReconcileColumnsRequests,
-                     table->ColumnsCount - index);
-}
-if (!table->IsReconcileMode)
-{
-    TableSetupColumnApply__7f77d8a256(imgui_c89_ctx, table, index, id, name_offset, flags,
-            init_width_or_weight, user_data);
-    column->IsNeedReconcileSrc = column->IsNeedReconcileDst = 0;
-    if (index < table->TempData->OldColumnsData.DataEnd -
-                table->TempData->OldColumnsData.Data)
-        table->TempData->OldColumnsData.Data[index].IsNeedReconcileSrc = 0;
-    return;
-}
-memset(&request, 0, sizeof(request));
-ImGuiTableColumn_ImGuiTableColumn__076012539a(&request.ColumnOldData);
-ImVector_ImGuiTableReconcileColumnData__push_back__6946bac754(imgui_c89_ctx, &table->TempData->ReconcileColumnsRequests, &request);
-reconcile = &table->TempData->ReconcileColumnsRequests.Data[
-    table->TempData->ReconcileColumnsRequests.Size - 1];
-reconcile->ID = id;
-reconcile->NameOffset = name_offset;
-reconcile->Flags = flags;
-reconcile->InitWidthOrWeight = init_width_or_weight;
-reconcile->UserData = user_data;
-reconcile->ColumnNewIdx = (ImGuiTableColumnIdx)index;
-reconcile->ColumnOldIdx = (ImGuiTableColumnIdx)-1;
-column->NameOffset = name_offset;
-column->IsNeedReconcileSrc = column->IsNeedReconcileDst = 1;
-}
-
-void imgui_i_im_gui_table_setup_draw_channels(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiTableColumn *column;
-int freeze_multiplier;
-int row_channels;
-int background_channels;
-int dummy_channels;
-int total_channels;
-int draw_channel;
-int bg2_frozen;
-int n;
-bg2_frozen = 1;
-freeze_multiplier = table->FreezeRowsCount > 0 ? 2 : 1;
-row_channels = table->Flags & ImGuiTableFlags_NoClip ? 1 : table->ColumnsEnabledCount;
-background_channels = 1 + freeze_multiplier;
-dummy_channels = table->ColumnsEnabledCount < table->ColumnsCount ||
-    memcmp(table->VisibleMaskByIndex, table->EnabledMaskByIndex,
-           ImBitArrayGetStorageSizeInBytes__ac1b7b5bd0(table->ColumnsCount)) != 0;
-total_channels = background_channels + row_channels * freeze_multiplier +
-                 dummy_channels;
-imgui_draw_list_splitter_split(imgui_c89_ctx, table->DrawSplitter, table->InnerWindow->DrawList,
-        total_channels);
-table->DummyDrawChannel = (ImGuiTableDrawChannelIdx)
-    (dummy_channels ? total_channels - 1 : -1);
-table->Bg2DrawChannelCurrent = (ImGuiTableDrawChannelIdx)bg2_frozen;
-table->Bg2DrawChannelUnfrozen = (ImGuiTableDrawChannelIdx)
-    (table->FreezeRowsCount ? 2 + row_channels : bg2_frozen);
-draw_channel = 2;
-for (n = 0; n < table->ColumnsCount; n++)
-{
-    column = &table->Columns.Data[n];
-    if (column->IsVisibleX && column->IsVisibleY)
+    ImGuiTableReconcileColumnData request;
+    ImGuiTableReconcileColumnData *reconcile;
+    ImGuiTableColumn *column;
+    ImGuiTable *table;
+    ImGuiID id;
+    ImS16 name_offset;
+    int index;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
     {
-        column->DrawChannelFrozen = (ImGuiTableDrawChannelIdx)draw_channel;
-        column->DrawChannelUnfrozen = (ImGuiTableDrawChannelIdx)
-            (draw_channel + (table->FreezeRowsCount ? row_channels + 1 : 0));
-        if (!(table->Flags & ImGuiTableFlags_NoClip))
-            draw_channel++;
+        if (imgui_i_error_log(imgui_c89_ctx,
+                "Call should only be done while in BeginTable() scope!"))
+            imgui_c89_assert_id(26);
+        return;
     }
-    else
-        column->DrawChannelFrozen = column->DrawChannelUnfrozen =
-            table->DummyDrawChannel;
-    column->DrawChannelCurrent = column->DrawChannelFrozen;
+    if (table->DeclColumnsCount >= table->ColumnsCount)
+    {
+        if (imgui_i_error_log(imgui_c89_ctx,
+                "TableSetupColumn(): called too many times!"))
+            imgui_c89_assert_id(27);
+        return;
+    }
+    if (table->IsLayoutLocked)
+    {
+        if (imgui_i_error_log(imgui_c89_ctx,
+                "TableSetupColumn(): need to call before first row!"))
+            imgui_c89_assert_id(28);
+        return;
+    }
+    if (flags & ImGuiTableColumnFlags_StatusMask_)
+        imgui_c89_assert_id(29);
+    /* Store the name including its terminator in the table's contiguous buffer. */
+    name_offset = -1;
+    id = 0;
+    if (label && *label)
+    {
+        name_offset = (ImS16)imgui_text_buffer_size(&table->ColumnsNames);
+        imgui_text_buffer_append(imgui_c89_ctx, &table->ColumnsNames, label, label + strlen(label) + 1);
+        id = imgui_i_im_hash_str(label, 0, 0);
+    }
+    index = table->DeclColumnsCount++;
+    column = &table->Columns[index];
+    if (!table->IsReconcileMode && column->ID != id)
+    {
+        table->IsReconcileMode = 1;
+        table->TempData->ReconcileColumnsRequests = imgui_c89_vector_reserve(
+            imgui_c89_ctx, table->TempData->ReconcileColumnsRequests,
+            table->TempData->ReconcileColumnsRequestsSize,
+            &table->TempData->ReconcileColumnsRequestsCapacity,
+            table->ColumnsCount - index,
+            sizeof(*table->TempData->ReconcileColumnsRequests), 0);
+    }
+    if (!table->IsReconcileMode)
+    {
+        /* Fast path: unchanged topology can be applied immediately. */
+        imgui_i_table_setup_column_apply(imgui_c89_ctx, table, index, id, name_offset, flags,
+                init_width_or_weight, user_data);
+        column->IsNeedReconcileSrc = column->IsNeedReconcileDst = 0;
+        if (index < table->TempData->OldColumnsDataEnd -
+                    table->TempData->OldColumnsData)
+            table->TempData->OldColumnsData[index].IsNeedReconcileSrc = 0;
+        return;
+    }
+    /* Reconcile path: preserve old-column state until layout can match the full
+     * previous and new column topologies. */
+    memset(&request, 0, sizeof(request));
+    request.ColumnOldData.StretchWeight = -1.0f;
+    request.ColumnOldData.WidthRequest = -1.0f;
+    request.ColumnOldData.NameOffset = -1;
+    request.ColumnOldData.DisplayOrder = -1;
+    request.ColumnOldData.IndexWithinEnabledSet = -1;
+    request.ColumnOldData.PrevEnabledColumn = -1;
+    request.ColumnOldData.NextEnabledColumn = -1;
+    request.ColumnOldData.SortOrder = -1;
+    request.ColumnOldData.IsJustCreated = 1;
+    request.ColumnOldData.DrawChannelCurrent = (ImU8)-1;
+    request.ColumnOldData.DrawChannelFrozen = (ImU8)-1;
+    request.ColumnOldData.DrawChannelUnfrozen = (ImU8)-1;
+    table->TempData->ReconcileColumnsRequests = imgui_c89_vector_push_back(
+        imgui_c89_ctx, table->TempData->ReconcileColumnsRequests,
+        &table->TempData->ReconcileColumnsRequestsSize,
+        &table->TempData->ReconcileColumnsRequestsCapacity,
+        sizeof(*table->TempData->ReconcileColumnsRequests), &request);
+    reconcile = &table->TempData->ReconcileColumnsRequests[
+        table->TempData->ReconcileColumnsRequestsSize - 1];
+    reconcile->ID = id;
+    reconcile->NameOffset = name_offset;
+    reconcile->Flags = flags;
+    reconcile->InitWidthOrWeight = init_width_or_weight;
+    reconcile->UserData = user_data;
+    reconcile->ColumnNewIdx = (ImGuiTableColumnIdx)index;
+    reconcile->ColumnOldIdx = (ImGuiTableColumnIdx)-1;
+    column->NameOffset = name_offset;
+    column->IsNeedReconcileSrc = column->IsNeedReconcileDst = 1;
 }
-table->BgClipRect = table->InnerClipRect;
-table->Bg0ClipRectForDrawCmd = table->OuterWindow->ClipRect;
-table->Bg2ClipRectForDrawCmd = table->HostClipRect;
+
+void imgui_i_table_setup_draw_channels(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+{
+    ImGuiTableColumn *column;
+    int freeze_multiplier;
+    int row_channels;
+    int background_channels;
+    int dummy_channels;
+    int total_channels;
+    int draw_channel;
+    int bg2_frozen;
+    int n;
+    bg2_frozen = 1;
+    /*
+     * Allocate in storage order: background, per-row columns, then an optional
+     * dummy channel. Frozen rows require a second row/background set.
+     */
+    freeze_multiplier = table->FreezeRowsCount > 0 ? 2 : 1;
+    row_channels = table->Flags & ImGuiTableFlags_NoClip ? 1 : table->ColumnsEnabledCount;
+    background_channels = 1 + freeze_multiplier;
+    dummy_channels = table->ColumnsEnabledCount < table->ColumnsCount ||
+        memcmp(table->VisibleMaskByIndex, table->EnabledMaskByIndex,
+               ImBitArrayGetStorageSizeInBytes__ac1b7b5bd0(table->ColumnsCount)) != 0;
+    total_channels = background_channels + row_channels * freeze_multiplier +
+                     dummy_channels;
+    imgui_draw_list_splitter_split(imgui_c89_ctx, table->DrawSplitter, table->InnerWindow->DrawList,
+            total_channels);
+    table->DummyDrawChannel = (ImGuiTableDrawChannelIdx)
+        (dummy_channels ? total_channels - 1 : -1);
+    table->Bg2DrawChannelCurrent = (ImGuiTableDrawChannelIdx)bg2_frozen;
+    table->Bg2DrawChannelUnfrozen = (ImGuiTableDrawChannelIdx)
+        (table->FreezeRowsCount ? 2 + row_channels : bg2_frozen);
+    draw_channel = 2;
+    for (n = 0; n < table->ColumnsCount; n++)
+    {
+        column = &table->Columns[n];
+        if (column->IsVisibleX && column->IsVisibleY)
+        {
+            column->DrawChannelFrozen = (ImGuiTableDrawChannelIdx)draw_channel;
+            column->DrawChannelUnfrozen = (ImGuiTableDrawChannelIdx)
+                (draw_channel + (table->FreezeRowsCount ? row_channels + 1 : 0));
+            if (!(table->Flags & ImGuiTableFlags_NoClip))
+                draw_channel++;
+        }
+        else
+            column->DrawChannelFrozen = column->DrawChannelUnfrozen =
+                table->DummyDrawChannel;
+        column->DrawChannelCurrent = column->DrawChannelFrozen;
+    }
+    table->BgClipRect = table->InnerClipRect;
+    table->Bg0ClipRectForDrawCmd = table->OuterWindow->ClipRect;
+    table->Bg2ClipRectForDrawCmd = table->HostClipRect;
+    if (!(table->BgClipRect.Min.y <= table->BgClipRect.Max.y))
+        imgui_c89_assert_id(59);
 }
 
 void imgui_table_setup_scroll_freeze(ImGuiContext *imgui_c89_ctx, int columns, int rows)
 {
-
-ImGuiTable *table;
-table = imgui_c89_ctx->CurrentTable;
-if (!table)
-{
-    imgui_i_im_gui_error_log(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
-    return;
+    ImGuiTable *table;
+    table = imgui_c89_ctx->CurrentTable;
+    if (!table)
+    {
+        if (imgui_i_error_log(imgui_c89_ctx,
+                "Call should only be done while in BeginTable() scope!"))
+            imgui_c89_assert_id(32);
+        return;
+    }
+    if (table->IsLayoutLocked)
+        imgui_c89_assert_id(33);
+    if (!(columns >= 0 && columns < 512))
+        imgui_c89_assert_id(34);
+    if (!(rows >= 0 && rows < 128))
+        imgui_c89_assert_id(35);
+    table->FreezeColumnsRequest = (ImGuiTableColumnIdx)
+        (table->Flags & ImGuiTableFlags_ScrollX ? (columns < table->ColumnsCount ? columns : table->ColumnsCount) : 0);
+    table->FreezeColumnsCount = table->InnerWindow->Scroll.x != 0.0f ? table->FreezeColumnsRequest : 0;
+    table->FreezeRowsRequest = (ImGuiTableColumnIdx)(table->Flags & ImGuiTableFlags_ScrollY ? rows : 0);
+    table->FreezeRowsCount = table->InnerWindow->Scroll.y != 0.0f ? table->FreezeRowsRequest : 0;
+    table->IsUnfrozenRows = table->FreezeRowsCount == 0;
 }
-table->FreezeColumnsRequest = (ImGuiTableColumnIdx)
-    (table->Flags & ImGuiTableFlags_ScrollX ? (columns < table->ColumnsCount ? columns : table->ColumnsCount) : 0);
-table->FreezeColumnsCount = table->InnerWindow->Scroll.x != 0.0f ? table->FreezeColumnsRequest : 0;
-table->FreezeRowsRequest = (ImGuiTableColumnIdx)(table->Flags & ImGuiTableFlags_ScrollY ? rows : 0);
-table->FreezeRowsCount = table->InnerWindow->Scroll.y != 0.0f ? table->FreezeRowsRequest : 0;
-table->IsUnfrozenRows = table->FreezeRowsCount == 0;
+
+void imgui_i_table_sort_specs_build(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+{
+    ImGuiTableColumnSortSpecs *specs;
+    ImGuiTableColumnSortSpecs *spec;
+    ImGuiTableColumn *column;
+    unsigned char dirty;
+    int n;
+    dirty = table->IsSortSpecsDirty;
+    if (dirty)
+    {
+        imgui_i_table_sort_specs_sanitize(table);
+        table->SortSpecsMulti = imgui_c89_vector_resize(
+            imgui_c89_ctx, table->SortSpecsMulti,
+            &table->SortSpecsMultiSize, &table->SortSpecsMultiCapacity,
+            table->SortSpecsCount > 1 ? table->SortSpecsCount : 0,
+            sizeof(*table->SortSpecsMulti));
+        table->SortSpecs.SpecsDirty = 1;
+        table->IsSortSpecsDirty = 0;
+    }
+    if (!table->SortSpecsCount)
+        specs = 0;
+    else if (table->SortSpecsCount == 1)
+        specs = &table->SortSpecsSingle;
+    else
+        specs = table->SortSpecsMulti;
+    if (dirty && specs)
+        for (n = 0; n < table->ColumnsCount; n++)
+        {
+            column = &table->Columns[n];
+            if (column->SortOrder != -1)
+            {
+                if (!(column->SortOrder < table->SortSpecsCount))
+                    imgui_c89_assert_id(72);
+                spec = &specs[column->SortOrder];
+                spec->ColumnUserID = column->UserData;
+                spec->ColumnIndex = (ImGuiTableColumnIdx)n;
+                spec->SortOrder = column->SortOrder;
+                spec->SortDirection = (ImGuiSortDirection)column->SortDirection;
+            }
+        }
+    table->SortSpecs.Specs = specs;
+    table->SortSpecs.SpecsCount = table->SortSpecsCount;
 }
 
-void imgui_i_im_gui_table_sort_specs_build(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+void imgui_i_table_sort_specs_sanitize(ImGuiTable * table)
 {
-
-ImGuiTableColumnSortSpecs *specs;
-ImGuiTableColumnSortSpecs *spec;
-ImGuiTableColumn *column;
-unsigned char dirty;
-int n;
-dirty = table->IsSortSpecsDirty;
-if (dirty)
-{
-    imgui_i_im_gui_table_sort_specs_sanitize(table);
-    ImVector_ImGuiTableColumnSortSpecs__resize__429b11f80b(imgui_c89_ctx, &table->SortSpecsMulti,
-                   table->SortSpecsCount > 1 ? table->SortSpecsCount : 0);
-    table->SortSpecs.SpecsDirty = 1;
-    table->IsSortSpecsDirty = 0;
-}
-if (!table->SortSpecsCount)
-    specs = 0;
-else if (table->SortSpecsCount == 1)
-    specs = &table->SortSpecsSingle;
-else
-    specs = table->SortSpecsMulti.Data;
-if (dirty && specs)
+    ImGuiTableColumn *column;
+    ImU64 order_mask;
+    ImU64 fixed_mask;
+    int order_count;
+    int fix_linear;
+    int fix_single;
+    int smallest;
+    int sort_n;
+    int n;
+    if (!(table->Flags & ImGuiTableFlags_Sortable))
+        imgui_c89_assert_id(69);
+    order_count = 0;
+    order_mask = 0;
     for (n = 0; n < table->ColumnsCount; n++)
     {
-        column = &table->Columns.Data[n];
+        column = &table->Columns[n];
+        if (column->SortOrder != -1 && !column->IsEnabled)
+            column->SortOrder = -1;
         if (column->SortOrder != -1)
         {
-            spec = &specs[column->SortOrder];
-            spec->ColumnUserID = column->UserData;
-            spec->ColumnIndex = (ImGuiTableColumnIdx)n;
-            spec->SortOrder = column->SortOrder;
-            spec->SortDirection = (ImGuiSortDirection)column->SortDirection;
+            order_count++;
+            order_mask |= (ImU64)1 << column->SortOrder;
+            if (!(order_count < (int)sizeof(order_mask) * 8))
+                imgui_c89_assert_id(70);
         }
     }
-table->SortSpecs.Specs = specs;
-table->SortSpecs.SpecsCount = table->SortSpecsCount;
-}
-
-void imgui_i_im_gui_table_sort_specs_sanitize(ImGuiTable * table)
-{
-
-ImGuiTableColumn *column;
-ImU64 order_mask;
-ImU64 fixed_mask;
-int order_count;
-int fix_linear;
-int fix_single;
-int smallest;
-int sort_n;
-int n;
-order_count = 0;
-order_mask = 0;
-for (n = 0; n < table->ColumnsCount; n++)
-{
-    column = &table->Columns.Data[n];
-    if (column->SortOrder != -1 && !column->IsEnabled)
-        column->SortOrder = -1;
-    if (column->SortOrder != -1)
+    fix_linear = ((ImU64)1 << order_count) != order_mask + 1;
+    fix_single = order_count > 1 && !(table->Flags & ImGuiTableFlags_SortMulti);
+    if (fix_linear || fix_single)
     {
-        order_count++;
-        order_mask |= (ImU64)1 << column->SortOrder;
-    }
-}
-fix_linear = ((ImU64)1 << order_count) != order_mask + 1;
-fix_single = order_count > 1 && !(table->Flags & ImGuiTableFlags_SortMulti);
-if (fix_linear || fix_single)
-{
-    fixed_mask = 0;
-    for (sort_n = 0; sort_n < order_count; sort_n++)
-    {
-        smallest = -1;
-        for (n = 0; n < table->ColumnsCount; n++)
-            if (!(fixed_mask & ((ImU64)1 << n)) &&
-                table->Columns.Data[n].SortOrder != -1 &&
-                (smallest == -1 || table->Columns.Data[n].SortOrder < table->Columns.Data[smallest].SortOrder))
-                smallest = n;
-        fixed_mask |= (ImU64)1 << smallest;
-        table->Columns.Data[smallest].SortOrder = (ImGuiTableColumnIdx)sort_n;
-        if (fix_single)
+        fixed_mask = 0;
+        for (sort_n = 0; sort_n < order_count; sort_n++)
         {
-            order_count = 1;
+            smallest = -1;
             for (n = 0; n < table->ColumnsCount; n++)
-                if (n != smallest)
-                    table->Columns.Data[n].SortOrder = -1;
-            break;
+                if (!(fixed_mask & ((ImU64)1 << n)) &&
+                    table->Columns[n].SortOrder != -1 &&
+                    (smallest == -1 || table->Columns[n].SortOrder < table->Columns[smallest].SortOrder))
+                    smallest = n;
+            if (smallest == -1)
+                imgui_c89_assert_id(71);
+            fixed_mask |= (ImU64)1 << smallest;
+            table->Columns[smallest].SortOrder = (ImGuiTableColumnIdx)sort_n;
+            if (fix_single)
+            {
+                order_count = 1;
+                for (n = 0; n < table->ColumnsCount; n++)
+                    if (n != smallest)
+                        table->Columns[n].SortOrder = -1;
+                break;
+            }
+        }
+    }
+    if (!order_count && !(table->Flags & ImGuiTableFlags_SortTristate))
+        for (n = 0; n < table->ColumnsCount; n++)
+        {
+            column = &table->Columns[n];
+            if (column->IsEnabled && !(column->Flags & ImGuiTableColumnFlags_NoSort))
+            {
+                order_count = 1;
+                column->SortOrder = 0;
+                column->SortDirection = (ImU8)imgui_i_table_get_column_avail_sort_direction(column, 0);
+                break;
+            }
+        }
+    table->SortSpecsCount = (ImGuiTableColumnIdx)order_count;
+}
+
+void imgui_i_table_update_borders(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
+{
+    ImGuiTableInstanceData *instance;
+    ImGuiTableColumn *column;
+    ImRect hit_rect;
+    ImGuiID column_id;
+    unsigned char hovered;
+    unsigned char held;
+    int pressed;
+    int order_n;
+    int column_n;
+    float half_width;
+    float y1;
+    float y2_body;
+    float y2_head;
+    float y2;
+    if (!(table->Flags & ImGuiTableFlags_Resizable))
+        imgui_c89_assert_id(15);
+    instance = ImGui_TableGetInstanceData__27767b51c6(table, table->InstanceCurrent);
+    /* OuterRect may not yet have its final height, so hit testing uses last
+     * frame's height; current-frame border rendering happens later. */
+    half_width = ImTrunc__ae7a4018f8(4.0f *
+        imgui_c89_ctx->CurrentDpiScale);
+    y1 = (table->FreezeRowsCount >= 1 ? table->OuterRect.Min.y :
+        table->WorkRect.Min.y) + table->AngledHeadersHeight;
+    y2_body = ImMax__3c7b1bb7d1(table->OuterRect.Max.y,
+        y1 + instance->LastOuterHeight - table->AngledHeadersHeight);
+    y2_head = y1 + instance->LastTopHeadersRowHeight;
+    for (order_n = 0; order_n < table->ColumnsCount; order_n++)
+    {
+        if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
+            ((ImU32)1 << (order_n & 31))))
+            continue;
+        column_n = table->DisplayOrderToIndex[order_n];
+        column = &table->Columns[column_n];
+        if (column->Flags & (ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoDirectResize_))
+            continue;
+        y2 = table->Flags & ImGuiTableFlags_NoBordersInBody ? y2_head : y2_body;
+        if ((table->Flags & ImGuiTableFlags_NoBordersInBody) && !table->IsUsingHeaders)
+            continue;
+        if (!column->IsVisibleX && table->LastResizedColumn != column_n)
+            continue;
+        column_id = imgui_i_table_get_column_resize_id(table, column_n, table->InstanceCurrent);
+        hit_rect.Min.x = column->MaxX - half_width;
+        hit_rect.Min.y = y1;
+        hit_rect.Max.x = column->MaxX + half_width;
+        hit_rect.Max.y = y2;
+        imgui_i_item_add(imgui_c89_ctx, &hit_rect, column_id, 0, ImGuiItemFlags_NoNav);
+        hovered = held = 0;
+        pressed = imgui_i_button_behavior(imgui_c89_ctx, &hit_rect, column_id,
+            &hovered, &held, ImGuiButtonFlags_FlattenChildren | ImGuiButtonFlags_PressedOnClick |
+            ImGuiButtonFlags_PressedOnDoubleClick | ImGuiButtonFlags_NoNavFocus);
+        if (pressed && imgui_is_mouse_double_clicked(imgui_c89_ctx, 0))
+        {
+            imgui_i_table_set_column_width_auto_single(table, column_n);
+            imgui_i_clear_active_id(imgui_c89_ctx);
+            held = 0;
+        }
+        if (held)
+        {
+            if (table->LastResizedColumn == -1)
+                table->ResizeLockMinContentsX2 =
+                    table->RightMostEnabledColumn != -1 ?
+                    table->Columns[table->RightMostEnabledColumn].MaxX :
+                    -3.402823466e38f;
+            table->ResizedColumn = (ImGuiTableColumnIdx)column_n;
+            table->InstanceInteracted = table->InstanceCurrent;
+        }
+        if ((hovered && imgui_c89_ctx->HoveredIdTimer >
+            0.06f) || held)
+        {
+            table->HoveredColumnBorder = (ImGuiTableColumnIdx)column_n;
+            imgui_set_mouse_cursor(imgui_c89_ctx, ImGuiMouseCursor_ResizeEW);
         }
     }
 }
-if (!order_count && !(table->Flags & ImGuiTableFlags_SortTristate))
+
+void imgui_i_table_update_columns_weight_from_width(ImGuiTable * table)
+{
+    ImGuiTableColumn *column;
+    float visible_weight;
+    float visible_width;
+    int n;
+    if (!(table->LeftMostStretchedColumn != -1 &&
+          table->RightMostStretchedColumn != -1))
+        imgui_c89_assert_id(55);
+    visible_weight = visible_width = 0.0f;
     for (n = 0; n < table->ColumnsCount; n++)
     {
-        column = &table->Columns.Data[n];
-        if (column->IsEnabled && !(column->Flags & ImGuiTableColumnFlags_NoSort))
+        column = &table->Columns[n];
+        if (column->IsEnabled && (column->Flags & ImGuiTableColumnFlags_WidthStretch))
         {
-            order_count = 1;
-            column->SortOrder = 0;
-            column->SortDirection = (ImU8)TableGetColumnAvailSortDirection__ccd2c84aa9(column, 0);
-            break;
+            if (!(column->StretchWeight > 0.0f))
+                imgui_c89_assert_id(56);
+            visible_weight += column->StretchWeight;
+            visible_width += column->WidthRequest;
         }
     }
-table->SortSpecsCount = (ImGuiTableColumnIdx)order_count;
-}
-
-void imgui_i_im_gui_table_update_borders(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
-ImGuiTableInstanceData *instance;
-ImGuiTableColumn *column;
-ImRect hit_rect;
-ImGuiID column_id;
-unsigned char hovered;
-unsigned char held;
-unsigned char pressed;
-int order_n;
-int column_n;
-float half_width;
-float y1;
-float y2_body;
-float y2_head;
-float y2;
-instance = ImGui_TableGetInstanceData__27767b51c6(table, table->InstanceCurrent);
-half_width = ImTrunc__ae7a4018f8(4.0f *
-    imgui_c89_ctx->CurrentDpiScale);
-y1 = (table->FreezeRowsCount >= 1 ? table->OuterRect.Min.y :
-    table->WorkRect.Min.y) + table->AngledHeadersHeight;
-y2_body = ImMax__3c7b1bb7d1(table->OuterRect.Max.y,
-    y1 + instance->LastOuterHeight - table->AngledHeadersHeight);
-y2_head = y1 + instance->LastTopHeadersRowHeight;
-for (order_n = 0; order_n < table->ColumnsCount; order_n++)
-{
-    if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
-        ((ImU32)1 << (order_n & 31))))
-        continue;
-    column_n = table->DisplayOrderToIndex.Data[order_n];
-    column = &table->Columns.Data[column_n];
-    if (column->Flags & (ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoDirectResize_))
-        continue;
-    y2 = table->Flags & ImGuiTableFlags_NoBordersInBody ? y2_head : y2_body;
-    if ((table->Flags & ImGuiTableFlags_NoBordersInBody) && !table->IsUsingHeaders)
-        continue;
-    if (!column->IsVisibleX && table->LastResizedColumn != column_n)
-        continue;
-    column_id = imgui_i_im_gui_table_get_column_resize_id(table, column_n, table->InstanceCurrent);
-    hit_rect.Min.x = column->MaxX - half_width;
-    hit_rect.Min.y = y1;
-    hit_rect.Max.x = column->MaxX + half_width;
-    hit_rect.Max.y = y2;
-    imgui_i_im_gui_item_add(imgui_c89_ctx, &hit_rect, column_id, 0, ImGuiItemFlags_NoNav);
-    hovered = held = 0;
-    pressed = imgui_i_im_gui_button_behavior(imgui_c89_ctx, &hit_rect, column_id,
-        &hovered, &held, ImGuiButtonFlags_FlattenChildren | ImGuiButtonFlags_PressedOnClick |
-        ImGuiButtonFlags_PressedOnDoubleClick | ImGuiButtonFlags_NoNavFocus);
-    if (pressed && imgui_is_mouse_double_clicked(imgui_c89_ctx, 0))
+    if (!(visible_weight > 0.0f && visible_width > 0.0f))
+        imgui_c89_assert_id(57);
+    for (n = 0; n < table->ColumnsCount; n++)
     {
-        imgui_i_im_gui_table_set_column_width_auto_single(table, column_n);
-        imgui_i_im_gui_clear_active_id(imgui_c89_ctx);
-        held = 0;
-    }
-    if (held)
-    {
-        if (table->LastResizedColumn == -1)
-            table->ResizeLockMinContentsX2 =
-                table->RightMostEnabledColumn != -1 ?
-                table->Columns.Data[table->RightMostEnabledColumn].MaxX :
-                -3.402823466e38f;
-        table->ResizedColumn = (ImGuiTableColumnIdx)column_n;
-        table->InstanceInteracted = table->InstanceCurrent;
-    }
-    if ((hovered && imgui_c89_ctx->HoveredIdTimer >
-        0.06f) || held)
-    {
-        table->HoveredColumnBorder = (ImGuiTableColumnIdx)column_n;
-        imgui_set_mouse_cursor(imgui_c89_ctx, ImGuiMouseCursor_ResizeEW);
+        column = &table->Columns[n];
+        if (column->IsEnabled && (column->Flags & ImGuiTableColumnFlags_WidthStretch))
+            column->StretchWeight = column->WidthRequest / visible_width * visible_weight;
     }
 }
-}
 
-void imgui_i_im_gui_table_update_columns_weight_from_width(ImGuiTable * table)
+void imgui_i_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
 {
-
-ImGuiTableColumn *column;
-float visible_weight;
-float visible_width;
-int n;
-visible_weight = visible_width = 0.0f;
-for (n = 0; n < table->ColumnsCount; n++)
-{
-    column = &table->Columns.Data[n];
-    if (column->IsEnabled && (column->Flags & ImGuiTableColumnFlags_WidthStretch))
-    {
-        visible_weight += column->StretchWeight;
-        visible_width += column->WidthRequest;
-    }
-}
-for (n = 0; n < table->ColumnsCount; n++)
-{
-    column = &table->Columns.Data[n];
-    if (column->IsEnabled && (column->Flags & ImGuiTableColumnFlags_WidthStretch))
-        column->StretchWeight = column->WidthRequest / visible_width * visible_weight;
-}
-}
-
-void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable * table)
-{
-
     ImGuiContext *g;
     ImGuiTableTempData *temp_data;
     ImGuiTableColumn *column;
@@ -4549,42 +4661,46 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
 
     g = imgui_c89_ctx;
     temp_data = table->TempData;
+    if (!(table->IsLayoutLocked == 0))
+        imgui_c89_assert_id(11);
     columns_count = table->ColumnsCount;
 
-    if (temp_data->ReconcileColumnsRequests.Size > 0)
-        imgui_i_im_gui_table_reconcile_columns(imgui_c89_ctx, table);
+    /* Reconcile declarations before releasing any previous column arena. */
+    if (temp_data->ReconcileColumnsRequestsSize > 0)
+        imgui_i_table_reconcile_columns(imgui_c89_ctx, table);
     if (temp_data->OldColumnsRawData != 0) {
         imgui_mem_free(imgui_c89_ctx, temp_data->OldColumnsRawData);
         temp_data->OldColumnsRawData = 0;
-        temp_data->OldColumnsData.Data = 0;
-        temp_data->OldColumnsData.DataEnd = 0;
+        temp_data->OldColumnsData = 0;
+        temp_data->OldColumnsDataEnd = 0;
     }
 
     if (table->IsSettingsRequestLoad)
-        imgui_i_im_gui_table_load_settings_for_columns(imgui_c89_ctx, table);
+        imgui_i_table_load_settings_for_columns(imgui_c89_ctx, table);
     if (table->IsInitializing || table->IsSettingsRequestLoad) {
         for (n = 0; n < columns_count; ++n) {
-            column = &table->Columns.Data[n];
+            column = &table->Columns[n];
             if (table->IsSettingsRequestLoad)
                 init_flags = column->IsLoadedSettings
                     ? ~table->SettingsLoadedFlags : ~0;
             else
                 init_flags = column->IsJustCreated ? ~0 : 0;
-            imgui_i_im_gui_table_init_column_defaults(table, column, init_flags);
+            imgui_i_table_init_column_defaults(table, column, init_flags);
         }
-        imgui_i_im_gui_table_fix_display_order(imgui_c89_ctx, table);
+        imgui_i_table_fix_display_order(imgui_c89_ctx, table);
         table->IsSettingsRequestLoad = 0;
     }
-    imgui_i_im_gui_table_apply_queued_requests(imgui_c89_ctx, table);
+    imgui_i_table_apply_queued_requests(imgui_c89_ctx, table);
 
     new_ref_scale_unit = g->FontSize;
     if (table->RefScale != 0.0f && table->RefScale != new_ref_scale_unit) {
         scale_factor = new_ref_scale_unit / table->RefScale;
         for (n = 0; n < columns_count; ++n)
-            table->Columns.Data[n].WidthRequest *= scale_factor;
+            table->Columns[n].WidthRequest *= scale_factor;
     }
     table->RefScale = new_ref_scale_unit;
 
+    /* Part 1: lock enabled/order state and calculate ideal column widths. */
     table_sizing_policy = table->Flags & ImGuiTableFlags_SizingMask_;
     table->IsDefaultVisibility = 1;
     table->IsDefaultDisplayOrder = 1;
@@ -4604,11 +4720,11 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
     stretch_sum_width_auto = 0.0f;
     fixed_max_width_auto = 0.0f;
     for (order_n = 0; order_n < columns_count; ++order_n) {
-        column_n = table->DisplayOrderToIndex.Data[order_n];
-        column = &table->Columns.Data[column_n];
+        column_n = table->DisplayOrderToIndex[order_n];
+        column = &table->Columns[column_n];
 
         if (table->DeclColumnsCount <= column_n) {
-            TableSetupColumnFlags__fd03640bbb(table, column, ImGuiTableColumnFlags_None);
+            imgui_i_table_setup_column_flags(table, column, ImGuiTableColumnFlags_None);
             column->NameOffset = -1;
             column->UserData = 0;
             column->ID = 0;
@@ -4652,7 +4768,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
             (ImGuiTableColumnIdx)prev_visible_column_idx;
         column->NextEnabledColumn = -1;
         if (prev_visible_column_idx != -1)
-            table->Columns.Data[prev_visible_column_idx].NextEnabledColumn =
+            table->Columns[prev_visible_column_idx].NextEnabledColumn =
                 (ImGuiTableColumnIdx)column_n;
         else
             table->LeftMostEnabledColumn =
@@ -4662,10 +4778,12 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         ImBitArraySetBit__e371039a31(
             table->EnabledMaskByDisplayOrder, column->DisplayOrder);
         prev_visible_column_idx = column_n;
+        if (!(column->IndexWithinEnabledSet <= column->DisplayOrder))
+            imgui_c89_assert_id(12);
 
         if (!column->IsPreserveWidthAuto && table->InstanceCurrent == 0)
             column->WidthAuto =
-                imgui_i_im_gui_table_get_column_width_auto(table, column);
+                imgui_i_table_get_column_width_auto(table, column);
         column_is_resizable = (unsigned char)(
             (column->Flags & ImGuiTableColumnFlags_NoResize) == 0);
         if (column_is_resizable)
@@ -4691,12 +4809,17 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         table->IsSortSpecsDirty = 1;
     table->RightMostEnabledColumn =
         (ImGuiTableColumnIdx)prev_visible_column_idx;
+    if (!(table->LeftMostEnabledColumn >= 0 &&
+          table->RightMostEnabledColumn >= 0))
+        imgui_c89_assert_id(13);
 
+    /* Part 2: allow clipped child tables to submit columns while fitting. */
     if (has_auto_fit_request && table->OuterWindow != table->InnerWindow)
         table->InnerWindow->SkipItems = 0;
     if (has_auto_fit_request)
         table->IsSettingsDirty = 1;
 
+    /* Part 3: sanitize sizing flags and accumulate fixed/stretch requests. */
     sum_width_requests = 0.0f;
     stretch_sum_weights = 0.0f;
     table->RightMostStretchedColumn = -1;
@@ -4705,7 +4828,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         if ((table->EnabledMaskByIndex[column_n >> 5] &
              ((ImU32)1 << (column_n & 31))) == 0)
             continue;
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         column_is_resizable = (unsigned char)(
             (column->Flags & ImGuiTableColumnFlags_NoResize) == 0);
         if ((column->Flags & ImGuiTableColumnFlags_WidthFixed) != 0) {
@@ -4738,12 +4861,12 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
             }
             stretch_sum_weights += column->StretchWeight;
             if (table->LeftMostStretchedColumn == -1 ||
-                table->Columns.Data[table->LeftMostStretchedColumn]
+                table->Columns[table->LeftMostStretchedColumn]
                     .DisplayOrder > column->DisplayOrder)
                 table->LeftMostStretchedColumn =
                     (ImGuiTableColumnIdx)column_n;
             if (table->RightMostStretchedColumn == -1 ||
-                table->Columns.Data[table->RightMostStretchedColumn]
+                table->Columns[table->RightMostStretchedColumn]
                     .DisplayOrder < column->DisplayOrder)
                 table->RightMostStretchedColumn =
                     (ImGuiTableColumnIdx)column_n;
@@ -4755,6 +4878,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         (ImGuiTableColumnIdx)count_fixed;
     table->ColumnsStretchSumWeights = stretch_sum_weights;
 
+    /* Part 4: distribute available width, then apply minimums and maxima. */
     work_rect = table->WorkRect;
     width_spacings = table->OuterPaddingX * 2.0f +
         (table->CellSpacingX1 + table->CellSpacingX2) *
@@ -4778,7 +4902,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         if ((table->EnabledMaskByIndex[column_n >> 5] &
              ((ImU32)1 << (column_n & 31))) == 0)
             continue;
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         if ((column->Flags & ImGuiTableColumnFlags_WidthStretch) != 0) {
             weight_ratio = column->StretchWeight / stretch_sum_weights;
             column->WidthRequest = ImTrunc__ae7a4018f8(
@@ -4795,6 +4919,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         table->ColumnsGivenWidth += column->WidthGiven;
     }
 
+    /* Part 5: distribute the sub-pixel stretch remainder right-to-left. */
     if (width_remaining_for_stretched_columns >= 1.0f &&
         (table->Flags & ImGuiTableFlags_PreciseWidths) == 0) {
         for (order_n = columns_count - 1;
@@ -4805,8 +4930,8 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
             if ((table->EnabledMaskByDisplayOrder[order_n >> 5] &
                  ((ImU32)1 << (order_n & 31))) == 0)
                 continue;
-            column = &table->Columns.Data[
-                table->DisplayOrderToIndex.Data[order_n]];
+            column = &table->Columns[
+                table->DisplayOrderToIndex[order_n]];
             if ((column->Flags & ImGuiTableColumnFlags_WidthStretch) == 0)
                 continue;
             column->WidthRequest += 1.0f;
@@ -4829,7 +4954,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         table->OuterRect.Min.y + table_instance->LastOuterHeight);
     backup_active_id = g->ActiveId;
     g->ActiveId = 0;
-    is_hovering_table = imgui_i_im_gui_item_hoverable(
+    is_hovering_table = imgui_i_item_hoverable(
         imgui_c89_ctx, &mouse_hit_rect, 0, ImGuiItemFlags_None);
     g->ActiveId = backup_active_id;
 
@@ -4842,6 +4967,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
             (table->OuterRect.Min.y + table->AngledHeadersHeight -
              g->IO.MousePos.y) * table->AngledHeadersSlope);
 
+    /* Part 6: finalize clip/output state in display order. */
     has_output_column = 0;
     offset_x_frozen = (unsigned char)(table->FreezeColumnsCount > 0);
     offset_x = (table->FreezeColumnsCount > 0
@@ -4850,8 +4976,8 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
     host_clip_rect = table->InnerClipRect;
     ImBitArrayClearAllBits__0e7c4d256e(table->VisibleMaskByIndex, columns_count);
     for (order_n = 0; order_n < columns_count; ++order_n) {
-        column_n = table->DisplayOrderToIndex.Data[order_n];
-        column = &table->Columns.Data[column_n];
+        column_n = table->DisplayOrderToIndex[order_n];
+        column = &table->Columns[column_n];
         column->NavLayerCurrent = (ImS8)(
             table->FreezeRowsCount > 0 ? ImGuiNavLayer_Menu : table->NavLayer);
         if (offset_x_frozen && table->FreezeColumnsCount == order_n) {
@@ -4880,7 +5006,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         }
 
         column->MinX = offset_x;
-        column->WidthMax = imgui_i_im_gui_table_calc_max_column_width(
+        column->WidthMax = imgui_i_table_calc_max_column_width(
             table, column_n);
         column->WidthGiven = ImMin__f04263da73(
             column->WidthGiven, column->WidthMax);
@@ -4912,6 +5038,9 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
             column->CannotSkipItemsQueue != 0);
         column->IsSkipItems = (unsigned char)(
             !column->IsEnabled || table->HostSkipItems);
+        if (column->IsSkipItems)
+            if (!(!is_visible))
+                imgui_c89_assert_id(14);
         if (column->IsRequestOutput && !column->IsSkipItems)
             has_output_column = 1;
         column->Flags |= ImGuiTableColumnFlags_IsEnabled;
@@ -4952,14 +5081,15 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
             table->CellSpacingX2 + table->CellPaddingX * 2.0f;
     }
 
+    /* Keep one output column alive when every visible column is clipped. */
     if (!has_output_column) {
-        column = &table->Columns.Data[table->LeftMostEnabledColumn];
+        column = &table->Columns[table->LeftMostEnabledColumn];
         column->IsRequestOutput = 1;
         column->IsSkipItems = 0;
     }
     unused_x1 = ImMax__3c7b1bb7d1(
         table->WorkRect.Min.x,
-        table->Columns.Data[table->RightMostEnabledColumn].ClipRect.Max.x);
+        table->Columns[table->RightMostEnabledColumn].ClipRect.Max.x);
     if (is_hovering_table && table->HoveredColumnBody == -1 &&
         mouse_skewed_x >= unused_x1)
         table->HoveredColumnBody =
@@ -4969,6 +5099,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
     table->IsActiveIdAliveBeforeTable =
         (unsigned char)(g->ActiveIdIsAlive != 0);
 
+    /* Part 8: lock the actual right edge after widths are known. */
     if (table->RightMostStretchedColumn != -1)
         table->Flags &= ~ImGuiTableFlags_NoHostExtendX;
     if ((table->Flags & ImGuiTableFlags_NoHostExtendX) != 0) {
@@ -4992,9 +5123,10 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
         table->InnerWindow->WorkRect.Min.y,
         table->InnerWindow->WorkRect.Max.y);
 
-    imgui_i_im_gui_table_setup_draw_channels(imgui_c89_ctx, table);
+    /* Parts 9-10: allocate draw channels and process resize borders. */
+    imgui_i_table_setup_draw_channels(imgui_c89_ctx, table);
     if ((table->Flags & ImGuiTableFlags_Resizable) != 0)
-        imgui_i_im_gui_table_update_borders(imgui_c89_ctx, table);
+        imgui_i_table_update_borders(imgui_c89_ctx, table);
     table_instance->LastTopHeadersRowHeight = 0.0f;
     table->IsLayoutLocked = 1;
     table->IsUsingHeaders = 0;
@@ -5012,19 +5144,21 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
               g->DragDropActive))
         table->HighlightColumnHeader = table->HoveredColumnBody;
 
+    /* Build deferred context-menu and sorting state after layout is locked. */
     if (!table->DisableDefaultContextMenu &&
-        imgui_i_im_gui_table_begin_context_menu_popup(imgui_c89_ctx, table)) {
-        imgui_i_im_gui_table_draw_default_context_menu(
+        imgui_i_table_begin_context_menu_popup(imgui_c89_ctx, table)) {
+        imgui_i_table_draw_default_context_menu(
             imgui_c89_ctx, table, table->Flags);
         imgui_end_popup(imgui_c89_ctx);
     }
     if (table->IsSortSpecsDirty &&
         (table->Flags & ImGuiTableFlags_Sortable) != 0)
-        imgui_i_im_gui_table_sort_specs_build(imgui_c89_ctx, table);
+        imgui_i_table_sort_specs_build(imgui_c89_ctx, table);
 
+    /* Record frozen decorations for scrolling and navigation. */
     if (table->FreezeColumnsRequest > 0)
         table->InnerWindow->DecoInnerSizeX1 =
-            table->Columns.Data[table->DisplayOrderToIndex.Data[
+            table->Columns[table->DisplayOrderToIndex[
                 table->FreezeColumnsRequest - 1]].MaxX -
             table->OuterRect.Min.x;
     if (table->FreezeRowsRequest > 0)
@@ -5035,7 +5169,7 @@ void imgui_i_im_gui_table_update_layout(ImGuiContext *imgui_c89_ctx, ImGuiTable 
     inner_window = table->InnerWindow;
     box_select = &g->BoxSelectState;
     if (box_select->Window == inner_window && box_select->UnclipMode)
-        imgui_i_im_gui_table_apply_external_unclip_rect(
+        imgui_i_table_apply_external_unclip_rect(
             table, &box_select->UnclipRect);
     if ((table->Flags & ImGuiTableFlags_NoClip) != 0)
         imgui_draw_list_splitter_set_current_channel(
@@ -5074,408 +5208,59 @@ static void ImChunkStream_ImGuiTableSettings__swap__09219107fa(ImChunkStream_ImG
     imgui_c89_chunk_swap(self, rhs);
 }
 
-static ImGuiTable * ImPool_ImGuiTable__Add__153b3075c8(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTable *self)
+static ImGuiTable * imgui_table_pool_add(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self)
 {
     ImGuiTable *item;
 
     item = (ImGuiTable *)imgui_c89_pool_add_slot(
-        imgui_c89_ctx, (void **)&self->Buf.Data,
-        &self->Buf.Size, &self->Buf.Capacity,
-        &self->FreeIdx, &self->AliveCount, sizeof(ImGuiTable));
-    ImGuiTable_ImGuiTable_at__8557b5c94d(item);
+        imgui_c89_ctx, (void **)&self->Data,
+        &self->Size, &self->Capacity,
+        &self->FreeIdx, &self->AliveCount, sizeof(*item));
+    memset(item, 0, sizeof(*item));
+    item->LastFrameActive = -1;
     return item;
 }
 
-static ImGuiTable * ImPool_ImGuiTable__GetByKey__b9c786232c(ImPool_ImGuiTable *self, ImGuiID key)
+static ImGuiTable * imgui_table_pool_find(ImGuiTablePool *self, ImGuiID key)
 {
     int index;
 
     index = imgui_storage_get_int(&self->Map, key, -1);
-    return index == -1 ? 0 : (ImGuiTable *)imgui_c89_pool_at(
-        self->Buf.Data, index, sizeof(ImGuiTable));
+    return index == -1 ? 0 : self->Data + index;
 }
 
-static ImPoolIdx ImPool_ImGuiTable__GetIndex__9187fcfe0b(ImPool_ImGuiTable *self, const ImGuiTable * p)
+static ImPoolIdx imgui_table_pool_index(ImGuiTablePool *self, const ImGuiTable * p)
 {
     return (ImPoolIdx)imgui_c89_pool_index(
-        self->Buf.Data, self->Buf.Size, p, sizeof(ImGuiTable));
+        self->Data, self->Size, p, sizeof(*p));
 }
 
-static ImGuiTable * ImPool_ImGuiTable__GetOrAddByKey__e67404e771(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTable *self, ImGuiID key)
+static ImGuiTable * imgui_table_pool_get_or_add(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self, ImGuiID key)
 {
     int *index;
 
-    index = imgui_storage_get_int_ref(imgui_c89_ctx, &self->Map, key, -1);
-    if (*index != -1)
-        return (ImGuiTable *)imgui_c89_pool_at(
-            self->Buf.Data, *index, sizeof(ImGuiTable));
+    index = imgui_storage_get_int_ref(
+        imgui_c89_ctx, &self->Map, key, -1);
+    if (*index != -1) {
+        return self->Data + *index;
+    }
     *index = self->FreeIdx;
-    return ImPool_ImGuiTable__Add__153b3075c8(imgui_c89_ctx, self);
+    return imgui_table_pool_add(imgui_c89_ctx, self);
 }
 
-static void ImPool_ImGuiTable__Remove__de4b7a8310(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTable *self, ImGuiID key, const ImGuiTable * p)
+static void imgui_table_pool_remove(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self, ImGuiID key, const ImGuiTable * p)
 {
-    ImPool_ImGuiTable__Remove__09b37246df(imgui_c89_ctx, ((ImPool_ImGuiTable *)(self)), key, ImPool_ImGuiTable__GetIndex__9187fcfe0b(((ImPool_ImGuiTable *)(self)), p));
+    imgui_table_pool_remove_at(imgui_c89_ctx, self, key,
+        imgui_table_pool_index(self, p));
 }
 
-static void ImPool_ImGuiTable__Remove__09b37246df(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTable *self, ImGuiID key, ImPoolIdx idx)
+static void imgui_table_pool_remove_at(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self, ImGuiID key, ImPoolIdx idx)
 {
-    ImGuiTable_dtor_ImGuiTable__272de0593a(imgui_c89_ctx, ((ImGuiTable *)(&((*(ImVector_ImGuiTable__operator____d7d8a488b4(((ImVector_ImGuiTable *)(&(self->Buf))), idx)))))));
-    (*((int *)((&(*(ImVector_ImGuiTable__operator____d7d8a488b4(((ImVector_ImGuiTable *)(&(self->Buf))), idx))))))) = self->FreeIdx;
+    imgui_table_fini(imgui_c89_ctx, self->Data + idx);
+    *(int *)(void *)(self->Data + idx) = self->FreeIdx;
     self->FreeIdx = idx;
-    imgui_storage_set_int(imgui_c89_ctx, ((ImGuiStorage *)(&(self->Map))), key, (-1));
+    imgui_storage_set_int(imgui_c89_ctx, &self->Map, key, -1);
     self->AliveCount--;
-}
-
-static ImGuiTableCellData * ImSpan_ImGuiTableCellData__operator____c3934dca7a(ImSpan_ImGuiTableCellData *self, int i)
-{
-    ImGuiTableCellData * p;
-
-    p = (self->Data + i);
-    imgui_c89_expect((!((p >= self->Data) && (p < self->DataEnd))), 0) ? imgui_c89_assert_id(3) : ((void)(0));
-    return &((*p));
-}
-
-static void ImSpan_ImGuiTableCellData__set__9a608544d7(ImSpan_ImGuiTableCellData *self, ImGuiTableCellData * data, ImGuiTableCellData * data_end)
-{
-    self->Data = data;
-    self->DataEnd = data_end;
-}
-
-static ImGuiTableColumn * ImSpan_ImGuiTableColumn__begin__47a64a5242(ImSpan_ImGuiTableColumn *self)
-{
-    return self->Data;
-}
-
-static void ImSpan_ImGuiTableColumn__clear__83871bf6d8(ImSpan_ImGuiTableColumn *self)
-{
-    self->Data = (self->DataEnd = 0);
-}
-
-static unsigned char ImSpan_ImGuiTableColumn__empty__fa37023415(ImSpan_ImGuiTableColumn *self)
-{
-    return self->Data == self->DataEnd;
-}
-
-static ImGuiTableColumn * ImSpan_ImGuiTableColumn__end__86eec06ec5(ImSpan_ImGuiTableColumn *self)
-{
-    return self->DataEnd;
-}
-
-static int ImSpan_ImGuiTableColumn__index_from_ptr__3468a31bfc(ImSpan_ImGuiTableColumn *self, const ImGuiTableColumn * it)
-{
-    ptrdiff_t off;
-
-    imgui_c89_expect((!((it >= self->Data) && (it < self->DataEnd))), 0) ? imgui_c89_assert_id(5) : ((void)(0));
-    off = (it - self->Data);
-    return (int)(off);
-}
-
-static const ImGuiTableColumn * ImSpan_ImGuiTableColumn__operator____7a74e5e58e(ImSpan_ImGuiTableColumn *self, int i)
-{
-    const ImGuiTableColumn * p;
-
-    p = (self->Data + i);
-    imgui_c89_expect((!((p >= self->Data) && (p < self->DataEnd))), 0) ? imgui_c89_assert_id(4) : ((void)(0));
-    return &((*p));
-}
-
-static void ImSpan_ImGuiTableColumn__set__c5651babe5(ImSpan_ImGuiTableColumn *self, ImGuiTableColumn * data, ImGuiTableColumn * data_end)
-{
-    self->Data = data;
-    self->DataEnd = data_end;
-}
-
-static int ImSpan_ImGuiTableColumn__size__26d3756bd7(ImSpan_ImGuiTableColumn *self)
-{
-    return (int)(((ptrdiff_t)((self->DataEnd - self->Data))));
-}
-
-static short * ImSpan_short__operator____76506b7980(ImSpan_short *self, int i)
-{
-    short * p;
-
-    p = (self->Data + i);
-    imgui_c89_expect((!((p >= self->Data) && (p < self->DataEnd))), 0) ? imgui_c89_assert_id(3) : ((void)(0));
-    return &((*p));
-}
-
-static void ImSpan_short__set__62a223df44(ImSpan_short *self, short * data, short * data_end)
-{
-    self->Data = data;
-    self->DataEnd = data_end;
-}
-
-static int ImSpanAllocator_6__GetArenaSizeInBytes__190a148dd1(ImSpanAllocator_6 *self)
-{
-    return self->CurrOff;
-}
-
-static void ImSpanAllocator_6__GetSpan__283a0a72ff(ImSpanAllocator_6 *self, int n, ImSpan_ImGuiTableCellData * span)
-{
-    ImSpan_ImGuiTableCellData__set__9a608544d7(((ImSpan_ImGuiTableCellData *)(span)), ((ImGuiTableCellData *)(ImSpanAllocator_6__GetSpanPtrBegin__eec30097bf(((ImSpanAllocator_6 *)(self)), n))), ((ImGuiTableCellData *)(ImSpanAllocator_6__GetSpanPtrEnd__678ad83cae(((ImSpanAllocator_6 *)(self)), n))));
-}
-
-static void ImSpanAllocator_6__GetSpan__6e4bf43a41(ImSpanAllocator_6 *self, int n, ImSpan_ImGuiTableColumn * span)
-{
-    ImSpan_ImGuiTableColumn__set__c5651babe5(((ImSpan_ImGuiTableColumn *)(span)), ((ImGuiTableColumn *)(ImSpanAllocator_6__GetSpanPtrBegin__eec30097bf(((ImSpanAllocator_6 *)(self)), n))), ((ImGuiTableColumn *)(ImSpanAllocator_6__GetSpanPtrEnd__678ad83cae(((ImSpanAllocator_6 *)(self)), n))));
-}
-
-static void ImSpanAllocator_6__GetSpan__df24077f74(ImSpanAllocator_6 *self, int n, ImSpan_short * span)
-{
-    ImSpan_short__set__62a223df44(((ImSpan_short *)(span)), ((short *)(ImSpanAllocator_6__GetSpanPtrBegin__eec30097bf(((ImSpanAllocator_6 *)(self)), n))), ((short *)(ImSpanAllocator_6__GetSpanPtrEnd__678ad83cae(((ImSpanAllocator_6 *)(self)), n))));
-}
-
-static void * ImSpanAllocator_6__GetSpanPtrBegin__eec30097bf(ImSpanAllocator_6 *self, int n)
-{
-    imgui_c89_expect((!(((n >= 0) && (n < 6)) && (self->CurrIdx == 6))), 0) ? imgui_c89_assert_id(7) : ((void)(0));
-    return (void *)((self->BasePtr + self->Offsets[n]));
-}
-
-static void * ImSpanAllocator_6__GetSpanPtrEnd__678ad83cae(ImSpanAllocator_6 *self, int n)
-{
-    imgui_c89_expect((!(((n >= 0) && (n < 6)) && (self->CurrIdx == 6))), 0) ? imgui_c89_assert_id(8) : ((void)(0));
-    return (void *)(((self->BasePtr + self->Offsets[n]) + self->Sizes[n]));
-}
-
-static void ImSpanAllocator_6__ImSpanAllocator__41efd1b735(ImSpanAllocator_6 *self)
-{
-    memset(((void *)(self)), 0, sizeof((*self)));
-}
-
-static void ImSpanAllocator_6__Reserve__9bc4506dc5(ImSpanAllocator_6 *self, int n, size_t sz, int a)
-{
-    imgui_c89_expect((!((n == self->CurrIdx) && (n < 6))), 0) ? imgui_c89_assert_id(6) : ((void)(0));
-    self->CurrOff = ((self->CurrOff + (a - 1)) & (~(a - 1)));
-    self->Offsets[n] = self->CurrOff;
-    self->Sizes[n] = ((int)(sz));
-    self->CurrIdx++;
-    self->CurrOff += ((int)(sz));
-}
-
-static void ImSpanAllocator_6__SetArenaBasePtr__60f366114f(ImSpanAllocator_6 *self, void * base_ptr)
-{
-    self->BasePtr = ((char *)(base_ptr));
-}
-
-static int ImVector_ImGuiOldColumnData___grow_capacity__90ee69ad3a(ImVector_ImGuiOldColumnData *self, int sz)
-{
-    return imgui_c89_vector_grow_capacity(self->Capacity, sz);
-}
-
-static ImGuiOldColumnData * ImVector_ImGuiOldColumnData__operator____db73c664cd(ImVector_ImGuiOldColumnData *self, int i)
-{
-    return (ImGuiOldColumnData *)imgui_c89_vector_at(
-        self->Data, self->Size, i, sizeof(*self->Data), 2262);
-}
-
-static void ImVector_ImGuiOldColumnData__push_back__f37c042a27(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumnData *self, const ImGuiOldColumnData * v)
-{
-    self->Data = imgui_c89_vector_push_back(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, sizeof(*self->Data), v);
-}
-
-static void ImVector_ImGuiOldColumnData__reserve__7e45ad4d46(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumnData *self, int new_capacity)
-{
-    self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
-        &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static void ImVector_ImGuiOldColumnData__resize__11b999b1d8(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumnData *self, int new_size)
-{
-    self->Data = imgui_c89_vector_resize(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, new_size, sizeof(*self->Data));
-}
-
-static int ImVector_ImGuiOldColumns___grow_capacity__9ca1d56437(ImVector_ImGuiOldColumns *self, int sz)
-{
-    return imgui_c89_vector_grow_capacity(self->Capacity, sz);
-}
-
-static ImGuiOldColumns * ImVector_ImGuiOldColumns__back__94412316d5(ImVector_ImGuiOldColumns *self)
-{
-    return (ImGuiOldColumns *)imgui_c89_vector_back(
-        self->Data, self->Size, sizeof(*self->Data), 2271);
-}
-
-static ImGuiOldColumns * ImVector_ImGuiOldColumns__operator____986c28a323(ImVector_ImGuiOldColumns *self, int i)
-{
-    return (ImGuiOldColumns *)imgui_c89_vector_at(
-        self->Data, self->Size, i, sizeof(*self->Data), 2262);
-}
-
-static void ImVector_ImGuiOldColumns__push_back__0c3f71346c(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumns *self, const ImGuiOldColumns * v)
-{
-    self->Data = imgui_c89_vector_push_back(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, sizeof(*self->Data), v);
-}
-
-static void ImVector_ImGuiOldColumns__reserve__aaf9eabcae(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiOldColumns *self, int new_capacity)
-{
-    self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
-        &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static int ImVector_ImGuiTable___grow_capacity__2f8c7b47e5(ImVector_ImGuiTable *self, int sz)
-{
-    return imgui_c89_vector_grow_capacity(self->Capacity, sz);
-}
-
-static void ImVector_ImGuiTable__reserve__9f1feaf3bd(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTable *self, int new_capacity)
-{
-    self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
-        &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static void ImVector_ImGuiTable__resize__97a3d1c587(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTable *self, int new_size)
-{
-    self->Data = imgui_c89_vector_resize(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, new_size, sizeof(*self->Data));
-}
-
-static int ImVector_ImGuiTableColumnSortSpecs___grow_capacity__5d5129bbf5(ImVector_ImGuiTableColumnSortSpecs *self, int sz)
-{
-    return imgui_c89_vector_grow_capacity(self->Capacity, sz);
-}
-
-static void ImVector_ImGuiTableColumnSortSpecs__clear__dc4c85f565(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableColumnSortSpecs *self)
-{
-    imgui_c89_vector_clear(
-        imgui_c89_ctx, (void **)&self->Data,
-        &self->Size, &self->Capacity);
-}
-
-static void ImVector_ImGuiTableColumnSortSpecs__reserve__f4b9cd8665(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableColumnSortSpecs *self, int new_capacity)
-{
-    self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
-        &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static void ImVector_ImGuiTableColumnSortSpecs__resize__429b11f80b(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableColumnSortSpecs *self, int new_size)
-{
-    self->Data = imgui_c89_vector_resize(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, new_size, sizeof(*self->Data));
-}
-
-static int ImVector_ImGuiTableHeaderData___grow_capacity__22238efe5a(ImVector_ImGuiTableHeaderData *self, int sz)
-{
-    return imgui_c89_vector_grow_capacity(self->Capacity, sz);
-}
-
-static void ImVector_ImGuiTableHeaderData__clear__e936969283(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableHeaderData *self)
-{
-    imgui_c89_vector_clear(
-        imgui_c89_ctx, (void **)&self->Data,
-        &self->Size, &self->Capacity);
-}
-
-static void ImVector_ImGuiTableHeaderData__push_back__4901f7814e(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableHeaderData *self, const ImGuiTableHeaderData * v)
-{
-    self->Data = imgui_c89_vector_push_back(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, sizeof(*self->Data), v);
-}
-
-static void ImVector_ImGuiTableHeaderData__reserve__19cc31f8cc(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableHeaderData *self, int new_capacity)
-{
-    self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
-        &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static void ImVector_ImGuiTableHeaderData__resize__c5a84d9865(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableHeaderData *self, int new_size)
-{
-    self->Data = imgui_c89_vector_resize(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, new_size, sizeof(*self->Data));
-}
-
-static int ImVector_ImGuiTableInstanceData___grow_capacity__f24f822b8c(ImVector_ImGuiTableInstanceData *self, int sz)
-{
-    return imgui_c89_vector_grow_capacity(self->Capacity, sz);
-}
-
-static void ImVector_ImGuiTableInstanceData__push_back__1b1e857ab3(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableInstanceData *self, const ImGuiTableInstanceData * v)
-{
-    self->Data = imgui_c89_vector_push_back(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, sizeof(*self->Data), v);
-}
-
-static void ImVector_ImGuiTableInstanceData__reserve__fb6ab6a50b(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableInstanceData *self, int new_capacity)
-{
-    self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
-        &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static int ImVector_ImGuiTableReconcileColumnData___grow_capacity__f22f6e2bb5(ImVector_ImGuiTableReconcileColumnData *self, int sz)
-{
-    return imgui_c89_vector_grow_capacity(self->Capacity, sz);
-}
-
-static ImGuiTableReconcileColumnData * ImVector_ImGuiTableReconcileColumnData__back__0881194b09(ImVector_ImGuiTableReconcileColumnData *self)
-{
-    return (ImGuiTableReconcileColumnData *)imgui_c89_vector_back(
-        self->Data, self->Size, sizeof(*self->Data), 2271);
-}
-
-static ImGuiTableReconcileColumnData * ImVector_ImGuiTableReconcileColumnData__begin__99a6fb41dd(ImVector_ImGuiTableReconcileColumnData *self)
-{
-    return self->Data;
-}
-
-static ImGuiTableReconcileColumnData * ImVector_ImGuiTableReconcileColumnData__end__099ac12a93(ImVector_ImGuiTableReconcileColumnData *self)
-{
-    return self->Data == 0 ? 0 : self->Data + self->Size;
-}
-
-static ImGuiTableReconcileColumnData * ImVector_ImGuiTableReconcileColumnData__operator____edc2e2d44e(ImVector_ImGuiTableReconcileColumnData *self, int i)
-{
-    return (ImGuiTableReconcileColumnData *)imgui_c89_vector_at(
-        self->Data, self->Size, i, sizeof(*self->Data), 2262);
-}
-
-static void ImVector_ImGuiTableReconcileColumnData__push_back__6946bac754(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableReconcileColumnData *self, const ImGuiTableReconcileColumnData * v)
-{
-    self->Data = imgui_c89_vector_push_back(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, sizeof(*self->Data), v);
-}
-
-static void ImVector_ImGuiTableReconcileColumnData__reserve__2c73d7c217(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableReconcileColumnData *self, int new_capacity)
-{
-    self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
-        &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static void ImVector_ImGuiTableReconcileColumnData__resize__69fbca6396(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableReconcileColumnData *self, int new_size)
-{
-    self->Data = imgui_c89_vector_resize(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, new_size, sizeof(*self->Data));
-}
-
-static int ImVector_ImGuiTableTempData___grow_capacity__933c8f77f2(ImVector_ImGuiTableTempData *self, int sz)
-{
-    return imgui_c89_vector_grow_capacity(self->Capacity, sz);
-}
-
-static ImGuiTableTempData * ImVector_ImGuiTableTempData__operator____d023aa5434(ImVector_ImGuiTableTempData *self, int i)
-{
-    return (ImGuiTableTempData *)imgui_c89_vector_at(
-        self->Data, self->Size, i, sizeof(*self->Data), 2262);
-}
-
-static void ImVector_ImGuiTableTempData__reserve__a07b348ffc(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableTempData *self, int new_capacity)
-{
-    self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
-        &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static void ImVector_ImGuiTableTempData__resize__52dad32fae(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiTableTempData *self, int new_size, const ImGuiTableTempData * v)
-{
-    self->Data = imgui_c89_vector_resize_fill(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, new_size, sizeof(*self->Data), v);
-}
-
-static const char * ImVector_char__operator____bea4762081(ImVector_char *self, int i)
-{
-    return (const char *)imgui_c89_vector_at(
-        self->Data, self->Size, i, sizeof(*self->Data), 2263);
 }
 
 static void ImVector_char__swap__e025a240c6(ImVector_char *self, ImVector_char * rhs)
@@ -5495,486 +5280,481 @@ static void ImVector_char__swap__e025a240c6(ImVector_char *self, ImVector_char *
     self->Data = rhs_data;
 }
 
-static const char * DebugNodeTableGetSizingPolicyDesc__5aab95655e(ImGuiTableFlags sizing_policy)
+static const char * imgui_i_debug_node_table_get_sizing_policy_desc(ImGuiTableFlags sizing_policy)
 {
-
-sizing_policy &= ImGuiTableFlags_SizingMask_;
-if (sizing_policy == ImGuiTableFlags_SizingFixedFit)
-    return "FixedFit";
-if (sizing_policy == ImGuiTableFlags_SizingFixedSame)
-    return "FixedSame";
-if (sizing_policy == ImGuiTableFlags_SizingStretchProp)
-    return "StretchProp";
-if (sizing_policy == ImGuiTableFlags_SizingStretchSame)
-    return "StretchSame";
-return "N/A";
+    sizing_policy &= ImGuiTableFlags_SizingMask_;
+    if (sizing_policy == ImGuiTableFlags_SizingFixedFit)
+        return "FixedFit";
+    if (sizing_policy == ImGuiTableFlags_SizingFixedSame)
+        return "FixedSame";
+    if (sizing_policy == ImGuiTableFlags_SizingStretchProp)
+        return "StretchProp";
+    if (sizing_policy == ImGuiTableFlags_SizingStretchSame)
+        return "StretchSame";
+    return "N/A";
 }
 
-static float GetColumnWidthEx__b040b1a359(ImGuiOldColumns * columns, int column_index, unsigned char before_resize)
+static float imgui_i_get_column_width_ex(ImGuiOldColumns * columns, int column_index, unsigned char before_resize)
 {
-
-float a;
-float b;
-if (column_index < 0)
-    column_index = columns->Current;
-if (before_resize)
-{
-    a = columns->Columns.Data[column_index].OffsetNormBeforeResize;
-    b = columns->Columns.Data[column_index + 1].OffsetNormBeforeResize;
+    float a;
+    float b;
+    if (column_index < 0)
+        column_index = columns->Current;
+    if (before_resize)
+    {
+        a = columns->Columns.Data[column_index].OffsetNormBeforeResize;
+        b = columns->Columns.Data[column_index + 1].OffsetNormBeforeResize;
+    }
+    else
+    {
+        a = columns->Columns.Data[column_index].OffsetNorm;
+        b = columns->Columns.Data[column_index + 1].OffsetNorm;
+    }
+    return imgui_i_get_column_offset_from_norm(columns, b - a);
 }
-else
-{
-    a = columns->Columns.Data[column_index].OffsetNorm;
-    b = columns->Columns.Data[column_index + 1].OffsetNorm;
-}
-return imgui_i_im_gui_get_column_offset_from_norm(columns, b - a);
-}
 
-static float GetDraggedColumnOffset__bff71b419b(ImGuiContext *imgui_c89_ctx, ImGuiOldColumns * columns, int column_index)
+static float imgui_i_get_dragged_column_offset(ImGuiContext *imgui_c89_ctx, ImGuiOldColumns * columns, int column_index)
 {
-
-float x;
-float bound;
-x = imgui_c89_ctx->IO.MousePos.x - imgui_c89_ctx->ActiveIdClickOffset.x +
-    ImTrunc__ae7a4018f8(4.0f * imgui_c89_ctx->CurrentDpiScale) -
-    imgui_c89_ctx->CurrentWindow->Pos.x;
-bound = imgui_get_column_offset(imgui_c89_ctx, column_index - 1) +
-    imgui_c89_ctx->Style.ColumnsMinSpacing;
-x = x >= bound ? x : bound;
-if (columns->Flags & ImGuiOldColumnFlags_NoPreserveWidths)
-{
-    bound = imgui_get_column_offset(imgui_c89_ctx, column_index + 1) -
+    float x;
+    float bound;
+    if (!(column_index > 0))
+        imgui_c89_assert_id(83);
+    if (!(imgui_c89_ctx->ActiveId == columns->ID + (ImGuiID)column_index))
+        imgui_c89_assert_id(84);
+    /* Keep the dragged separator in absolute coordinates: normalized positions
+     * would feed an auto-resizing window back into its own drag calculation. */
+    x = imgui_c89_ctx->IO.MousePos.x - imgui_c89_ctx->ActiveIdClickOffset.x +
+        ImTrunc__ae7a4018f8(4.0f * imgui_c89_ctx->CurrentDpiScale) -
+        imgui_c89_ctx->CurrentWindow->Pos.x;
+    bound = imgui_get_column_offset(imgui_c89_ctx, column_index - 1) +
         imgui_c89_ctx->Style.ColumnsMinSpacing;
-    x = x <= bound ? x : bound;
-}
-return x;
-}
-
-static unsigned char MenuItemForColumnReorder__e881d10945(ImGuiContext *imgui_c89_ctx, const char * label, unsigned char selected, unsigned char enabled)
-{
-
-ImGuiWindow *window;
-ImGuiMenuColumns *offsets;
-ImVec2 size;
-ImVec2 pos;
-ImGuiID id;
-ImGuiSelectableFlags selectable_flags;
-unsigned char moved;
-unsigned char ret;
-float checkmark_w;
-float min_w;
-float stretch_w;
-window = imgui_c89_ctx->CurrentWindow;
-size = imgui_calc_text_size(imgui_c89_ctx, label, 0, 1, -1.0f);
-offsets = &window->DC.MenuColumns;
-checkmark_w = ImTrunc__ae7a4018f8(imgui_c89_ctx->FontSize * 1.20f);
-min_w = imgui_i_im_gui_menu_columns_decl_columns(offsets, 0.0f, size.x, 0.0f, checkmark_w);
-stretch_w = ImMax__3c7b1bb7d1(0.0f,
-    imgui_get_content_region_avail(imgui_c89_ctx).x - min_w);
-pos.x = window->DC.CursorPos.x;
-pos.y = window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset;
-id = imgui_get_id_string_none(imgui_c89_ctx, label);
-selectable_flags = ImGuiSelectableFlags_SelectOnRelease | ImGuiSelectableFlags_SpanAvailWidth;
-if (imgui_c89_ctx->ActiveId == id)
-    selectable_flags |= ImGuiSelectableFlags_Highlight;
-moved = imgui_c89_ctx->ActiveId == id &&
-    imgui_c89_ctx->ActiveIdHasBeenEditedBefore;
-imgui_begin_disabled(imgui_c89_ctx, !enabled);
-size.x = min_w;
-ret = imgui_selectable_bool(imgui_c89_ctx, label, 0, selectable_flags, &size) &&
-    !moved;
-if ((imgui_c89_ctx->LastItemData.StatusFlags & ImGuiItemStatusFlags_Visible) && selected)
-{
-    pos.x += offsets->OffsetMark + stretch_w +
-        imgui_c89_ctx->FontSize * 0.40f;
-    pos.y += imgui_c89_ctx->FontSize * 0.134f * 0.5f;
-    imgui_i_im_gui_render_check_mark(imgui_c89_ctx, window->DrawList, pos,
-        imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, 1.0f),
-        imgui_c89_ctx->FontSize * 0.866f);
-}
-imgui_end_disabled(imgui_c89_ctx);
-
-return ret;
-}
-
-static int TableFixDisplayOrderComparer__4f18b3bf60(const void * lhs, const void * rhs)
-{
-
-const ImGuiTableFixDisplayOrderColumnData *a;
-const ImGuiTableFixDisplayOrderColumnData *b;
-unsigned short ao;
-unsigned short bo;
-a = (const ImGuiTableFixDisplayOrderColumnData *)lhs;
-b = (const ImGuiTableFixDisplayOrderColumnData *)rhs;
-ao = (unsigned short)a->Table->Columns.Data[a->Idx].DisplayOrder;
-bo = (unsigned short)b->Table->Columns.Data[b->Idx].DisplayOrder;
-if (ao != bo)
-    return ao < bo ? -1 : 1;
-return a->Idx < b->Idx ? -1 : 1;
-}
-
-static ImGuiSortDirection TableGetColumnAvailSortDirection__ccd2c84aa9(ImGuiTableColumn * column, int n)
-{
-
-return (ImGuiSortDirection)((column->SortDirectionsAvailList >> (n * 2)) & 3);
-}
-
-static ImU32 TableGetColumnBorderCol__08e5751e75(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int order_n, int column_n)
-{
-
-int resized;
-resized = table->ResizedColumn == column_n &&
-    table->InstanceInteracted == table->InstanceCurrent;
-if (resized || table->HoveredColumnBorder == column_n)
-    return imgui_get_color_u32_col_float(imgui_c89_ctx,
-        resized ? ImGuiCol_SeparatorActive : ImGuiCol_SeparatorHovered, 1.0f);
-if (table->FreezeColumnsCount == order_n + 1 ||
-    (table->Flags & (ImGuiTableFlags_NoBordersInBody | ImGuiTableFlags_NoBordersInBodyUntilResize)))
-    return table->BorderColorStrong;
-return table->BorderColorLight;
-}
-
-static int TableGetMaxDisplayOrderAllowed__501237b51d(ImGuiTable * table, int src_order, int dst_order)
-{
-
-int direction;
-int order;
-if (dst_order < 0)
-    dst_order = 0;
-else if (dst_order >= table->ColumnsCount)
-    dst_order = table->ColumnsCount - 1;
-if (src_order == dst_order)
-    return dst_order;
-if (table->FreezeColumnsRequest > 0)
-{
-    if (src_order < table->FreezeColumnsRequest)
+    x = x >= bound ? x : bound;
+    if (columns->Flags & ImGuiOldColumnFlags_NoPreserveWidths)
     {
-        if (dst_order >= table->FreezeColumnsRequest)
-            dst_order = table->FreezeColumnsRequest - 1;
+        bound = imgui_get_column_offset(imgui_c89_ctx, column_index + 1) -
+            imgui_c89_ctx->Style.ColumnsMinSpacing;
+        x = x <= bound ? x : bound;
     }
-    else if (dst_order < table->FreezeColumnsRequest)
-        dst_order = table->FreezeColumnsRequest;
+    return x;
 }
-direction = src_order < dst_order ? 1 : -1;
-for (order = src_order;
-     direction > 0 ? order <= dst_order : order >= dst_order;
-     order += direction)
-    if (table->Columns.Data[table->DisplayOrderToIndex.Data[order]].Flags &
-        ImGuiTableColumnFlags_NoReorder)
+
+static unsigned char imgui_i_menu_item_for_column_reorder(ImGuiContext *imgui_c89_ctx, const char * label, unsigned char selected, unsigned char enabled)
+{
+    ImGuiWindow *window;
+    ImGuiMenuColumns *offsets;
+    ImVec2 size;
+    ImVec2 pos;
+    ImGuiID id;
+    ImGuiSelectableFlags selectable_flags;
+    unsigned char moved;
+    unsigned char ret;
+    float checkmark_w;
+    float min_w;
+    float stretch_w;
+    window = imgui_c89_ctx->CurrentWindow;
+    size = imgui_calc_text_size(imgui_c89_ctx, label, 0, 1, -1.0f);
+    offsets = &window->DC.MenuColumns;
+    checkmark_w = ImTrunc__ae7a4018f8(imgui_c89_ctx->FontSize * 1.20f);
+    min_w = imgui_i_menu_columns_decl_columns(offsets, 0.0f, size.x, 0.0f, checkmark_w);
+    stretch_w = ImMax__3c7b1bb7d1(0.0f,
+        imgui_get_content_region_avail(imgui_c89_ctx).x - min_w);
+    pos.x = window->DC.CursorPos.x;
+    pos.y = window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset;
+    id = imgui_get_id_string_none(imgui_c89_ctx, label);
+    selectable_flags = ImGuiSelectableFlags_SelectOnRelease | ImGuiSelectableFlags_SpanAvailWidth;
+    if (imgui_c89_ctx->ActiveId == id)
+        selectable_flags |= ImGuiSelectableFlags_Highlight;
+    moved = imgui_c89_ctx->ActiveId == id &&
+        imgui_c89_ctx->ActiveIdHasBeenEditedBefore;
+    imgui_begin_disabled(imgui_c89_ctx, !enabled);
+    size.x = min_w;
+    ret = imgui_selectable_bool(imgui_c89_ctx, label, 0, selectable_flags, &size) &&
+        !moved;
+    if ((imgui_c89_ctx->LastItemData.StatusFlags & ImGuiItemStatusFlags_Visible) && selected)
     {
-        dst_order = order == src_order ? src_order : order - direction;
-        break;
+        pos.x += offsets->OffsetMark + stretch_w +
+            imgui_c89_ctx->FontSize * 0.40f;
+        pos.y += imgui_c89_ctx->FontSize * 0.134f * 0.5f;
+        imgui_i_render_check_mark(imgui_c89_ctx, window->DrawList, pos,
+            imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, 1.0f),
+            imgui_c89_ctx->FontSize * 0.866f);
     }
-return dst_order;
+    imgui_end_disabled(imgui_c89_ctx);
+
+    return ret;
 }
 
-static size_t TableSettingsCalcChunkSize__760aeea963(int columns_count)
+static int imgui_i_table_fix_display_order_comparer(const void * lhs, const void * rhs)
 {
-
-return sizeof(ImGuiTableSettings) + (size_t)columns_count * sizeof(ImGuiTableColumnSettings);
+    const ImGuiTableFixDisplayOrderColumnData *a;
+    const ImGuiTableFixDisplayOrderColumnData *b;
+    unsigned short ao;
+    unsigned short bo;
+    a = (const ImGuiTableFixDisplayOrderColumnData *)lhs;
+    b = (const ImGuiTableFixDisplayOrderColumnData *)rhs;
+    ao = (unsigned short)a->Table->Columns[a->Idx].DisplayOrder;
+    bo = (unsigned short)b->Table->Columns[b->Idx].DisplayOrder;
+    if (ao != bo)
+        return ao < bo ? -1 : 1;
+    return a->Idx < b->Idx ? -1 : 1;
 }
 
-static void TableSettingsHandler_ApplyAll__1d802ec58a(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1)
+static ImGuiSortDirection imgui_i_table_get_column_avail_sort_direction(ImGuiTableColumn * column, int n)
 {
+    return (ImGuiSortDirection)((column->SortDirectionsAvailList >> (n * 2)) & 3);
+}
 
-ImGuiTable *table;
-int i;
-for (i = 0; i < ImPool_ImGuiTable__GetMapSize__2b91536528(&ctx->Tables); i++)
+static ImU32 imgui_i_table_get_column_border_col(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int order_n, int column_n)
 {
-    table = ImPool_ImGuiTable__TryGetMapData__3e6c159dd7(&ctx->Tables, i);
-    if (table)
+    int resized;
+    resized = table->ResizedColumn == column_n &&
+        table->InstanceInteracted == table->InstanceCurrent;
+    if (resized || table->HoveredColumnBorder == column_n)
+        return imgui_get_color_u32_col_float(imgui_c89_ctx,
+            resized ? ImGuiCol_SeparatorActive : ImGuiCol_SeparatorHovered, 1.0f);
+    if (table->FreezeColumnsCount == order_n + 1 ||
+        (table->Flags & (ImGuiTableFlags_NoBordersInBody | ImGuiTableFlags_NoBordersInBodyUntilResize)))
+        return table->BorderColorStrong;
+    return table->BorderColorLight;
+}
+
+static int imgui_i_table_get_max_display_order_allowed(ImGuiTable * table, int src_order, int dst_order)
+{
+    int direction;
+    int order;
+    if (dst_order < 0)
+        dst_order = 0;
+    else if (dst_order >= table->ColumnsCount)
+        dst_order = table->ColumnsCount - 1;
+    if (src_order == dst_order)
+        return dst_order;
+    if (table->FreezeColumnsRequest > 0)
     {
-        table->IsSettingsRequestLoad = 1;
-        table->SettingsOffset = -1;
-    }
-}
-}
-
-static void TableSettingsHandler_Cleanup__1928564537(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1, ImGuiSettingsCleanupArgs * args)
-{
-
-ImGuiTableSettings *settings;
-ImGuiTable *table;
-int valid;
-int i;
-for (i = 0; i < ImPool_ImGuiTable__GetMapSize__2b91536528(&ctx->Tables); i++)
-{
-    table = ImPool_ImGuiTable__TryGetMapData__3e6c159dd7(&ctx->Tables, i);
-    if (table)
-        table->SettingsOffset = -1;
-}
-settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&ctx->SettingsTables);
-while (settings)
-{
-    valid = ImGuiPackedDate_IsValid__ee10de0281(&settings->LastUsedDate);
-    if (args->_DiscardOlderThanDate && ImGuiPackedDate_Unpack__6d04c4f8e1(&settings->LastUsedDate) < args->_DiscardOlderThanDate)
-        settings->ID = 0;
-    else if (args->DiscardWhenMissingDate && !valid)
-        settings->ID = 0;
-    else if (args->SetCurrentSessionDateToAll || (args->SetCurrentSessionDateWhenMissingDate && !valid))
-        settings->LastUsedDate = ctx->SessionDate;
-    settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&ctx->SettingsTables, settings);
-}
-}
-
-static void TableSettingsHandler_ClearAll__7504c1753b(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1)
-{
-
-ImGuiTable *table;
-int i;
-for (i = 0; i < ImPool_ImGuiTable__GetMapSize__2b91536528(&ctx->Tables); i++)
-{
-    table = ImPool_ImGuiTable__TryGetMapData__3e6c159dd7(&ctx->Tables, i);
-    if (table)
-        table->SettingsOffset = -1;
-}
-ImChunkStream_ImGuiTableSettings__clear__5fb9d3300d(ctx, &ctx->SettingsTables);
-}
-
-static void TableSettingsHandler_ReadLine__a95685e3ec(ImGuiContext * arg_0, ImGuiSettingsHandler * arg_1, void * entry, const char * line)
-{
-
-ImGuiTableSettings *settings;
-ImGuiTableColumnSettings *column;
-float f;
-int column_n;
-int r;
-int n;
-char c;
-settings = (ImGuiTableSettings *)entry;
-f = 0.0f;
-column_n = r = n = 0;
-if (sscanf(line, "RefScale=%f", &f) == 1)
-{
-    settings->RefScale = f;
-    return;
-}
-if (sscanf(line, "LastUsed=%d", &n) == 1)
-{
-    settings->LastUsedDate.Year = (ImU16)(n / 10000 - 2000);
-    settings->LastUsedDate.Month = (ImU16)((n / 100) % 100);
-    settings->LastUsedDate.Day = (ImU16)(n % 100);
-    return;
-}
-if (sscanf(line, "Column %d%n", &column_n, &r) != 1 || column_n < 0 || column_n >= settings->ColumnsCount)
-    return;
-line = imgui_i_im_str_skip_blank(line + r);
-c = 0;
-column = (ImGuiTableColumnSettings *)(settings + 1) + column_n;
-column->Index = (ImGuiTableColumnIdx)column_n;
-if (sscanf(line, "UserID=0x%08X%n", (ImU32 *)&n, &r) == 1)
-    line = imgui_i_im_str_skip_blank(line + r);
-if (sscanf(line, "Width=%d%n", &n, &r) == 1)
-{
-    line = imgui_i_im_str_skip_blank(line + r);
-    column->WidthOrWeight = (float)n;
-    column->IsStretch = 0;
-    settings->SaveFlags |= ImGuiTableFlags_Resizable;
-}
-if (sscanf(line, "Weight=%f%n", &f, &r) == 1)
-{
-    line = imgui_i_im_str_skip_blank(line + r);
-    column->WidthOrWeight = f;
-    column->IsStretch = 1;
-    settings->SaveFlags |= ImGuiTableFlags_Resizable;
-}
-if (sscanf(line, "Visible=%d%n", &n, &r) == 1)
-{
-    line = imgui_i_im_str_skip_blank(line + r);
-    column->IsEnabled = (ImU8)n;
-    settings->SaveFlags |= ImGuiTableFlags_Hideable;
-}
-if (sscanf(line, "Order=%d%n", &n, &r) == 1)
-{
-    line = imgui_i_im_str_skip_blank(line + r);
-    column->DisplayOrder = (ImGuiTableColumnIdx)n;
-    settings->SaveFlags |= ImGuiTableFlags_Reorderable;
-}
-if (sscanf(line, "Sort=%d%c%n", &n, &c, &r) == 2)
-{
-    line = imgui_i_im_str_skip_blank(line + r);
-    column->SortOrder = (ImGuiTableColumnIdx)n;
-    column->SortDirection = c == '^' ? ImGuiSortDirection_Descending : ImGuiSortDirection_Ascending;
-    settings->SaveFlags |= ImGuiTableFlags_Sortable;
-}
-if (sscanf(line, "ID=0x%08X%n", (ImU32 *)&n, &r) == 1)
-    column->ID = (ImGuiID)n;
-}
-
-static void * TableSettingsHandler_ReadOpen__cb3642ee3f(ImGuiContext * arg_0, ImGuiSettingsHandler * arg_1, const char * name)
-{
-
-ImGuiID id;
-int count;
-id = 0;
-count = 0;
-if (sscanf(name, "0x%08X,%d", &id, &count) < 2 || count <= 0 || count >= 512)
-    return 0;
-return imgui_i_im_gui_table_settings_create(arg_0, id, count);
-}
-
-static void TableSettingsHandler_WriteAll__f87e4dd34e(ImGuiContext * ctx, ImGuiSettingsHandler * handler, ImGuiTextBuffer * buf)
-{
-
-ImGuiTableSettings *settings;
-ImGuiTableColumnSettings *column;
-int flags;
-int column_n;
-int last_used;
-settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&ctx->SettingsTables);
-while (settings)
-{
-    if (!settings->ID)
-    {
-        settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&ctx->SettingsTables, settings);
-        continue;
-    }
-    flags = settings->SaveFlags;
-    imgui_text_buffer_reserve(ctx, buf, imgui_text_buffer_size(buf) + 30 + settings->ColumnsCount * 50);
-    imgui_i_im_gui_text_buffer_appendf(ctx, buf, "[%s][0x%08X,%d]\n", handler->TypeName, settings->ID, settings->ColumnsCount);
-    if (settings->RefScale != 0.0f)
-        imgui_i_im_gui_text_buffer_appendf(ctx, buf, "RefScale=%g\n", settings->RefScale);
-    column = (ImGuiTableColumnSettings *)(settings + 1);
-    for (column_n = 0; column_n < settings->ColumnsCount; column_n++, column++)
-    {
-        if (!(flags & (ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Reorderable)) && (!(flags & ImGuiTableFlags_Sortable) || column->SortOrder == -1))
-            continue;
-        imgui_i_im_gui_text_buffer_appendf(ctx, buf, "Column %-2d", column_n);
-        if (flags & ImGuiTableFlags_Resizable)
+        if (src_order < table->FreezeColumnsRequest)
         {
-            if (column->IsStretch)
-                imgui_i_im_gui_text_buffer_appendf(ctx, buf, " Weight=%.4f", column->WidthOrWeight);
-            else
-                imgui_i_im_gui_text_buffer_appendf(ctx, buf, " Width=%d", (int)column->WidthOrWeight);
+            if (dst_order >= table->FreezeColumnsRequest)
+                dst_order = table->FreezeColumnsRequest - 1;
         }
-        if (flags & ImGuiTableFlags_Hideable)
-            imgui_i_im_gui_text_buffer_appendf(ctx, buf, " Visible=%d", column->IsEnabled);
-        if (flags & ImGuiTableFlags_Reorderable)
-            imgui_i_im_gui_text_buffer_appendf(ctx, buf, " Order=%d", column->DisplayOrder);
-        if ((flags & ImGuiTableFlags_Sortable) && column->SortOrder != -1)
-            imgui_i_im_gui_text_buffer_appendf(ctx, buf, " Sort=%d%c", column->SortOrder, column->SortDirection == ImGuiSortDirection_Ascending ? 'v' : '^');
-        if (column->ID)
-            imgui_i_im_gui_text_buffer_appendf(ctx, buf, " ID=0x%08X", column->ID);
+        else if (dst_order < table->FreezeColumnsRequest)
+            dst_order = table->FreezeColumnsRequest;
+    }
+    direction = src_order < dst_order ? 1 : -1;
+    for (order = src_order;
+         direction > 0 ? order <= dst_order : order >= dst_order;
+         order += direction)
+        if (table->Columns[table->DisplayOrderToIndex[order]].Flags &
+            ImGuiTableColumnFlags_NoReorder)
+        {
+            dst_order = order == src_order ? src_order : order - direction;
+            break;
+        }
+    return dst_order;
+}
+
+static size_t imgui_i_table_settings_calc_chunk_size(int columns_count)
+{
+    return sizeof(ImGuiTableSettings) + (size_t)columns_count * sizeof(ImGuiTableColumnSettings);
+}
+
+static void imgui_i_table_settings_handler_apply_all(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1)
+{
+    ImGuiTable *table;
+    int i;
+    for (i = 0; i < imgui_table_pool_map_size(&ctx->Tables); i++)
+    {
+        table = imgui_table_pool_map_at(&ctx->Tables, i);
+        if (table)
+        {
+            table->IsSettingsRequestLoad = 1;
+            table->SettingsOffset = -1;
+        }
+    }
+}
+
+static void imgui_i_table_settings_handler_cleanup(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1, ImGuiSettingsCleanupArgs * args)
+{
+    ImGuiTableSettings *settings;
+    ImGuiTable *table;
+    int valid;
+    int i;
+    for (i = 0; i < imgui_table_pool_map_size(&ctx->Tables); i++)
+    {
+        table = imgui_table_pool_map_at(&ctx->Tables, i);
+        if (table)
+            table->SettingsOffset = -1;
+    }
+    settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&ctx->SettingsTables);
+    while (settings)
+    {
+        valid = ImGuiPackedDate_IsValid__ee10de0281(&settings->LastUsedDate);
+        if (args->_DiscardOlderThanDate && ImGuiPackedDate_Unpack__6d04c4f8e1(&settings->LastUsedDate) < args->_DiscardOlderThanDate)
+            settings->ID = 0;
+        else if (args->DiscardWhenMissingDate && !valid)
+            settings->ID = 0;
+        else if (args->SetCurrentSessionDateToAll || (args->SetCurrentSessionDateWhenMissingDate && !valid))
+            settings->LastUsedDate = ctx->SessionDate;
+        settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&ctx->SettingsTables, settings);
+    }
+}
+
+static void imgui_i_table_settings_handler_clear_all(ImGuiContext * ctx, ImGuiSettingsHandler * arg_1)
+{
+    ImGuiTable *table;
+    int i;
+    for (i = 0; i < imgui_table_pool_map_size(&ctx->Tables); i++)
+    {
+        table = imgui_table_pool_map_at(&ctx->Tables, i);
+        if (table)
+            table->SettingsOffset = -1;
+    }
+    ImChunkStream_ImGuiTableSettings__clear__5fb9d3300d(ctx, &ctx->SettingsTables);
+}
+
+static void imgui_i_table_settings_handler_read_line(ImGuiContext * arg_0, ImGuiSettingsHandler * arg_1, void * entry, const char * line)
+{
+    ImGuiTableSettings *settings;
+    ImGuiTableColumnSettings *column;
+    float f;
+    int column_n;
+    int r;
+    int n;
+    ImU32 parsed_id;
+    char c;
+    settings = (ImGuiTableSettings *)entry;
+    f = 0.0f;
+    column_n = r = n = 0;
+    parsed_id = 0;
+    if (sscanf(line, "RefScale=%f", &f) == 1)
+    {
+        settings->RefScale = f;
+        return;
+    }
+    if (sscanf(line, "LastUsed=%d", &n) == 1)
+    {
+        settings->LastUsedDate.Year = (ImU16)(n / 10000 - 2000);
+        settings->LastUsedDate.Month = (ImU16)((n / 100) % 100);
+        settings->LastUsedDate.Day = (ImU16)(n % 100);
+        return;
+    }
+    if (sscanf(line, "Column %d%n", &column_n, &r) != 1 || column_n < 0 || column_n >= settings->ColumnsCount)
+        return;
+    line = imgui_i_im_str_skip_blank(line + r);
+    c = 0;
+    column = (ImGuiTableColumnSettings *)(settings + 1) + column_n;
+    column->Index = (ImGuiTableColumnIdx)column_n;
+    if (sscanf(line, "UserID=0x%08X%n", &parsed_id, &r) == 1)
+        line = imgui_i_im_str_skip_blank(line + r);
+    if (sscanf(line, "Width=%d%n", &n, &r) == 1)
+    {
+        line = imgui_i_im_str_skip_blank(line + r);
+        column->WidthOrWeight = (float)n;
+        column->IsStretch = 0;
+        settings->SaveFlags |= ImGuiTableFlags_Resizable;
+    }
+    if (sscanf(line, "Weight=%f%n", &f, &r) == 1)
+    {
+        line = imgui_i_im_str_skip_blank(line + r);
+        column->WidthOrWeight = f;
+        column->IsStretch = 1;
+        settings->SaveFlags |= ImGuiTableFlags_Resizable;
+    }
+    if (sscanf(line, "Visible=%d%n", &n, &r) == 1)
+    {
+        line = imgui_i_im_str_skip_blank(line + r);
+        column->IsEnabled = (ImS8)n;
+        settings->SaveFlags |= ImGuiTableFlags_Hideable;
+    }
+    if (sscanf(line, "Order=%d%n", &n, &r) == 1)
+    {
+        line = imgui_i_im_str_skip_blank(line + r);
+        column->DisplayOrder = (ImGuiTableColumnIdx)n;
+        settings->SaveFlags |= ImGuiTableFlags_Reorderable;
+    }
+    if (sscanf(line, "Sort=%d%c%n", &n, &c, &r) == 2)
+    {
+        line = imgui_i_im_str_skip_blank(line + r);
+        column->SortOrder = (ImGuiTableColumnIdx)n;
+        column->SortDirection = c == '^' ? ImGuiSortDirection_Descending : ImGuiSortDirection_Ascending;
+        settings->SaveFlags |= ImGuiTableFlags_Sortable;
+    }
+    if (sscanf(line, "ID=0x%08X%n", &parsed_id, &r) == 1)
+        column->ID = parsed_id;
+}
+
+static void * imgui_i_table_settings_handler_read_open(ImGuiContext * arg_0, ImGuiSettingsHandler * arg_1, const char * name)
+{
+    ImGuiID id;
+    int count;
+    id = 0;
+    count = 0;
+    if (sscanf(name, "0x%08X,%d", &id, &count) < 2 || count <= 0 || count >= 512)
+        return 0;
+    return imgui_i_table_settings_create(arg_0, id, count);
+}
+
+static void imgui_i_table_settings_handler_write_all(ImGuiContext * ctx, ImGuiSettingsHandler * handler, ImGuiTextBuffer * buf)
+{
+    ImGuiTableSettings *settings;
+    ImGuiTableColumnSettings *column;
+    int flags;
+    int column_n;
+    int last_used;
+    settings = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(&ctx->SettingsTables);
+    while (settings)
+    {
+        if (!settings->ID)
+        {
+            settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&ctx->SettingsTables, settings);
+            continue;
+        }
+        flags = settings->SaveFlags;
+        imgui_text_buffer_reserve(ctx, buf, imgui_text_buffer_size(buf) + 30 + settings->ColumnsCount * 50);
+        imgui_i_text_buffer_appendf(ctx, buf, "[%s][0x%08X,%d]\n", handler->TypeName, settings->ID, settings->ColumnsCount);
+        if (settings->RefScale != 0.0f)
+            imgui_i_text_buffer_appendf(ctx, buf, "RefScale=%g\n", settings->RefScale);
+        column = (ImGuiTableColumnSettings *)(settings + 1);
+        for (column_n = 0; column_n < settings->ColumnsCount; column_n++, column++)
+        {
+            if (!(flags & (ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Reorderable)) && (!(flags & ImGuiTableFlags_Sortable) || column->SortOrder == -1))
+                continue;
+            imgui_i_text_buffer_appendf(ctx, buf, "Column %-2d", column_n);
+            if (flags & ImGuiTableFlags_Resizable)
+            {
+                if (column->IsStretch)
+                    imgui_i_text_buffer_appendf(ctx, buf, " Weight=%.4f", column->WidthOrWeight);
+                else
+                    imgui_i_text_buffer_appendf(ctx, buf, " Width=%d", (int)column->WidthOrWeight);
+            }
+            if (flags & ImGuiTableFlags_Hideable)
+                imgui_i_text_buffer_appendf(ctx, buf, " Visible=%d", column->IsEnabled);
+            if (flags & ImGuiTableFlags_Reorderable)
+                imgui_i_text_buffer_appendf(ctx, buf, " Order=%d", column->DisplayOrder);
+            if ((flags & ImGuiTableFlags_Sortable) && column->SortOrder != -1)
+                imgui_i_text_buffer_appendf(ctx, buf, " Sort=%d%c", column->SortOrder, column->SortDirection == ImGuiSortDirection_Ascending ? 'v' : '^');
+            if (column->ID)
+                imgui_i_text_buffer_appendf(ctx, buf, " ID=0x%08X", column->ID);
+            imgui_text_buffer_append(ctx, buf, "\n", 0);
+        }
+        if (ctx->IO.ConfigIniSettingsSaveLastUsedDate)
+        {
+            last_used = ImGuiPackedDate_Unpack__6d04c4f8e1(&settings->LastUsedDate);
+            if (last_used)
+                imgui_i_text_buffer_appendf(ctx, buf, "LastUsed=%08d\n", last_used);
+        }
         imgui_text_buffer_append(ctx, buf, "\n", 0);
+        settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&ctx->SettingsTables, settings);
     }
-    if (ctx->IO.ConfigIniSettingsSaveLastUsedDate)
-    {
-        last_used = ImGuiPackedDate_Unpack__6d04c4f8e1(&settings->LastUsedDate);
-        if (last_used)
-            imgui_i_im_gui_text_buffer_appendf(ctx, buf, "LastUsed=%08d\n", last_used);
-    }
-    imgui_text_buffer_append(ctx, buf, "\n", 0);
-    settings = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(&ctx->SettingsTables, settings);
-}
 }
 
-static void TableSettingsInit__26cd849599(ImGuiTableSettings * settings, ImGuiID id, int columns_count, int columns_count_max)
+static void imgui_i_table_settings_init(ImGuiTableSettings * settings, ImGuiID id, int columns_count, int columns_count_max)
 {
-
-ImGuiTableColumnSettings *column;
-int n;
-memset(settings, 0, TableSettingsCalcChunkSize__760aeea963(columns_count_max));
-settings->ID = id;
-settings->ColumnsCount = (ImGuiTableColumnIdx)columns_count;
-settings->ColumnsCountMax = (ImGuiTableColumnIdx)columns_count_max;
-settings->WantApply = 1;
-column = (ImGuiTableColumnSettings *)(settings + 1);
-for (n = 0; n < columns_count_max; n++, column++)
-{
-    column->Index = -1;
-    column->DisplayOrder = -1;
-    column->SortOrder = -1;
-    column->IsEnabled = -1;
-}
-}
-
-static void TableSetupColumnApply__7f77d8a256(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int idx, ImGuiID id, ImS16 name_offset, ImGuiTableColumnFlags flags, float init_width_or_weight, ImGuiID user_data)
-{
-
-ImGuiTableColumn *column;
-column = &table->Columns.Data[idx];
-if (table->IsDefaultSizingPolicy && !(flags & ImGuiTableColumnFlags_WidthMask_) &&
-    !(flags & ImGuiTableFlags_ScrollX) && init_width_or_weight > 0.0f)
-{
-    imgui_i_im_gui_error_log(imgui_c89_ctx, "TableSetupColumn(): can only specify width/weight if sizing policy is set explicitly in either Table or Column.");
-    return;
-}
-if (!(flags & ImGuiTableColumnFlags_WidthMask_) && init_width_or_weight > 0.0f &&
-    ((table->Flags & ImGuiTableFlags_SizingMask_) == ImGuiTableFlags_SizingFixedFit ||
-     (table->Flags & ImGuiTableFlags_SizingMask_) == ImGuiTableFlags_SizingFixedSame))
-    flags |= ImGuiTableColumnFlags_WidthFixed;
-if (flags & ImGuiTableColumnFlags_AngledHeader)
-{
-    flags |= ImGuiTableColumnFlags_NoHeaderLabel;
-    table->AngledHeadersCount++;
-}
-TableSetupColumnFlags__fd03640bbb(table, column, flags);
-column->ID = id;
-column->UserData = user_data;
-column->NameOffset = name_offset;
-column->InitStretchWeightOrWidth = init_width_or_weight;
+    ImGuiTableColumnSettings *column;
+    int n;
+    memset(settings, 0, imgui_i_table_settings_calc_chunk_size(columns_count_max));
+    settings->ID = id;
+    settings->ColumnsCount = (ImGuiTableColumnIdx)columns_count;
+    settings->ColumnsCountMax = (ImGuiTableColumnIdx)columns_count_max;
+    settings->WantApply = 1;
+    column = (ImGuiTableColumnSettings *)(settings + 1);
+    for (n = 0; n < columns_count_max; n++, column++)
+    {
+        column->Index = -1;
+        column->DisplayOrder = -1;
+        column->SortOrder = -1;
+        column->IsEnabled = -1;
+    }
 }
 
-static void TableSetupColumnFlags__fd03640bbb(ImGuiTable * table, ImGuiTableColumn * column, ImGuiTableColumnFlags flags_in)
+static void imgui_i_table_setup_column_apply(ImGuiContext *imgui_c89_ctx, ImGuiTable * table, int idx, ImGuiID id, ImS16 name_offset, ImGuiTableColumnFlags flags, float init_width_or_weight, ImGuiID user_data)
 {
+    ImGuiTableColumn *column;
+    column = &table->Columns[idx];
+    if (table->IsDefaultSizingPolicy && !(flags & ImGuiTableColumnFlags_WidthMask_) &&
+        !(flags & ImGuiTableFlags_ScrollX) && init_width_or_weight > 0.0f)
+    {
+        if (imgui_i_error_log(imgui_c89_ctx,
+                "TableSetupColumn(): can only specify width/weight if sizing policy is set explicitly in either Table or Column."))
+            imgui_c89_assert_id(25);
+        return;
+    }
+    /* Passing an explicit width under a fixed sizing policy implies WidthFixed. */
+    if (!(flags & ImGuiTableColumnFlags_WidthMask_) && init_width_or_weight > 0.0f &&
+        ((table->Flags & ImGuiTableFlags_SizingMask_) == ImGuiTableFlags_SizingFixedFit ||
+         (table->Flags & ImGuiTableFlags_SizingMask_) == ImGuiTableFlags_SizingFixedSame))
+        flags |= ImGuiTableColumnFlags_WidthFixed;
+    if (flags & ImGuiTableColumnFlags_AngledHeader)
+    {
+        flags |= ImGuiTableColumnFlags_NoHeaderLabel;
+        table->AngledHeadersCount++;
+    }
+    imgui_i_table_setup_column_flags(table, column, flags);
+    column->ID = id;
+    column->UserData = user_data;
+    column->NameOffset = name_offset;
+    column->InitStretchWeightOrWidth = init_width_or_weight;
+}
 
-ImGuiTableColumnFlags flags;
-ImGuiTableFlags sizing;
-int count;
-int mask;
-int list;
-flags = flags_in;
-if (!(flags & ImGuiTableColumnFlags_WidthMask_))
+static void imgui_i_table_setup_column_flags(ImGuiTable * table, ImGuiTableColumn * column, ImGuiTableColumnFlags flags_in)
 {
-    sizing = table->Flags & ImGuiTableFlags_SizingMask_;
-    flags |= sizing == ImGuiTableFlags_SizingFixedFit ||
-        sizing == ImGuiTableFlags_SizingFixedSame ? ImGuiTableColumnFlags_WidthFixed : ImGuiTableColumnFlags_WidthStretch;
-}
-if (!(table->Flags & ImGuiTableFlags_Resizable))
-    flags |= ImGuiTableColumnFlags_NoResize;
-if ((flags & (ImGuiTableColumnFlags_NoSortAscending | ImGuiTableColumnFlags_NoSortDescending)) ==
-    (ImGuiTableColumnFlags_NoSortAscending | ImGuiTableColumnFlags_NoSortDescending))
-    flags |= ImGuiTableColumnFlags_NoSort;
-if (!(flags & ImGuiTableColumnFlags_IndentMask_))
-    flags |= column == table->Columns.Data ?
-        ImGuiTableColumnFlags_IndentEnable : ImGuiTableColumnFlags_IndentDisable;
-column->Flags = flags | (column->Flags & ImGuiTableColumnFlags_StatusMask_);
-column->SortDirectionsAvailCount = 0;
-column->SortDirectionsAvailMask = 0;
-column->SortDirectionsAvailList = 0;
-if (table->Flags & ImGuiTableFlags_Sortable)
-{
-    count = mask = list = 0;
-    if ((flags & ImGuiTableColumnFlags_PreferSortAscending) &&
-        !(flags & ImGuiTableColumnFlags_NoSortAscending))
+    ImGuiTableColumnFlags flags;
+    ImGuiTableFlags sizing;
+    int count;
+    int mask;
+    int list;
+    flags = flags_in;
+    if (!(flags & ImGuiTableColumnFlags_WidthMask_))
     {
-        mask |= 1 << ImGuiSortDirection_Ascending;
-        list |= ImGuiSortDirection_Ascending << (count++ << 1);
+        sizing = table->Flags & ImGuiTableFlags_SizingMask_;
+        flags |= sizing == ImGuiTableFlags_SizingFixedFit ||
+            sizing == ImGuiTableFlags_SizingFixedSame ? ImGuiTableColumnFlags_WidthFixed : ImGuiTableColumnFlags_WidthStretch;
     }
-    if ((flags & ImGuiTableColumnFlags_PreferSortDescending) &&
-        !(flags & ImGuiTableColumnFlags_NoSortDescending))
+    else if (((flags & ImGuiTableColumnFlags_WidthMask_) & ((flags & ImGuiTableColumnFlags_WidthMask_) - 1)) != 0)
+        imgui_c89_assert_id(10);
+    if (!(table->Flags & ImGuiTableFlags_Resizable))
+        flags |= ImGuiTableColumnFlags_NoResize;
+    if ((flags & (ImGuiTableColumnFlags_NoSortAscending | ImGuiTableColumnFlags_NoSortDescending)) ==
+        (ImGuiTableColumnFlags_NoSortAscending | ImGuiTableColumnFlags_NoSortDescending))
+        flags |= ImGuiTableColumnFlags_NoSort;
+    if (!(flags & ImGuiTableColumnFlags_IndentMask_))
+        flags |= column == table->Columns ?
+            ImGuiTableColumnFlags_IndentEnable : ImGuiTableColumnFlags_IndentDisable;
+    column->Flags = flags | (column->Flags & ImGuiTableColumnFlags_StatusMask_);
+    column->SortDirectionsAvailCount = 0;
+    column->SortDirectionsAvailMask = 0;
+    column->SortDirectionsAvailList = 0;
+    if (table->Flags & ImGuiTableFlags_Sortable)
     {
-        mask |= 1 << ImGuiSortDirection_Descending;
-        list |= ImGuiSortDirection_Descending << (count++ << 1);
+        count = mask = list = 0;
+        if ((flags & ImGuiTableColumnFlags_PreferSortAscending) &&
+            !(flags & ImGuiTableColumnFlags_NoSortAscending))
+        {
+            mask |= 1 << ImGuiSortDirection_Ascending;
+            list |= ImGuiSortDirection_Ascending << (count++ << 1);
+        }
+        if ((flags & ImGuiTableColumnFlags_PreferSortDescending) &&
+            !(flags & ImGuiTableColumnFlags_NoSortDescending))
+        {
+            mask |= 1 << ImGuiSortDirection_Descending;
+            list |= ImGuiSortDirection_Descending << (count++ << 1);
+        }
+        if (!(flags & (ImGuiTableColumnFlags_PreferSortAscending | ImGuiTableColumnFlags_NoSortAscending)))
+        {
+            mask |= 1 << ImGuiSortDirection_Ascending;
+            list |= ImGuiSortDirection_Ascending << (count++ << 1);
+        }
+        if (!(flags & (ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_NoSortDescending)))
+        {
+            mask |= 1 << ImGuiSortDirection_Descending;
+            list |= ImGuiSortDirection_Descending << (count++ << 1);
+        }
+        if ((table->Flags & ImGuiTableFlags_SortTristate) || !count)
+        {
+            mask |= 1 << ImGuiSortDirection_None;
+            count++;
+        }
+        column->SortDirectionsAvailList = (ImU8)list;
+        column->SortDirectionsAvailMask = (ImU8)mask;
+        column->SortDirectionsAvailCount = (ImU8)count;
+        imgui_i_table_fix_column_sort_direction(table, column);
     }
-    if (!(flags & (ImGuiTableColumnFlags_PreferSortAscending | ImGuiTableColumnFlags_NoSortAscending)))
-    {
-        mask |= 1 << ImGuiSortDirection_Ascending;
-        list |= ImGuiSortDirection_Ascending << (count++ << 1);
-    }
-    if (!(flags & (ImGuiTableColumnFlags_PreferSortDescending | ImGuiTableColumnFlags_NoSortDescending)))
-    {
-        mask |= 1 << ImGuiSortDirection_Descending;
-        list |= ImGuiSortDirection_Descending << (count++ << 1);
-    }
-    if ((table->Flags & ImGuiTableFlags_SortTristate) || !count)
-    {
-        mask |= 1 << ImGuiSortDirection_None;
-        count++;
-    }
-    column->SortDirectionsAvailList = (ImU8)list;
-    column->SortDirectionsAvailMask = (ImU8)mask;
-    column->SortDirectionsAvailCount = (ImU8)count;
-    imgui_i_im_gui_table_fix_column_sort_direction(table, column);
-}
 }

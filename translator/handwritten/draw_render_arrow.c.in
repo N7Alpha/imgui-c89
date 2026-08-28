@@ -1,0 +1,44 @@
+ImVec2 center;
+ImVec2 a;
+ImVec2 b;
+ImVec2 c;
+float height;
+float radius;
+
+height = draw_list->_Data->FontSize;
+radius = height * 0.40f * scale;
+center.x = pos.x + height * 0.50f;
+center.y = pos.y + height * 0.50f * scale;
+a.x = a.y = 0.0f;
+b.x = b.y = 0.0f;
+c.x = c.y = 0.0f;
+
+if (dir == @DIR_UP@ || dir == @DIR_DOWN@) {
+    if (dir == @DIR_UP@)
+        radius = -radius;
+    a.x = 0.0f;
+    a.y = 0.750f * radius;
+    b.x = -0.866f * radius;
+    b.y = -0.750f * radius;
+    c.x = 0.866f * radius;
+    c.y = -0.750f * radius;
+} else if (dir == @DIR_LEFT@ || dir == @DIR_RIGHT@) {
+    if (dir == @DIR_LEFT@)
+        radius = -radius;
+    a.x = 0.750f * radius;
+    a.y = 0.0f;
+    b.x = -0.750f * radius;
+    b.y = 0.866f * radius;
+    c.x = -0.750f * radius;
+    c.y = -0.866f * radius;
+} else {
+    @ASSERT_6060@;
+}
+
+a.x += center.x;
+a.y += center.y;
+b.x += center.x;
+b.y += center.y;
+c.x += center.x;
+c.y += center.y;
+@ADD_TRIANGLE_FILLED@(imgui_c89_ctx, draw_list, &a, &b, &c, col);

@@ -18,7 +18,7 @@ return @TABLE_GET_COLUMN_NAME@(table, column_n);
 const ImGuiTableColumn *column;
 if (!table->IsLayoutLocked && column_n >= table->DeclColumnsCount)
     return "";
-column = &table->Columns.Data[column_n];
+column = &table->Columns[column_n];
 return column->NameOffset == -1 ? "" : table->ColumnsNames.Buf.Data + column->NameOffset;
 /* IMGUI_C89_FUNCTION_END table_get_column_name_table */
 
@@ -29,15 +29,18 @@ if (!table)
     return @COLUMN_NONE@;
 if (column_n < 0)
     column_n = table->CurrentColumn;
+/* One extra index represents the unused area to the right of the table. */
 if (column_n == table->ColumnsCount)
     return table->HoveredColumnBody == column_n ? @COLUMN_HOVERED@ : @COLUMN_NONE@;
-return table->Columns.Data[column_n].Flags;
+return table->Columns[column_n].Flags;
 /* IMGUI_C89_FUNCTION_END table_get_column_flags */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_get_cell_bg_rect */
 const ImGuiTableColumn *column;
 ImRect rect;
-column = &table->Columns.Data[column_n];
+column = &table->Columns[column_n];
+/* Row height is only final after TableEndRow(); before then Max.y reflects
+ * the minimum or the height accumulated so far. */
 rect.Min.x = column->MinX > table->WorkRect.Min.x ? column->MinX : table->WorkRect.Min.x;
 rect.Min.y = table->RowPosY1;
 rect.Max.x = column->MaxX < table->WorkRect.Max.x ? column->MaxX : table->WorkRect.Max.x;
@@ -47,7 +50,9 @@ return rect;
 
 /* IMGUI_C89_FUNCTION_BEGIN table_get_column_resize_id */
 ImGuiTableInstanceData *instance;
-instance = instance_no == 0 ? &table->InstanceDataFirst : &table->InstanceDataExtra.Data[instance_no - 1];
+if (!(column_n >= 0 && column_n < table->ColumnsCount))
+    @ASSERT_1971@;
+instance = instance_no == 0 ? &table->InstanceDataFirst : &table->InstanceDataExtra[instance_no - 1];
 return instance->TableInstanceID + 1 + column_n;
 /* IMGUI_C89_FUNCTION_END table_get_column_resize_id */
 
@@ -63,7 +68,8 @@ ImGuiTableInstanceData *instance;
 table = imgui_c89_ctx->CurrentTable;
 if (!table)
     return -1;
-instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst : &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
+/* HoveredRowLast intentionally has one frame of latency. */
+instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst : &table->InstanceDataExtra[table->InstanceCurrent - 1];
 return instance->HoveredRowLast;
 /* IMGUI_C89_FUNCTION_END table_get_hovered_row */
 
@@ -83,7 +89,7 @@ return table ? table->CurrentColumn : 0;
 const ImGuiTableColumn *column;
 float max_width;
 float min_distance;
-column = &table->Columns.Data[column_n];
+column = &table->Columns[column_n];
 max_width = 3.402823466e38f;
 min_distance = table->MinColumnWidth + 2.0f * table->CellPaddingX + table->CellSpacingX1 + table->CellSpacingX2;
 if (table->Flags & @TABLE_SCROLL_X@)
@@ -117,11 +123,14 @@ return (ImGuiSortDirection)((column->SortDirectionsAvailList >> (n * 2)) & 3);
 
 /* IMGUI_C89_FUNCTION_BEGIN table_get_column_next_sort_direction */
 int n;
+if (!(column->SortDirectionsAvailCount > 0))
+    @ASSERT_3095@;
 if (column->SortOrder == -1)
     return @GET_AVAIL_DIRECTION@(column, 0);
 for (n = 0; n < 3; n++)
     if (column->SortDirection == @GET_AVAIL_DIRECTION@(column, n))
         return @GET_AVAIL_DIRECTION@(column, (n + 1) % column->SortDirectionsAvailCount);
+@ASSERT_3101@;
 return @SORT_NONE@;
 /* IMGUI_C89_FUNCTION_END table_get_column_next_sort_direction */
 
@@ -131,8 +140,10 @@ float height;
 int column_n;
 table = imgui_c89_ctx->CurrentTable;
 height = imgui_c89_ctx->FontSize;
+/* Handle the rare case of labels with unequal multiline heights so the
+ * shorter headers still receive hover/input over the full header row. */
 for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-    if ((table->EnabledMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))) != 0 && !(table->Columns.Data[column_n].Flags & @COLUMN_NO_HEADER_LABEL@))
+    if ((table->EnabledMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))) != 0 && !(table->Columns[column_n].Flags & @COLUMN_NO_HEADER_LABEL@))
     {
         ImVec2 size;
         size = @CALC_TEXT_SIZE@(imgui_c89_ctx, @TABLE_GET_COLUMN_NAME@(table, column_n), 0, 0, 0.0f);
@@ -149,7 +160,7 @@ int column_n;
 table = imgui_c89_ctx->CurrentTable;
 width = 0.0f;
 for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-    if ((table->EnabledMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))) != 0 && (table->Columns.Data[column_n].Flags & @COLUMN_ANGLED_HEADER@))
+    if ((table->EnabledMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))) != 0 && (table->Columns[column_n].Flags & @COLUMN_ANGLED_HEADER@))
     {
         ImVec2 size;
         size = @CALC_TEXT_SIZE@(imgui_c89_ctx, @TABLE_GET_COLUMN_NAME@(table, column_n), 0, 1, 0.0f);

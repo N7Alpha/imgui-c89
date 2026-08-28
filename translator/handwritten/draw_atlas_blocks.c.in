@@ -1,0 +1,137 @@
+/* Narrow pixel-block primitives for the font atlas.  Keeping the loops in
+ * ordinary C also avoids the translator's per-branch duplicate locals. */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_block_convert */
+int x;
+int y;
+int row_bytes;
+const ImU8 *src8;
+const ImU32 *src32;
+ImU8 *dst8;
+ImU32 *dst32;
+
+if (!src_pixels || !dst_pixels)
+    @ASSERT_2890@;
+if (src_fmt == dst_fmt)
+{
+    row_bytes = w * @GET_FORMAT_BPP@(src_fmt);
+    for (y = 0; y < h; ++y)
+    {
+        memcpy(dst_pixels, src_pixels, (size_t)row_bytes);
+        src_pixels += src_pitch;
+        dst_pixels += dst_pitch;
+    }
+    return;
+}
+if (src_fmt == @FORMAT_ALPHA8@ && dst_fmt == @FORMAT_RGBA32@)
+{
+    for (y = 0; y < h; ++y)
+    {
+        src8 = (const ImU8 *)src_pixels;
+        dst32 = (ImU32 *)(void *)dst_pixels;
+        for (x = 0; x < w; ++x)
+            *dst32++ = 0x00ffffffu | ((ImU32)*src8++ << 24);
+        src_pixels += src_pitch;
+        dst_pixels += dst_pitch;
+    }
+    return;
+}
+if (src_fmt == @FORMAT_RGBA32@ && dst_fmt == @FORMAT_ALPHA8@)
+{
+    for (y = 0; y < h; ++y)
+    {
+        src32 = (const ImU32 *)(const void *)src_pixels;
+        dst8 = (ImU8 *)dst_pixels;
+        for (x = 0; x < w; ++x)
+            *dst8++ = (ImU8)(*src32++ >> 24);
+        src_pixels += src_pitch;
+        dst_pixels += dst_pitch;
+    }
+    return;
+}
+@ASSERT_2919@;
+/* IMGUI_C89_FUNCTION_END atlas_block_convert */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_block_multiply */
+unsigned char *row;
+int x;
+int y;
+unsigned int alpha;
+ImU8 *pixel8;
+ImU32 *pixel32;
+ImU32 pixel;
+
+row = (unsigned char *)data->Pixels;
+if (data->Format == @FORMAT_ALPHA8@)
+{
+    for (y = 0; y < data->Height; ++y, row += data->Pitch)
+    {
+        pixel8 = (ImU8 *)row;
+        for (x = 0; x < data->Width; ++x)
+        {
+            alpha = (unsigned int)(pixel8[x] * multiply_factor);
+            pixel8[x] = (ImU8)(alpha < 255u ? alpha : 255u);
+        }
+    }
+    return;
+}
+if (data->Format == @FORMAT_RGBA32@)
+{
+    for (y = 0; y < data->Height; ++y, row += data->Pitch)
+    {
+        pixel32 = (ImU32 *)(void *)row;
+        for (x = 0; x < data->Width; ++x)
+        {
+            pixel = pixel32[x];
+            alpha = (unsigned int)((pixel >> 24) * multiply_factor);
+            if (alpha > 255u)
+                alpha = 255u;
+            pixel32[x] = (pixel & 0x00ffffffu) | ((ImU32)alpha << 24);
+        }
+    }
+    return;
+}
+@ASSERT_2962@;
+/* IMGUI_C89_FUNCTION_END atlas_block_multiply */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_block_fill */
+int x;
+int y;
+ImU32 *pixel;
+
+if (dst_tex->Format == @FORMAT_ALPHA8@)
+{
+    for (y = 0; y < h; ++y)
+        memset(@GET_PIXELS@(dst_tex, dst_x, dst_y + y),
+               (int)(unsigned char)(col >> 24), (size_t)w);
+    return;
+}
+for (y = 0; y < h; ++y)
+{
+    pixel = (ImU32 *)@GET_PIXELS@(dst_tex, dst_x, dst_y + y);
+    for (x = 0; x < w; ++x)
+        pixel[x] = col;
+}
+/* IMGUI_C89_FUNCTION_END atlas_block_fill */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_block_copy */
+int y;
+size_t row_bytes;
+
+if (!src_tex->Pixels || !dst_tex->Pixels)
+    @ASSERT_2989@;
+if (src_tex->Format != dst_tex->Format)
+    @ASSERT_2990@;
+if (src_x < 0 || src_x + w > src_tex->Width)
+    @ASSERT_2991@;
+if (src_y < 0 || src_y + h > src_tex->Height)
+    @ASSERT_2992@;
+if (dst_x < 0 || dst_x + w > dst_tex->Width)
+    @ASSERT_2993@;
+if (dst_y < 0 || dst_y + h > dst_tex->Height)
+    @ASSERT_2994@;
+row_bytes = (size_t)w * (size_t)dst_tex->BytesPerPixel;
+for (y = 0; y < h; ++y)
+    memcpy(@GET_PIXELS@(dst_tex, dst_x, dst_y + y),
+           @GET_PIXELS@(src_tex, src_x, src_y + y), row_bytes);
+/* IMGUI_C89_FUNCTION_END atlas_block_copy */

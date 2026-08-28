@@ -1,0 +1,175 @@
+/* Handwritten C89 draw-list channel splitter. */
+
+/* IMGUI_C89_FUNCTION_BEGIN splitter_clear_free_memory */
+ImDrawChannel *channel;
+int i;
+
+for (i = 0; i < self->_Channels.Size; i++)
+{
+    channel = &self->_Channels.Data[i];
+    if (i == self->_Current)
+        memset(channel, 0, sizeof(*channel));
+    @CMD_CLEAR@(imgui_c89_ctx, &channel->_CmdBuffer);
+    @IDX_CLEAR@(imgui_c89_ctx, &channel->_IdxBuffer);
+}
+self->_Current = 0;
+self->_Count = 1;
+@CHANNEL_CLEAR@(imgui_c89_ctx, &self->_Channels);
+/* IMGUI_C89_FUNCTION_END splitter_clear_free_memory */
+
+/* IMGUI_C89_FUNCTION_BEGIN splitter_split */
+ImDrawChannel *channel;
+int old_count;
+int i;
+
+(void)draw_list;
+if (!(self->_Current == 0 && self->_Count <= 1))
+    @ASSERT_2154@;
+old_count = self->_Channels.Size;
+if (old_count < channels_count)
+{
+    @CHANNEL_RESERVE@(imgui_c89_ctx, &self->_Channels, channels_count);
+    @CHANNEL_RESIZE@(imgui_c89_ctx, &self->_Channels, channels_count);
+}
+self->_Count = channels_count;
+memset(&self->_Channels.Data[0], 0, sizeof(self->_Channels.Data[0]));
+for (i = 1; i < channels_count; i++)
+{
+    channel = &self->_Channels.Data[i];
+    if (i >= old_count)
+        memset(channel, 0, sizeof(*channel));
+    else
+    {
+        channel->_CmdBuffer.Size = 0;
+        channel->_IdxBuffer.Size = 0;
+    }
+}
+/* IMGUI_C89_FUNCTION_END splitter_split */
+
+/* IMGUI_C89_FUNCTION_BEGIN splitter_merge */
+ImDrawChannel *channel;
+ImDrawCmd *last_cmd;
+ImDrawCmd *next_cmd;
+ImDrawCmd *cmd_write;
+ImDrawCmd *cmd;
+ImDrawIdx *idx_write;
+int new_cmd_count;
+int new_idx_count;
+int idx_offset;
+int size;
+int cmd_n;
+int i;
+
+if (self->_Count <= 1)
+    return;
+
+@SET_CHANNEL@(imgui_c89_ctx, self, draw_list, 0);
+@POP_UNUSED@(draw_list);
+new_cmd_count = 0;
+new_idx_count = 0;
+last_cmd = draw_list->CmdBuffer.Size
+    ? &draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1] : 0;
+idx_offset = last_cmd ? (int)(last_cmd->IdxOffset + last_cmd->ElemCount) : 0;
+
+for (i = 1; i < self->_Count; i++)
+{
+    channel = &self->_Channels.Data[i];
+    size = channel->_CmdBuffer.Size;
+    if (size && channel->_CmdBuffer.Data[size - 1].ElemCount == 0 &&
+        channel->_CmdBuffer.Data[size - 1].UserCallback == 0)
+        channel->_CmdBuffer.Size = --size;
+
+    if (size && last_cmd)
+    {
+        next_cmd = channel->_CmdBuffer.Data;
+        if (memcmp(last_cmd, next_cmd,
+                   offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int)) == 0 &&
+            last_cmd->UserCallback == 0 && next_cmd->UserCallback == 0)
+        {
+            last_cmd->ElemCount += next_cmd->ElemCount;
+            idx_offset += (int)next_cmd->ElemCount;
+            size--;
+            if (size)
+                memmove(next_cmd, next_cmd + 1, (size_t)size * sizeof(*next_cmd));
+            channel->_CmdBuffer.Size = size;
+        }
+    }
+    if (size)
+        last_cmd = &channel->_CmdBuffer.Data[size - 1];
+    new_cmd_count += size;
+    new_idx_count += channel->_IdxBuffer.Size;
+    for (cmd_n = 0; cmd_n < size; cmd_n++)
+    {
+        cmd = &channel->_CmdBuffer.Data[cmd_n];
+        cmd->IdxOffset = (unsigned int)idx_offset;
+        idx_offset += (int)cmd->ElemCount;
+    }
+}
+
+@CMD_RESIZE@(imgui_c89_ctx, &draw_list->CmdBuffer,
+             draw_list->CmdBuffer.Size + new_cmd_count);
+@IDX_RESIZE@(imgui_c89_ctx, &draw_list->IdxBuffer,
+             draw_list->IdxBuffer.Size + new_idx_count);
+cmd_write = draw_list->CmdBuffer.Data + draw_list->CmdBuffer.Size - new_cmd_count;
+idx_write = draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size - new_idx_count;
+for (i = 1; i < self->_Count; i++)
+{
+    channel = &self->_Channels.Data[i];
+    size = channel->_CmdBuffer.Size;
+    if (size)
+    {
+        memcpy(cmd_write, channel->_CmdBuffer.Data, (size_t)size * sizeof(*cmd_write));
+        cmd_write += size;
+    }
+    size = channel->_IdxBuffer.Size;
+    if (size)
+    {
+        memcpy(idx_write, channel->_IdxBuffer.Data, (size_t)size * sizeof(*idx_write));
+        idx_write += size;
+    }
+}
+draw_list->_IdxWritePtr = idx_write;
+
+if (draw_list->CmdBuffer.Size == 0 ||
+    draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1].UserCallback != 0)
+    @ADD_DRAW_CMD@(imgui_c89_ctx, draw_list);
+cmd = &draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1];
+if (cmd->ElemCount == 0)
+    memcpy(cmd, &draw_list->_CmdHeader,
+           offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int));
+else if (memcmp(cmd, &draw_list->_CmdHeader,
+                offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int)) != 0)
+    @ADD_DRAW_CMD@(imgui_c89_ctx, draw_list);
+self->_Count = 1;
+/* IMGUI_C89_FUNCTION_END splitter_merge */
+
+/* IMGUI_C89_FUNCTION_BEGIN splitter_set_current_channel */
+ImDrawCmd *cmd;
+
+if (!(idx >= 0 && idx < self->_Count))
+    @ASSERT_2254@;
+if (self->_Current == idx)
+    return;
+
+memcpy(&self->_Channels.Data[self->_Current]._CmdBuffer,
+       &draw_list->CmdBuffer, sizeof(draw_list->CmdBuffer));
+memcpy(&self->_Channels.Data[self->_Current]._IdxBuffer,
+       &draw_list->IdxBuffer, sizeof(draw_list->IdxBuffer));
+self->_Current = idx;
+memcpy(&draw_list->CmdBuffer, &self->_Channels.Data[idx]._CmdBuffer,
+       sizeof(draw_list->CmdBuffer));
+memcpy(&draw_list->IdxBuffer, &self->_Channels.Data[idx]._IdxBuffer,
+       sizeof(draw_list->IdxBuffer));
+draw_list->_IdxWritePtr = draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size;
+
+cmd = draw_list->CmdBuffer.Size
+    ? &draw_list->CmdBuffer.Data[draw_list->CmdBuffer.Size - 1] : 0;
+if (!cmd)
+    @ADD_DRAW_CMD@(imgui_c89_ctx, draw_list);
+else if (cmd->ElemCount == 0)
+    memcpy(cmd, &draw_list->_CmdHeader,
+           offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int));
+else if (memcmp(cmd, &draw_list->_CmdHeader,
+                offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int)) != 0)
+    @ADD_DRAW_CMD@(imgui_c89_ctx, draw_list);
+/* IMGUI_C89_FUNCTION_END splitter_set_current_channel */

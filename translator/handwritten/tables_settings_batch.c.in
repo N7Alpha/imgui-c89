@@ -58,6 +58,8 @@ ImGuiTableSettings *settings;
 if (table->SettingsOffset == -1)
     return 0;
 settings = @CHUNK_PTR@(&imgui_c89_ctx->SettingsTables, table->SettingsOffset);
+if (settings->ID != table->ID)
+    @ASSERT_3911@;
 return settings;
 /* IMGUI_C89_FUNCTION_END table_get_bound_settings */
 
@@ -132,8 +134,13 @@ if (!settings)
 }
 settings->ColumnsCount = (ImGuiTableColumnIdx)table->ColumnsCount;
 settings->LastUsedDate = imgui_c89_ctx->SessionDate;
+if (settings->ID != table->ID)
+    @ASSERT_3947@;
+if (!(settings->ColumnsCount == table->ColumnsCount &&
+      settings->ColumnsCountMax >= settings->ColumnsCount))
+    @ASSERT_3948@;
 saved = (ImGuiTableColumnSettings *)(settings + 1);
-column = table->Columns.Data;
+column = table->Columns;
 save_ref_scale = 0;
 settings->SaveFlags = @TABLE_NONE@;
 for (n = 0; n < table->ColumnsCount; n++, column++, saved++)
@@ -171,16 +178,16 @@ int n;
 int column_n;
 int dst;
 for (column_n = 0; column_n < table->ColumnsCount; column_n++)
-    table->Columns.Data[column_n].IsLoadedSettings = 0;
+    table->Columns[column_n].IsLoadedSettings = 0;
 settings = @GET_BOUND@(imgui_c89_ctx, table);
 if (!settings)
     return;
 table->SettingsLoadedFlags |= @REORDERABLE@;
 saved = (ImGuiTableColumnSettings *)(settings + 1);
 matches = 0;
-while (matches < table->ColumnsCount && matches < settings->ColumnsCount && saved[matches].ID == table->Columns.Data[matches].ID)
+while (matches < table->ColumnsCount && matches < settings->ColumnsCount && saved[matches].ID == table->Columns[matches].ID)
 {
-    @LOAD_ONE@(&table->Columns.Data[matches], &saved[matches], settings->SaveFlags);
+    @LOAD_ONE@(&table->Columns[matches], &saved[matches], settings->SaveFlags);
     matches++;
 }
 if (matches == settings->ColumnsCount)
@@ -189,7 +196,7 @@ for (n = matches; n < settings->ColumnsCount; n++)
     saved[n].IsLoaded = 0;
 for (column_n = 0; column_n < table->ColumnsCount; column_n++)
 {
-    column = &table->Columns.Data[column_n];
+    column = &table->Columns[column_n];
     if (!column->ID || column->IsLoadedSettings)
         continue;
     for (n = matches; n < settings->ColumnsCount; n++)
@@ -203,11 +210,11 @@ dst = 0;
 for (n = matches; n < settings->ColumnsCount; n++)
     if (!saved[n].IsLoaded)
     {
-        while (dst < table->ColumnsCount && table->Columns.Data[dst].IsLoadedSettings)
+        while (dst < table->ColumnsCount && table->Columns[dst].IsLoadedSettings)
             dst++;
         if (dst == table->ColumnsCount)
             break;
-        @LOAD_ONE@(&table->Columns.Data[dst++], &saved[n], settings->SaveFlags);
+        @LOAD_ONE@(&table->Columns[dst++], &saved[n], settings->SaveFlags);
     }
 /* IMGUI_C89_FUNCTION_END table_load_settings_for_columns */
 
@@ -218,8 +225,8 @@ unsigned short ao;
 unsigned short bo;
 a = (const ImGuiTableFixDisplayOrderColumnData *)lhs;
 b = (const ImGuiTableFixDisplayOrderColumnData *)rhs;
-ao = (unsigned short)a->Table->Columns.Data[a->Idx].DisplayOrder;
-bo = (unsigned short)b->Table->Columns.Data[b->Idx].DisplayOrder;
+ao = (unsigned short)a->Table->Columns[a->Idx].DisplayOrder;
+bo = (unsigned short)b->Table->Columns[b->Idx].DisplayOrder;
 if (ao != bo)
     return ao < bo ? -1 : 1;
 return a->Idx < b->Idx ? -1 : 1;
@@ -238,9 +245,9 @@ for (n = 0; n < table->ColumnsCount; n++)
 }
 @QSORT@(order, (size_t)table->ColumnsCount, sizeof(*order), @COMPARE@);
 for (n = 0; n < table->ColumnsCount; n++)
-    table->Columns.Data[order[n].Idx].DisplayOrder = (ImGuiTableColumnIdx)n;
+    table->Columns[order[n].Idx].DisplayOrder = (ImGuiTableColumnIdx)n;
 for (index = 0; index < table->ColumnsCount; index++)
-    table->DisplayOrderToIndex.Data[table->Columns.Data[index].DisplayOrder] = (ImGuiTableColumnIdx)index;
+    table->DisplayOrderToIndex[table->Columns[index].DisplayOrder] = (ImGuiTableColumnIdx)index;
 /* IMGUI_C89_FUNCTION_END table_fix_display_order */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_settings_handler_clear_all */
@@ -311,10 +318,12 @@ float f;
 int column_n;
 int r;
 int n;
+ImU32 parsed_id;
 char c;
 settings = (ImGuiTableSettings *)entry;
 f = 0.0f;
 column_n = r = n = 0;
+parsed_id = 0;
 if (sscanf(line, "RefScale=%f", &f) == 1)
 {
     settings->RefScale = f;
@@ -333,7 +342,7 @@ line = @SKIP_BLANK@(line + r);
 c = 0;
 column = (ImGuiTableColumnSettings *)(settings + 1) + column_n;
 column->Index = (ImGuiTableColumnIdx)column_n;
-if (sscanf(line, "UserID=0x%08X%n", (ImU32 *)&n, &r) == 1)
+if (sscanf(line, "UserID=0x%08X%n", &parsed_id, &r) == 1)
     line = @SKIP_BLANK@(line + r);
 if (sscanf(line, "Width=%d%n", &n, &r) == 1)
 {
@@ -352,7 +361,7 @@ if (sscanf(line, "Weight=%f%n", &f, &r) == 1)
 if (sscanf(line, "Visible=%d%n", &n, &r) == 1)
 {
     line = @SKIP_BLANK@(line + r);
-    column->IsEnabled = (ImU8)n;
+    column->IsEnabled = (ImS8)n;
     settings->SaveFlags |= @HIDEABLE@;
 }
 if (sscanf(line, "Order=%d%n", &n, &r) == 1)
@@ -368,8 +377,8 @@ if (sscanf(line, "Sort=%d%c%n", &n, &c, &r) == 2)
     column->SortDirection = c == '^' ? @SORT_DESC@ : @SORT_ASC@;
     settings->SaveFlags |= @SORTABLE@;
 }
-if (sscanf(line, "ID=0x%08X%n", (ImU32 *)&n, &r) == 1)
-    column->ID = (ImGuiID)n;
+if (sscanf(line, "ID=0x%08X%n", &parsed_id, &r) == 1)
+    column->ID = parsed_id;
 /* IMGUI_C89_FUNCTION_END table_settings_handler_read_line */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_settings_handler_write_all */

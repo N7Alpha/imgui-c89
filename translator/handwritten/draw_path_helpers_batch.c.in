@@ -1,0 +1,187 @@
+/* IMGUI_C89_FUNCTION_BEGIN draw_list_prim_quad_uv */
+ImDrawIdx idx;
+
+idx = (ImDrawIdx)self->_VtxCurrentIdx;
+self->_IdxWritePtr[0] = idx;
+self->_IdxWritePtr[1] = (ImDrawIdx)(idx + 1);
+self->_IdxWritePtr[2] = (ImDrawIdx)(idx + 2);
+self->_IdxWritePtr[3] = idx;
+self->_IdxWritePtr[4] = (ImDrawIdx)(idx + 2);
+self->_IdxWritePtr[5] = (ImDrawIdx)(idx + 3);
+self->_VtxWritePtr[0].pos = *a;
+self->_VtxWritePtr[0].uv = *uv_a;
+self->_VtxWritePtr[0].col = col;
+self->_VtxWritePtr[1].pos = *b;
+self->_VtxWritePtr[1].uv = *uv_b;
+self->_VtxWritePtr[1].col = col;
+self->_VtxWritePtr[2].pos = *c;
+self->_VtxWritePtr[2].uv = *uv_c;
+self->_VtxWritePtr[2].col = col;
+self->_VtxWritePtr[3].pos = *d;
+self->_VtxWritePtr[3].uv = *uv_d;
+self->_VtxWritePtr[3].col = col;
+self->_VtxWritePtr += 4;
+self->_VtxCurrentIdx += 4;
+self->_IdxWritePtr += 6;
+/* IMGUI_C89_FUNCTION_END draw_list_prim_quad_uv */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_list_prim_rect */
+ImVec2 b;
+ImVec2 d;
+ImVec2 uv;
+ImDrawIdx idx;
+
+b.x = c->x;
+b.y = a->y;
+d.x = a->x;
+d.y = c->y;
+uv = self->_Data->TexUvWhitePixel;
+idx = (ImDrawIdx)self->_VtxCurrentIdx;
+self->_IdxWritePtr[0] = idx;
+self->_IdxWritePtr[1] = (ImDrawIdx)(idx + 1);
+self->_IdxWritePtr[2] = (ImDrawIdx)(idx + 2);
+self->_IdxWritePtr[3] = idx;
+self->_IdxWritePtr[4] = (ImDrawIdx)(idx + 2);
+self->_IdxWritePtr[5] = (ImDrawIdx)(idx + 3);
+self->_VtxWritePtr[0].pos = *a;
+self->_VtxWritePtr[0].uv = uv;
+self->_VtxWritePtr[0].col = col;
+self->_VtxWritePtr[1].pos = b;
+self->_VtxWritePtr[1].uv = uv;
+self->_VtxWritePtr[1].col = col;
+self->_VtxWritePtr[2].pos = *c;
+self->_VtxWritePtr[2].uv = uv;
+self->_VtxWritePtr[2].col = col;
+self->_VtxWritePtr[3].pos = d;
+self->_VtxWritePtr[3].uv = uv;
+self->_VtxWritePtr[3].col = col;
+self->_VtxWritePtr += 4;
+self->_VtxCurrentIdx += 4;
+self->_IdxWritePtr += 6;
+/* IMGUI_C89_FUNCTION_END draw_list_prim_rect */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_list_prim_rect_uv */
+ImVec2 b;
+ImVec2 d;
+ImVec2 uv_b;
+ImVec2 uv_d;
+ImDrawIdx idx;
+
+b.x = c->x;
+b.y = a->y;
+d.x = a->x;
+d.y = c->y;
+uv_b.x = uv_c->x;
+uv_b.y = uv_a->y;
+uv_d.x = uv_a->x;
+uv_d.y = uv_c->y;
+idx = (ImDrawIdx)self->_VtxCurrentIdx;
+self->_IdxWritePtr[0] = idx;
+self->_IdxWritePtr[1] = (ImDrawIdx)(idx + 1);
+self->_IdxWritePtr[2] = (ImDrawIdx)(idx + 2);
+self->_IdxWritePtr[3] = idx;
+self->_IdxWritePtr[4] = (ImDrawIdx)(idx + 2);
+self->_IdxWritePtr[5] = (ImDrawIdx)(idx + 3);
+self->_VtxWritePtr[0].pos = *a;
+self->_VtxWritePtr[0].uv = *uv_a;
+self->_VtxWritePtr[0].col = col;
+self->_VtxWritePtr[1].pos = b;
+self->_VtxWritePtr[1].uv = uv_b;
+self->_VtxWritePtr[1].col = col;
+self->_VtxWritePtr[2].pos = *c;
+self->_VtxWritePtr[2].uv = *uv_c;
+self->_VtxWritePtr[2].col = col;
+self->_VtxWritePtr[3].pos = d;
+self->_VtxWritePtr[3].uv = uv_d;
+self->_VtxWritePtr[3].col = col;
+self->_VtxWritePtr += 4;
+self->_VtxCurrentIdx += 4;
+self->_IdxWritePtr += 6;
+/* IMGUI_C89_FUNCTION_END draw_list_prim_rect_uv */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_list_path_rect */
+float width;
+float height;
+float rounding_tl;
+float rounding_tr;
+float rounding_br;
+float rounding_bl;
+ImVec2 p;
+
+if (rounding >= 0.5f) {
+    if (!(flags & @ROUND_CORNERS_MASK@))
+        flags |= @ROUND_CORNERS_ALL@;
+    width = @FABS@(b->x - a->x);
+    height = @FABS@(b->y - a->y);
+    width = width * ((((flags & @ROUND_CORNERS_TOP@) == @ROUND_CORNERS_TOP@) ||
+                     ((flags & @ROUND_CORNERS_BOTTOM@) == @ROUND_CORNERS_BOTTOM@)) ? 0.5f : 1.0f) - 1.0f;
+    height = height * ((((flags & @ROUND_CORNERS_LEFT@) == @ROUND_CORNERS_LEFT@) ||
+                       ((flags & @ROUND_CORNERS_RIGHT@) == @ROUND_CORNERS_RIGHT@)) ? 0.5f : 1.0f) - 1.0f;
+    rounding = @MIN_FLOAT@(rounding, width);
+    rounding = @MIN_FLOAT@(rounding, height);
+}
+if (rounding < 0.5f || (flags & @ROUND_CORNERS_MASK@) == @ROUND_CORNERS_NONE@) {
+    @PATH_PUSH@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path, a);
+    p.x = b->x;
+    p.y = a->y;
+    @PATH_PUSH@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path, &p);
+    @PATH_PUSH@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path, b);
+    p.x = a->x;
+    p.y = b->y;
+    @PATH_PUSH@(imgui_c89_ctx, (@PATH_VECTOR_TYPE@ *)&self->_Path, &p);
+    return;
+}
+
+rounding_tl = flags & @ROUND_TOP_LEFT@ ? rounding : 0.0f;
+rounding_tr = flags & @ROUND_TOP_RIGHT@ ? rounding : 0.0f;
+rounding_br = flags & @ROUND_BOTTOM_RIGHT@ ? rounding : 0.0f;
+rounding_bl = flags & @ROUND_BOTTOM_LEFT@ ? rounding : 0.0f;
+p.x = a->x + rounding_tl;
+p.y = a->y + rounding_tl;
+@PATH_ARC_FAST@(imgui_c89_ctx, self, &p, rounding_tl, 6, 9);
+p.x = b->x - rounding_tr;
+p.y = a->y + rounding_tr;
+@PATH_ARC_FAST@(imgui_c89_ctx, self, &p, rounding_tr, 9, 12);
+p.x = b->x - rounding_br;
+p.y = b->y - rounding_br;
+@PATH_ARC_FAST@(imgui_c89_ctx, self, &p, rounding_br, 0, 3);
+p.x = a->x + rounding_bl;
+p.y = b->y - rounding_bl;
+@PATH_ARC_FAST@(imgui_c89_ctx, self, &p, rounding_bl, 3, 6);
+/* IMGUI_C89_FUNCTION_END draw_list_path_rect */
+
+/* IMGUI_C89_FUNCTION_BEGIN add_draw_list_to_draw_data_ex */
+ImDrawCmd *cmd;
+ImDrawCmd *end;
+
+if (!draw_list->CmdBuffer.Size)
+    return;
+cmd = draw_list->CmdBuffer.Data;
+if (draw_list->CmdBuffer.Size == 1 && !cmd->ElemCount && !cmd->UserCallback)
+    return;
+
+if (!(draw_list->VtxBuffer.Size == 0 ||
+      draw_list->_VtxWritePtr == draw_list->VtxBuffer.Data + draw_list->VtxBuffer.Size))
+    @ASSERT_2304@;
+if (!(draw_list->IdxBuffer.Size == 0 ||
+      draw_list->_IdxWritePtr == draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size))
+    @ASSERT_2305@;
+if (!(draw_list->Flags & @ALLOW_VTX_OFFSET@) &&
+    (int)draw_list->_VtxCurrentIdx != draw_list->VtxBuffer.Size)
+    @ASSERT_2307@;
+if (sizeof(ImDrawIdx) == 2 && draw_list->_VtxCurrentIdx >= (1u << 16))
+    @ASSERT_2325@;
+
+if (draw_list->_CallbacksDataBuf.Size) {
+    end = cmd + draw_list->CmdBuffer.Size;
+    for (; cmd != end; ++cmd) {
+        if (cmd->UserCallback && cmd->UserCallbackDataOffset != -1 &&
+            cmd->UserCallbackDataSize > 0)
+            cmd->UserCallbackData = draw_list->_CallbacksDataBuf.Data +
+                                    cmd->UserCallbackDataOffset;
+    }
+}
+@OUT_LIST_PUSH@(imgui_c89_ctx, out_list, &draw_list);
+draw_data->TotalVtxCount += draw_list->VtxBuffer.Size;
+draw_data->TotalIdxCount += draw_list->IdxBuffer.Size;
+/* IMGUI_C89_FUNCTION_END add_draw_list_to_draw_data_ex */

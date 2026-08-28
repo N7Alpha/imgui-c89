@@ -10,11 +10,14 @@ int column_n;
 table = imgui_c89_ctx->CurrentTable;
 if (!table)
 {
-    @ERROR_LOG@(imgui_c89_ctx,
-        "Call should only be done while in BeginTable() scope!");
+    if (@ERROR_LOG@(imgui_c89_ctx,
+            "Call should only be done while in BeginTable() scope!"))
+        @ASSERT_3288@;
     return;
 }
 if (!table->IsLayoutLocked)
+    /* Layout is forced here only to make this convenience helper easier to
+     * debug-step; custom header rows can rely on TableNextRow(). */
     @UPDATE_LAYOUT@(imgui_c89_ctx, table);
 row_height = @GET_HEIGHT@(imgui_c89_ctx);
 @NEXT_ROW@(imgui_c89_ctx, @HEADERS@, row_height);
@@ -26,14 +29,16 @@ for (column_n = 0; column_n < table->ColumnsCount; column_n++)
     if (!@SET_COLUMN@(imgui_c89_ctx, column_n) &&
         table->LastHeldHeaderColumn != column_n)
         continue;
-    column = &table->Columns.Data[column_n];
+    column = &table->Columns[column_n];
     name = "";
     if (!(column->Flags & @NO_HEADER_LABEL@) && column->NameOffset >= 0)
         name = table->ColumnsNames.Buf.Data + column->NameOffset;
+    /* The per-column ID keeps empty and unnamed headers addressable. */
     @PUSH_ID@(imgui_c89_ctx, column_n);
     @HEADER@(imgui_c89_ctx, name);
     @POP_ID@(imgui_c89_ctx);
 }
+/* The unused section to the right of the last column owns a table-wide menu. */
 if (@MOUSE_RELEASED@(imgui_c89_ctx, 1) &&
     table->HoveredColumnBody == table->ColumnsCount &&
     imgui_c89_ctx->IO.MousePos.y >= row_y1 &&

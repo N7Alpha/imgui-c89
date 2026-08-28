@@ -50,22 +50,25 @@
 
     g = imgui_c89_ctx;
     temp_data = table->TempData;
+    if (!(table->IsLayoutLocked == 0))
+        @ASSERT_853@;
     columns_count = table->ColumnsCount;
 
-    if (temp_data->ReconcileColumnsRequests.Size > 0)
+    /* Reconcile declarations before releasing any previous column arena. */
+    if (temp_data->ReconcileColumnsRequestsSize > 0)
         @TABLE_RECONCILE_COLUMNS@(imgui_c89_ctx, table);
     if (temp_data->OldColumnsRawData != 0) {
         @MEM_FREE@(imgui_c89_ctx, temp_data->OldColumnsRawData);
         temp_data->OldColumnsRawData = 0;
-        temp_data->OldColumnsData.Data = 0;
-        temp_data->OldColumnsData.DataEnd = 0;
+        temp_data->OldColumnsData = 0;
+        temp_data->OldColumnsDataEnd = 0;
     }
 
     if (table->IsSettingsRequestLoad)
         @TABLE_LOAD_SETTINGS_FOR_COLUMNS@(imgui_c89_ctx, table);
     if (table->IsInitializing || table->IsSettingsRequestLoad) {
         for (n = 0; n < columns_count; ++n) {
-            column = &table->Columns.Data[n];
+            column = &table->Columns[n];
             if (table->IsSettingsRequestLoad)
                 init_flags = column->IsLoadedSettings
                     ? ~table->SettingsLoadedFlags : ~0;
@@ -82,10 +85,11 @@
     if (table->RefScale != 0.0f && table->RefScale != new_ref_scale_unit) {
         scale_factor = new_ref_scale_unit / table->RefScale;
         for (n = 0; n < columns_count; ++n)
-            table->Columns.Data[n].WidthRequest *= scale_factor;
+            table->Columns[n].WidthRequest *= scale_factor;
     }
     table->RefScale = new_ref_scale_unit;
 
+    /* Part 1: lock enabled/order state and calculate ideal column widths. */
     table_sizing_policy = table->Flags & @SIZING_MASK@;
     table->IsDefaultVisibility = 1;
     table->IsDefaultDisplayOrder = 1;
@@ -105,8 +109,8 @@
     stretch_sum_width_auto = 0.0f;
     fixed_max_width_auto = 0.0f;
     for (order_n = 0; order_n < columns_count; ++order_n) {
-        column_n = table->DisplayOrderToIndex.Data[order_n];
-        column = &table->Columns.Data[column_n];
+        column_n = table->DisplayOrderToIndex[order_n];
+        column = &table->Columns[column_n];
 
         if (table->DeclColumnsCount <= column_n) {
             @TABLE_SETUP_COLUMN_FLAGS@(table, column, @COLUMN_NONE@);
@@ -153,7 +157,7 @@
             (@IMGUI_TABLE_COLUMN_IDX@)prev_visible_column_idx;
         column->NextEnabledColumn = -1;
         if (prev_visible_column_idx != -1)
-            table->Columns.Data[prev_visible_column_idx].NextEnabledColumn =
+            table->Columns[prev_visible_column_idx].NextEnabledColumn =
                 (@IMGUI_TABLE_COLUMN_IDX@)column_n;
         else
             table->LeftMostEnabledColumn =
@@ -163,6 +167,8 @@
         @BIT_ARRAY_SET@(
             table->EnabledMaskByDisplayOrder, column->DisplayOrder);
         prev_visible_column_idx = column_n;
+        if (!(column->IndexWithinEnabledSet <= column->DisplayOrder))
+            @ASSERT_978@;
 
         if (!column->IsPreserveWidthAuto && table->InstanceCurrent == 0)
             column->WidthAuto =
@@ -192,12 +198,17 @@
         table->IsSortSpecsDirty = 1;
     table->RightMostEnabledColumn =
         (@IMGUI_TABLE_COLUMN_IDX@)prev_visible_column_idx;
+    if (!(table->LeftMostEnabledColumn >= 0 &&
+          table->RightMostEnabledColumn >= 0))
+        @ASSERT_1008@;
 
+    /* Part 2: allow clipped child tables to submit columns while fitting. */
     if (has_auto_fit_request && table->OuterWindow != table->InnerWindow)
         table->InnerWindow->SkipItems = 0;
     if (has_auto_fit_request)
         table->IsSettingsDirty = 1;
 
+    /* Part 3: sanitize sizing flags and accumulate fixed/stretch requests. */
     sum_width_requests = 0.0f;
     stretch_sum_weights = 0.0f;
     table->RightMostStretchedColumn = -1;
@@ -206,7 +217,7 @@
         if ((table->EnabledMaskByIndex[column_n >> 5] &
              ((ImU32)1 << (column_n & 31))) == 0)
             continue;
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         column_is_resizable = (unsigned char)(
             (column->Flags & @NO_RESIZE@) == 0);
         if ((column->Flags & @WIDTH_FIXED@) != 0) {
@@ -239,12 +250,12 @@
             }
             stretch_sum_weights += column->StretchWeight;
             if (table->LeftMostStretchedColumn == -1 ||
-                table->Columns.Data[table->LeftMostStretchedColumn]
+                table->Columns[table->LeftMostStretchedColumn]
                     .DisplayOrder > column->DisplayOrder)
                 table->LeftMostStretchedColumn =
                     (@IMGUI_TABLE_COLUMN_IDX@)column_n;
             if (table->RightMostStretchedColumn == -1 ||
-                table->Columns.Data[table->RightMostStretchedColumn]
+                table->Columns[table->RightMostStretchedColumn]
                     .DisplayOrder < column->DisplayOrder)
                 table->RightMostStretchedColumn =
                     (@IMGUI_TABLE_COLUMN_IDX@)column_n;
@@ -256,6 +267,7 @@
         (@IMGUI_TABLE_COLUMN_IDX@)count_fixed;
     table->ColumnsStretchSumWeights = stretch_sum_weights;
 
+    /* Part 4: distribute available width, then apply minimums and maxima. */
     work_rect = table->WorkRect;
     width_spacings = table->OuterPaddingX * 2.0f +
         (table->CellSpacingX1 + table->CellSpacingX2) *
@@ -279,7 +291,7 @@
         if ((table->EnabledMaskByIndex[column_n >> 5] &
              ((ImU32)1 << (column_n & 31))) == 0)
             continue;
-        column = &table->Columns.Data[column_n];
+        column = &table->Columns[column_n];
         if ((column->Flags & @WIDTH_STRETCH@) != 0) {
             weight_ratio = column->StretchWeight / stretch_sum_weights;
             column->WidthRequest = @TRUNC_FLOAT@(
@@ -296,6 +308,7 @@
         table->ColumnsGivenWidth += column->WidthGiven;
     }
 
+    /* Part 5: distribute the sub-pixel stretch remainder right-to-left. */
     if (width_remaining_for_stretched_columns >= 1.0f &&
         (table->Flags & @PRECISE_WIDTHS@) == 0) {
         for (order_n = columns_count - 1;
@@ -306,8 +319,8 @@
             if ((table->EnabledMaskByDisplayOrder[order_n >> 5] &
                  ((ImU32)1 << (order_n & 31))) == 0)
                 continue;
-            column = &table->Columns.Data[
-                table->DisplayOrderToIndex.Data[order_n]];
+            column = &table->Columns[
+                table->DisplayOrderToIndex[order_n]];
             if ((column->Flags & @WIDTH_STRETCH@) == 0)
                 continue;
             column->WidthRequest += 1.0f;
@@ -343,6 +356,7 @@
             (table->OuterRect.Min.y + table->AngledHeadersHeight -
              g->IO.MousePos.y) * table->AngledHeadersSlope);
 
+    /* Part 6: finalize clip/output state in display order. */
     has_output_column = 0;
     offset_x_frozen = (unsigned char)(table->FreezeColumnsCount > 0);
     offset_x = (table->FreezeColumnsCount > 0
@@ -351,8 +365,8 @@
     host_clip_rect = table->InnerClipRect;
     @BIT_ARRAY_CLEAR_ALL@(table->VisibleMaskByIndex, columns_count);
     for (order_n = 0; order_n < columns_count; ++order_n) {
-        column_n = table->DisplayOrderToIndex.Data[order_n];
-        column = &table->Columns.Data[column_n];
+        column_n = table->DisplayOrderToIndex[order_n];
+        column = &table->Columns[column_n];
         column->NavLayerCurrent = (@IMS8@)(
             table->FreezeRowsCount > 0 ? @NAV_LAYER_MENU@ : table->NavLayer);
         if (offset_x_frozen && table->FreezeColumnsCount == order_n) {
@@ -413,6 +427,9 @@
             column->CannotSkipItemsQueue != 0);
         column->IsSkipItems = (unsigned char)(
             !column->IsEnabled || table->HostSkipItems);
+        if (column->IsSkipItems)
+            if (!(!is_visible))
+                @ASSERT_1230@;
         if (column->IsRequestOutput && !column->IsSkipItems)
             has_output_column = 1;
         column->Flags |= @IS_ENABLED@;
@@ -453,14 +470,15 @@
             table->CellSpacingX2 + table->CellPaddingX * 2.0f;
     }
 
+    /* Keep one output column alive when every visible column is clipped. */
     if (!has_output_column) {
-        column = &table->Columns.Data[table->LeftMostEnabledColumn];
+        column = &table->Columns[table->LeftMostEnabledColumn];
         column->IsRequestOutput = 1;
         column->IsSkipItems = 0;
     }
     unused_x1 = @MAX_FLOAT@(
         table->WorkRect.Min.x,
-        table->Columns.Data[table->RightMostEnabledColumn].ClipRect.Max.x);
+        table->Columns[table->RightMostEnabledColumn].ClipRect.Max.x);
     if (is_hovering_table && table->HoveredColumnBody == -1 &&
         mouse_skewed_x >= unused_x1)
         table->HoveredColumnBody =
@@ -470,6 +488,7 @@
     table->IsActiveIdAliveBeforeTable =
         (unsigned char)(g->ActiveIdIsAlive != 0);
 
+    /* Part 8: lock the actual right edge after widths are known. */
     if (table->RightMostStretchedColumn != -1)
         table->Flags &= ~@NO_HOST_EXTEND_X@;
     if ((table->Flags & @NO_HOST_EXTEND_X@) != 0) {
@@ -493,6 +512,7 @@
         table->InnerWindow->WorkRect.Min.y,
         table->InnerWindow->WorkRect.Max.y);
 
+    /* Parts 9-10: allocate draw channels and process resize borders. */
     @TABLE_SETUP_DRAW_CHANNELS@(imgui_c89_ctx, table);
     if ((table->Flags & @RESIZABLE@) != 0)
         @TABLE_UPDATE_BORDERS@(imgui_c89_ctx, table);
@@ -513,6 +533,7 @@
               g->DragDropActive))
         table->HighlightColumnHeader = table->HoveredColumnBody;
 
+    /* Build deferred context-menu and sorting state after layout is locked. */
     if (!table->DisableDefaultContextMenu &&
         @TABLE_BEGIN_CONTEXT_MENU_POPUP@(imgui_c89_ctx, table)) {
         @TABLE_DRAW_DEFAULT_CONTEXT_MENU@(
@@ -523,9 +544,10 @@
         (table->Flags & @SORTABLE@) != 0)
         @TABLE_SORT_SPECS_BUILD@(imgui_c89_ctx, table);
 
+    /* Record frozen decorations for scrolling and navigation. */
     if (table->FreezeColumnsRequest > 0)
         table->InnerWindow->DecoInnerSizeX1 =
-            table->Columns.Data[table->DisplayOrderToIndex.Data[
+            table->Columns[table->DisplayOrderToIndex[
                 table->FreezeColumnsRequest - 1]].MaxX -
             table->OuterRect.Min.x;
     if (table->FreezeRowsRequest > 0)

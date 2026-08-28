@@ -30,6 +30,7 @@ int resized;
 int hovered;
 int resizable;
 window = table->InnerWindow;
+/* Avoid touching draw channels when the entire table is outside the host. */
 if (table->OuterWindow->ClipRect.Min.x >= table->OuterRect.Max.x ||
     table->OuterWindow->ClipRect.Max.x <= table->OuterRect.Min.x ||
     table->OuterWindow->ClipRect.Min.y >= table->OuterRect.Max.y ||
@@ -40,7 +41,7 @@ draw_list = window->DrawList;
 @PUSH_CLIP@(imgui_c89_ctx, draw_list, &table->Bg0ClipRectForDrawCmd.Min,
     &table->Bg0ClipRectForDrawCmd.Max, 0);
 instance = table->InstanceCurrent == 0 ? &table->InstanceDataFirst :
-    &table->InstanceDataExtra.Data[table->InstanceCurrent - 1];
+    &table->InstanceDataExtra[table->InstanceCurrent - 1];
 base_y = table->FreezeRowsCount >= 1 ?
     table->InnerRect.Min.y : table->WorkRect.Min.y;
 draw_y1 = base_y + table->AngledHeadersHeight;
@@ -56,14 +57,15 @@ if (table->IsUsingHeaders)
     if (header_y2 > table->InnerRect.Max.y)
         header_y2 = table->InnerRect.Max.y;
 }
+/* Inner separators also carry resize hover/active feedback. */
 if (table->Flags & @BORDERS_INNER_V@)
     for (order_n = 0; order_n < table->ColumnsCount; order_n++)
     {
         if (!(table->EnabledMaskByDisplayOrder[order_n >> 5] &
               ((ImU32)1 << (order_n & 31))))
             continue;
-        column_n = table->DisplayOrderToIndex.Data[order_n];
-        column = &table->Columns.Data[column_n];
+        column_n = table->DisplayOrderToIndex[order_n];
+        column = &table->Columns[column_n];
         resized = table->ResizedColumn == column_n &&
             table->InstanceInteracted == table->InstanceCurrent;
         hovered = table->HoveredColumnBorder == column_n;
@@ -87,6 +89,7 @@ if (table->Flags & @BORDERS_INNER_V@)
                 draw_y1, draw_y2,
                 @BORDER_COLOR@(imgui_c89_ctx, table, order_n, column_n), 1.0f);
     }
+/* Draw the outer border in one command when both axes are enabled. */
 if (table->Flags & @BORDERS_OUTER@)
 {
     if ((table->Flags & @BORDERS_OUTER@) == @BORDERS_OUTER@)

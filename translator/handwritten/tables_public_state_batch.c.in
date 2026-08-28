@@ -8,9 +8,13 @@ if (!table)
     @ERROR_LOG@(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
     return;
 }
+if (!(table->Flags & @HIDEABLE@))
+    @ASSERT_1926@;
 if (column_n < 0)
     column_n = table->CurrentColumn;
-table->Columns.Data[column_n].IsUserEnabledNextFrame = enabled;
+if (!(column_n >= 0 && column_n < table->ColumnsCount))
+    @ASSERT_1929@;
+table->Columns[column_n].IsUserEnabledNextFrame = enabled;
 /* IMGUI_C89_FUNCTION_END table_set_column_enabled */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_set_bg_color */
@@ -22,6 +26,8 @@ if (!table)
     @ERROR_LOG@(imgui_c89_ctx, "Call should only be done while in BeginTable() scope!");
     return;
 }
+if (target == @BG_NONE@)
+    @ASSERT_2004@;
 if (color == ((ImU32)1 << 24))
     color = 0;
 if (target == @CELL_BG@)
@@ -33,9 +39,9 @@ if (target == @CELL_BG@)
     if (!(table->VisibleMaskByIndex[column_n >> 5] & ((ImU32)1 << (column_n & 31))))
         return;
     if (table->RowCellDataCurrent < 0 ||
-        table->RowCellData.Data[table->RowCellDataCurrent].Column != column_n)
+        table->RowCellData[table->RowCellDataCurrent].Column != column_n)
         table->RowCellDataCurrent++;
-    cell = &table->RowCellData.Data[table->RowCellDataCurrent];
+    cell = &table->RowCellData[table->RowCellDataCurrent];
     cell->BgColor = color;
     cell->Column = (ImGuiTableColumnIdx)column_n;
 }
@@ -43,8 +49,12 @@ else if (target == @ROW_BG0@ || target == @ROW_BG1@)
 {
     if (table->RowPosY1 > table->InnerClipRect.Max.y)
         return;
+    if (column_n != -1)
+        @ASSERT_2032@;
     table->RowBgColor[target == @ROW_BG1@] = color;
 }
+else
+    @ASSERT_2038@;
 /* IMGUI_C89_FUNCTION_END table_set_bg_color */
 
 /* IMGUI_C89_FUNCTION_BEGIN table_open_context_menu */
@@ -55,6 +65,8 @@ if (column_n == -1 && table->CurrentColumn != -1)
     column_n = table->CurrentColumn;
 if (column_n == table->ColumnsCount)
     column_n = -1;
+if (!(column_n >= -1 && column_n < table->ColumnsCount))
+    @ASSERT_3655@;
 if (table->Flags & (@RESIZABLE@ | @REORDERABLE@ | @HIDEABLE@))
 {
     table->IsContextPopupOpen = 1;
