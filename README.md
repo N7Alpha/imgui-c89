@@ -97,7 +97,7 @@ in `UPSTREAM.md` and `translator/upstream.lock.json`.
 The maintained idiomatic release is Dear ImGui v1.92.9b translated to strict
 C89 and then processed by the tracked, fingerprint-checked overlay. It retains
 every core feature and assertion path, passes the official 415-test suite
-through the exact C++ facade, and occupies 812,592 archive bytes / 516,999
+through the exact C++ facade, and occupies 811,192 archive bytes / 516,999
 loaded bytes under the documented like-for-like `-Os` build. The literal
 translation remains the upstream-derived semantic and maintenance oracle.
 

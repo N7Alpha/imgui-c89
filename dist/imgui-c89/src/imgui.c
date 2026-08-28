@@ -466,10 +466,10 @@ static int ImPool_ImGuiTabBar__GetMapSize__c478c86514(ImPool_ImGuiTabBar *self);
 static void ImPool_ImGuiTabBar__ImPool__5e53af34d2(ImPool_ImGuiTabBar *self);
 static ImGuiTabBar * ImPool_ImGuiTabBar__TryGetMapData__3cee31d06b(ImPool_ImGuiTabBar *self, ImPoolIdx n);
 static void ImPool_ImGuiTabBar__dtor_ImPool__3df3442a84(ImGuiContext *imgui_c89_ctx, ImPool_ImGuiTabBar *self);
-static void imgui_table_pool_clear(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self);
-static int imgui_table_pool_alive_count(ImGuiTablePool *self);
-static void imgui_table_pool_init(ImGuiTablePool *self);
-static void imgui_table_pool_fini(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self);
+static void imgui__table_pool_clear(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self);
+static int imgui__table_pool_alive_count(ImGuiTablePool *self);
+static void imgui__table_pool_init(ImGuiTablePool *self);
+static void imgui__table_pool_fini(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self);
 static void ImRect_Add__8f5fcd2ad6(ImRect *self, const ImVec2 * p);
 static unsigned char ImRect_Contains__c9916e1cff(ImRect *self, const ImRect * r);
 static unsigned char ImRect_ContainsWithPad__9ace5539b9(ImRect *self, const ImVec2 * p, const ImVec2 * pad);
@@ -884,13 +884,13 @@ static unsigned char imgui_c89_nav_overlay_selectable(
     float spacing_l;
     float spacing_u;
     if (window->SkipItems) return 0;
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, window, label, 0);
-    label_end = imgui_i_find_rendered_text_end(label, 0);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, window, label, 0);
+    label_end = imgui__find_rendered_text_end(label, 0);
     label_size = imgui_calc_text_size(imgui_c89_ctx, label, label_end, 0, -1.0f);
     size = label_size;
     pos = window->DC.CursorPos;
     pos.y += window->DC.CurrLineTextBaseOffset;
-    imgui_i_item_size(imgui_c89_ctx, &size, 0.0f);
+    imgui__item_size(imgui_c89_ctx, &size, 0.0f);
     if (size.x < window->WorkRect.Max.x - pos.x)
         size.x = window->WorkRect.Max.x - pos.x;
     bb.Min = pos;
@@ -902,14 +902,14 @@ static unsigned char imgui_c89_nav_overlay_selectable(
     bb.Min.y -= spacing_u;
     bb.Max.x += g->Style.ItemSpacing.x - spacing_l;
     bb.Max.y += g->Style.ItemSpacing.y - spacing_u;
-    if (!imgui_i_item_add(imgui_c89_ctx, &bb, id, 0, 0)) return 0;
+    if (!imgui__item_add(imgui_c89_ctx, &bb, id, 0, 0)) return 0;
     if (selected)
-        imgui_i_render_frame(imgui_c89_ctx, bb.Min, bb.Max, imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Header, 1.0f), 0, g->Style.SelectableRounding);
+        imgui__render_frame(imgui_c89_ctx, bb.Min, bb.Max, imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Header, 1.0f), 0, g->Style.SelectableRounding);
     if (pos.x + size.x > window->WorkRect.Max.x)
         size.x = window->WorkRect.Max.x - pos.x;
     pos_max.x = pos.x + size.x;
     pos_max.y = pos.y + size.y;
-    imgui_i_render_text_clipped(imgui_c89_ctx, &pos, &pos_max, label, label_end, &label_size, &g->Style.SelectableTextAlign, &bb);
+    imgui__render_text_clipped(imgui_c89_ctx, &pos, &pos_max, label, label_end, &label_size, &g->Style.SelectableTextAlign, &bb);
     return 0;
 }
 
@@ -1025,7 +1025,7 @@ ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *m
 static ImGuiContext *ImGuiContext_ImGuiContext_at__57017b82b5(ImGuiContext *imgui_c89_ctx, void *memory, ImFontAtlas * shared_font_atlas)
 {
     ImGuiContext *result = (ImGuiContext *)memory;
-    imgui_i_context_init(imgui_c89_ctx, result, shared_font_atlas);
+    imgui__context_init(imgui_c89_ctx, result, shared_font_atlas);
     return result;
 }
 
@@ -1144,7 +1144,7 @@ static ImGuiViewportP *ImGuiViewportP_ImGuiViewportP_at__d494acc966(ImGuiContext
 static ImGuiWindow *ImGuiWindow_ImGuiWindow_at__bc0c18d648(ImGuiContext *imgui_c89_ctx, void *memory, ImGuiContext * ctx, const char * name)
 {
     ImGuiWindow *result = (ImGuiWindow *)memory;
-    imgui_i_window_init(imgui_c89_ctx, result, ctx, name);
+    imgui__window_init(imgui_c89_ctx, result, ctx, name);
     return result;
 }
 
@@ -1250,7 +1250,7 @@ static ImVec4 ImVec4_ImVec4_value__2df7b774e7(float _x, float _y, float _z, floa
 static void IM_DELETE__c099fa8c9f(ImGuiContext *imgui_c89_ctx, ImDrawList * p)
 {
     if (p) {
-        imgui_i_im_draw_list_destroy(imgui_c89_ctx, ((ImDrawList *)(p)));
+        imgui__im_draw_list_destroy(imgui_c89_ctx, ((ImDrawList *)(p)));
         imgui_mem_free(imgui_c89_ctx, p);
     }
 }
@@ -1258,7 +1258,7 @@ static void IM_DELETE__c099fa8c9f(ImGuiContext *imgui_c89_ctx, ImDrawList * p)
 static void IM_DELETE__d182bf1b26(ImGuiContext *imgui_c89_ctx, ImFontAtlas * p)
 {
     if (p) {
-        imgui_i_im_font_atlas_destroy(imgui_c89_ctx, ((ImFontAtlas *)(p)));
+        imgui__im_font_atlas_destroy(imgui_c89_ctx, ((ImFontAtlas *)(p)));
         imgui_mem_free(imgui_c89_ctx, p);
     }
 }
@@ -1266,7 +1266,7 @@ static void IM_DELETE__d182bf1b26(ImGuiContext *imgui_c89_ctx, ImFontAtlas * p)
 static void IM_DELETE__1612c3f00d(ImGuiContext *imgui_c89_ctx, ImGuiContext * p)
 {
     if (p) {
-        imgui_i_context_destroy(imgui_c89_ctx, ((ImGuiContext *)(p)));
+        imgui__context_destroy(imgui_c89_ctx, ((ImGuiContext *)(p)));
         imgui_mem_free(imgui_c89_ctx, p);
     }
 }
@@ -1282,7 +1282,7 @@ static void IM_DELETE__f1b75a2e98(ImGuiContext *imgui_c89_ctx, ImGuiViewportP * 
 static void IM_DELETE__ef59a8e8d8(ImGuiContext *imgui_c89_ctx, ImGuiWindow * p)
 {
     if (p) {
-        imgui_i_window_destroy(imgui_c89_ctx, ((ImGuiWindow *)(p)));
+        imgui__window_destroy(imgui_c89_ctx, ((ImGuiWindow *)(p)));
         imgui_mem_free(imgui_c89_ctx, p);
     }
 }
@@ -1309,7 +1309,7 @@ float ImAbs__34413c361e(float x)
     return fabsf(x);
 }
 
-ImU32 imgui_i_im_alpha_blend_colors(ImU32 col_a, ImU32 col_b)
+ImU32 imgui__im_alpha_blend_colors(ImU32 col_a, ImU32 col_b)
 {
     float t;
     int r;
@@ -1323,7 +1323,7 @@ ImU32 imgui_i_im_alpha_blend_colors(ImU32 col_a, ImU32 col_b)
     return (((((ImU32)(255)) << 24) | (((ImU32)(b)) << 16)) | (((ImU32)(g)) << 8)) | (((ImU32)(r)) << 0);
 }
 
-ImVec2 imgui_i_im_bezier_cubic_closest_point(const ImVec2 * p1, const ImVec2 * p2, const ImVec2 * p3, const ImVec2 * p4, const ImVec2 * p, int num_segments)
+ImVec2 imgui__im_bezier_cubic_closest_point(const ImVec2 * p1, const ImVec2 * p2, const ImVec2 * p3, const ImVec2 * p4, const ImVec2 * p, int num_segments)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -1343,8 +1343,8 @@ ImVec2 imgui_i_im_bezier_cubic_closest_point(const ImVec2 * p1, const ImVec2 * p
     t_step = (1.0f / ((float)(num_segments)));
     i_step = 1;
     for (; i_step <= num_segments; i_step++) {
-        p_current = imgui_i_im_bezier_cubic_calc(p1, p2, p3, p4, (t_step * i_step));
-        p_line = imgui_i_im_line_closest_point(&(p_last), &(p_current), p);
+        p_current = imgui__im_bezier_cubic_calc(p1, p2, p3, p4, (t_step * i_step));
+        p_line = imgui__im_line_closest_point(&(p_last), &(p_current), p);
         dist2 = ImLengthSqr__a1d968fcc5((imgui_c89_temporary_0 = operator___cb7271567d(p, &(p_line)), &imgui_c89_temporary_0));
         if (dist2 < p_closest_dist2) {
             p_closest = p_line;
@@ -1355,7 +1355,7 @@ ImVec2 imgui_i_im_bezier_cubic_closest_point(const ImVec2 * p1, const ImVec2 * p
     return p_closest;
 }
 
-ImVec2 imgui_i_im_bezier_cubic_closest_point_casteljau(const ImVec2 * p1, const ImVec2 * p2, const ImVec2 * p3, const ImVec2 * p4, const ImVec2 * p, float tess_tol)
+ImVec2 imgui__im_bezier_cubic_closest_point_casteljau(const ImVec2 * p1, const ImVec2 * p2, const ImVec2 * p3, const ImVec2 * p4, const ImVec2 * p, float tess_tol)
 {
     ImVec2 p_last;
     ImVec2 p_closest;
@@ -1444,12 +1444,12 @@ static float ImExponentialMovingAverage__a690c30050(float avg, float sample, int
     return avg;
 }
 
-unsigned char imgui_i_im_file_close(ImFileHandle f)
+unsigned char imgui__im_file_close(ImFileHandle f)
 {
     return fclose(f) == 0;
 }
 
-ImU64 imgui_i_im_file_get_size(ImFileHandle f)
+ImU64 imgui__im_file_get_size(ImFileHandle f)
 {
     long off;
     long sz;
@@ -1459,7 +1459,7 @@ ImU64 imgui_i_im_file_get_size(ImFileHandle f)
     return (((((off = ftell(f)) != (-1)) && (!fseek(f, 0, 2))) && ((sz = ftell(f)) != (-1))) && (!fseek(f, off, 0))) ? ((ImU64)(sz)) : ((ImU64)((-1)));
 }
 
-void * imgui_i_im_file_load_to_memory(ImGuiContext *imgui_c89_ctx, const char * filename, const char * mode, size_t * out_file_size, int padding_bytes)
+void * imgui__im_file_load_to_memory(ImGuiContext *imgui_c89_ctx, const char * filename, const char * mode, size_t * out_file_size, int padding_bytes)
 {
     ImFileHandle f;
     size_t file_size;
@@ -1469,45 +1469,45 @@ void * imgui_i_im_file_load_to_memory(ImGuiContext *imgui_c89_ctx, const char * 
     if (out_file_size) {
         (*out_file_size) = 0;
     }
-    if ((f = imgui_i_im_file_open(filename, mode)) == 0) {
+    if ((f = imgui__im_file_open(filename, mode)) == 0) {
         return 0;
     }
-    file_size = ((size_t)(imgui_i_im_file_get_size(f)));
+    file_size = ((size_t)(imgui__im_file_get_size(f)));
     if (file_size == ((size_t)((-1)))) {
-        imgui_i_im_file_close(f);
+        imgui__im_file_close(f);
         return 0;
     }
     file_data = imgui_mem_alloc(imgui_c89_ctx, (file_size + padding_bytes));
     if (file_data == 0) {
-        imgui_i_im_file_close(f);
+        imgui__im_file_close(f);
         return 0;
     }
-    if (imgui_i_im_file_read(file_data, 1, file_size, f) != file_size) {
-        imgui_i_im_file_close(f);
+    if (imgui__im_file_read(file_data, 1, file_size, f) != file_size) {
+        imgui__im_file_close(f);
         imgui_mem_free(imgui_c89_ctx, file_data);
         return 0;
     }
     if (padding_bytes > 0) {
         memset(((void *)((((char *)(file_data)) + file_size))), 0, ((size_t)(padding_bytes)));
     }
-    imgui_i_im_file_close(f);
+    imgui__im_file_close(f);
     if (out_file_size) {
         (*out_file_size) = file_size;
     }
     return file_data;
 }
 
-ImFileHandle imgui_i_im_file_open(const char * filename, const char * mode)
+ImFileHandle imgui__im_file_open(const char * filename, const char * mode)
 {
     return fopen(filename, mode);
 }
 
-ImU64 imgui_i_im_file_read(void * data, ImU64 sz, ImU64 count, ImFileHandle f)
+ImU64 imgui__im_file_read(void * data, ImU64 sz, ImU64 count, ImFileHandle f)
 {
     return fread(data, ((size_t)(sz)), ((size_t)(count)), f);
 }
 
-ImU64 imgui_i_im_file_write(const void * data, ImU64 sz, ImU64 count, ImFileHandle f)
+ImU64 imgui__im_file_write(const void * data, ImU64 sz, ImU64 count, ImFileHandle f)
 {
     return fwrite(data, ((size_t)(sz)), ((size_t)(count)), f);
 }
@@ -1538,7 +1538,7 @@ ImFontAtlasRectId ImFontAtlasRectId_Make__76050ffe54(int index_idx, int gen_idx)
     return (ImFontAtlasRectId)((index_idx | (gen_idx << 20)));
 }
 
-int imgui_i_im_format_string(char * buf, size_t buf_size, const char * fmt, ...)
+int imgui__im_format_string(char * buf, size_t buf_size, const char * fmt, ...)
 {
     va_list args;
     int w;
@@ -1556,16 +1556,16 @@ int imgui_i_im_format_string(char * buf, size_t buf_size, const char * fmt, ...)
     return w;
 }
 
-void imgui_i_im_format_string_to_temp_buffer(ImGuiContext *imgui_c89_ctx, const char ** out_buf, const char ** out_buf_end, const char * fmt, ...)
+void imgui__im_format_string_to_temp_buffer(ImGuiContext *imgui_c89_ctx, const char ** out_buf, const char ** out_buf_end, const char * fmt, ...)
 {
     va_list args;
 
     va_start(args, fmt);
-    imgui_i_im_format_string_to_temp_buffer_v(imgui_c89_ctx, out_buf, out_buf_end, fmt, args);
+    imgui__im_format_string_to_temp_buffer_v(imgui_c89_ctx, out_buf, out_buf_end, fmt, args);
     va_end(args);
 }
 
-void imgui_i_im_format_string_to_temp_buffer_v(ImGuiContext *imgui_c89_ctx, const char ** out_buf, const char ** out_buf_end, const char * fmt, va_list args)
+void imgui__im_format_string_to_temp_buffer_v(ImGuiContext *imgui_c89_ctx, const char ** out_buf, const char ** out_buf_end, const char * fmt, va_list args)
 {
     ImGuiContext * g;
     int buf_len;
@@ -1594,7 +1594,7 @@ void imgui_i_im_format_string_to_temp_buffer_v(ImGuiContext *imgui_c89_ctx, cons
             (*out_buf) = buf;
             (*out_buf_end) = (buf + buf_len__16dae864);
         } else {
-            buf_len = imgui_i_im_format_string_v(g->TempBuffer.Data, g->TempBuffer.Size, fmt, args);
+            buf_len = imgui__im_format_string_v(g->TempBuffer.Data, g->TempBuffer.Size, fmt, args);
             (*out_buf) = g->TempBuffer.Data;
             if (out_buf_end) {
                 (*out_buf_end) = (g->TempBuffer.Data + buf_len);
@@ -1603,7 +1603,7 @@ void imgui_i_im_format_string_to_temp_buffer_v(ImGuiContext *imgui_c89_ctx, cons
     }
 }
 
-int imgui_i_im_format_string_v(char * buf, size_t buf_size, const char * fmt, va_list args)
+int imgui__im_format_string_v(char * buf, size_t buf_size, const char * fmt, va_list args)
 {
     int w;
 
@@ -1618,7 +1618,7 @@ int imgui_i_im_format_string_v(char * buf, size_t buf_size, const char * fmt, va
     return w;
 }
 
-ImGuiID imgui_i_im_hash_data(const void * data_p, size_t data_size, ImGuiID seed)
+ImGuiID imgui__im_hash_data(const void * data_p, size_t data_size, ImGuiID seed)
 {
     ImU32 crc = ~seed;
     const unsigned char *data = (const unsigned char *)data_p;
@@ -1627,7 +1627,7 @@ ImGuiID imgui_i_im_hash_data(const void * data_p, size_t data_size, ImGuiID seed
     return ~crc;
 }
 
-const char * imgui_i_im_hash_skip_uncontributing_prefix(const char * label)
+const char * imgui__im_hash_skip_uncontributing_prefix(const char * label)
 {
     const char * result;
     unsigned char c;
@@ -1643,7 +1643,7 @@ const char * imgui_i_im_hash_skip_uncontributing_prefix(const char * label)
     return result;
 }
 
-ImGuiID imgui_i_im_hash_str(const char * data_p, size_t data_size, ImGuiID seed)
+ImGuiID imgui__im_hash_str(const char * data_p, size_t data_size, ImGuiID seed)
 {
     ImU32 initial = ~seed;
     ImU32 crc = initial;
@@ -1708,7 +1708,7 @@ float ImLerp__95dd708a82(float a, float b, float t)
     return (float)((((float)(a)) + (((float)((b - a))) * t)));
 }
 
-ImVec2 imgui_i_im_line_closest_point(const ImVec2 * a, const ImVec2 * b, const ImVec2 * p)
+ImVec2 imgui__im_line_closest_point(const ImVec2 * a, const ImVec2 * b, const ImVec2 * p)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -1757,7 +1757,7 @@ float ImLog__8ae734901e(float x)
     return logf(x);
 }
 
-ImGuiStoragePair * imgui_i_im_lower_bound(ImGuiStoragePair * in_begin, ImGuiStoragePair * in_end, ImGuiID key)
+ImGuiStoragePair * imgui__im_lower_bound(ImGuiStoragePair * in_begin, ImGuiStoragePair * in_end, ImGuiID key)
 {
     ImGuiStoragePair * in_p;
     size_t count2;
@@ -1794,7 +1794,7 @@ float ImMax__3c7b1bb7d1(float lhs, float rhs)
     return (lhs >= rhs) ? lhs : rhs;
 }
 
-void * imgui_i_im_memdup(ImGuiContext *imgui_c89_ctx, const void * src, size_t size)
+void * imgui__im_memdup(ImGuiContext *imgui_c89_ctx, const void * src, size_t size)
 {
     void * dst;
 
@@ -1864,7 +1864,7 @@ float ImSign__f9f863f978(float x)
     return (x < 0.0f) ? (-1.0f) : ((x > 0.0f) ? 1.0f : 0.0f);
 }
 
-const char * imgui_i_im_str_skip_blank(const char * str)
+const char * imgui__im_str_skip_blank(const char * str)
 {
     while ((str[0] == 32) || (str[0] == 9)) {
         str++;
@@ -1872,7 +1872,7 @@ const char * imgui_i_im_str_skip_blank(const char * str)
     return str;
 }
 
-void imgui_i_im_str_trim_blanks(char * buf)
+void imgui__im_str_trim_blanks(char * buf)
 {
     char * p;
     char * p_start;
@@ -1894,7 +1894,7 @@ void imgui_i_im_str_trim_blanks(char * buf)
     buf[(p - p_start)] = 0;
 }
 
-const char * imgui_i_im_strbol(const char * buf_mid_line, const char * buf_begin)
+const char * imgui__im_strbol(const char * buf_mid_line, const char * buf_begin)
 {
     ;
     while ((buf_mid_line > buf_begin) && (buf_mid_line[(-1)] != 10)) {
@@ -1903,7 +1903,7 @@ const char * imgui_i_im_strbol(const char * buf_mid_line, const char * buf_begin
     return buf_mid_line;
 }
 
-const char * imgui_i_im_strchr_range(const char * str, const char * str_end, char c)
+const char * imgui__im_strchr_range(const char * str, const char * str_end, char c)
 {
     const char * p;
 
@@ -1911,7 +1911,7 @@ const char * imgui_i_im_strchr_range(const char * str, const char * str_end, cha
     return p;
 }
 
-char * imgui_i_im_strdup(ImGuiContext *imgui_c89_ctx, const char * str)
+char * imgui__im_strdup(ImGuiContext *imgui_c89_ctx, const char * str)
 {
     size_t len;
     void * buf;
@@ -1921,7 +1921,7 @@ char * imgui_i_im_strdup(ImGuiContext *imgui_c89_ctx, const char * str)
     return (char *)(memcpy(buf, ((const void *)(str)), (len + 1)));
 }
 
-char * imgui_i_im_strdupcpy(ImGuiContext *imgui_c89_ctx, char * dst, size_t * p_dst_size, const char * src)
+char * imgui__im_strdupcpy(ImGuiContext *imgui_c89_ctx, char * dst, size_t * p_dst_size, const char * src)
 {
     size_t dst_buf_size;
     size_t src_size;
@@ -1938,7 +1938,7 @@ char * imgui_i_im_strdupcpy(ImGuiContext *imgui_c89_ctx, char * dst, size_t * p_
     return (char *)(memcpy(dst, ((const void *)(src)), src_size));
 }
 
-const char * imgui_i_im_streol_range(const char * str, const char * str_end)
+const char * imgui__im_streol_range(const char * str, const char * str_end)
 {
     const char * p;
 
@@ -1946,7 +1946,7 @@ const char * imgui_i_im_streol_range(const char * str, const char * str_end)
     return p ? p : str_end;
 }
 
-int imgui_i_im_stricmp(const char * str1, const char * str2)
+int imgui__im_stricmp(const char * str1, const char * str2)
 {
     int d;
 
@@ -1957,7 +1957,7 @@ int imgui_i_im_stricmp(const char * str1, const char * str2)
     return d;
 }
 
-const char * imgui_i_im_stristr(const char * haystack, const char * haystack_end, const char * needle, const char * needle_end)
+const char * imgui__im_stristr(const char * haystack, const char * haystack_end, const char * needle, const char * needle_end)
 {
     char un0;
     const char * b;
@@ -1985,7 +1985,7 @@ const char * imgui_i_im_stristr(const char * haystack, const char * haystack_end
     return 0;
 }
 
-int imgui_i_im_strlen_w(const ImWchar * str)
+int imgui__im_strlen_w(const ImWchar * str)
 {
     int n;
 
@@ -1996,7 +1996,7 @@ int imgui_i_im_strlen_w(const ImWchar * str)
     return n;
 }
 
-void imgui_i_im_strncpy(char * dst, const char * src, size_t count)
+void imgui__im_strncpy(char * dst, const char * src, size_t count)
 {
     if (count < 1) {
         return;
@@ -2007,7 +2007,7 @@ void imgui_i_im_strncpy(char * dst, const char * src, size_t count)
     dst[(count - 1)] = 0;
 }
 
-int imgui_i_im_strnicmp(const char * str1, const char * str2, size_t count)
+int imgui__im_strnicmp(const char * str1, const char * str2, size_t count)
 {
     int d;
 
@@ -2038,7 +2038,7 @@ void ImSwap__3e5ab29a0d(float * a, float * b)
     (*b) = tmp;
 }
 
-int imgui_i_im_text_char_from_utf8(unsigned int * out_char, const char * in_text, const char * in_text_end)
+int imgui__im_text_char_from_utf8(unsigned int * out_char, const char * in_text, const char * in_text_end)
 {
     int len;
     int wanted;
@@ -2075,7 +2075,7 @@ int imgui_i_im_text_char_from_utf8(unsigned int * out_char, const char * in_text
     return wanted;
 }
 
-int imgui_i_im_text_char_to_utf8(char * out_buf, unsigned int c)
+int imgui__im_text_char_to_utf8(char * out_buf, unsigned int c)
 {
     int count;
 
@@ -2084,20 +2084,20 @@ int imgui_i_im_text_char_to_utf8(char * out_buf, unsigned int c)
     return count;
 }
 
-int imgui_i_im_text_count_chars_from_utf8(const char * in_text, const char * in_text_end)
+int imgui__im_text_count_chars_from_utf8(const char * in_text, const char * in_text_end)
 {
     int char_count;
     unsigned int c;
 
     char_count = 0;
     while (((!in_text_end) || (in_text < in_text_end)) && (*in_text)) {
-        in_text += imgui_i_im_text_char_from_utf8((&c), in_text, in_text_end);
+        in_text += imgui__im_text_char_from_utf8((&c), in_text, in_text_end);
         char_count++;
     }
     return char_count;
 }
 
-int imgui_i_im_text_count_lines(const char * in_text, const char * in_text_end)
+int imgui__im_text_count_lines(const char * in_text, const char * in_text_end)
 {
     int count;
     const char * line_end;
@@ -2114,15 +2114,15 @@ int imgui_i_im_text_count_lines(const char * in_text, const char * in_text_end)
     return count;
 }
 
-int imgui_i_im_text_count_utf8_bytes_from_char(const char * in_text, const char * in_text_end)
+int imgui__im_text_count_utf8_bytes_from_char(const char * in_text, const char * in_text_end)
 {
     unsigned int unused;
 
     unused = 0;
-    return imgui_i_im_text_char_from_utf8((&unused), in_text, in_text_end);
+    return imgui__im_text_char_from_utf8((&unused), in_text, in_text_end);
 }
 
-int imgui_i_im_text_count_utf8_bytes_from_str(const ImWchar * in_text, const ImWchar * in_text_end)
+int imgui__im_text_count_utf8_bytes_from_str(const ImWchar * in_text, const ImWchar * in_text_end)
 {
     int bytes_count;
     unsigned int c;
@@ -2139,7 +2139,7 @@ int imgui_i_im_text_count_utf8_bytes_from_str(const ImWchar * in_text, const ImW
     return bytes_count;
 }
 
-const char * imgui_i_im_text_find_previous_utf8_codepoint(const char * in_text_start, const char * in_p)
+const char * imgui__im_text_find_previous_utf8_codepoint(const char * in_text_start, const char * in_p)
 {
     while (in_p > in_text_start) {
         in_p--;
@@ -2150,7 +2150,7 @@ const char * imgui_i_im_text_find_previous_utf8_codepoint(const char * in_text_s
     return in_text_start;
 }
 
-const char * imgui_i_im_text_find_valid_utf8_codepoint_end(const char * in_text_start, const char * in_text_end, const char * in_p)
+const char * imgui__im_text_find_valid_utf8_codepoint_end(const char * in_text_start, const char * in_text_end, const char * in_p)
 {
     const char * prev;
     unsigned int prev_c;
@@ -2159,15 +2159,15 @@ const char * imgui_i_im_text_find_valid_utf8_codepoint_end(const char * in_text_
     if (in_text_start == in_p) {
         return in_text_start;
     }
-    prev = imgui_i_im_text_find_previous_utf8_codepoint(in_text_start, in_p);
-    prev_c_len = imgui_i_im_text_char_from_utf8((&prev_c), prev, in_text_end);
+    prev = imgui__im_text_find_previous_utf8_codepoint(in_text_start, in_p);
+    prev_c_len = imgui__im_text_char_from_utf8((&prev_c), prev, in_text_end);
     if ((prev_c != 65533) && (prev_c_len <= ((int)((in_p - prev))))) {
         return in_p;
     }
     return prev;
 }
 
-int imgui_i_im_text_str_from_utf8(ImWchar * buf, int buf_size, const char * in_text, const char * in_text_end, const char ** in_text_remaining)
+int imgui__im_text_str_from_utf8(ImWchar * buf, int buf_size, const char * in_text, const char * in_text_end, const char ** in_text_remaining)
 {
     ImWchar * buf_out;
     ImWchar * buf_end;
@@ -2176,7 +2176,7 @@ int imgui_i_im_text_str_from_utf8(ImWchar * buf, int buf_size, const char * in_t
     buf_out = buf;
     buf_end = (buf + buf_size);
     while (((buf_out < (buf_end - 1)) && ((!in_text_end) || (in_text < in_text_end))) && (*in_text)) {
-        in_text += imgui_i_im_text_char_from_utf8((&c), in_text, in_text_end);
+        in_text += imgui__im_text_char_from_utf8((&c), in_text, in_text_end);
         (*(buf_out++)) = ((ImWchar)(c));
     }
     (*buf_out) = 0;
@@ -2186,7 +2186,7 @@ int imgui_i_im_text_str_from_utf8(ImWchar * buf, int buf_size, const char * in_t
     return (int)((buf_out - buf));
 }
 
-int imgui_i_im_text_str_to_utf8(char * out_buf, int out_buf_size, const ImWchar * in_text, const ImWchar * in_text_end)
+int imgui__im_text_str_to_utf8(char * out_buf, int out_buf_size, const ImWchar * in_text, const ImWchar * in_text_end)
 {
     char * buf_p;
     const char * buf_end;
@@ -2216,7 +2216,7 @@ static float ImTriangleArea__b57cabc9ca(const ImVec2 * a, const ImVec2 * b, cons
     return fabsf((((a->x * (b->y - c->y)) + (b->x * (c->y - a->y))) + (c->x * (a->y - b->y)))) * 0.5f;
 }
 
-void imgui_i_im_triangle_barycentric_coords(const ImVec2 * a, const ImVec2 * b, const ImVec2 * c, const ImVec2 * p, float * out_u, float * out_v, float * out_w)
+void imgui__im_triangle_barycentric_coords(const ImVec2 * a, const ImVec2 * b, const ImVec2 * c, const ImVec2 * p, float * out_u, float * out_v, float * out_w)
 {
     ImVec2 v0;
     ImVec2 v1;
@@ -2232,7 +2232,7 @@ void imgui_i_im_triangle_barycentric_coords(const ImVec2 * a, const ImVec2 * b, 
     (*out_u) = ((1.0f - (*out_v)) - (*out_w));
 }
 
-ImVec2 imgui_i_im_triangle_closest_point(const ImVec2 * a, const ImVec2 * b, const ImVec2 * c, const ImVec2 * p)
+ImVec2 imgui__im_triangle_closest_point(const ImVec2 * a, const ImVec2 * b, const ImVec2 * c, const ImVec2 * p)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -2246,9 +2246,9 @@ ImVec2 imgui_i_im_triangle_closest_point(const ImVec2 * a, const ImVec2 * b, con
     float dist2_ca;
     float m;
 
-    proj_ab = imgui_i_im_line_closest_point(a, b, p);
-    proj_bc = imgui_i_im_line_closest_point(b, c, p);
-    proj_ca = imgui_i_im_line_closest_point(c, a, p);
+    proj_ab = imgui__im_line_closest_point(a, b, p);
+    proj_bc = imgui__im_line_closest_point(b, c, p);
+    proj_ca = imgui__im_line_closest_point(c, a, p);
     dist2_ab = ImLengthSqr__a1d968fcc5((imgui_c89_temporary_0 = operator___cb7271567d(p, &(proj_ab)), &imgui_c89_temporary_0));
     dist2_bc = ImLengthSqr__a1d968fcc5((imgui_c89_temporary_1 = operator___cb7271567d(p, &(proj_bc)), &imgui_c89_temporary_1));
     dist2_ca = ImLengthSqr__a1d968fcc5((imgui_c89_temporary_2 = operator___cb7271567d(p, &(proj_ca)), &imgui_c89_temporary_2));
@@ -2262,7 +2262,7 @@ ImVec2 imgui_i_im_triangle_closest_point(const ImVec2 * a, const ImVec2 * b, con
     return proj_ca;
 }
 
-unsigned char imgui_i_im_triangle_contains_point(const ImVec2 * a, const ImVec2 * b, const ImVec2 * c, const ImVec2 * p)
+unsigned char imgui__im_triangle_contains_point(const ImVec2 * a, const ImVec2 * b, const ImVec2 * c, const ImVec2 * p)
 {
     unsigned char b1;
     unsigned char b2;
@@ -2392,10 +2392,10 @@ const ImGuiPayload * imgui_accept_drag_drop_payload(ImGuiContext *imgui_c89_ctx,
     if (draw_target_rect && (g->DragDropTargetFullViewport != 0)) {
         bb = g->DragDropTargetRect;
         ImRect_Expand__d4c31dde12(((ImRect *)(&(bb))), (-3.5f));
-        imgui_i_render_drag_drop_target_rect_ex(imgui_c89_ctx, imgui_get_foreground_draw_list(imgui_c89_ctx), &(bb), g->Style.DragDropTargetRounding);
+        imgui__render_drag_drop_target_rect_ex(imgui_c89_ctx, imgui_get_foreground_draw_list(imgui_c89_ctx), &(bb), g->Style.DragDropTargetRounding);
     } else {
         if (draw_target_rect) {
-            imgui_i_render_drag_drop_target_rect_for_item(imgui_c89_ctx, &(r));
+            imgui__render_drag_drop_target_rect_for_item(imgui_c89_ctx, &(r));
         }
     }
     g->DragDropAcceptFrameCount = g->FrameCount;
@@ -2410,14 +2410,14 @@ const ImGuiPayload * imgui_accept_drag_drop_payload(ImGuiContext *imgui_c89_ctx,
     if (payload->Delivery) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventActiveId) {
-                imgui_i_debug_log(imgui_c89_ctx, "[dragdrop] AcceptDragDropPayload(): 0x%08X: payload delivery\n", g->DragDropTargetId);
+                imgui__debug_log(imgui_c89_ctx, "[dragdrop] AcceptDragDropPayload(): 0x%08X: payload delivery\n", g->DragDropTargetId);
             }
         } while (0);
     }
     return &(*payload);
 }
 
-void imgui_i_activate_item_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+void imgui__activate_item_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
 
@@ -2426,7 +2426,7 @@ void imgui_i_activate_item_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
     g->NavNextActivateFlags = ImGuiActivateFlags_None;
 }
 
-ImGuiID imgui_i_add_context_hook(ImGuiContext *imgui_c89_ctx, ImGuiContext * ctx, const ImGuiContextHook * hook)
+ImGuiID imgui__add_context_hook(ImGuiContext *imgui_c89_ctx, ImGuiContext * ctx, const ImGuiContextHook * hook)
 {
     ImGuiContext * g;
 
@@ -2437,12 +2437,12 @@ ImGuiID imgui_i_add_context_hook(ImGuiContext *imgui_c89_ctx, ImGuiContext * ctx
     return g->HookIdNext;
 }
 
-void imgui_i_add_settings_handler(ImGuiContext *imgui_c89_ctx, const ImGuiSettingsHandler * handler)
+void imgui__add_settings_handler(ImGuiContext *imgui_c89_ctx, const ImGuiSettingsHandler * handler)
 {
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    imgui_c89_expect((!(imgui_i_find_settings_handler(imgui_c89_ctx, handler->TypeName) == 0)), 0) ? imgui_c89_assert_id(284) : ((void)(0));
+    imgui_c89_expect((!(imgui__find_settings_handler(imgui_c89_ctx, handler->TypeName) == 0)), 0) ? imgui_c89_assert_id(284) : ((void)(0));
     ImVector_ImGuiSettingsHandler__push_back__0785c5eb8f(imgui_c89_ctx, ((ImVector_ImGuiSettingsHandler *)(&(g->SettingsHandlers))), &((*handler)));
 }
 
@@ -2538,7 +2538,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
     imgui_c89_expect((!((name != 0) && (name[0] != 0))), 0) ? imgui_c89_assert_id(73) : ((void)(0));
     imgui_c89_expect((!g->WithinFrameScope), 0) ? imgui_c89_assert_id(74) : ((void)(0));
     imgui_c89_expect((!(g->FrameCountEnded != g->FrameCount)), 0) ? imgui_c89_assert_id(75) : ((void)(0));
-    window = imgui_i_find_window_by_name(imgui_c89_ctx, name);
+    window = imgui__find_window_by_name(imgui_c89_ctx, name);
     window_just_created = (window == 0);
     if (window_just_created) {
         window = CreateNewWindow__47f6c0c606(imgui_c89_ctx, name, flags);
@@ -2586,18 +2586,18 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
     window_stack_data->ParentLastItemDataBackup = g->LastItemData;
     window_stack_data->DisabledOverrideReenable = ((flags & ImGuiWindowFlags_Tooltip) && (g->CurrentItemFlags & ImGuiItemFlags_Disabled));
     window_stack_data->DisabledOverrideReenableAlphaBackup = 0.0f;
-    imgui_i_error_recovery_store_state(imgui_c89_ctx, (&window_stack_data->StackSizesInBegin));
+    imgui__error_recovery_store_state(imgui_c89_ctx, (&window_stack_data->StackSizesInBegin));
     g->StackSizesInBeginForCurrentWindow = (&window_stack_data->StackSizesInBegin);
     if (flags & ImGuiWindowFlags_ChildMenu) {
         g->BeginMenuDepth++;
     }
     if (first_begin_of_the_frame) {
-        imgui_i_update_window_parent_and_root_links(window, flags, parent_window);
+        imgui__update_window_parent_and_root_links(window, flags, parent_window);
         window->ParentWindowInBeginStack = parent_window_in_stack;
         window->ParentWindowForFocusRoute = ((flags & ImGuiWindowFlags_ChildWindow) ? parent_window_in_stack : 0);
         window->FontWindowScaleParents = (parent_window ? (parent_window->FontWindowScaleParents * parent_window->FontWindowScale) : 1.0f);
     }
-    imgui_i_push_focus_scope(imgui_c89_ctx, ((window->ChildFlags & ImGuiChildFlags_NavFlattened) ? g->CurrentFocusScopeId : window->ID));
+    imgui__push_focus_scope(imgui_c89_ctx, ((window->ChildFlags & ImGuiChildFlags_NavFlattened) ? g->CurrentFocusScopeId : window->ID));
     window->NavRootFocusScopeId = g->CurrentFocusScopeId;
     if (flags & ImGuiWindowFlags_Popup) {
         popup_ref__213a11cf = &((*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), g->BeginPopupStack.Size))));
@@ -2616,7 +2616,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
             window->SetWindowPosPivot = g->NextWindowData.PosPivotVal;
             window->SetWindowPosAllowFlags &= (~((ImGuiCond_Once | ImGuiCond_FirstUseEver) | ImGuiCond_Appearing));
         } else {
-            imgui_i_set_window_pos(imgui_c89_ctx, window, &(g->NextWindowData.PosVal), g->NextWindowData.PosCond);
+            imgui__set_window_pos(imgui_c89_ctx, window, &(g->NextWindowData.PosVal), g->NextWindowData.PosCond);
         }
     }
     if (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasSize) {
@@ -2628,7 +2628,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
         if ((window->ChildFlags & ImGuiChildFlags_ResizeY) && ((window->SetWindowSizeAllowFlags & ImGuiCond_FirstUseEver) == 0)) {
             g->NextWindowData.SizeVal.y = window->SizeFull.y;
         }
-        imgui_i_set_window_size(imgui_c89_ctx, window, &(g->NextWindowData.SizeVal), g->NextWindowData.SizeCond);
+        imgui__set_window_size(imgui_c89_ctx, window, &(g->NextWindowData.SizeVal), g->NextWindowData.SizeCond);
     }
     if (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasScroll) {
         if (g->NextWindowData.ScrollVal.x >= 0.0f) {
@@ -2648,17 +2648,17 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
         }
     }
     if (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasCollapsed) {
-        imgui_i_set_window_collapsed(window, g->NextWindowData.CollapsedVal, g->NextWindowData.CollapsedCond);
+        imgui__set_window_collapsed(window, g->NextWindowData.CollapsedVal, g->NextWindowData.CollapsedCond);
     }
     if (g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasFocus) {
-        imgui_i_focus_window(imgui_c89_ctx, window, 0);
+        imgui__focus_window(imgui_c89_ctx, window, 0);
     }
     if (window->Appearing) {
         SetWindowConditionAllowFlags__5223a0d6cf(window, ImGuiCond_Appearing, 0);
     }
-    imgui_i_update_window_skip_refresh(imgui_c89_ctx, window);
+    imgui__update_window_skip_refresh(imgui_c89_ctx, window);
     if (window_stack_data->DisabledOverrideReenable && (window->RootWindow == window)) {
-        imgui_i_begin_disabled_override_reenable(imgui_c89_ctx);
+        imgui__begin_disabled_override_reenable(imgui_c89_ctx);
     }
     g->CurrentWindow = 0;
     if (first_begin_of_the_frame && (!window->SkipRefresh)) {
@@ -2671,7 +2671,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
         imgui_draw_list_reset_for_new_frame(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)));
         window->DC.CurrentTableIdx = (-1);
         if (window->MemoryCompacted) {
-            imgui_i_gc_awake_transient_window_buffers(imgui_c89_ctx, window);
+            imgui__gc_awake_transient_window_buffers(imgui_c89_ctx, window);
         }
         window_title_visible_elsewhere = 0;
         if (((g->NavWindowingListWindow != 0) && g->NavWindowingListWindow->WasActive) && ((flags & ImGuiWindowFlags_NoNavFocus) == 0)) {
@@ -2682,7 +2682,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
         }
         if (((window_title_visible_elsewhere || window_just_activated_by_user) && (!window_just_created)) && (strcmp(name, window->Name) != 0)) {
             buf_len = ((size_t)(window->NameBufLen));
-            window->Name = imgui_i_im_strdupcpy(imgui_c89_ctx, window->Name, (&buf_len), name);
+            window->Name = imgui__im_strdupcpy(imgui_c89_ctx, window->Name, (&buf_len), name);
             window->NameBufLen = ((int)(buf_len));
         }
         CalcWindowContentSizes__92f816a291(window, (&window->ContentSize), (&window->ContentSizeIdeal));
@@ -2711,7 +2711,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
             }
         }
         viewport = ((ImGuiViewportP *)(((void *)(imgui_get_main_viewport(imgui_c89_ctx)))));
-        imgui_i_set_window_viewport(window, viewport);
+        imgui__set_window_viewport(window, viewport);
         SetCurrentWindow__f02a6e67f9(imgui_c89_ctx, window);
         if (flags & ImGuiWindowFlags_ChildWindow) {
             window->WindowBorderSize = style->ChildBorderSize;
@@ -2738,9 +2738,9 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
         if ((!(flags & ImGuiWindowFlags_NoTitleBar)) && (!(flags & ImGuiWindowFlags_NoCollapse))) {
             title_bar_rect = ImGuiWindow_TitleBarRect__f94973910d(((ImGuiWindow *)(window)));
             if (((((g->HoveredWindow == window) && (g->HoveredId == 0)) && (g->HoveredIdPreviousFrame == 0)) && (g->ActiveId == 0)) && imgui_is_mouse_hovering_rect(imgui_c89_ctx, &(title_bar_rect.Min), &(title_bar_rect.Max), 1)) {
-                if ((g->IO.MouseClickedCount[0] == 2) && (imgui_i_get_key_owner(imgui_c89_ctx, ImGuiKey_MouseLeft) == ((ImGuiID)((-1))))) {
+                if ((g->IO.MouseClickedCount[0] == 2) && (imgui__get_key_owner(imgui_c89_ctx, ImGuiKey_MouseLeft) == ((ImGuiID)((-1))))) {
                     window->WantCollapseToggle = 1;
-                    imgui_i_set_key_owner(imgui_c89_ctx, ImGuiKey_MouseLeft, window->MoveId, 0);
+                    imgui__set_key_owner(imgui_c89_ctx, ImGuiKey_MouseLeft, window->MoveId, 0);
                 }
             }
             if (window->WantCollapseToggle) {
@@ -2748,7 +2748,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
                 if (!window->Collapsed) {
                     use_current_size_for_scrollbar_y = 1;
                 }
-                imgui_i_mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
+                imgui__mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
             }
         } else {
             window->Collapsed = 0;
@@ -2790,7 +2790,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
             use_current_size_for_scrollbar_y = 1;
         }
         if ((old_size.x != window->SizeFull.x) || (old_size.y != window->SizeFull.y)) {
-            imgui_i_mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
+            imgui__mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
         }
         window->SizeFull = CalcWindowSizeAfterConstraint__6c270dd706(imgui_c89_ctx, window, &(window->SizeFull));
         window->Size = ((window->Collapsed && (!(flags & ImGuiWindowFlags_ChildWindow))) ? ImRect_GetSize__c91c92deb7(((ImRect *)((imgui_c89_temporary_1 = ImGuiWindow_TitleBarRect__f94973910d(((ImGuiWindow *)(window))), &imgui_c89_temporary_1)))) : window->SizeFull);
@@ -2810,16 +2810,16 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
         }
         window_pos_with_pivot = ((window->SetWindowPosVal.x != 3.40282347E+38f) && (window->HiddenFramesCannotSkipItems == 0));
         if (window_pos_with_pivot) {
-            imgui_i_set_window_pos(imgui_c89_ctx, window, (imgui_c89_temporary_2 = operator___cb7271567d(&(window->SetWindowPosVal), (imgui_c89_temporary_3 = operator___c29d694b8f(&(window->Size), &(window->SetWindowPosPivot)), &imgui_c89_temporary_3)), &imgui_c89_temporary_2), 0);
+            imgui__set_window_pos(imgui_c89_ctx, window, (imgui_c89_temporary_2 = operator___cb7271567d(&(window->SetWindowPosVal), (imgui_c89_temporary_3 = operator___c29d694b8f(&(window->Size), &(window->SetWindowPosPivot)), &imgui_c89_temporary_3)), &imgui_c89_temporary_2), 0);
         } else {
             if ((flags & ImGuiWindowFlags_ChildMenu) != 0) {
-                window->Pos = imgui_i_find_best_window_pos_for_popup(imgui_c89_ctx, window);
+                window->Pos = imgui__find_best_window_pos_for_popup(imgui_c89_ctx, window);
             } else {
                 if ((((flags & ImGuiWindowFlags_Popup) != 0) && (!window_pos_set_by_api)) && window_just_appearing_after_hidden_for_resize) {
-                    window->Pos = imgui_i_find_best_window_pos_for_popup(imgui_c89_ctx, window);
+                    window->Pos = imgui__find_best_window_pos_for_popup(imgui_c89_ctx, window);
                 } else {
                     if ((((flags & ImGuiWindowFlags_Tooltip) != 0) && (!window_pos_set_by_api)) && (!window_is_child_tooltip)) {
-                        window->Pos = imgui_i_find_best_window_pos_for_popup(imgui_c89_ctx, window);
+                        window->Pos = imgui__find_best_window_pos_for_popup(imgui_c89_ctx, window);
                     }
                 }
             }
@@ -2969,7 +2969,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
         window->DC.NavHideHighlightOneFrame = 0;
         window->DC.NavWindowHasScrollY = (window->ScrollMax.y > 0.0f);
         window->DC.MenuBarAppending = 0;
-        imgui_i_menu_columns_update(((ImGuiMenuColumns *)(&(window->DC.MenuColumns))), style->ItemSpacing.x, window_just_activated_by_user);
+        imgui__menu_columns_update(((ImGuiMenuColumns *)(&(window->DC.MenuColumns))), style->ItemSpacing.x, window_just_activated_by_user);
         window->DC.TreeDepth = 0;
         window->DC.TreeHasStackDataDepthMask = (window->DC.TreeRecordsClippedNodesY2Mask = 0);
         ImVector_ImGuiWindow____resize__9ae44f8796(imgui_c89_ctx, ((ImVector_ImGuiWindow_ptr *)(&(window->DC.ChildWindows))), 0);
@@ -3001,10 +3001,10 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
             window->AutoFitFramesY--;
         }
         if (want_focus) {
-            imgui_i_focus_window(imgui_c89_ctx, window, ImGuiFocusRequestFlags_UnlessBelowModal);
+            imgui__focus_window(imgui_c89_ctx, window, ImGuiFocusRequestFlags_UnlessBelowModal);
         }
         if (want_focus && (window == g->NavWindow)) {
-            imgui_i_nav_init_window(imgui_c89_ctx, window, 0);
+            imgui__nav_init_window(imgui_c89_ctx, window, 0);
         }
         if (g->IO.ConfigWindowsCopyContentsWithCtrlC) {
             if (((g->NavWindow && (g->NavWindow->RootWindow == window)) && (g->ActiveId == 0)) && imgui_shortcut(imgui_c89_ctx, (ImGuiMod_Ctrl | ImGuiKey_C), 0)) {
@@ -3023,7 +3023,7 @@ unsigned char imgui_begin(ImGuiContext *imgui_c89_ctx, const char * name, unsign
         window->DC.WindowItemStatusFlags |= (imgui_is_mouse_hovering_rect(imgui_c89_ctx, &(title_bar_rect__56fc6167.Min), &(title_bar_rect__56fc6167.Max), 0) ? ImGuiItemStatusFlags_HoveredRect : 0);
         ImGui_SetLastItemDataForWindow__c067771a9f(imgui_c89_ctx, window, &(title_bar_rect__56fc6167));
         if ((g->DebugLocateId != 0) && ((window->ID == g->DebugLocateId) || (window->MoveId == g->DebugLocateId))) {
-            imgui_i_debug_locate_item_resolve_with_last_item(imgui_c89_ctx);
+            imgui__debug_locate_item_resolve_with_last_item(imgui_c89_ctx);
         }
     } else {
         if (window->SkipRefresh) {
@@ -3097,16 +3097,16 @@ unsigned char imgui_begin_child_string(ImGuiContext *imgui_c89_ctx, const char *
 {
     ImGuiID id;
 
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx))), str_id, 0);
-    return imgui_i_begin_child_ex(imgui_c89_ctx, str_id, id, size_arg, child_flags, window_flags);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx))), str_id, 0);
+    return imgui__begin_child_ex(imgui_c89_ctx, str_id, id, size_arg, child_flags, window_flags);
 }
 
 unsigned char imgui_begin_child_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, const ImVec2 * size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
 {
-    return imgui_i_begin_child_ex(imgui_c89_ctx, 0, id, size_arg, child_flags, window_flags);
+    return imgui__begin_child_ex(imgui_c89_ctx, 0, id, size_arg, child_flags, window_flags);
 }
 
-unsigned char imgui_i_begin_child_ex(ImGuiContext *imgui_c89_ctx, const char * name, ImGuiID id, const ImVec2 * size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
+unsigned char imgui__begin_child_ex(ImGuiContext *imgui_c89_ctx, const char * name, ImGuiID id, const ImVec2 * size_arg, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
 {
     ImGuiContext * g;
     ImGuiWindow * parent_window;
@@ -3155,7 +3155,7 @@ unsigned char imgui_i_begin_child_ex(ImGuiContext *imgui_c89_ctx, const char * n
     }
     size_avail = imgui_get_content_region_avail(imgui_c89_ctx);
     ImVec2_ImVec2__2b588b6e68(&size_default, ((child_flags & ImGuiChildFlags_AutoResizeX) ? 0.0f : size_avail.x), ((child_flags & ImGuiChildFlags_AutoResizeY) ? 0.0f : size_avail.y));
-    size = imgui_i_calc_item_size(imgui_c89_ctx, (*size_arg), size_default.x, size_default.y);
+    size = imgui__calc_item_size(imgui_c89_ctx, (*size_arg), size_default.x, size_default.y);
     if (((g->NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasSize) != 0) && ((g->NextWindowData.SizeCond & ImGuiCond_Always) != 0)) {
         if (g->NextWindowData.SizeVal.x > 0.0f) {
             size.x = g->NextWindowData.SizeVal.x;
@@ -3174,9 +3174,9 @@ unsigned char imgui_i_begin_child_ex(ImGuiContext *imgui_c89_ctx, const char * n
     }
     g->NextWindowData.HasFlags |= ImGuiNextWindowDataFlags_HasChildFlags;
     if (name) {
-        imgui_i_im_format_string_to_temp_buffer(imgui_c89_ctx, (&temp_window_name), 0, "%s/%s_%08X", parent_window->Name, name, id);
+        imgui__im_format_string_to_temp_buffer(imgui_c89_ctx, (&temp_window_name), 0, "%s/%s_%08X", parent_window->Name, name, id);
     } else {
-        imgui_i_im_format_string_to_temp_buffer(imgui_c89_ctx, (&temp_window_name), 0, "%s/%08X", parent_window->Name, id);
+        imgui__im_format_string_to_temp_buffer(imgui_c89_ctx, (&temp_window_name), 0, "%s/%08X", parent_window->Name, id);
     }
     backup_border_size = g->Style.ChildBorderSize;
     if ((child_flags & ImGuiChildFlags_Borders) == 0) {
@@ -3193,14 +3193,14 @@ unsigned char imgui_i_begin_child_ex(ImGuiContext *imgui_c89_ctx, const char * n
     if (child_window->BeginCount == 1) {
         parent_window->DC.CursorPos = child_window->Pos;
     }
-    temp_id_for_activation = imgui_i_im_hash_str("##Child", 0, id);
+    temp_id_for_activation = imgui__im_hash_str("##Child", 0, id);
     if (g->ActiveId == temp_id_for_activation) {
-        imgui_i_clear_active_id(imgui_c89_ctx);
+        imgui__clear_active_id(imgui_c89_ctx);
     }
     if (((g->NavActivateId == id) && (!(child_flags & ImGuiChildFlags_NavFlattened))) && ((child_window->DC.NavLayersActiveMask != 0) || child_window->DC.NavWindowHasScrollY)) {
-        imgui_i_focus_window(imgui_c89_ctx, child_window, 0);
-        imgui_i_nav_init_window(imgui_c89_ctx, child_window, 0);
-        imgui_i_set_active_id(imgui_c89_ctx, temp_id_for_activation, child_window);
+        imgui__focus_window(imgui_c89_ctx, child_window, 0);
+        imgui__nav_init_window(imgui_c89_ctx, child_window, 0);
+        imgui__set_active_id(imgui_c89_ctx, temp_id_for_activation, child_window);
         g->ActiveIdSource = g->NavInputSource;
     }
     return ret;
@@ -3224,7 +3224,7 @@ void imgui_begin_disabled(ImGuiContext *imgui_c89_ctx, unsigned char disabled)
     g->DisabledStackSize++;
 }
 
-void imgui_i_begin_disabled_override_reenable(ImGuiContext *imgui_c89_ctx)
+void imgui__begin_disabled_override_reenable(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -3279,12 +3279,12 @@ unsigned char imgui_begin_drag_drop_source(ImGuiContext *imgui_c89_ctx, ImGuiDra
                 imgui_c89_expect((!0), 0) ? imgui_c89_assert_id(259) : ((void)(0));
                 return 0;
             }
-            source_id = (g->LastItemData.ID = imgui_i_window_get_id_from_rectangle(((ImGuiWindow *)(window)), &(g->LastItemData.Rect)));
-            imgui_i_keep_alive_id(imgui_c89_ctx, source_id);
-            is_hovered = imgui_i_item_hoverable(imgui_c89_ctx, &(g->LastItemData.Rect), source_id, g->LastItemData.ItemFlags);
+            source_id = (g->LastItemData.ID = imgui__window_get_id_from_rectangle(((ImGuiWindow *)(window)), &(g->LastItemData.Rect)));
+            imgui__keep_alive_id(imgui_c89_ctx, source_id);
+            is_hovered = imgui__item_hoverable(imgui_c89_ctx, &(g->LastItemData.Rect), source_id, g->LastItemData.ItemFlags);
             if (is_hovered && g->IO.MouseClicked[mouse_button]) {
-                imgui_i_set_active_id(imgui_c89_ctx, source_id, window);
-                imgui_i_focus_window(imgui_c89_ctx, window, 0);
+                imgui__set_active_id(imgui_c89_ctx, source_id, window);
+                imgui__focus_window(imgui_c89_ctx, window, 0);
             }
             if (g->ActiveId == source_id) {
                 g->ActiveIdAllowOverlap = is_hovered;
@@ -3295,14 +3295,14 @@ unsigned char imgui_begin_drag_drop_source(ImGuiContext *imgui_c89_ctx, ImGuiDra
         }
         source_parent_id = (*(ImVector_unsigned_int__back__2320fb1e8e(((ImVector_unsigned_int *)(&(window->IDStack))))));
         source_drag_active = imgui_is_mouse_dragging(imgui_c89_ctx, mouse_button, (-1.0f));
-        imgui_i_set_active_id_using_all_keyboard_keys(imgui_c89_ctx);
+        imgui__set_active_id_using_all_keyboard_keys(imgui_c89_ctx);
     } else {
         window = 0;
-        source_id = imgui_i_im_hash_str("#SourceExtern", 0, 0);
+        source_id = imgui__im_hash_str("#SourceExtern", 0, 0);
         source_drag_active = 1;
         mouse_button = (g->IO.MouseDown[0] ? 0 : (-1));
-        imgui_i_keep_alive_id(imgui_c89_ctx, source_id);
-        imgui_i_set_active_id(imgui_c89_ctx, source_id, 0);
+        imgui__keep_alive_id(imgui_c89_ctx, source_id);
+        imgui__set_active_id(imgui_c89_ctx, source_id, 0);
     }
     imgui_c89_expect((!(g->DragDropWithinTarget == 0)), 0) ? imgui_c89_assert_id(260) : ((void)(0));
     if (!source_drag_active) {
@@ -3310,10 +3310,10 @@ unsigned char imgui_begin_drag_drop_source(ImGuiContext *imgui_c89_ctx, ImGuiDra
     }
     if (!g->DragDropActive) {
         imgui_c89_expect((!(source_id != 0)), 0) ? imgui_c89_assert_id(261) : ((void)(0));
-        imgui_i_clear_drag_drop(imgui_c89_ctx);
+        imgui__clear_drag_drop(imgui_c89_ctx);
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventActiveId) {
-                imgui_i_debug_log(imgui_c89_ctx, "[dragdrop] BeginDragDropSource() DragDropActive = true, source_id = 0x%08X%s\n", source_id, ((flags & ImGuiDragDropFlags_SourceExtern) ? " (EXTERN)" : ""));
+                imgui__debug_log(imgui_c89_ctx, "[dragdrop] BeginDragDropSource() DragDropActive = true, source_id = 0x%08X%s\n", source_id, ((flags & ImGuiDragDropFlags_SourceExtern) ? " (EXTERN)" : ""));
             }
         } while (0);
         payload = &(g->DragDropPayload);
@@ -3330,7 +3330,7 @@ unsigned char imgui_begin_drag_drop_source(ImGuiContext *imgui_c89_ctx, ImGuiDra
     g->DragDropWithinSource = 1;
     if (!(flags & ImGuiDragDropFlags_SourceNoPreviewTooltip)) {
         if (g->DragDropAcceptIdPrev && (g->DragDropAcceptFlagsPrev & ImGuiDragDropFlags_AcceptNoPreviewTooltip)) {
-            ret = imgui_i_begin_tooltip_hidden(imgui_c89_ctx);
+            ret = imgui__begin_tooltip_hidden(imgui_c89_ctx);
         } else {
             ret = imgui_begin_tooltip(imgui_c89_ctx);
         }
@@ -3366,8 +3366,8 @@ unsigned char imgui_begin_drag_drop_target(ImGuiContext *imgui_c89_ctx)
     display_rect = ((g->LastItemData.StatusFlags & ImGuiItemStatusFlags_HasDisplayRect) ? &(g->LastItemData.DisplayRect) : &(g->LastItemData.Rect));
     id = g->LastItemData.ID;
     if (id == 0) {
-        id = imgui_i_window_get_id_from_rectangle(((ImGuiWindow *)(window)), display_rect);
-        imgui_i_keep_alive_id(imgui_c89_ctx, id);
+        id = imgui__window_get_id_from_rectangle(((ImGuiWindow *)(window)), display_rect);
+        imgui__keep_alive_id(imgui_c89_ctx, id);
     }
     if (g->DragDropPayload.SourceId == id) {
         return 0;
@@ -3380,7 +3380,7 @@ unsigned char imgui_begin_drag_drop_target(ImGuiContext *imgui_c89_ctx)
     return 1;
 }
 
-unsigned char imgui_i_begin_drag_drop_target_custom(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id)
+unsigned char imgui__begin_drag_drop_target_custom(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -3411,7 +3411,7 @@ unsigned char imgui_i_begin_drag_drop_target_custom(ImGuiContext *imgui_c89_ctx,
     return 1;
 }
 
-unsigned char imgui_i_begin_drag_drop_target_viewport(ImGuiContext *imgui_c89_ctx, ImGuiViewport * viewport, const ImRect * p_bb)
+unsigned char imgui__begin_drag_drop_target_viewport(ImGuiContext *imgui_c89_ctx, ImGuiViewport * viewport, const ImRect * p_bb)
 {
     ImGuiContext * g;
     ImRect bb;
@@ -3435,7 +3435,7 @@ unsigned char imgui_i_begin_drag_drop_target_viewport(ImGuiContext *imgui_c89_ct
     return 1;
 }
 
-unsigned char imgui_i_begin_error_tooltip(ImGuiContext *imgui_c89_ctx)
+unsigned char imgui__begin_error_tooltip(ImGuiContext *imgui_c89_ctx)
 {
     ImVec4 imgui_c89_temporary_0;
     ImVec4 imgui_c89_temporary_1;
@@ -3447,7 +3447,7 @@ unsigned char imgui_i_begin_error_tooltip(ImGuiContext *imgui_c89_ctx)
     unsigned char is_visible;
 
     g = &((*imgui_c89_ctx));
-    window = imgui_i_find_window_by_name(imgui_c89_ctx, "##Tooltip_Error");
+    window = imgui__find_window_by_name(imgui_c89_ctx, "##Tooltip_Error");
     use_locked_pos = ((g->IO.KeyCtrl && window) && window->WasActive);
     imgui_push_style_color_vec4(imgui_c89_ctx, ImGuiCol_PopupBg, (imgui_c89_temporary_0 = ImLerp__4129e9c45f(&(g->Style.Colors[ImGuiCol_PopupBg]), (imgui_c89_temporary_1 = ImVec4_ImVec4_value__2df7b774e7(1.0f, 0.0f, 0.0f, 1.0f), &imgui_c89_temporary_1), 0.150000006f), &imgui_c89_temporary_0));
     if (use_locked_pos) {
@@ -3457,8 +3457,8 @@ unsigned char imgui_i_begin_error_tooltip(ImGuiContext *imgui_c89_ctx)
     imgui_pop_style_color(imgui_c89_ctx, 1);
     if (is_visible && (g->CurrentWindow->BeginCount == 1)) {
         imgui_separator_text(imgui_c89_ctx, "MESSAGE FROM DEAR IMGUI");
-        imgui_i_bring_window_to_display_front(imgui_c89_ctx, g->CurrentWindow);
-        imgui_i_bring_window_to_focus_front(imgui_c89_ctx, g->CurrentWindow);
+        imgui__bring_window_to_display_front(imgui_c89_ctx, g->CurrentWindow);
+        imgui__bring_window_to_focus_front(imgui_c89_ctx, g->CurrentWindow);
         g->ErrorTooltipLockedPos = imgui_get_window_pos(imgui_c89_ctx);
     } else {
         if (!is_visible) {
@@ -3506,7 +3506,7 @@ unsigned char imgui_begin_item_tooltip(ImGuiContext *imgui_c89_ctx)
     if (!imgui_is_item_hovered(imgui_c89_ctx, ImGuiHoveredFlags_ForTooltip)) {
         return 0;
     }
-    return imgui_i_begin_tooltip_ex(imgui_c89_ctx, ImGuiTooltipFlags_None, ImGuiWindowFlags_None);
+    return imgui__begin_tooltip_ex(imgui_c89_ctx, ImGuiTooltipFlags_None, ImGuiWindowFlags_None);
 }
 
 unsigned char imgui_begin_popup(ImGuiContext *imgui_c89_ctx, const char * str_id, ImGuiWindowFlags flags)
@@ -3520,8 +3520,8 @@ unsigned char imgui_begin_popup(ImGuiContext *imgui_c89_ctx, const char * str_id
         return 0;
     }
     flags |= ((ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoSavedSettings);
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->CurrentWindow)), str_id, 0);
-    return imgui_i_begin_popup_ex(imgui_c89_ctx, id, flags);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->CurrentWindow)), str_id, 0);
+    return imgui__begin_popup_ex(imgui_c89_ctx, id, flags);
 }
 
 unsigned char imgui_begin_popup_context_item(ImGuiContext *imgui_c89_ctx, const char * str_id, ImGuiPopupFlags popup_flags)
@@ -3535,12 +3535,12 @@ unsigned char imgui_begin_popup_context_item(ImGuiContext *imgui_c89_ctx, const 
     if (window->SkipItems) {
         return 0;
     }
-    id = (str_id ? imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0) : g->LastItemData.ID);
+    id = (str_id ? imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0) : g->LastItemData.ID);
     imgui_c89_expect((!(id != 0)), 0) ? imgui_c89_assert_id(221) : ((void)(0));
-    if (imgui_i_is_popup_open_request_for_item(imgui_c89_ctx, popup_flags, g->LastItemData.ID)) {
-        imgui_i_open_popup_ex(imgui_c89_ctx, id, popup_flags);
+    if (imgui__is_popup_open_request_for_item(imgui_c89_ctx, popup_flags, g->LastItemData.ID)) {
+        imgui__open_popup_ex(imgui_c89_ctx, id, popup_flags);
     }
-    return imgui_i_begin_popup_ex(imgui_c89_ctx, id, ((ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoSavedSettings));
+    return imgui__begin_popup_ex(imgui_c89_ctx, id, ((ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoSavedSettings));
 }
 
 unsigned char imgui_begin_popup_context_void(ImGuiContext *imgui_c89_ctx, const char * str_id, ImGuiPopupFlags popup_flags)
@@ -3555,14 +3555,14 @@ unsigned char imgui_begin_popup_context_void(ImGuiContext *imgui_c89_ctx, const 
     if (!str_id) {
         str_id = "void_context";
     }
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0);
-    mouse_button = imgui_i_get_mouse_button_from_popup_flags(popup_flags);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0);
+    mouse_button = imgui__get_mouse_button_from_popup_flags(popup_flags);
     if (imgui_is_mouse_released(imgui_c89_ctx, mouse_button) && (!imgui_is_window_hovered(imgui_c89_ctx, ImGuiHoveredFlags_AnyWindow))) {
-        if (imgui_i_get_top_most_popup_modal(imgui_c89_ctx) == 0) {
-            imgui_i_open_popup_ex(imgui_c89_ctx, id, popup_flags);
+        if (imgui__get_top_most_popup_modal(imgui_c89_ctx) == 0) {
+            imgui__open_popup_ex(imgui_c89_ctx, id, popup_flags);
         }
     }
-    return imgui_i_begin_popup_ex(imgui_c89_ctx, id, ((ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoSavedSettings));
+    return imgui__begin_popup_ex(imgui_c89_ctx, id, ((ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoSavedSettings));
 }
 
 unsigned char imgui_begin_popup_context_window(ImGuiContext *imgui_c89_ctx, const char * str_id, ImGuiPopupFlags popup_flags)
@@ -3576,26 +3576,26 @@ unsigned char imgui_begin_popup_context_window(ImGuiContext *imgui_c89_ctx, cons
     if (!str_id) {
         str_id = "window_context";
     }
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0);
-    if (imgui_i_is_popup_open_request_for_window(imgui_c89_ctx, popup_flags)) {
-        imgui_i_open_popup_ex(imgui_c89_ctx, id, popup_flags);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0);
+    if (imgui__is_popup_open_request_for_window(imgui_c89_ctx, popup_flags)) {
+        imgui__open_popup_ex(imgui_c89_ctx, id, popup_flags);
     }
-    return imgui_i_begin_popup_ex(imgui_c89_ctx, id, ((ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoSavedSettings));
+    return imgui__begin_popup_ex(imgui_c89_ctx, id, ((ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoSavedSettings));
 }
 
-unsigned char imgui_i_begin_popup_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindowFlags extra_window_flags)
+unsigned char imgui__begin_popup_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindowFlags extra_window_flags)
 {
     ImGuiContext * g;
     char name[20];
     unsigned char is_open;
 
     g = &((*imgui_c89_ctx));
-    if (!imgui_i_is_popup_open(imgui_c89_ctx, id, ImGuiPopupFlags_None)) {
+    if (!imgui__is_popup_open(imgui_c89_ctx, id, ImGuiPopupFlags_None)) {
         ImGuiNextWindowData_ClearFlags__5c145439ca(((ImGuiNextWindowData *)(&(g->NextWindowData))));
         return 0;
     }
     imgui_c89_expect((!((extra_window_flags & ImGuiWindowFlags_ChildMenu) == 0)), 0) ? imgui_c89_assert_id(217) : ((void)(0));
-    imgui_i_im_format_string(name, ((int)((sizeof(name) / sizeof((*name))))), "##Popup_%08x", id);
+    imgui__im_format_string(name, ((int)((sizeof(name) / sizeof((*name))))), "##Popup_%08x", id);
     is_open = imgui_begin(imgui_c89_ctx, name, 0, (extra_window_flags | ImGuiWindowFlags_Popup));
     if (!is_open) {
         imgui_end_popup(imgui_c89_ctx);
@@ -3603,14 +3603,14 @@ unsigned char imgui_i_begin_popup_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, Im
     return is_open;
 }
 
-unsigned char imgui_i_begin_popup_menu_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, const char * label, ImGuiWindowFlags extra_window_flags)
+unsigned char imgui__begin_popup_menu_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, const char * label, ImGuiWindowFlags extra_window_flags)
 {
     ImGuiContext * g;
     char name[128];
     unsigned char is_open;
 
     g = &((*imgui_c89_ctx));
-    if (!imgui_i_is_popup_open(imgui_c89_ctx, id, ImGuiPopupFlags_None)) {
+    if (!imgui__is_popup_open(imgui_c89_ctx, id, ImGuiPopupFlags_None)) {
         ImGuiNextWindowData_ClearFlags__5c145439ca(((ImGuiNextWindowData *)(&(g->NextWindowData))));
         return 0;
     }
@@ -3623,7 +3623,7 @@ unsigned char imgui_i_begin_popup_menu_ex(ImGuiContext *imgui_c89_ctx, ImGuiID i
         g->NextWindowData.HasFlags |= ImGuiNextWindowDataFlags_HasChildFlags;
     }
     imgui_c89_expect((!(extra_window_flags & ImGuiWindowFlags_ChildMenu)), 0) ? imgui_c89_assert_id(218) : ((void)(0));
-    imgui_i_im_format_string(name, ((int)((sizeof(name) / sizeof((*name))))), "%s###Menu_%02d", label, g->BeginMenuDepth);
+    imgui__im_format_string(name, ((int)((sizeof(name) / sizeof((*name))))), "%s###Menu_%02d", label, g->BeginMenuDepth);
     is_open = imgui_begin(imgui_c89_ctx, name, 0, (extra_window_flags | ImGuiWindowFlags_Popup));
     if (!is_open) {
         imgui_end_popup(imgui_c89_ctx);
@@ -3644,8 +3644,8 @@ unsigned char imgui_begin_popup_modal(ImGuiContext *imgui_c89_ctx, const char * 
 
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), name, 0);
-    if (!imgui_i_is_popup_open(imgui_c89_ctx, id, ImGuiPopupFlags_None)) {
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), name, 0);
+    if (!imgui__is_popup_open(imgui_c89_ctx, id, ImGuiPopupFlags_None)) {
         ImGuiNextWindowData_ClearFlags__5c145439ca(((ImGuiNextWindowData *)(&(g->NextWindowData))));
         if (p_open && (*p_open)) {
             (*p_open) = 0;
@@ -3661,7 +3661,7 @@ unsigned char imgui_begin_popup_modal(ImGuiContext *imgui_c89_ctx, const char * 
     if ((!is_open) || (p_open && (!(*p_open)))) {
         imgui_end_popup(imgui_c89_ctx);
         if (is_open) {
-            imgui_i_close_popup_to_level(imgui_c89_ctx, g->BeginPopupStack.Size, 1);
+            imgui__close_popup_to_level(imgui_c89_ctx, g->BeginPopupStack.Size, 1);
         }
         return 0;
     }
@@ -3670,10 +3670,10 @@ unsigned char imgui_begin_popup_modal(ImGuiContext *imgui_c89_ctx, const char * 
 
 unsigned char imgui_begin_tooltip(ImGuiContext *imgui_c89_ctx)
 {
-    return imgui_i_begin_tooltip_ex(imgui_c89_ctx, ImGuiTooltipFlags_None, ImGuiWindowFlags_None);
+    return imgui__begin_tooltip_ex(imgui_c89_ctx, ImGuiTooltipFlags_None, ImGuiWindowFlags_None);
 }
 
-unsigned char imgui_i_begin_tooltip_ex(ImGuiContext *imgui_c89_ctx, ImGuiTooltipFlags tooltip_flags, ImGuiWindowFlags extra_window_flags)
+unsigned char imgui__begin_tooltip_ex(ImGuiContext *imgui_c89_ctx, ImGuiTooltipFlags tooltip_flags, ImGuiWindowFlags extra_window_flags)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -3699,29 +3699,29 @@ unsigned char imgui_i_begin_tooltip_ex(ImGuiContext *imgui_c89_ctx, ImGuiTooltip
         imgui_set_next_window_bg_alpha(imgui_c89_ctx, (g->Style.Colors[ImGuiCol_PopupBg].w * 0.600000024f));
         tooltip_flags |= ImGuiTooltipFlags_OverridePrevious;
     }
-    if ((((tooltip_flags & ImGuiTooltipFlags_OverridePrevious) && (g->TooltipPreviousWindow != 0)) && g->TooltipPreviousWindow->Active) && (!imgui_i_is_window_in_begin_stack(imgui_c89_ctx, g->TooltipPreviousWindow))) {
-        imgui_i_set_window_hidden_and_skip_items_for_current_frame(g->TooltipPreviousWindow);
+    if ((((tooltip_flags & ImGuiTooltipFlags_OverridePrevious) && (g->TooltipPreviousWindow != 0)) && g->TooltipPreviousWindow->Active) && (!imgui__is_window_in_begin_stack(imgui_c89_ctx, g->TooltipPreviousWindow))) {
+        imgui__set_window_hidden_and_skip_items_for_current_frame(g->TooltipPreviousWindow);
         g->TooltipOverrideCount++;
     }
     window_name_template = (is_dragdrop_tooltip ? "##Tooltip_DragDrop_%02d" : "##Tooltip_%02d");
-    imgui_i_im_format_string(window_name, ((int)((sizeof(window_name) / sizeof((*window_name))))), window_name_template, g->TooltipOverrideCount);
+    imgui__im_format_string(window_name, ((int)((sizeof(window_name) / sizeof((*window_name))))), window_name_template, g->TooltipOverrideCount);
     flags = ((((((ImGuiWindowFlags_Tooltip | ImGuiWindowFlags_NoInputs) | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoMove) | ImGuiWindowFlags_NoResize) | ImGuiWindowFlags_NoSavedSettings) | ImGuiWindowFlags_AlwaysAutoResize);
     imgui_begin(imgui_c89_ctx, window_name, 0, (flags | extra_window_flags));
     return 1;
 }
 
-unsigned char imgui_i_begin_tooltip_hidden(ImGuiContext *imgui_c89_ctx)
+unsigned char imgui__begin_tooltip_hidden(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     unsigned char ret;
 
     g = &((*imgui_c89_ctx));
     ret = imgui_begin(imgui_c89_ctx, "##Tooltip_Hidden", 0, ((((((ImGuiWindowFlags_Tooltip | ImGuiWindowFlags_NoInputs) | ImGuiWindowFlags_NoTitleBar) | ImGuiWindowFlags_NoMove) | ImGuiWindowFlags_NoResize) | ImGuiWindowFlags_NoSavedSettings) | ImGuiWindowFlags_AlwaysAutoResize));
-    imgui_i_set_window_hidden_and_skip_items_for_current_frame(g->CurrentWindow);
+    imgui__set_window_hidden_and_skip_items_for_current_frame(g->CurrentWindow);
     return ret;
 }
 
-void imgui_i_bring_window_to_display_back(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__bring_window_to_display_back(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
     int i;
@@ -3740,7 +3740,7 @@ void imgui_i_bring_window_to_display_back(ImGuiContext *imgui_c89_ctx, ImGuiWind
     }
 }
 
-void imgui_i_bring_window_to_display_behind(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiWindow * behind_window)
+void imgui__bring_window_to_display_behind(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiWindow * behind_window)
 {
     ImGuiContext * g;
     int pos_wnd;
@@ -3752,8 +3752,8 @@ void imgui_i_bring_window_to_display_behind(ImGuiContext *imgui_c89_ctx, ImGuiWi
     g = &((*imgui_c89_ctx));
     window = window->RootWindow;
     behind_window = behind_window->RootWindow;
-    pos_wnd = imgui_i_find_window_display_index(imgui_c89_ctx, window);
-    pos_beh = imgui_i_find_window_display_index(imgui_c89_ctx, behind_window);
+    pos_wnd = imgui__find_window_display_index(imgui_c89_ctx, window);
+    pos_beh = imgui__find_window_display_index(imgui_c89_ctx, behind_window);
     if (pos_wnd < pos_beh) {
         copy_bytes__db202fb6 = (((pos_beh - pos_wnd) - 1) * sizeof(ImGuiWindow *));
         memmove((&g->Windows.Data[pos_wnd]), (&g->Windows.Data[(pos_wnd + 1)]), copy_bytes__db202fb6);
@@ -3765,7 +3765,7 @@ void imgui_i_bring_window_to_display_behind(ImGuiContext *imgui_c89_ctx, ImGuiWi
     }
 }
 
-void imgui_i_bring_window_to_display_front(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__bring_window_to_display_front(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
     ImGuiWindow * current_front_window;
@@ -3786,7 +3786,7 @@ void imgui_i_bring_window_to_display_front(ImGuiContext *imgui_c89_ctx, ImGuiWin
     }
 }
 
-void imgui_i_bring_window_to_focus_front(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__bring_window_to_focus_front(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
     int cur_order;
@@ -3811,13 +3811,13 @@ void imgui_i_bring_window_to_focus_front(ImGuiContext *imgui_c89_ctx, ImGuiWindo
     window->FocusOrder = ((short)(new_order));
 }
 
-void imgui_i_calc_clip_rect_visible_items_y(const ImRect * clip_rect, const ImVec2 * pos, float items_height, int * out_visible_start, int * out_visible_end)
+void imgui__calc_clip_rect_visible_items_y(const ImRect * clip_rect, const ImVec2 * pos, float items_height, int * out_visible_start, int * out_visible_end)
 {
     (*out_visible_start) = ImMax__55d6006f6c(((int)(((clip_rect->Min.y - pos->y) / items_height))), 0);
     (*out_visible_end) = ImMax__55d6006f6c(((int)(ceilf(((clip_rect->Max.y - pos->y) / items_height)))), (*out_visible_start));
 }
 
-ImVec2 imgui_i_calc_item_size(ImGuiContext *imgui_c89_ctx, ImVec2 size, float default_w, float default_h)
+ImVec2 imgui__calc_item_size(ImGuiContext *imgui_c89_ctx, ImVec2 size, float default_w, float default_h)
 {
     ImVec2 avail;
 
@@ -3874,7 +3874,7 @@ ImVec2 imgui_calc_text_size(ImGuiContext *imgui_c89_ctx, const char * text, cons
 
     g = &((*imgui_c89_ctx));
     if (hide_text_after_double_hash) {
-        text_display_end = imgui_i_find_rendered_text_end(text, text_end);
+        text_display_end = imgui__find_rendered_text_end(text, text_end);
     } else {
         text_display_end = text_end;
     }
@@ -3888,7 +3888,7 @@ ImVec2 imgui_calc_text_size(ImGuiContext *imgui_c89_ctx, const char * text, cons
     return text_size;
 }
 
-int imgui_i_calc_typematic_repeat_amount(float t0, float t1, float repeat_delay, float repeat_rate)
+int imgui__calc_typematic_repeat_amount(float t0, float t1, float repeat_delay, float repeat_rate)
 {
     int count_t0;
     int count_t1;
@@ -3909,7 +3909,7 @@ int imgui_i_calc_typematic_repeat_amount(float t0, float t1, float repeat_delay,
     return count;
 }
 
-ImVec2 imgui_i_calc_window_next_auto_fit_size(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+ImVec2 imgui__calc_window_next_auto_fit_size(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImVec2 size_contents_current;
     ImVec2 size_contents_ideal;
@@ -3924,7 +3924,7 @@ ImVec2 imgui_i_calc_window_next_auto_fit_size(ImGuiContext *imgui_c89_ctx, ImGui
     return size_final;
 }
 
-float imgui_i_calc_wrap_width_for_pos(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos, float wrap_pos_x)
+float imgui__calc_wrap_width_for_pos(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos, float wrap_pos_x)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -3944,7 +3944,7 @@ float imgui_i_calc_wrap_width_for_pos(ImGuiContext *imgui_c89_ctx, const ImVec2 
     return ImMax__3c7b1bb7d1((wrap_pos_x - pos->x), 1.0f);
 }
 
-void imgui_i_call_context_hooks(ImGuiContext * ctx, ImGuiContextHookType hook_type)
+void imgui__call_context_hooks(ImGuiContext * ctx, ImGuiContextHookType hook_type)
 {
     ImGuiContext * g;
     ImGuiContextHook * __begin1;
@@ -3964,7 +3964,7 @@ void imgui_i_call_context_hooks(ImGuiContext * ctx, ImGuiContextHookType hook_ty
     }
 }
 
-void imgui_i_cleanup_ini_settings(ImGuiContext *imgui_c89_ctx, ImGuiSettingsCleanupArgs * args)
+void imgui__cleanup_ini_settings(ImGuiContext *imgui_c89_ctx, ImGuiSettingsCleanupArgs * args)
 {
     ImGuiContext * g;
     ImGuiSettingsHandler * __begin2;
@@ -4009,12 +4009,12 @@ void imgui_i_cleanup_ini_settings(ImGuiContext *imgui_c89_ctx, ImGuiSettingsClea
     }
 }
 
-void imgui_i_clear_active_id(ImGuiContext *imgui_c89_ctx)
+void imgui__clear_active_id(ImGuiContext *imgui_c89_ctx)
 {
-    imgui_i_set_active_id(imgui_c89_ctx, 0, 0);
+    imgui__set_active_id(imgui_c89_ctx, 0, 0);
 }
 
-void imgui_i_clear_drag_drop(ImGuiContext *imgui_c89_ctx)
+void imgui__clear_drag_drop(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -4022,7 +4022,7 @@ void imgui_i_clear_drag_drop(ImGuiContext *imgui_c89_ctx)
     if (g->DragDropActive) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventActiveId) {
-                imgui_i_debug_log(imgui_c89_ctx, "[dragdrop] ClearDragDrop()\n");
+                imgui__debug_log(imgui_c89_ctx, "[dragdrop] ClearDragDrop()\n");
             }
         } while (0);
     }
@@ -4036,7 +4036,7 @@ void imgui_i_clear_drag_drop(ImGuiContext *imgui_c89_ctx)
     memset((&g->DragDropPayloadBufLocal), 0, sizeof(g->DragDropPayloadBufLocal));
 }
 
-void imgui_i_clear_ini_settings(ImGuiContext *imgui_c89_ctx)
+void imgui__clear_ini_settings(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiSettingsHandler * __begin1;
@@ -4057,17 +4057,17 @@ void imgui_i_clear_ini_settings(ImGuiContext *imgui_c89_ctx)
     }
 }
 
-void imgui_i_clear_window_settings(ImGuiContext *imgui_c89_ctx, const char * name)
+void imgui__clear_window_settings(ImGuiContext *imgui_c89_ctx, const char * name)
 {
     ImGuiWindow * window;
     ImGuiWindowSettings * settings;
 
-    window = imgui_i_find_window_by_name(imgui_c89_ctx, name);
+    window = imgui__find_window_by_name(imgui_c89_ctx, name);
     if (window != 0) {
         window->Flags |= ImGuiWindowFlags_NoSavedSettings;
         InitOrLoadWindowSettings__d724be5d76(imgui_c89_ctx, window, 0);
     }
-    settings = (window ? imgui_i_find_window_settings_by_window(imgui_c89_ctx, window) : imgui_i_find_window_settings_by_id(imgui_c89_ctx, imgui_i_im_hash_str(name, 0, 0)));
+    settings = (window ? imgui__find_window_settings_by_window(imgui_c89_ctx, window) : imgui__find_window_settings_by_id(imgui_c89_ctx, imgui__im_hash_str(name, 0, 0)));
     if (settings) {
         settings->WantDelete = 1;
     }
@@ -4103,17 +4103,17 @@ void imgui_close_current_popup(ImGuiContext *imgui_c89_ctx)
     }
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventPopup) {
-            imgui_i_debug_log(imgui_c89_ctx, "[popup] CloseCurrentPopup %d -> %d\n", (g->BeginPopupStack.Size - 1), popup_idx);
+            imgui__debug_log(imgui_c89_ctx, "[popup] CloseCurrentPopup %d -> %d\n", (g->BeginPopupStack.Size - 1), popup_idx);
         }
     } while (0);
-    imgui_i_close_popup_to_level(imgui_c89_ctx, popup_idx, 1);
+    imgui__close_popup_to_level(imgui_c89_ctx, popup_idx, 1);
     window = g->NavWindow;
     if (window) {
         window->DC.NavHideHighlightOneFrame = 1;
     }
 }
 
-void imgui_i_close_popup_to_level(ImGuiContext *imgui_c89_ctx, int remaining, unsigned char restore_focus_to_window_under_popup)
+void imgui__close_popup_to_level(ImGuiContext *imgui_c89_ctx, int remaining, unsigned char restore_focus_to_window_under_popup)
 {
     ImGuiContext * g;
     int n;
@@ -4124,7 +4124,7 @@ void imgui_i_close_popup_to_level(ImGuiContext *imgui_c89_ctx, int remaining, un
     g = &((*imgui_c89_ctx));
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventPopup) {
-            imgui_i_debug_log(imgui_c89_ctx, "[popup] ClosePopupToLevel(%d), restore_under=%d\n", remaining, restore_focus_to_window_under_popup);
+            imgui__debug_log(imgui_c89_ctx, "[popup] ClosePopupToLevel(%d), restore_under=%d\n", remaining, restore_focus_to_window_under_popup);
         }
     } while (0);
     imgui_c89_expect((!((remaining >= 0) && (remaining < g->OpenPopupStack.Size))), 0) ? imgui_c89_assert_id(216) : ((void)(0));
@@ -4133,7 +4133,7 @@ void imgui_i_close_popup_to_level(ImGuiContext *imgui_c89_ctx, int remaining, un
         for (; n < g->OpenPopupStack.Size; n++) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventPopup) {
-                    imgui_i_debug_log(imgui_c89_ctx, "[popup] - Closing PopupID 0x%08X Window \"%s\"\n", (*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), n))).PopupId, ((*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), n))).Window ? (*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), n))).Window->Name : 0));
+                    imgui__debug_log(imgui_c89_ctx, "[popup] - Closing PopupID 0x%08X Window \"%s\"\n", (*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), n))).PopupId, ((*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), n))).Window ? (*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), n))).Window->Name : 0));
                 }
             } while (0);
         }
@@ -4144,14 +4144,14 @@ void imgui_i_close_popup_to_level(ImGuiContext *imgui_c89_ctx, int remaining, un
         popup_window = prev_popup.Window;
         focus_window = ((popup_window->Flags & ImGuiWindowFlags_ChildMenu) ? popup_window->ParentWindow : prev_popup.RestoreNavWindow);
         if (focus_window && (!focus_window->WasActive)) {
-            imgui_i_focus_top_most_window_under_one(imgui_c89_ctx, popup_window, 0, 0, ImGuiFocusRequestFlags_RestoreFocusedChild);
+            imgui__focus_top_most_window_under_one(imgui_c89_ctx, popup_window, 0, 0, ImGuiFocusRequestFlags_RestoreFocusedChild);
         } else {
-            imgui_i_focus_window(imgui_c89_ctx, focus_window, ((g->NavLayer == ImGuiNavLayer_Main) ? ImGuiFocusRequestFlags_RestoreFocusedChild : ImGuiFocusRequestFlags_None));
+            imgui__focus_window(imgui_c89_ctx, focus_window, ((g->NavLayer == ImGuiNavLayer_Main) ? ImGuiFocusRequestFlags_RestoreFocusedChild : ImGuiFocusRequestFlags_None));
         }
     }
 }
 
-void imgui_i_close_popups_except_modals(ImGuiContext *imgui_c89_ctx)
+void imgui__close_popups_except_modals(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     int popup_count_to_keep;
@@ -4165,11 +4165,11 @@ void imgui_i_close_popups_except_modals(ImGuiContext *imgui_c89_ctx)
         }
     }
     if (popup_count_to_keep < g->OpenPopupStack.Size) {
-        imgui_i_close_popup_to_level(imgui_c89_ctx, popup_count_to_keep, 1);
+        imgui__close_popup_to_level(imgui_c89_ctx, popup_count_to_keep, 1);
     }
 }
 
-void imgui_i_close_popups_over_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * ref_window, unsigned char restore_focus_to_window_under_popup)
+void imgui__close_popups_over_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * ref_window, unsigned char restore_focus_to_window_under_popup)
 {
     ImGuiContext * g;
     int popup_count_to_keep;
@@ -4195,7 +4195,7 @@ void imgui_i_close_popups_over_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow *
             for (; n < g->OpenPopupStack.Size; n++) {
                 popup_window = (*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), n))).Window;
                 if (popup_window) {
-                    if (imgui_i_is_window_within_begin_stack_of(ref_window, popup_window)) {
+                    if (imgui__is_window_within_begin_stack_of(ref_window, popup_window)) {
                         ref_window_is_descendant_of_popup = 1;
                         break;
                     }
@@ -4209,10 +4209,10 @@ void imgui_i_close_popups_over_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow *
     if (popup_count_to_keep < g->OpenPopupStack.Size) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventPopup) {
-                imgui_i_debug_log(imgui_c89_ctx, "[popup] ClosePopupsOverWindow(\"%s\")\n", (ref_window ? ref_window->Name : "<NULL>"));
+                imgui__debug_log(imgui_c89_ctx, "[popup] ClosePopupsOverWindow(\"%s\")\n", (ref_window ? ref_window->Name : "<NULL>"));
             }
         } while (0);
-        imgui_i_close_popup_to_level(imgui_c89_ctx, popup_count_to_keep, restore_focus_to_window_under_popup);
+        imgui__close_popup_to_level(imgui_c89_ctx, popup_count_to_keep, restore_focus_to_window_under_popup);
     }
 }
 
@@ -4333,14 +4333,14 @@ ImGuiContext * imgui_create_context(ImFontAtlas * shared_font_atlas)
     prev_ctx = imgui_get_current_context();
     ctx = ImGuiContext_ImGuiContext_at__57017b82b5(GImGui, imgui_mem_alloc(GImGui, sizeof(ImGuiContext)), shared_font_atlas);
     imgui_set_current_context(ctx);
-    imgui_i_initialize(GImGui);
+    imgui__initialize(GImGui);
     if (prev_ctx != 0) {
         imgui_set_current_context(prev_ctx);
     }
     return ctx;
 }
 
-ImGuiWindowSettings * imgui_i_create_new_window_settings(ImGuiContext *imgui_c89_ctx, const char * name)
+ImGuiWindowSettings * imgui__create_new_window_settings(ImGuiContext *imgui_c89_ctx, const char * name)
 {
     ImGuiContext * g;
     size_t name_len;
@@ -4349,18 +4349,18 @@ ImGuiWindowSettings * imgui_i_create_new_window_settings(ImGuiContext *imgui_c89
 
     g = &((*imgui_c89_ctx));
     if (g->IO.ConfigDebugIniSettings == 0) {
-        name = imgui_i_im_hash_skip_uncontributing_prefix(name);
+        name = imgui__im_hash_skip_uncontributing_prefix(name);
     }
     name_len = strlen(name);
     chunk_size = ((sizeof(ImGuiWindowSettings) + name_len) + 1);
     settings = ImChunkStream_ImGuiWindowSettings__alloc_chunk__45429353ea(imgui_c89_ctx, ((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows))), chunk_size);
     ImGuiWindowSettings_ImGuiWindowSettings_at__dc9ba99ef2(settings);
-    settings->ID = imgui_i_im_hash_str(name, name_len, 0);
+    settings->ID = imgui__im_hash_str(name, name_len, 0);
     memcpy(ImGuiWindowSettings_GetName__fb7cfc2069(((ImGuiWindowSettings *)(settings))), name, (name_len + 1));
     return settings;
 }
 
-void imgui_i_debug_alloc_hook(ImGuiDebugAllocInfo * info, int frame_count, void * ptr, size_t size)
+void imgui__debug_alloc_hook(ImGuiDebugAllocInfo * info, int frame_count, void * ptr, size_t size)
 {
     ImGuiDebugAllocEntry * entry;
 
@@ -4381,7 +4381,7 @@ void imgui_i_debug_alloc_hook(ImGuiDebugAllocInfo * info, int frame_count, void 
     }
 }
 
-unsigned char imgui_i_debug_break_button(ImGuiContext *imgui_c89_ctx, const char * label, const char * description_of_location)
+unsigned char imgui__debug_break_button(ImGuiContext *imgui_c89_ctx, const char * label, const char * description_of_location)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -4403,35 +4403,35 @@ unsigned char imgui_i_debug_break_button(ImGuiContext *imgui_c89_ctx, const char
         return 0;
     }
     g = &((*imgui_c89_ctx));
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), label, 0);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), label, 0);
     label_size = imgui_calc_text_size(imgui_c89_ctx, label, 0, 1, (-1.0f));
     pos = operator___29d06b7915(&(window->DC.CursorPos), (imgui_c89_temporary_0 = ImVec2_ImVec2_value__c798775144(0.0f, window->DC.CurrLineTextBaseOffset), &imgui_c89_temporary_0));
     size = ImVec2_ImVec2_value__c798775144((label_size.x + (g->Style.FramePadding.x * 2.0f)), label_size.y);
     ImRect_ImRect__b1b06c34ac(&bb, &(pos), (imgui_c89_temporary_1 = operator___29d06b7915(&(pos), &(size)), &imgui_c89_temporary_1));
-    imgui_i_item_size(imgui_c89_ctx, &(size), 0.0f);
-    if (!imgui_i_item_add(imgui_c89_ctx, &(bb), id, 0, 0)) {
+    imgui__item_size(imgui_c89_ctx, &(size), 0.0f);
+    if (!imgui__item_add(imgui_c89_ctx, &(bb), id, 0, 0)) {
         return 0;
     }
-    hovered = imgui_i_item_hoverable(imgui_c89_ctx, &(bb), id, g->CurrentItemFlags);
+    hovered = imgui__item_hoverable(imgui_c89_ctx, &(bb), id, g->CurrentItemFlags);
     pressed = (hovered && ((imgui_is_key_chord_pressed(imgui_c89_ctx, g->DebugBreakKeyChord) || imgui_is_mouse_clicked(imgui_c89_ctx, 0, 0)) || (g->NavActivateId == id)));
-    imgui_i_debug_break_button_tooltip(imgui_c89_ctx, 0, description_of_location);
+    imgui__debug_break_button_tooltip(imgui_c89_ctx, 0, description_of_location);
     col4f = (*(imgui_get_style_color_vec4(imgui_c89_ctx, (hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button))));
     ImVec4_ImVec4__711f95b97f(&hsv);
     imgui_color_convert_rg_bto_hsv(col4f.x, col4f.y, col4f.z, &(hsv.x), &(hsv.y), &(hsv.z));
     imgui_color_convert_hs_vto_rgb((hsv.x + 0.200000003f), hsv.y, hsv.z, &(col4f.x), &(col4f.y), &(col4f.z));
-    imgui_i_render_nav_cursor(imgui_c89_ctx, &(bb), id, ImGuiNavRenderCursorFlags_None, (-1.0f));
-    imgui_i_render_frame(imgui_c89_ctx, bb.Min, bb.Max, imgui_get_color_u32_vec4_none(imgui_c89_ctx, &(col4f)), 1, g->Style.FrameRounding);
-    imgui_i_render_text_clipped(imgui_c89_ctx, &(bb.Min), &(bb.Max), label, 0, (&label_size), &(g->Style.ButtonTextAlign), (&bb));
+    imgui__render_nav_cursor(imgui_c89_ctx, &(bb), id, ImGuiNavRenderCursorFlags_None, (-1.0f));
+    imgui__render_frame(imgui_c89_ctx, bb.Min, bb.Max, imgui_get_color_u32_vec4_none(imgui_c89_ctx, &(col4f)), 1, g->Style.FrameRounding);
+    imgui__render_text_clipped(imgui_c89_ctx, &(bb.Min), &(bb.Max), label, 0, (&label_size), &(g->Style.ButtonTextAlign), (&bb));
     (void)((*g));
     return pressed;
 }
 
-void imgui_i_debug_break_button_tooltip(ImGuiContext *imgui_c89_ctx, unsigned char keyboard_only, const char * description_of_location)
+void imgui__debug_break_button_tooltip(ImGuiContext *imgui_c89_ctx, unsigned char keyboard_only, const char * description_of_location)
 {
     if (!imgui_begin_item_tooltip(imgui_c89_ctx)) {
         return;
     }
-    imgui_i_text(imgui_c89_ctx, "To call IM_DEBUG_BREAK() %s:", description_of_location);
+    imgui__text(imgui_c89_ctx, "To call IM_DEBUG_BREAK() %s:", description_of_location);
     imgui_separator(imgui_c89_ctx);
     imgui_text_unformatted(imgui_c89_ctx, (keyboard_only ? "- Press 'Pause/Break' on keyboard." : "- Press 'Pause/Break' on keyboard.\n- or Click (may alter focus/active id).\n- or navigate using keyboard and press space."), 0);
     imgui_separator(imgui_c89_ctx);
@@ -4439,7 +4439,7 @@ void imgui_i_debug_break_button_tooltip(ImGuiContext *imgui_c89_ctx, unsigned ch
     imgui_end_tooltip(imgui_c89_ctx);
 }
 
-void imgui_i_debug_break_clear_data(ImGuiContext *imgui_c89_ctx)
+void imgui__debug_break_clear_data(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -4485,7 +4485,7 @@ unsigned char imgui_debug_check_version_and_data_layout(const char * version, si
     return !error;
 }
 
-void imgui_i_debug_draw_cursor_pos(ImGuiContext *imgui_c89_ctx, ImU32 col)
+void imgui__debug_draw_cursor_pos(ImGuiContext *imgui_c89_ctx, ImU32 col)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -4498,7 +4498,7 @@ void imgui_i_debug_draw_cursor_pos(ImGuiContext *imgui_c89_ctx, ImU32 col)
     imgui_draw_list_add_line_h(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)), (pos.x - 3.0f), (pos.x + 4.0f), pos.y, col, 1.0f);
 }
 
-void imgui_i_debug_draw_item_rect(ImGuiContext *imgui_c89_ctx, ImU32 col)
+void imgui__debug_draw_item_rect(ImGuiContext *imgui_c89_ctx, ImU32 col)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -4508,7 +4508,7 @@ void imgui_i_debug_draw_item_rect(ImGuiContext *imgui_c89_ctx, ImU32 col)
     imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(ImGui_GetForegroundDrawList__167528742e(imgui_c89_ctx, window))), &(g->LastItemData.Rect.Min), &(g->LastItemData.Rect.Max), col, 0.0f, 1.0f, 0);
 }
 
-void imgui_i_debug_draw_line_extents(ImGuiContext *imgui_c89_ctx, ImU32 col)
+void imgui__debug_draw_line_extents(ImGuiContext *imgui_c89_ctx, ImU32 col)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -4537,7 +4537,7 @@ void imgui_debug_flash_style_color(ImGuiContext *imgui_c89_ctx, ImGuiCol idx)
     g->DebugFlashStyleColorBackup = g->Style.Colors[idx];
 }
 
-void imgui_i_debug_hook_id_info(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiDataType data_type, const void * data_id, const void * data_id_end)
+void imgui__debug_hook_id_info(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiDataType data_type, const void * data_id, const void * data_id_end)
 {
     ImGuiStackLevelInfo imgui_c89_temporary_0;
 
@@ -4577,16 +4577,16 @@ void imgui_i_debug_hook_id_info(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiDa
         result_end = 0;
         switch (data_type) {
             case ImGuiDataType_S32:
-                imgui_i_im_format_string_to_temp_buffer(imgui_c89_ctx, (&result), (&result_end), "%d", ((int)(((intptr_t)(data_id)))));
+                imgui__im_format_string_to_temp_buffer(imgui_c89_ctx, (&result), (&result_end), "%d", ((int)(((intptr_t)(data_id)))));
             break;
             case ImGuiDataType_String:
-                imgui_i_im_format_string_to_temp_buffer(imgui_c89_ctx, (&result), (&result_end), "%.*s", (data_id_end ? ((int)((((const char *)(data_id_end)) - ((const char *)(data_id))))) : ((int)(strlen(((const char *)(data_id)))))), ((const char *)(data_id)));
+                imgui__im_format_string_to_temp_buffer(imgui_c89_ctx, (&result), (&result_end), "%.*s", (data_id_end ? ((int)((((const char *)(data_id_end)) - ((const char *)(data_id))))) : ((int)(strlen(((const char *)(data_id)))))), ((const char *)(data_id)));
             break;
             case ImGuiDataType_Pointer:
-                imgui_i_im_format_string_to_temp_buffer(imgui_c89_ctx, (&result), (&result_end), "(void*)0x%p", data_id);
+                imgui__im_format_string_to_temp_buffer(imgui_c89_ctx, (&result), (&result_end), "(void*)0x%p", data_id);
             break;
             case ImGuiDataType_ID:
-                imgui_i_im_format_string_to_temp_buffer(imgui_c89_ctx, (&result), (&result_end), "0x%08X [override]", id);
+                imgui__im_format_string_to_temp_buffer(imgui_c89_ctx, (&result), (&result_end), "0x%08X [override]", id);
             break;
             default:
                 imgui_c89_expect((!0), 0) ? imgui_c89_assert_id(296) : ((void)(0));
@@ -4600,7 +4600,7 @@ void imgui_i_debug_hook_id_info(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiDa
     }
 }
 
-void imgui_i_debug_locate_item(ImGuiContext *imgui_c89_ctx, ImGuiID target_id)
+void imgui__debug_locate_item(ImGuiContext *imgui_c89_ctx, ImGuiID target_id)
 {
     ImGuiContext * g;
 
@@ -4610,7 +4610,7 @@ void imgui_i_debug_locate_item(ImGuiContext *imgui_c89_ctx, ImGuiID target_id)
     g->DebugBreakInLocateId = 0;
 }
 
-void imgui_i_debug_locate_item_on_hover(ImGuiContext *imgui_c89_ctx, ImGuiID target_id)
+void imgui__debug_locate_item_on_hover(ImGuiContext *imgui_c89_ctx, ImGuiID target_id)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -4623,17 +4623,17 @@ void imgui_i_debug_locate_item_on_hover(ImGuiContext *imgui_c89_ctx, ImGuiID tar
         return;
     }
     g = &((*imgui_c89_ctx));
-    imgui_i_debug_locate_item(imgui_c89_ctx, target_id);
+    imgui__debug_locate_item(imgui_c89_ctx, target_id);
     imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(ImGui_GetForegroundDrawList__167528742e(imgui_c89_ctx, g->CurrentWindow))), (imgui_c89_temporary_0 = operator___cb7271567d(&(g->LastItemData.Rect.Min), (imgui_c89_temporary_1 = ImVec2_ImVec2_value__c798775144(3.0f, 3.0f), &imgui_c89_temporary_1)), &imgui_c89_temporary_0), (imgui_c89_temporary_2 = operator___29d06b7915(&(g->LastItemData.Rect.Max), (imgui_c89_temporary_3 = ImVec2_ImVec2_value__c798775144(3.0f, 3.0f), &imgui_c89_temporary_3)), &imgui_c89_temporary_2), DEBUG_LOCATE_ITEM_COLOR__1ed7a4ff0c, 0.0f, 1.0f, 0);
     if (g->IO.ConfigDebugIsDebuggerPresent && (g->MouseStationaryTimer > 1.0f)) {
-        imgui_i_debug_break_button_tooltip(imgui_c89_ctx, 0, "in ItemAdd()");
+        imgui__debug_break_button_tooltip(imgui_c89_ctx, 0, "in ItemAdd()");
         if (imgui_is_key_chord_pressed(imgui_c89_ctx, g->DebugBreakKeyChord)) {
             g->DebugBreakInLocateId = 1;
         }
     }
 }
 
-void imgui_i_debug_locate_item_resolve_with_last_item(ImGuiContext *imgui_c89_ctx)
+void imgui__debug_locate_item_resolve_with_last_item(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiLastItemData item_data;
@@ -4657,7 +4657,7 @@ void imgui_i_debug_locate_item_resolve_with_last_item(ImGuiContext *imgui_c89_ct
     imgui_draw_list_add_line(imgui_c89_ctx, ((ImDrawList *)(draw_list)), &(p1), &(p2), DEBUG_LOCATE_ITEM_COLOR__1ed7a4ff0c, 1.0f);
 }
 
-void imgui_i_debug_log(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
+void imgui__debug_log(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
 {
     va_list args;
 
@@ -4675,40 +4675,40 @@ void imgui_debug_log_v(ImGuiContext *imgui_c89_ctx, const char * fmt, va_list ar
     g = &((*imgui_c89_ctx));
     old_size = imgui_text_buffer_size(((ImGuiTextBuffer *)(&(g->DebugLogBuf))));
     if (g->ContextName[0] != 0) {
-        imgui_i_text_buffer_appendf(imgui_c89_ctx, ((ImGuiTextBuffer *)(&(g->DebugLogBuf))), "[%s] [%05d] ", g->ContextName, g->FrameCount);
+        imgui__text_buffer_appendf(imgui_c89_ctx, ((ImGuiTextBuffer *)(&(g->DebugLogBuf))), "[%s] [%05d] ", g->ContextName, g->FrameCount);
     } else {
-        imgui_i_text_buffer_appendf(imgui_c89_ctx, ((ImGuiTextBuffer *)(&(g->DebugLogBuf))), "[%05d] ", g->FrameCount);
+        imgui__text_buffer_appendf(imgui_c89_ctx, ((ImGuiTextBuffer *)(&(g->DebugLogBuf))), "[%05d] ", g->FrameCount);
     }
     imgui_text_buffer_appendfv(imgui_c89_ctx, ((ImGuiTextBuffer *)(&(g->DebugLogBuf))), fmt, args);
-    imgui_i_text_index_append(imgui_c89_ctx, ((ImGuiTextIndex *)(&(g->DebugLogIndex))), imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))), old_size, imgui_text_buffer_size(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))));
+    imgui__text_index_append(imgui_c89_ctx, ((ImGuiTextIndex *)(&(g->DebugLogIndex))), imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))), old_size, imgui_text_buffer_size(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))));
     str = (imgui_text_buffer_begin(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))) + old_size);
     if (g->DebugLogFlags & ImGuiDebugLogFlags_OutputToTTY) {
         printf("%s", str);
     }
 }
 
-void imgui_i_debug_node_columns(ImGuiContext *imgui_c89_ctx, ImGuiOldColumns * columns)
+void imgui__debug_node_columns(ImGuiContext *imgui_c89_ctx, ImGuiOldColumns * columns)
 {
     ImGuiOldColumnData * __begin1;
     ImGuiOldColumnData * __end1;
     ImGuiOldColumnData * column;
     ImVector_ImGuiOldColumnData * __range1;
 
-    if (!imgui_i_tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)(((uintptr_t)(columns->ID)))), "Columns Id: 0x%08X, Count: %d, Flags: 0x%04X", columns->ID, columns->Count, columns->Flags)) {
+    if (!imgui__tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)(((uintptr_t)(columns->ID)))), "Columns Id: 0x%08X, Count: %d, Flags: 0x%04X", columns->ID, columns->Count, columns->Flags)) {
         return;
     }
-    imgui_i_bullet_text(imgui_c89_ctx, "Width: %.1f (MinX: %.1f, MaxX: %.1f)", (columns->OffMaxX - columns->OffMinX), columns->OffMinX, columns->OffMaxX);
+    imgui__bullet_text(imgui_c89_ctx, "Width: %.1f (MinX: %.1f, MaxX: %.1f)", (columns->OffMaxX - columns->OffMinX), columns->OffMinX, columns->OffMaxX);
     __range1 = &(columns->Columns);
     __begin1 = ImVector_ImGuiOldColumnData__begin__91588f7176(((ImVector_ImGuiOldColumnData *)(__range1)));
     __end1 = ImVector_ImGuiOldColumnData__end__6307768641(((ImVector_ImGuiOldColumnData *)(__range1)));
     for (; __begin1 != __end1; ++__begin1) {
         column = &((*__begin1));
-        imgui_i_bullet_text(imgui_c89_ctx, "Column %02d: OffsetNorm %.3f (= %.1f px)", ((int)(ImVector_ImGuiOldColumnData__index_from_ptr__3bf0ca75b7(((ImVector_ImGuiOldColumnData *)(&(columns->Columns))), (&(*column))))), column->OffsetNorm, imgui_i_get_column_offset_from_norm(columns, column->OffsetNorm));
+        imgui__bullet_text(imgui_c89_ctx, "Column %02d: OffsetNorm %.3f (= %.1f px)", ((int)(ImVector_ImGuiOldColumnData__index_from_ptr__3bf0ca75b7(((ImVector_ImGuiOldColumnData *)(&(columns->Columns))), (&(*column))))), column->OffsetNorm, imgui__get_column_offset_from_norm(columns, column->OffsetNorm));
     }
     imgui_tree_pop(imgui_c89_ctx);
 }
 
-void imgui_i_debug_node_draw_cmd_show_mesh_and_bounding_box(ImGuiContext *imgui_c89_ctx, ImDrawList * out_draw_list, const ImDrawList * draw_list, const ImDrawCmd * draw_cmd, unsigned char show_mesh, unsigned char show_aabb)
+void imgui__debug_node_draw_cmd_show_mesh_and_bounding_box(ImGuiContext *imgui_c89_ctx, ImDrawList * out_draw_list, const ImDrawList * draw_list, const ImDrawCmd * draw_cmd, unsigned char show_mesh, unsigned char show_aabb)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -4755,7 +4755,7 @@ void imgui_i_debug_node_draw_cmd_show_mesh_and_bounding_box(ImGuiContext *imgui_
     out_draw_list->Flags = backup_flags;
 }
 
-void imgui_i_debug_node_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiViewportP * viewport, const ImDrawList * draw_list, const char * label)
+void imgui__debug_node_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiViewportP * viewport, const ImDrawList * draw_list, const char * label)
 {
     ImVec4 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -4796,10 +4796,10 @@ void imgui_i_debug_node_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiWindow * win
     if (((cmd_count > 0) && ((*(ImVector_ImDrawCmd__back__76decd74fd(((ImVector_ImDrawCmd *)(&(draw_list->CmdBuffer)))))).ElemCount == 0)) && ((*(ImVector_ImDrawCmd__back__76decd74fd(((ImVector_ImDrawCmd *)(&(draw_list->CmdBuffer)))))).UserCallback == 0)) {
         cmd_count--;
     }
-    node_open = imgui_i_tree_node_const_pointer_string_varargs(imgui_c89_ctx, draw_list, "%s: '%s' %d vtx, %d indices, %d cmds", label, (draw_list->_OwnerName ? draw_list->_OwnerName : ""), draw_list->VtxBuffer.Size, draw_list->IdxBuffer.Size, cmd_count);
+    node_open = imgui__tree_node_const_pointer_string_varargs(imgui_c89_ctx, draw_list, "%s: '%s' %d vtx, %d indices, %d cmds", label, (draw_list->_OwnerName ? draw_list->_OwnerName : ""), draw_list->VtxBuffer.Size, draw_list->IdxBuffer.Size, cmd_count);
     if (draw_list == imgui_get_window_draw_list(imgui_c89_ctx)) {
         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-        imgui_i_text_colored(imgui_c89_ctx, (imgui_c89_temporary_0 = ImVec4_ImVec4_value__2df7b774e7(1.0f, 0.400000006f, 0.400000006f, 1.0f), &imgui_c89_temporary_0), "CURRENTLY APPENDING");
+        imgui__text_colored(imgui_c89_ctx, (imgui_c89_temporary_0 = ImVec4_ImVec4_value__2df7b774e7(1.0f, 0.400000006f, 0.400000006f, 1.0f), &imgui_c89_temporary_0), "CURRENTLY APPENDING");
         if (node_open) {
             imgui_tree_pop(imgui_c89_ctx);
         }
@@ -4813,19 +4813,19 @@ void imgui_i_debug_node_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiWindow * win
         return;
     }
     if (window && (!window->WasActive)) {
-        imgui_i_text_disabled(imgui_c89_ctx, "Warning: owning Window is inactive. This DrawList is not being rendered!");
+        imgui__text_disabled(imgui_c89_ctx, "Warning: owning Window is inactive. This DrawList is not being rendered!");
     }
     pcmd = draw_list->CmdBuffer.Data;
     for (; pcmd < (draw_list->CmdBuffer.Data + cmd_count); pcmd++) {
         if (pcmd->UserCallback) {
-            imgui_i_bullet_text(imgui_c89_ctx, "Callback %p, user_data %p", pcmd->UserCallback, pcmd->UserCallbackData);
+            imgui__bullet_text(imgui_c89_ctx, "Callback %p, user_data %p", pcmd->UserCallback, pcmd->UserCallbackData);
             continue;
         }
         FormatTextureRefForDebugDisplay__69309e42e0(texid_desc, ((int)((sizeof(texid_desc) / sizeof((*texid_desc))))), pcmd->TexRef);
-        imgui_i_im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "DrawCmd:%5d tris, Tex %s, ClipRect (%4.0f,%4.0f)-(%4.0f,%4.0f)", (pcmd->ElemCount / 3), texid_desc, pcmd->ClipRect.x, pcmd->ClipRect.y, pcmd->ClipRect.z, pcmd->ClipRect.w);
-        pcmd_node_open = imgui_i_tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)((pcmd - ImVector_ImDrawCmd__begin__f5fe5d0a62(((ImVector_ImDrawCmd *)(&(draw_list->CmdBuffer))))))), "%s", buf);
+        imgui__im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "DrawCmd:%5d tris, Tex %s, ClipRect (%4.0f,%4.0f)-(%4.0f,%4.0f)", (pcmd->ElemCount / 3), texid_desc, pcmd->ClipRect.x, pcmd->ClipRect.y, pcmd->ClipRect.z, pcmd->ClipRect.w);
+        pcmd_node_open = imgui__tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)((pcmd - ImVector_ImDrawCmd__begin__f5fe5d0a62(((ImVector_ImDrawCmd *)(&(draw_list->CmdBuffer))))))), "%s", buf);
         if ((imgui_is_item_hovered(imgui_c89_ctx, 0) && (cfg->ShowDrawCmdMesh || cfg->ShowDrawCmdBoundingBoxes)) && fg_draw_list) {
-            imgui_i_debug_node_draw_cmd_show_mesh_and_bounding_box(imgui_c89_ctx, fg_draw_list, draw_list, pcmd, cfg->ShowDrawCmdMesh, cfg->ShowDrawCmdBoundingBoxes);
+            imgui__debug_node_draw_cmd_show_mesh_and_bounding_box(imgui_c89_ctx, fg_draw_list, draw_list, pcmd, cfg->ShowDrawCmdMesh, cfg->ShowDrawCmdBoundingBoxes);
         }
         if (!pcmd_node_open) {
             continue;
@@ -4845,12 +4845,12 @@ void imgui_i_debug_node_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiWindow * win
             }
             total_area += ImTriangleArea__b57cabc9ca(&(triangle[0]), &(triangle[1]), &(triangle[2]));
         }
-        imgui_i_im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "Mesh: ElemCount: %d, VtxOffset: +%d, IdxOffset: +%d, Area: ~%0.f px", pcmd->ElemCount, pcmd->VtxOffset, pcmd->IdxOffset, total_area);
+        imgui__im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "Mesh: ElemCount: %d, VtxOffset: +%d, IdxOffset: +%d, Area: ~%0.f px", pcmd->ElemCount, pcmd->VtxOffset, pcmd->IdxOffset, total_area);
         imgui_selectable_bool(imgui_c89_ctx, buf, 0, 0, (imgui_c89_temporary_2 = ImVec2_ImVec2_value__c798775144(0, 0), &imgui_c89_temporary_2));
         if (imgui_is_item_hovered(imgui_c89_ctx, 0) && fg_draw_list) {
-            imgui_i_debug_node_draw_cmd_show_mesh_and_bounding_box(imgui_c89_ctx, fg_draw_list, draw_list, pcmd, 1, 0);
+            imgui__debug_node_draw_cmd_show_mesh_and_bounding_box(imgui_c89_ctx, fg_draw_list, draw_list, pcmd, 1, 0);
         }
-        imgui_i_list_clipper_init(&clipper);
+        imgui__list_clipper_init(&clipper);
         imgui_list_clipper_begin(imgui_c89_ctx, ((ImGuiListClipper *)(&(clipper))), (pcmd->ElemCount / 3), (-1.0f));
         while (imgui_list_clipper_step(imgui_c89_ctx, ((ImGuiListClipper *)(&(clipper))))) {
             prim = clipper.DisplayStart;
@@ -4866,7 +4866,7 @@ void imgui_i_debug_node_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiWindow * win
                 for (; n__2eca5831 < 3; (n__2eca5831++) , (idx_i++)) {
                     v = &(vtx_buffer[(idx_buffer ? idx_buffer[idx_i] : idx_i)]);
                     triangle__9412fc72[n__2eca5831] = v->pos;
-                    buf_p += imgui_i_im_format_string(buf_p, (buf_end - buf_p), "%s %04d: pos (%8.2f,%8.2f), uv (%.6f,%.6f), col %08X\n", ((n__2eca5831 == 0) ? "Vert:" : "     "), idx_i, v->pos.x, v->pos.y, v->uv.x, v->uv.y, v->col);
+                    buf_p += imgui__im_format_string(buf_p, (buf_end - buf_p), "%s %04d: pos (%8.2f,%8.2f), uv (%.6f,%.6f), col %08X\n", ((n__2eca5831 == 0) ? "Vert:" : "     "), idx_i, v->pos.x, v->pos.y, v->uv.x, v->uv.y, v->col);
                 }
                 imgui_selectable_bool(imgui_c89_ctx, buf, 0, 0, (imgui_c89_temporary_3 = ImVec2_ImVec2_value__c798775144(0, 0), &imgui_c89_temporary_3));
                 if (fg_draw_list && imgui_is_item_hovered(imgui_c89_ctx, 0)) {
@@ -4878,12 +4878,12 @@ void imgui_i_debug_node_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiWindow * win
             }
         }
         imgui_tree_pop(imgui_c89_ctx);
-        imgui_i_list_clipper_destroy(imgui_c89_ctx, &(clipper));
+        imgui__list_clipper_destroy(imgui_c89_ctx, &(clipper));
     }
     imgui_tree_pop(imgui_c89_ctx);
 }
 
-void imgui_i_debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
+void imgui__debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -4913,14 +4913,14 @@ void imgui_i_debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
     g = &((*imgui_c89_ctx));
     cfg = (&g->DebugMetricsConfig);
     atlas = font->OwnerAtlas;
-    opened = imgui_i_tree_node_const_pointer_string_varargs(imgui_c89_ctx, font, "Font: \"%s\": %d sources(s)", imgui_font_get_debug_name(((ImFont *)(font))), font->Sources.Size);
+    opened = imgui__tree_node_const_pointer_string_varargs(imgui_c89_ctx, font, "Font: \"%s\": %d sources(s)", imgui_font_get_debug_name(((ImFont *)(font))), font->Sources.Size);
     if (!opened) {
         imgui_indent(imgui_c89_ctx, 0.0f);
     }
     imgui_indent(imgui_c89_ctx, 0.0f);
     if (cfg->ShowFontPreview) {
         imgui_push_font_float(imgui_c89_ctx, font, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "The quick brown fox jumps over the lazy dog");
+        imgui__text(imgui_c89_ctx, "The quick brown fox jumps over the lazy dog");
         imgui_pop_font(imgui_c89_ctx);
     }
     if (!opened) {
@@ -4939,29 +4939,29 @@ void imgui_i_debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
     imgui_end_disabled(imgui_c89_ctx);
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
     if (imgui_small_button(imgui_c89_ctx, "Clear bakes")) {
-        imgui_i_im_font_atlas_font_discard_bakes(imgui_c89_ctx, atlas, font, 0);
+        imgui__im_font_atlas_font_discard_bakes(imgui_c89_ctx, atlas, font, 0);
     }
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
     if (imgui_small_button(imgui_c89_ctx, "Clear unused")) {
-        imgui_i_im_font_atlas_font_discard_bakes(imgui_c89_ctx, atlas, font, 2);
+        imgui__im_font_atlas_font_discard_bakes(imgui_c89_ctx, atlas, font, 2);
     }
     imgui_set_next_item_width(imgui_c89_ctx, (imgui_get_font_size(imgui_c89_ctx) * 8));
     imgui_drag_float(imgui_c89_ctx, "Font scale", (&font->Scale), 0.00499999989f, 0.300000012f, 2.0f, "%.1f", 0);
-    imgui_i_im_text_char_to_utf8(c_str, font->FallbackChar);
-    imgui_i_text(imgui_c89_ctx, "Fallback character: '%s' (U+%04X)", c_str, font->FallbackChar);
-    imgui_i_im_text_char_to_utf8(c_str, font->EllipsisChar);
-    imgui_i_text(imgui_c89_ctx, "Ellipsis character: '%s' (U+%04X)", c_str, font->EllipsisChar);
+    imgui__im_text_char_to_utf8(c_str, font->FallbackChar);
+    imgui__text(imgui_c89_ctx, "Fallback character: '%s' (U+%04X)", c_str, font->FallbackChar);
+    imgui__im_text_char_to_utf8(c_str, font->EllipsisChar);
+    imgui__text(imgui_c89_ctx, "Ellipsis character: '%s' (U+%04X)", c_str, font->EllipsisChar);
     src_n = 0;
     for (; src_n < font->Sources.Size; src_n++) {
         src = (*(ImVector_ImFontConfig____operator____f864e92bd4(((ImVector_ImFontConfig_ptr *)(&(font->Sources))), src_n)));
-        if (imgui_i_tree_node_const_pointer_string_varargs(imgui_c89_ctx, src, "Input %d: '%s' [%d], Oversample: %d,%d, PixelSnapH: %d, Offset: (%.1f,%.1f)", src_n, src->Name, src->FontNo, src->OversampleH, src->OversampleV, src->PixelSnapH, src->GlyphOffset.x, src->GlyphOffset.y)) {
+        if (imgui__tree_node_const_pointer_string_varargs(imgui_c89_ctx, src, "Input %d: '%s' [%d], Oversample: %d,%d, PixelSnapH: %d, Offset: (%.1f,%.1f)", src_n, src->Name, src->FontNo, src->OversampleH, src->OversampleV, src->PixelSnapH, src->GlyphOffset.x, src->GlyphOffset.y)) {
             loader = (src->FontLoader ? src->FontLoader : atlas->FontLoader);
-            imgui_i_text(imgui_c89_ctx, "Loader: '%s'", (loader->Name ? loader->Name : "N/A"));
+            imgui__text(imgui_c89_ctx, "Loader: '%s'", (loader->Name ? loader->Name : "N/A"));
             imgui_tree_pop(imgui_c89_ctx);
         }
     }
     if ((font->Sources.Size > 1) && imgui_tree_node(imgui_c89_ctx, "Input Glyphs Overlap Detection Tool")) {
-        imgui_i_text_wrapped(imgui_c89_ctx, "- First Input that contains the glyph is used.\n- Use ImFontConfig::GlyphExcludeRanges[] to specify ranges to ignore glyph in given Input.\n- Prefer using a small number of ranges as the list is scanned every time a new glyph is loaded,\n  - e.g. GlyphExcludeRanges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };\n- This tool doesn't cache results and is slow, don't keep it open!");
+        imgui__text_wrapped(imgui_c89_ctx, "- First Input that contains the glyph is used.\n- Use ImFontConfig::GlyphExcludeRanges[] to specify ranges to ignore glyph in given Input.\n- Prefer using a small number of ranges as the list is scanned every time a new glyph is loaded,\n  - e.g. GlyphExcludeRanges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };\n- This tool doesn't cache results and is slow, don't keep it open!");
         if (imgui_begin_table(imgui_c89_ctx, "table", 2, 0, (imgui_c89_temporary_0 = ImVec2_ImVec2_value__c798775144(0.0f, 0.0f), &imgui_c89_temporary_0), 0.0f)) {
             c = 0;
             for (; c < 65536; c++) {
@@ -4971,11 +4971,11 @@ void imgui_i_debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
                     while ((c_end < 65536) && (CalcFontGlyphSrcOverlapMask__8b25ecb784(atlas, font, c_end) == overlap_mask)) {
                         c_end++;
                     }
-                    if (imgui_table_next_column(imgui_c89_ctx) && imgui_i_tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)(((intptr_t)(c)))), "U+%04X-U+%04X: %d codepoints in %d inputs", c, (c_end - 1), (c_end - c), ImCountSetBits__0f0f42da0f(overlap_mask))) {
+                    if (imgui_table_next_column(imgui_c89_ctx) && imgui__tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)(((intptr_t)(c)))), "U+%04X-U+%04X: %d codepoints in %d inputs", c, (c_end - 1), (c_end - c), ImCountSetBits__0f0f42da0f(overlap_mask))) {
                         n = c;
                         for (; n < c_end; n++) {
-                            imgui_i_im_text_char_to_utf8(utf8_buf, n);
-                            imgui_i_bullet_text(imgui_c89_ctx, "Codepoint U+%04X (%s)", n, utf8_buf);
+                            imgui__im_text_char_to_utf8(utf8_buf, n);
+                            imgui__bullet_text(imgui_c89_ctx, "Codepoint U+%04X (%s)", n, utf8_buf);
                         }
                         imgui_tree_pop(imgui_c89_ctx);
                     }
@@ -4983,7 +4983,7 @@ void imgui_i_debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
                     src_n__9d3b3f2a = 0;
                     for (; src_n__9d3b3f2a < font->Sources.Size; src_n__9d3b3f2a++) {
                         if (overlap_mask & (1 << src_n__9d3b3f2a)) {
-                            imgui_i_text(imgui_c89_ctx, "%d ", src_n__9d3b3f2a);
+                            imgui__text(imgui_c89_ctx, "%d ", src_n__9d3b3f2a);
                             imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
                         }
                     }
@@ -5001,7 +5001,7 @@ void imgui_i_debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
             continue;
         }
         imgui_push_id_int_none(imgui_c89_ctx, baked->BakedId);
-        if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "Glyphs", "Baked at { %.2fpx, d.%.2f }: %d glyphs%s", baked->Size, baked->RasterizerDensity, baked->Glyphs.Size, ((baked->LastUsedFrame < (atlas->Builder->FrameCount - 1)) ? " *Unused*" : ""))) {
+        if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "Glyphs", "Baked at { %.2fpx, d.%.2f }: %d glyphs%s", baked->Size, baked->RasterizerDensity, baked->Glyphs.Size, ((baked->LastUsedFrame < (atlas->Builder->FrameCount - 1)) ? " *Unused*" : ""))) {
             if (imgui_small_button(imgui_c89_ctx, "Load all")) {
                 base = 0;
                 for (; base <= 65535; base++) {
@@ -5009,15 +5009,15 @@ void imgui_i_debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
                 }
             }
             surface_sqrt = ((int)(sqrtf(((float)(baked->MetricsTotalSurface)))));
-            imgui_i_text(imgui_c89_ctx, "Ascent: %f, Descent: %f, Ascent-Descent: %f", baked->Ascent, baked->Descent, (baked->Ascent - baked->Descent));
-            imgui_i_text(imgui_c89_ctx, "Texture Area: about %d px ~%dx%d px", baked->MetricsTotalSurface, surface_sqrt, surface_sqrt);
+            imgui__text(imgui_c89_ctx, "Ascent: %f, Descent: %f, Ascent-Descent: %f", baked->Ascent, baked->Descent, (baked->Ascent - baked->Descent));
+            imgui__text(imgui_c89_ctx, "Texture Area: about %d px ~%dx%d px", baked->MetricsTotalSurface, surface_sqrt, surface_sqrt);
             src_n__a34c87c1 = 0;
             for (; src_n__a34c87c1 < font->Sources.Size; src_n__a34c87c1++) {
                 src__0c5032ef = (*(ImVector_ImFontConfig____operator____f864e92bd4(((ImVector_ImFontConfig_ptr *)(&(font->Sources))), src_n__a34c87c1)));
-                imgui_i_im_font_atlas_build_get_oversample_factors(src__0c5032ef, baked, (&oversample_h), (&oversample_v));
-                imgui_i_bullet_text(imgui_c89_ctx, "Input %d: '%s', Oversample: (%d=>%d,%d=>%d), PixelSnapH: %d, Offset: (%.1f,%.1f)", src_n__a34c87c1, src__0c5032ef->Name, src__0c5032ef->OversampleH, oversample_h, src__0c5032ef->OversampleV, oversample_v, src__0c5032ef->PixelSnapH, src__0c5032ef->GlyphOffset.x, src__0c5032ef->GlyphOffset.y);
+                imgui__im_font_atlas_build_get_oversample_factors(src__0c5032ef, baked, (&oversample_h), (&oversample_v));
+                imgui__bullet_text(imgui_c89_ctx, "Input %d: '%s', Oversample: (%d=>%d,%d=>%d), PixelSnapH: %d, Offset: (%.1f,%.1f)", src_n__a34c87c1, src__0c5032ef->Name, src__0c5032ef->OversampleH, oversample_h, src__0c5032ef->OversampleV, oversample_v, src__0c5032ef->PixelSnapH, src__0c5032ef->GlyphOffset.x, src__0c5032ef->GlyphOffset.y);
             }
-            imgui_i_debug_node_font_glyphs_for_src_mask(imgui_c89_ctx, font, baked, (~0));
+            imgui__debug_node_font_glyphs_for_src_mask(imgui_c89_ctx, font, baked, (~0));
             imgui_tree_pop(imgui_c89_ctx);
         }
         imgui_pop_id(imgui_c89_ctx);
@@ -5026,24 +5026,24 @@ void imgui_i_debug_node_font(ImGuiContext *imgui_c89_ctx, ImFont * font)
     imgui_unindent(imgui_c89_ctx, 0.0f);
 }
 
-void imgui_i_debug_node_font_glyph(ImGuiContext *imgui_c89_ctx, ImFont * font, const ImFontGlyph * glyph)
+void imgui__debug_node_font_glyph(ImGuiContext *imgui_c89_ctx, ImFont * font, const ImFontGlyph * glyph)
 {
     ImTextureRect * r;
 
-    imgui_i_text(imgui_c89_ctx, "Codepoint: U+%04X", glyph->Codepoint);
+    imgui__text(imgui_c89_ctx, "Codepoint: U+%04X", glyph->Codepoint);
     imgui_separator(imgui_c89_ctx);
-    imgui_i_text(imgui_c89_ctx, "Visible: %d", glyph->Visible);
-    imgui_i_text(imgui_c89_ctx, "AdvanceX: %.1f", glyph->AdvanceX);
-    imgui_i_text(imgui_c89_ctx, "Pos: (%.2f,%.2f)->(%.2f,%.2f)", glyph->X0, glyph->Y0, glyph->X1, glyph->Y1);
-    imgui_i_text(imgui_c89_ctx, "UV: (%.3f,%.3f)->(%.3f,%.3f)", glyph->U0, glyph->V0, glyph->U1, glyph->V1);
+    imgui__text(imgui_c89_ctx, "Visible: %d", glyph->Visible);
+    imgui__text(imgui_c89_ctx, "AdvanceX: %.1f", glyph->AdvanceX);
+    imgui__text(imgui_c89_ctx, "Pos: (%.2f,%.2f)->(%.2f,%.2f)", glyph->X0, glyph->Y0, glyph->X1, glyph->Y1);
+    imgui__text(imgui_c89_ctx, "UV: (%.3f,%.3f)->(%.3f,%.3f)", glyph->U0, glyph->V0, glyph->U1, glyph->V1);
     if (glyph->PackId >= 0) {
-        r = imgui_i_im_font_atlas_pack_get_rect(font->OwnerAtlas, glyph->PackId);
-        imgui_i_text(imgui_c89_ctx, "PackId: 0x%X (%dx%d rect at %d,%d)", glyph->PackId, r->w, r->h, r->x, r->y);
+        r = imgui__im_font_atlas_pack_get_rect(font->OwnerAtlas, glyph->PackId);
+        imgui__text(imgui_c89_ctx, "PackId: 0x%X (%dx%d rect at %d,%d)", glyph->PackId, r->w, r->h, r->x, r->y);
     }
-    imgui_i_text(imgui_c89_ctx, "SourceIdx: %d", glyph->SourceIdx);
+    imgui__text(imgui_c89_ctx, "SourceIdx: %d", glyph->SourceIdx);
 }
 
-void imgui_i_debug_node_font_glyphs_for_src_mask(ImGuiContext *imgui_c89_ctx, ImFont * font, ImFontBaked * baked, int src_mask)
+void imgui__debug_node_font_glyphs_for_src_mask(ImGuiContext *imgui_c89_ctx, ImFont * font, ImFontBaked * baked, int src_mask)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -5084,7 +5084,7 @@ void imgui_i_debug_node_font_glyphs_for_src_mask(ImGuiContext *imgui_c89_ctx, Im
         if (count <= 0) {
             continue;
         }
-        if (!imgui_i_tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)(((intptr_t)(base)))), "U+%04X..U+%04X (%d %s)", base, (base + 255), count, ((count > 1) ? "glyphs" : "glyph"))) {
+        if (!imgui__tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)(((intptr_t)(base)))), "U+%04X..U+%04X (%d %s)", base, (base + 255), count, ((count > 1) ? "glyphs" : "glyph"))) {
             continue;
         }
         base_pos = imgui_get_cursor_screen_pos(imgui_c89_ctx);
@@ -5099,7 +5099,7 @@ void imgui_i_debug_node_font_glyphs_for_src_mask(ImGuiContext *imgui_c89_ctx, Im
             }
             imgui_font_render_char(imgui_c89_ctx, ((ImFont *)(font)), draw_list, cell_size, &(cell_p1), glyph_col, ((ImWchar)((base + n__c6b8246a))), 0);
             if (imgui_is_mouse_hovering_rect(imgui_c89_ctx, &(cell_p1), &(cell_p2), 1) && imgui_begin_tooltip(imgui_c89_ctx)) {
-                imgui_i_debug_node_font_glyph(imgui_c89_ctx, font, glyph__9190fc8e);
+                imgui__debug_node_font_glyph(imgui_c89_ctx, font, glyph__9190fc8e);
                 imgui_end_tooltip(imgui_c89_ctx);
             }
         }
@@ -5108,14 +5108,14 @@ void imgui_i_debug_node_font_glyphs_for_src_mask(ImGuiContext *imgui_c89_ctx, Im
     }
 }
 
-void imgui_i_debug_node_storage(ImGuiContext *imgui_c89_ctx, ImGuiStorage * storage, const char * label)
+void imgui__debug_node_storage(ImGuiContext *imgui_c89_ctx, ImGuiStorage * storage, const char * label)
 {
     ImGuiStoragePair * __begin1;
     ImGuiStoragePair * __end1;
     const ImGuiStoragePair * p;
     ImVector_ImGuiStoragePair * __range1;
 
-    if (!imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, label, "%s: %d entries, %d bytes", label, storage->Data.Size, ImVector_ImGuiStoragePair__size_in_bytes__1e4372ab92(((ImVector_ImGuiStoragePair *)(&(storage->Data)))))) {
+    if (!imgui__tree_node_string_string_varargs(imgui_c89_ctx, label, "%s: %d entries, %d bytes", label, storage->Data.Size, ImVector_ImGuiStoragePair__size_in_bytes__1e4372ab92(((ImVector_ImGuiStoragePair *)(&(storage->Data)))))) {
         return;
     }
     __range1 = &(storage->Data);
@@ -5123,13 +5123,13 @@ void imgui_i_debug_node_storage(ImGuiContext *imgui_c89_ctx, ImGuiStorage * stor
     __end1 = ImVector_ImGuiStoragePair__end__422dc07a61(((ImVector_ImGuiStoragePair *)(__range1)));
     for (; __begin1 != __end1; ++__begin1) {
         p = &((*__begin1));
-        imgui_i_bullet_text(imgui_c89_ctx, "Key 0x%08X Value { i: %d }", p->key, p->imgui_c89_unnamed_ae97675b.val_i);
-        imgui_i_debug_locate_item_on_hover(imgui_c89_ctx, p->key);
+        imgui__bullet_text(imgui_c89_ctx, "Key 0x%08X Value { i: %d }", p->key, p->imgui_c89_unnamed_ae97675b.val_i);
+        imgui__debug_locate_item_on_hover(imgui_c89_ctx, p->key);
     }
     imgui_tree_pop(imgui_c89_ctx);
 }
 
-void imgui_i_debug_node_tab_bar(ImGuiContext *imgui_c89_ctx, ImGuiTabBar * tab_bar, const char * label)
+void imgui__debug_node_tab_bar(ImGuiContext *imgui_c89_ctx, ImGuiTabBar * tab_bar, const char * label)
 {
     char buf[256];
     char * p;
@@ -5145,17 +5145,17 @@ void imgui_i_debug_node_tab_bar(ImGuiContext *imgui_c89_ctx, ImGuiTabBar * tab_b
     p = buf;
     buf_end = (buf + ((int)((sizeof(buf) / sizeof((*buf))))));
     is_active = (tab_bar->PrevFrameVisible >= (imgui_get_frame_count(imgui_c89_ctx) - 2));
-    p += imgui_i_im_format_string(p, (buf_end - p), "%s 0x%08X (%d tabs)%s  {", label, tab_bar->ID, tab_bar->Tabs.Size, (is_active ? "" : " *Inactive*"));
+    p += imgui__im_format_string(p, (buf_end - p), "%s 0x%08X (%d tabs)%s  {", label, tab_bar->ID, tab_bar->Tabs.Size, (is_active ? "" : " *Inactive*"));
     tab_n = 0;
     for (; tab_n < ImMin__16ca668bb0(tab_bar->Tabs.Size, 3); tab_n++) {
         tab = (&(*(ImVector_ImGuiTabItem__operator____f111b122c1(((ImVector_ImGuiTabItem *)(&(tab_bar->Tabs))), tab_n))));
-        p += imgui_i_im_format_string(p, (buf_end - p), "%s'%s'", ((tab_n > 0) ? ", " : ""), imgui_i_tab_bar_get_tab_name(tab_bar, tab));
+        p += imgui__im_format_string(p, (buf_end - p), "%s'%s'", ((tab_n > 0) ? ", " : ""), imgui__tab_bar_get_tab_name(tab_bar, tab));
     }
-    p += imgui_i_im_format_string(p, (buf_end - p), ((tab_bar->Tabs.Size > 3) ? " ... }" : " } "));
+    p += imgui__im_format_string(p, (buf_end - p), ((tab_bar->Tabs.Size > 3) ? " ... }" : " } "));
     if (!is_active) {
         imgui_push_style_color_vec4(imgui_c89_ctx, ImGuiCol_Text, &((*(imgui_get_style_color_vec4(imgui_c89_ctx, ImGuiCol_TextDisabled)))));
     }
-    open = imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, label, "%s", buf);
+    open = imgui__tree_node_string_string_varargs(imgui_c89_ctx, label, "%s", buf);
     if (!is_active) {
         imgui_pop_style_color(imgui_c89_ctx, 1);
     }
@@ -5171,21 +5171,21 @@ void imgui_i_debug_node_tab_bar(ImGuiContext *imgui_c89_ctx, ImGuiTabBar * tab_b
             tab__d8eaf4a4 = (&(*(ImVector_ImGuiTabItem__operator____f111b122c1(((ImVector_ImGuiTabItem *)(&(tab_bar->Tabs))), tab_n__f1580c79))));
             imgui_push_id_const_pointer_none(imgui_c89_ctx, tab__d8eaf4a4);
             if (imgui_small_button(imgui_c89_ctx, "<")) {
-                imgui_i_tab_bar_queue_reorder(tab_bar, tab__d8eaf4a4, (-1));
+                imgui__tab_bar_queue_reorder(tab_bar, tab__d8eaf4a4, (-1));
             }
             imgui_same_line(imgui_c89_ctx, 0, 2);
             if (imgui_small_button(imgui_c89_ctx, ">")) {
-                imgui_i_tab_bar_queue_reorder(tab_bar, tab__d8eaf4a4, (+1));
+                imgui__tab_bar_queue_reorder(tab_bar, tab__d8eaf4a4, (+1));
             }
             imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-            imgui_i_text(imgui_c89_ctx, "%02d%c Tab 0x%08X '%s' Offset: %.2f, Width: %.2f/%.2f", tab_n__f1580c79, ((tab__d8eaf4a4->ID == tab_bar->SelectedTabId) ? 42 : 32), tab__d8eaf4a4->ID, imgui_i_tab_bar_get_tab_name(tab_bar, tab__d8eaf4a4), tab__d8eaf4a4->Offset, tab__d8eaf4a4->Width, tab__d8eaf4a4->ContentWidth);
+            imgui__text(imgui_c89_ctx, "%02d%c Tab 0x%08X '%s' Offset: %.2f, Width: %.2f/%.2f", tab_n__f1580c79, ((tab__d8eaf4a4->ID == tab_bar->SelectedTabId) ? 42 : 32), tab__d8eaf4a4->ID, imgui__tab_bar_get_tab_name(tab_bar, tab__d8eaf4a4), tab__d8eaf4a4->Offset, tab__d8eaf4a4->Width, tab__d8eaf4a4->ContentWidth);
             imgui_pop_id(imgui_c89_ctx);
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
 }
 
-void imgui_i_debug_node_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * tex, int int_id, const ImFontAtlasRect * highlight_rect)
+void imgui__debug_node_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * tex, int int_id, const ImFontAtlasRect * highlight_rect)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -5209,7 +5209,7 @@ void imgui_i_debug_node_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * tex
 
     g = &((*imgui_c89_ctx));
     imgui_push_id_int_none(imgui_c89_ctx, int_id);
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "", "Texture #%03d (%dx%d pixels)", tex->UniqueID, tex->Width, tex->Height)) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "", "Texture #%03d (%dx%d pixels)", tex->UniqueID, tex->Width, tex->Height)) {
         cfg = (&g->DebugMetricsConfig);
         imgui_checkbox(imgui_c89_ctx, "Show used rect", (&cfg->ShowTextureUsedRect));
         imgui_push_style_var_float(imgui_c89_ctx, ImGuiStyleVar_ImageBorderSize, ImMax__3c7b1bb7d1(1.0f, g->Style.ImageBorderSize));
@@ -5225,18 +5225,18 @@ void imgui_i_debug_node_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * tex
         if (highlight_rect != 0) {
             ImRect_ImRect__9d29cc465f(&r_outer, p.x, p.y, (p.x + tex->Width), (p.y + tex->Height));
             ImRect_ImRect__9d29cc465f(&r_inner, (p.x + highlight_rect->x), (p.y + highlight_rect->y), ((p.x + highlight_rect->x) + highlight_rect->w), ((p.y + highlight_rect->y) + highlight_rect->h));
-            imgui_i_render_rect_filled_with_hole(imgui_c89_ctx, imgui_get_window_draw_list(imgui_c89_ctx), &(r_outer), &(r_inner), ((((((ImU32)(100)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(0)) << 0)), 0.0f);
+            imgui__render_rect_filled_with_hole(imgui_c89_ctx, imgui_get_window_draw_list(imgui_c89_ctx), &(r_outer), &(r_inner), ((((((ImU32)(100)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(0)) << 0)), 0.0f);
             imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(imgui_get_window_draw_list(imgui_c89_ctx))), (imgui_c89_temporary_8 = operator___cb7271567d(&(r_inner.Min), (imgui_c89_temporary_9 = ImVec2_ImVec2_value__c798775144(1, 1), &imgui_c89_temporary_9)), &imgui_c89_temporary_8), (imgui_c89_temporary_10 = operator___29d06b7915(&(r_inner.Max), (imgui_c89_temporary_11 = ImVec2_ImVec2_value__c798775144(1, 1), &imgui_c89_temporary_11)), &imgui_c89_temporary_10), ((((((ImU32)(255)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(255)) << 8)) | (((ImU32)(255)) << 0)), 0.0f, 1.0f, 0);
         }
         imgui_pop_style_var(imgui_c89_ctx, 1);
-        imgui_i_text(imgui_c89_ctx, "Status = %s (%d), Format = %s (%d), UseColors = %d", imgui_i_im_texture_data_get_status_name(tex->Status), tex->Status, imgui_i_im_texture_data_get_format_name(tex->Format), tex->Format, tex->UseColors);
-        imgui_i_text(imgui_c89_ctx, "TexRef = %s, BackendUserData = %p", FormatTextureRefForDebugDisplay__69309e42e0(texref_desc, ((int)((sizeof(texref_desc) / sizeof((*texref_desc))))), imgui_texture_data_get_tex_ref(((ImTextureData *)(tex)))), tex->BackendUserData);
+        imgui__text(imgui_c89_ctx, "Status = %s (%d), Format = %s (%d), UseColors = %d", imgui__im_texture_data_get_status_name(tex->Status), tex->Status, imgui__im_texture_data_get_format_name(tex->Format), tex->Format, tex->UseColors);
+        imgui__text(imgui_c89_ctx, "TexRef = %s, BackendUserData = %p", FormatTextureRefForDebugDisplay__69309e42e0(texref_desc, ((int)((sizeof(texref_desc) / sizeof((*texref_desc))))), imgui_texture_data_get_tex_ref(((ImTextureData *)(tex)))), tex->BackendUserData);
         imgui_tree_pop(imgui_c89_ctx);
     }
     imgui_pop_id(imgui_c89_ctx);
 }
 
-void imgui_i_debug_node_viewport(ImGuiContext *imgui_c89_ctx, ImGuiViewportP * viewport)
+void imgui__debug_node_viewport(ImGuiContext *imgui_c89_ctx, ImGuiViewportP * viewport)
 {
     ImGuiContext * g;
     unsigned char open;
@@ -5248,26 +5248,26 @@ void imgui_i_debug_node_viewport(ImGuiContext *imgui_c89_ctx, ImGuiViewportP * v
 
     g = &((*imgui_c89_ctx));
     imgui_set_next_item_open(imgui_c89_ctx, 1, ImGuiCond_Once);
-    open = imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "viewport0", "Viewport #%d", 0);
+    open = imgui__tree_node_string_string_varargs(imgui_c89_ctx, "viewport0", "Viewport #%d", 0);
     if (imgui_is_item_hovered(imgui_c89_ctx, 0)) {
         g->DebugMetricsConfig.HighlightViewportID = viewport->ID;
     }
     if (open) {
         flags = viewport->Flags;
-        imgui_i_bullet_text(imgui_c89_ctx, "Main Pos: (%.0f,%.0f), Size: (%.0f,%.0f)\nWorkArea Inset Left: %.0f Top: %.0f, Right: %.0f, Bottom: %.0f", viewport->Pos.x, viewport->Pos.y, viewport->Size.x, viewport->Size.y, viewport->WorkInsetMin.x, viewport->WorkInsetMin.y, viewport->WorkInsetMax.x, viewport->WorkInsetMax.y);
-        imgui_i_bullet_text(imgui_c89_ctx, "Flags: 0x%04X =%s%s%s", viewport->Flags, ((flags & ImGuiViewportFlags_IsPlatformWindow) ? " IsPlatformWindow" : ""), ((flags & ImGuiViewportFlags_IsPlatformMonitor) ? " IsPlatformMonitor" : ""), ((flags & ImGuiViewportFlags_OwnedByApp) ? " OwnedByApp" : ""));
+        imgui__bullet_text(imgui_c89_ctx, "Main Pos: (%.0f,%.0f), Size: (%.0f,%.0f)\nWorkArea Inset Left: %.0f Top: %.0f, Right: %.0f, Bottom: %.0f", viewport->Pos.x, viewport->Pos.y, viewport->Size.x, viewport->Size.y, viewport->WorkInsetMin.x, viewport->WorkInsetMin.y, viewport->WorkInsetMax.x, viewport->WorkInsetMax.y);
+        imgui__bullet_text(imgui_c89_ctx, "Flags: 0x%04X =%s%s%s", viewport->Flags, ((flags & ImGuiViewportFlags_IsPlatformWindow) ? " IsPlatformWindow" : ""), ((flags & ImGuiViewportFlags_IsPlatformMonitor) ? " IsPlatformMonitor" : ""), ((flags & ImGuiViewportFlags_OwnedByApp) ? " OwnedByApp" : ""));
         __range2 = &(viewport->DrawDataP.CmdLists);
         __begin2 = ImVector_ImDrawList____begin__f18a70ccac(((ImVector_ImDrawList_ptr *)(__range2)));
         __end2 = ImVector_ImDrawList____end__151818158d(((ImVector_ImDrawList_ptr *)(__range2)));
         for (; __begin2 != __end2; ++__begin2) {
             draw_list = (*__begin2);
-            imgui_i_debug_node_draw_list(imgui_c89_ctx, 0, viewport, draw_list, "DrawList");
+            imgui__debug_node_draw_list(imgui_c89_ctx, 0, viewport, draw_list, "DrawList");
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
 }
 
-void imgui_i_debug_node_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const char * label)
+void imgui__debug_node_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const char * label)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -5286,7 +5286,7 @@ void imgui_i_debug_node_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window
     ImVector_ImGuiOldColumns * __range2;
 
     if (window == 0) {
-        imgui_i_bullet_text(imgui_c89_ctx, "%s: NULL", label);
+        imgui__bullet_text(imgui_c89_ctx, "%s: NULL", label);
         return;
     }
     g = &((*imgui_c89_ctx));
@@ -5295,7 +5295,7 @@ void imgui_i_debug_node_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window
     if (!is_active) {
         imgui_push_style_color_vec4(imgui_c89_ctx, ImGuiCol_Text, &((*(imgui_get_style_color_vec4(imgui_c89_ctx, ImGuiCol_TextDisabled)))));
     }
-    open = imgui_i_tree_node_ex_string_tree_node_flags_string_varargs(imgui_c89_ctx, label, tree_node_flags, "%s '%s'%s", label, window->Name, (is_active ? "" : " *Inactive*"));
+    open = imgui__tree_node_ex_string_tree_node_flags_string_varargs(imgui_c89_ctx, label, tree_node_flags, "%s '%s'%s", label, window->Name, (is_active ? "" : " *Inactive*"));
     if (!is_active) {
         imgui_pop_style_color(imgui_c89_ctx, 1);
     }
@@ -5306,91 +5306,91 @@ void imgui_i_debug_node_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window
         return;
     }
     if (window->MemoryCompacted) {
-        imgui_i_text_disabled(imgui_c89_ctx, "Note: some memory buffers have been compacted/freed.");
+        imgui__text_disabled(imgui_c89_ctx, "Note: some memory buffers have been compacted/freed.");
     }
-    if (g->IO.ConfigDebugIsDebuggerPresent && imgui_i_debug_break_button(imgui_c89_ctx, "**DebugBreak**", "in Begin()")) {
+    if (g->IO.ConfigDebugIsDebuggerPresent && imgui__debug_break_button(imgui_c89_ctx, "**DebugBreak**", "in Begin()")) {
         g->DebugBreakInWindow = window->ID;
     }
     flags = window->Flags;
-    imgui_i_debug_node_draw_list(imgui_c89_ctx, window, window->Viewport, window->DrawList, "DrawList");
-    imgui_i_bullet_text(imgui_c89_ctx, "Pos: (%.1f,%.1f), Size: (%.1f,%.1f), ContentSize (%.1f,%.1f) Ideal (%.1f,%.1f)", window->Pos.x, window->Pos.y, window->Size.x, window->Size.y, window->ContentSize.x, window->ContentSize.y, window->ContentSizeIdeal.x, window->ContentSizeIdeal.y);
-    imgui_i_bullet_text(imgui_c89_ctx, "Flags: 0x%08X (%s%s%s%s%s%s%s%s%s..)", flags, ((flags & ImGuiWindowFlags_ChildWindow) ? "Child " : ""), ((flags & ImGuiWindowFlags_Tooltip) ? "Tooltip " : ""), ((flags & ImGuiWindowFlags_Popup) ? "Popup " : ""), ((flags & ImGuiWindowFlags_Modal) ? "Modal " : ""), ((flags & ImGuiWindowFlags_ChildMenu) ? "ChildMenu " : ""), ((flags & ImGuiWindowFlags_NoSavedSettings) ? "NoSavedSettings " : ""), ((flags & ImGuiWindowFlags_NoMouseInputs) ? "NoMouseInputs" : ""), ((flags & ImGuiWindowFlags_NoNavInputs) ? "NoNavInputs" : ""), ((flags & ImGuiWindowFlags_AlwaysAutoResize) ? "AlwaysAutoResize" : ""));
+    imgui__debug_node_draw_list(imgui_c89_ctx, window, window->Viewport, window->DrawList, "DrawList");
+    imgui__bullet_text(imgui_c89_ctx, "Pos: (%.1f,%.1f), Size: (%.1f,%.1f), ContentSize (%.1f,%.1f) Ideal (%.1f,%.1f)", window->Pos.x, window->Pos.y, window->Size.x, window->Size.y, window->ContentSize.x, window->ContentSize.y, window->ContentSizeIdeal.x, window->ContentSizeIdeal.y);
+    imgui__bullet_text(imgui_c89_ctx, "Flags: 0x%08X (%s%s%s%s%s%s%s%s%s..)", flags, ((flags & ImGuiWindowFlags_ChildWindow) ? "Child " : ""), ((flags & ImGuiWindowFlags_Tooltip) ? "Tooltip " : ""), ((flags & ImGuiWindowFlags_Popup) ? "Popup " : ""), ((flags & ImGuiWindowFlags_Modal) ? "Modal " : ""), ((flags & ImGuiWindowFlags_ChildMenu) ? "ChildMenu " : ""), ((flags & ImGuiWindowFlags_NoSavedSettings) ? "NoSavedSettings " : ""), ((flags & ImGuiWindowFlags_NoMouseInputs) ? "NoMouseInputs" : ""), ((flags & ImGuiWindowFlags_NoNavInputs) ? "NoNavInputs" : ""), ((flags & ImGuiWindowFlags_AlwaysAutoResize) ? "AlwaysAutoResize" : ""));
     if (flags & ImGuiWindowFlags_ChildWindow) {
-        imgui_i_bullet_text(imgui_c89_ctx, "ChildFlags: 0x%08X (%s%s%s%s..)", window->ChildFlags, ((window->ChildFlags & ImGuiChildFlags_Borders) ? "Borders " : ""), ((window->ChildFlags & ImGuiChildFlags_ResizeX) ? "ResizeX " : ""), ((window->ChildFlags & ImGuiChildFlags_ResizeY) ? "ResizeY " : ""), ((window->ChildFlags & ImGuiChildFlags_NavFlattened) ? "NavFlattened " : ""));
+        imgui__bullet_text(imgui_c89_ctx, "ChildFlags: 0x%08X (%s%s%s%s..)", window->ChildFlags, ((window->ChildFlags & ImGuiChildFlags_Borders) ? "Borders " : ""), ((window->ChildFlags & ImGuiChildFlags_ResizeX) ? "ResizeX " : ""), ((window->ChildFlags & ImGuiChildFlags_ResizeY) ? "ResizeY " : ""), ((window->ChildFlags & ImGuiChildFlags_NavFlattened) ? "NavFlattened " : ""));
     }
-    imgui_i_bullet_text(imgui_c89_ctx, "Scroll: (%.2f/%.2f,%.2f/%.2f) Scrollbar:%s%s", window->Scroll.x, window->ScrollMax.x, window->Scroll.y, window->ScrollMax.y, (window->ScrollbarX ? "X" : ""), (window->ScrollbarY ? "Y" : ""));
-    imgui_i_bullet_text(imgui_c89_ctx, "Active: %d/%d, WriteAccessed: %d, BeginOrderWithinContext: %d", window->Active, window->WasActive, window->WriteAccessed, ((window->Active || window->WasActive) ? window->BeginOrderWithinContext : (-1)));
-    imgui_i_bullet_text(imgui_c89_ctx, "Appearing: %d, Hidden: %d (CanSkip %d Cannot %d), SkipItems: %d", window->Appearing, window->Hidden, window->HiddenFramesCanSkipItems, window->HiddenFramesCannotSkipItems, window->SkipItems);
+    imgui__bullet_text(imgui_c89_ctx, "Scroll: (%.2f/%.2f,%.2f/%.2f) Scrollbar:%s%s", window->Scroll.x, window->ScrollMax.x, window->Scroll.y, window->ScrollMax.y, (window->ScrollbarX ? "X" : ""), (window->ScrollbarY ? "Y" : ""));
+    imgui__bullet_text(imgui_c89_ctx, "Active: %d/%d, WriteAccessed: %d, BeginOrderWithinContext: %d", window->Active, window->WasActive, window->WriteAccessed, ((window->Active || window->WasActive) ? window->BeginOrderWithinContext : (-1)));
+    imgui__bullet_text(imgui_c89_ctx, "Appearing: %d, Hidden: %d (CanSkip %d Cannot %d), SkipItems: %d", window->Appearing, window->Hidden, window->HiddenFramesCanSkipItems, window->HiddenFramesCannotSkipItems, window->SkipItems);
     layer = 0;
     for (; layer < ImGuiNavLayer_COUNT; layer++) {
         r = window->NavRectRel[layer];
         if ((r.Min.x >= r.Max.x) && (r.Min.y >= r.Max.y)) {
-            imgui_i_bullet_text(imgui_c89_ctx, "NavLastIds[%d]: 0x%08X", layer, window->NavLastIds[layer]);
+            imgui__bullet_text(imgui_c89_ctx, "NavLastIds[%d]: 0x%08X", layer, window->NavLastIds[layer]);
         } else {
-            imgui_i_bullet_text(imgui_c89_ctx, "NavLastIds[%d]: 0x%08X at +(%.1f,%.1f)(%.1f,%.1f)", layer, window->NavLastIds[layer], r.Min.x, r.Min.y, r.Max.x, r.Max.y);
+            imgui__bullet_text(imgui_c89_ctx, "NavLastIds[%d]: 0x%08X at +(%.1f,%.1f)(%.1f,%.1f)", layer, window->NavLastIds[layer], r.Min.x, r.Min.y, r.Max.x, r.Max.y);
         }
-        imgui_i_debug_locate_item_on_hover(imgui_c89_ctx, window->NavLastIds[layer]);
+        imgui__debug_locate_item_on_hover(imgui_c89_ctx, window->NavLastIds[layer]);
     }
     pr = window->NavPreferredScoringPosRel;
     layer__b4f2b780 = 0;
     for (; layer__b4f2b780 < ImGuiNavLayer_COUNT; layer__b4f2b780++) {
-        imgui_i_bullet_text(imgui_c89_ctx, "NavPreferredScoringPosRel[%d] = (%.1f,%.1f)", layer__b4f2b780, ((pr[layer__b4f2b780].x == 3.40282347E+38f) ? (-99999.0f) : pr[layer__b4f2b780].x), ((pr[layer__b4f2b780].y == 3.40282347E+38f) ? (-99999.0f) : pr[layer__b4f2b780].y));
+        imgui__bullet_text(imgui_c89_ctx, "NavPreferredScoringPosRel[%d] = (%.1f,%.1f)", layer__b4f2b780, ((pr[layer__b4f2b780].x == 3.40282347E+38f) ? (-99999.0f) : pr[layer__b4f2b780].x), ((pr[layer__b4f2b780].y == 3.40282347E+38f) ? (-99999.0f) : pr[layer__b4f2b780].y));
     }
-    imgui_i_bullet_text(imgui_c89_ctx, "NavLayersActiveMask: %X, NavLastChildNavWindow: %s", window->DC.NavLayersActiveMask, (window->NavLastChildNavWindow ? window->NavLastChildNavWindow->Name : "NULL"));
+    imgui__bullet_text(imgui_c89_ctx, "NavLayersActiveMask: %X, NavLastChildNavWindow: %s", window->DC.NavLayersActiveMask, (window->NavLastChildNavWindow ? window->NavLastChildNavWindow->Name : "NULL"));
     if (window->RootWindow != window) {
-        imgui_i_debug_node_window(imgui_c89_ctx, window->RootWindow, "RootWindow");
+        imgui__debug_node_window(imgui_c89_ctx, window->RootWindow, "RootWindow");
     }
     if (window->ParentWindow != 0) {
-        imgui_i_debug_node_window(imgui_c89_ctx, window->ParentWindow, "ParentWindow");
+        imgui__debug_node_window(imgui_c89_ctx, window->ParentWindow, "ParentWindow");
     }
     if (window->ParentWindowForFocusRoute != 0) {
-        imgui_i_debug_node_window(imgui_c89_ctx, window->ParentWindowForFocusRoute, "ParentWindowForFocusRoute");
+        imgui__debug_node_window(imgui_c89_ctx, window->ParentWindowForFocusRoute, "ParentWindowForFocusRoute");
     }
     if (window->DC.ChildWindows.Size > 0) {
-        imgui_i_debug_node_windows_list(imgui_c89_ctx, (&window->DC.ChildWindows), "ChildWindows");
+        imgui__debug_node_windows_list(imgui_c89_ctx, (&window->DC.ChildWindows), "ChildWindows");
     }
-    if ((window->ColumnsStorage.Size > 0) && imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "Columns", "Columns sets (%d)", window->ColumnsStorage.Size)) {
+    if ((window->ColumnsStorage.Size > 0) && imgui__tree_node_string_string_varargs(imgui_c89_ctx, "Columns", "Columns sets (%d)", window->ColumnsStorage.Size)) {
         __range2 = &(window->ColumnsStorage);
         __begin2 = ImVector_ImGuiOldColumns__begin__6518941464(((ImVector_ImGuiOldColumns *)(__range2)));
         __end2 = ImVector_ImGuiOldColumns__end__c49046b8fb(((ImVector_ImGuiOldColumns *)(__range2)));
         for (; __begin2 != __end2; ++__begin2) {
             columns = &((*__begin2));
-            imgui_i_debug_node_columns(imgui_c89_ctx, (&(*columns)));
+            imgui__debug_node_columns(imgui_c89_ctx, (&(*columns)));
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
-    imgui_i_debug_node_storage(imgui_c89_ctx, (&window->StateStorage), "Storage");
+    imgui__debug_node_storage(imgui_c89_ctx, (&window->StateStorage), "Storage");
     imgui_tree_pop(imgui_c89_ctx);
 }
 
-void imgui_i_debug_node_window_settings(ImGuiContext *imgui_c89_ctx, ImGuiWindowSettings * settings)
+void imgui__debug_node_window_settings(ImGuiContext *imgui_c89_ctx, ImGuiWindowSettings * settings)
 {
     if (settings->WantDelete) {
         imgui_begin_disabled(imgui_c89_ctx, 1);
     }
-    imgui_i_bullet_text(imgui_c89_ctx, "0x%08X \"%s\" Pos (%d,%d) Size (%d,%d) Collapsed=%d", settings->ID, ImGuiWindowSettings_GetName__fb7cfc2069(((ImGuiWindowSettings *)(settings))), settings->Pos.x, settings->Pos.y, settings->Size.x, settings->Size.y, settings->Collapsed);
+    imgui__bullet_text(imgui_c89_ctx, "0x%08X \"%s\" Pos (%d,%d) Size (%d,%d) Collapsed=%d", settings->ID, ImGuiWindowSettings_GetName__fb7cfc2069(((ImGuiWindowSettings *)(settings))), settings->Pos.x, settings->Pos.y, settings->Size.x, settings->Size.y, settings->Collapsed);
     if (settings->WantDelete) {
         imgui_end_disabled(imgui_c89_ctx);
     }
 }
 
-void imgui_i_debug_node_windows_list(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiWindow_ptr * windows, const char * label)
+void imgui__debug_node_windows_list(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiWindow_ptr * windows, const char * label)
 {
     int i;
 
-    if (!imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, label, "%s (%d)", label, windows->Size)) {
+    if (!imgui__tree_node_string_string_varargs(imgui_c89_ctx, label, "%s (%d)", label, windows->Size)) {
         return;
     }
     i = (windows->Size - 1);
     for (; i >= 0; i--) {
         imgui_push_id_const_pointer_none(imgui_c89_ctx, (*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&((*windows)))), i))));
-        imgui_i_debug_node_window(imgui_c89_ctx, (*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&((*windows)))), i))), "Window");
+        imgui__debug_node_window(imgui_c89_ctx, (*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&((*windows)))), i))), "Window");
         imgui_pop_id(imgui_c89_ctx);
     }
     imgui_tree_pop(imgui_c89_ctx);
 }
 
-void imgui_i_debug_node_windows_list_by_begin_stack_parent(ImGuiContext *imgui_c89_ctx, ImGuiWindow ** windows, int windows_size, ImGuiWindow * parent_in_begin_stack)
+void imgui__debug_node_windows_list_by_begin_stack_parent(ImGuiContext *imgui_c89_ctx, ImGuiWindow ** windows, int windows_size, ImGuiWindow * parent_in_begin_stack)
 {
     ImGuiWindow * window;
     char buf[20];
@@ -5402,15 +5402,15 @@ void imgui_i_debug_node_windows_list_by_begin_stack_parent(ImGuiContext *imgui_c
         if (window->ParentWindowInBeginStack != parent_in_begin_stack) {
             continue;
         }
-        imgui_i_im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "[%04d] Window", window->BeginOrderWithinContext);
-        imgui_i_debug_node_window(imgui_c89_ctx, window, buf);
+        imgui__im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "[%04d] Window", window->BeginOrderWithinContext);
+        imgui__debug_node_window(imgui_c89_ctx, window, buf);
         imgui_tree_push_string(imgui_c89_ctx, buf);
-        imgui_i_debug_node_windows_list_by_begin_stack_parent(imgui_c89_ctx, ((windows + i) + 1), ((windows_size - i) - 1), window);
+        imgui__debug_node_windows_list_by_begin_stack_parent(imgui_c89_ctx, ((windows + i) + 1), ((windows_size - i) - 1), window);
         imgui_tree_pop(imgui_c89_ctx);
     }
 }
 
-void imgui_i_debug_render_keyboard_preview(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list)
+void imgui__debug_render_keyboard_preview(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -5476,7 +5476,7 @@ void imgui_i_debug_render_keyboard_preview(ImGuiContext *imgui_c89_ctx, ImDrawLi
     imgui_draw_list_pop_clip_rect(imgui_c89_ctx, ((ImDrawList *)(draw_list)));
 }
 
-void imgui_i_debug_render_viewport_thumbnail(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, ImGuiViewportP * viewport, const ImRect * bb)
+void imgui__debug_render_viewport_thumbnail(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, ImGuiViewportP * viewport, const ImRect * bb)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -5531,7 +5531,7 @@ void imgui_i_debug_render_viewport_thumbnail(ImGuiContext *imgui_c89_ctx, ImDraw
         imgui_draw_list_add_rect_filled(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)), &(thumb_r.Min), &(thumb_r.Max), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_WindowBg, alpha_mul), 0.0f, 0);
         imgui_draw_list_add_rect_filled(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)), &(title_r.Min), &(title_r.Max), imgui_get_color_u32_col_float(imgui_c89_ctx, (window_is_focused ? ImGuiCol_TitleBgActive : ImGuiCol_TitleBg), alpha_mul), 0.0f, 0);
         imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)), &(thumb_r.Min), &(thumb_r.Max), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Border, alpha_mul), 0.0f, 1.0f, 0);
-        imgui_draw_list_add_text_font_pointer_float_vec2_u32_string_string_float_vec4_pointer(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)), g->Font, (g->FontSize * 1.0f), &(title_r.Min), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, alpha_mul), thumb_window->Name, imgui_i_find_rendered_text_end(thumb_window->Name, 0), 0.0f, 0);
+        imgui_draw_list_add_text_font_pointer_float_vec2_u32_string_string_float_vec4_pointer(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)), g->Font, (g->FontSize * 1.0f), &(title_r.Min), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, alpha_mul), thumb_window->Name, imgui__find_rendered_text_end(thumb_window->Name, 0), 0.0f, 0);
     }
     imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(draw_list)), &(bb->Min), &(bb->Max), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Border, alpha_mul), 0.0f, 1.0f, 0);
     if (viewport->ID == g->DebugMetricsConfig.HighlightViewportID) {
@@ -5557,7 +5557,7 @@ void imgui_debug_text_encoding(ImGuiContext *imgui_c89_ctx, const char * str)
     int byte_index;
     const char * p;
 
-    imgui_i_text(imgui_c89_ctx, "Text: \"%s\"", str);
+    imgui__text(imgui_c89_ctx, "Text: \"%s\"", str);
     if (!imgui_begin_table(imgui_c89_ctx, "##DebugTextEncoding", 4, (((ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg) | ImGuiTableFlags_SizingFixedFit) | ImGuiTableFlags_Resizable), (imgui_c89_temporary_0 = ImVec2_ImVec2_value__c798775144(0.0f, 0.0f), &imgui_c89_temporary_0), 0.0f)) {
         return;
     }
@@ -5569,16 +5569,16 @@ void imgui_debug_text_encoding(ImGuiContext *imgui_c89_ctx, const char * str)
     str_end = (str + strlen(str));
     p = str;
     for (; (*p) != 0; ) {
-        c_utf8_len = imgui_i_im_text_char_from_utf8((&c), p, str_end);
+        c_utf8_len = imgui__im_text_char_from_utf8((&c), p, str_end);
         imgui_table_next_column(imgui_c89_ctx);
-        imgui_i_text(imgui_c89_ctx, "%d", ((int)((p - str))));
+        imgui__text(imgui_c89_ctx, "%d", ((int)((p - str))));
         imgui_table_next_column(imgui_c89_ctx);
         byte_index = 0;
         for (; byte_index < c_utf8_len; byte_index++) {
             if (byte_index > 0) {
                 imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
             }
-            imgui_i_text(imgui_c89_ctx, "0x%02X", ((int)(((unsigned char)(p[byte_index])))));
+            imgui__text(imgui_c89_ctx, "0x%02X", ((int)(((unsigned char)(p[byte_index])))));
         }
         imgui_table_next_column(imgui_c89_ctx);
         imgui_text_unformatted(imgui_c89_ctx, p, (p + c_utf8_len));
@@ -5587,13 +5587,13 @@ void imgui_debug_text_encoding(ImGuiContext *imgui_c89_ctx, const char * str)
             imgui_text_unformatted(imgui_c89_ctx, "[missing]", 0);
         }
         imgui_table_next_column(imgui_c89_ctx);
-        imgui_i_text(imgui_c89_ctx, "U+%04X", ((int)(c)));
+        imgui__text(imgui_c89_ctx, "U+%04X", ((int)(c)));
         p += c_utf8_len;
     }
     imgui_end_table(imgui_c89_ctx);
 }
 
-void imgui_i_debug_text_unformatted_with_locate_item(ImGuiContext *imgui_c89_ctx, const char * line_begin, const char * line_end)
+void imgui__debug_text_unformatted_with_locate_item(ImGuiContext *imgui_c89_ctx, const char * line_begin, const char * line_end)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -5623,13 +5623,13 @@ void imgui_i_debug_text_unformatted_with_locate_item(ImGuiContext *imgui_c89_ctx
         p1 = imgui_calc_text_size(imgui_c89_ctx, p, (p + 10), 0, (-1.0f));
         g->LastItemData.Rect = ImRect_ImRect_value__99b7f05542((imgui_c89_temporary_0 = operator___29d06b7915(&(text_rect.Min), (imgui_c89_temporary_1 = ImVec2_ImVec2_value__c798775144(p0.x, 0.0f), &imgui_c89_temporary_1)), &imgui_c89_temporary_0), (imgui_c89_temporary_2 = operator___29d06b7915(&(text_rect.Min), (imgui_c89_temporary_3 = ImVec2_ImVec2_value__c798775144((p0.x + p1.x), p1.y), &imgui_c89_temporary_3)), &imgui_c89_temporary_2));
         if (imgui_is_mouse_hovering_rect(imgui_c89_ctx, &(g->LastItemData.Rect.Min), &(g->LastItemData.Rect.Max), 1)) {
-            imgui_i_debug_locate_item_on_hover(imgui_c89_ctx, id);
+            imgui__debug_locate_item_on_hover(imgui_c89_ctx, id);
         }
         p += 10;
     }
 }
 
-ImU64 imgui_i_debug_texture_id_to_u64(ImTextureID tex_id)
+ImU64 imgui__debug_texture_id_to_u64(ImTextureID tex_id)
 {
     ImU64 v;
 
@@ -5638,7 +5638,7 @@ ImU64 imgui_i_debug_texture_id_to_u64(ImTextureID tex_id)
     return v;
 }
 
-void imgui_i_demo_marker(ImGuiContext *imgui_c89_ctx, const char * file, int line, const char * section)
+void imgui__demo_marker(ImGuiContext *imgui_c89_ctx, const char * file, int line, const char * section)
 {
     ImGuiContext * g;
 
@@ -5657,7 +5657,7 @@ void imgui_destroy_context(ImGuiContext * ctx)
         ctx = prev_ctx;
     }
     imgui_set_current_context(ctx);
-    imgui_i_shutdown(GImGui);
+    imgui__shutdown(GImGui);
     imgui_set_current_context(((prev_ctx != ctx) ? prev_ctx : 0));
     IM_DELETE__1612c3f00d(GImGui, ctx);
 }
@@ -5673,7 +5673,7 @@ void imgui_end(ImGuiContext *imgui_c89_ctx)
     if ((g->CurrentWindowStack.Size <= 1) && g->WithinFrameScopeWithImplicitWindow) {
         do {
             if (!(g->CurrentWindowStack.Size > 1)) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Calling End() too many times!")) {
+                if (imgui__error_log(imgui_c89_ctx, "Calling End() too many times!")) {
                     imgui_c89_expect((!((g->CurrentWindowStack.Size > 1) && "Calling End() too many times!")), 0) ? imgui_c89_assert_id(80) : ((void)(0));
                 }
             }
@@ -5684,7 +5684,7 @@ void imgui_end(ImGuiContext *imgui_c89_ctx)
     if (window->Flags & ImGuiWindowFlags_Popup) {
         do {
             if (!(g->WithinEndPopupID == window->ID)) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Must call EndPopup() and not End()!")) {
+                if (imgui__error_log(imgui_c89_ctx, "Must call EndPopup() and not End()!")) {
                     imgui_c89_expect((!((g->WithinEndPopupID == window->ID) && "Must call EndPopup() and not End()!")), 0) ? imgui_c89_assert_id(81) : ((void)(0));
                 }
             }
@@ -5693,21 +5693,21 @@ void imgui_end(ImGuiContext *imgui_c89_ctx)
     if (window->Flags & ImGuiWindowFlags_ChildWindow) {
         do {
             if (!(g->WithinEndChildID == window->ID)) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Must call EndChild() and not End()!")) {
+                if (imgui__error_log(imgui_c89_ctx, "Must call EndChild() and not End()!")) {
                     imgui_c89_expect((!((g->WithinEndChildID == window->ID) && "Must call EndChild() and not End()!")), 0) ? imgui_c89_assert_id(82) : ((void)(0));
                 }
             }
         } while (0);
     }
     if (window->DC.CurrentColumns) {
-        imgui_i_end_columns(imgui_c89_ctx);
+        imgui__end_columns(imgui_c89_ctx);
     }
     if (!window->SkipRefresh) {
         imgui_pop_clip_rect(imgui_c89_ctx);
     }
-    imgui_i_pop_focus_scope(imgui_c89_ctx);
+    imgui__pop_focus_scope(imgui_c89_ctx);
     if (window_stack_data->DisabledOverrideReenable && (window->RootWindow == window)) {
-        imgui_i_end_disabled_override_reenable(imgui_c89_ctx);
+        imgui__end_disabled_override_reenable(imgui_c89_ctx);
     }
     if (window->SkipRefresh) {
         imgui_c89_expect((!(window->DrawList == 0)), 0) ? imgui_c89_assert_id(83) : ((void)(0));
@@ -5717,7 +5717,7 @@ void imgui_end(ImGuiContext *imgui_c89_ctx)
         imgui_log_finish(imgui_c89_ctx);
     }
     if (window->DC.IsSetPos) {
-        imgui_i_error_check_using_set_cursor_pos_to_extend_parent_boundaries(imgui_c89_ctx);
+        imgui__error_check_using_set_cursor_pos_to_extend_parent_boundaries(imgui_c89_ctx);
     }
     g->LastItemData = window_stack_data->ParentLastItemDataBackup;
     if (window->Flags & ImGuiWindowFlags_ChildMenu) {
@@ -5727,7 +5727,7 @@ void imgui_end(ImGuiContext *imgui_c89_ctx)
         ImVector_ImGuiPopupData__pop_back__a4fbc953b6(((ImVector_ImGuiPopupData *)(&(g->BeginPopupStack))));
     }
     if (g->IO.ConfigErrorRecovery) {
-        imgui_i_error_recovery_try_to_recover_window_state(imgui_c89_ctx, (&window_stack_data->StackSizesInBegin));
+        imgui__error_recovery_try_to_recover_window_state(imgui_c89_ctx, (&window_stack_data->StackSizesInBegin));
     }
     ImVector_ImGuiWindowStackData__pop_back__8a0a91044f(((ImVector_ImGuiWindowStackData *)(&(g->CurrentWindowStack))));
     SetCurrentWindow__f02a6e67f9(imgui_c89_ctx, ((g->CurrentWindowStack.Size == 0) ? 0 : (*(ImVector_ImGuiWindowStackData__back__20779cb287(((ImVector_ImGuiWindowStackData *)(&(g->CurrentWindowStack)))))).Window));
@@ -5761,16 +5761,16 @@ void imgui_end_child(ImGuiContext *imgui_c89_ctx)
     if (child_window->BeginCount == 1) {
         parent_window = g->CurrentWindow;
         ImRect_ImRect__b1b06c34ac(&bb, &(parent_window->DC.CursorPos), (imgui_c89_temporary_0 = operator___29d06b7915(&(parent_window->DC.CursorPos), &(child_size)), &imgui_c89_temporary_0));
-        imgui_i_item_size(imgui_c89_ctx, &(child_size), (-1.0f));
+        imgui__item_size(imgui_c89_ctx, &(child_size), (-1.0f));
         nav_flattened = ((child_window->ChildFlags & ImGuiChildFlags_NavFlattened) != 0);
         if (((child_window->DC.NavLayersActiveMask != 0) || child_window->DC.NavWindowHasScrollY) && (!nav_flattened)) {
-            imgui_i_item_add(imgui_c89_ctx, &(bb), child_window->ChildId, 0, 0);
-            imgui_i_render_nav_cursor(imgui_c89_ctx, &(bb), child_window->ChildId, ImGuiNavRenderCursorFlags_None, (-1.0f));
+            imgui__item_add(imgui_c89_ctx, &(bb), child_window->ChildId, 0, 0);
+            imgui__render_nav_cursor(imgui_c89_ctx, &(bb), child_window->ChildId, ImGuiNavRenderCursorFlags_None, (-1.0f));
             if ((child_window->DC.NavLayersActiveMask == 0) && (child_window == g->NavWindow)) {
-                imgui_i_render_nav_cursor(imgui_c89_ctx, (imgui_c89_temporary_1 = ImRect_ImRect_value__99b7f05542((imgui_c89_temporary_2 = operator___cb7271567d(&(bb.Min), (imgui_c89_temporary_3 = ImVec2_ImVec2_value__c798775144(2, 2), &imgui_c89_temporary_3)), &imgui_c89_temporary_2), (imgui_c89_temporary_4 = operator___29d06b7915(&(bb.Max), (imgui_c89_temporary_5 = ImVec2_ImVec2_value__c798775144(2, 2), &imgui_c89_temporary_5)), &imgui_c89_temporary_4)), &imgui_c89_temporary_1), g->NavId, ImGuiNavRenderCursorFlags_Compact, (-1.0f));
+                imgui__render_nav_cursor(imgui_c89_ctx, (imgui_c89_temporary_1 = ImRect_ImRect_value__99b7f05542((imgui_c89_temporary_2 = operator___cb7271567d(&(bb.Min), (imgui_c89_temporary_3 = ImVec2_ImVec2_value__c798775144(2, 2), &imgui_c89_temporary_3)), &imgui_c89_temporary_2), (imgui_c89_temporary_4 = operator___29d06b7915(&(bb.Max), (imgui_c89_temporary_5 = ImVec2_ImVec2_value__c798775144(2, 2), &imgui_c89_temporary_5)), &imgui_c89_temporary_4)), &imgui_c89_temporary_1), g->NavId, ImGuiNavRenderCursorFlags_Compact, (-1.0f));
             }
         } else {
-            imgui_i_item_add(imgui_c89_ctx, &(bb), child_window->ChildId, 0, ImGuiItemFlags_NoNav);
+            imgui__item_add(imgui_c89_ctx, &(bb), child_window->ChildId, 0, ImGuiItemFlags_NoNav);
             if (nav_flattened) {
                 parent_window->DC.NavLayersActiveMaskNext |= child_window->DC.NavLayersActiveMaskNext;
             }
@@ -5794,7 +5794,7 @@ void imgui_end_disabled(ImGuiContext *imgui_c89_ctx)
     g = &((*imgui_c89_ctx));
     do {
         if (!(g->DisabledStackSize > 0)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling EndDisabled() too many times!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling EndDisabled() too many times!")) {
                 imgui_c89_expect((!((g->DisabledStackSize > 0) && "Calling EndDisabled() too many times!")), 0) ? imgui_c89_assert_id(86) : ((void)(0));
             }
             return;
@@ -5809,7 +5809,7 @@ void imgui_end_disabled(ImGuiContext *imgui_c89_ctx)
     }
 }
 
-void imgui_i_end_disabled_override_reenable(ImGuiContext *imgui_c89_ctx)
+void imgui__end_disabled_override_reenable(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -5832,7 +5832,7 @@ void imgui_end_drag_drop_source(ImGuiContext *imgui_c89_ctx)
         imgui_end_tooltip(imgui_c89_ctx);
     }
     if (g->DragDropPayload.DataFrameCount == (-1)) {
-        imgui_i_clear_drag_drop(imgui_c89_ctx);
+        imgui__clear_drag_drop(imgui_c89_ctx);
     }
     g->DragDropWithinSource = 0;
 }
@@ -5846,11 +5846,11 @@ void imgui_end_drag_drop_target(ImGuiContext *imgui_c89_ctx)
     imgui_c89_expect((!g->DragDropWithinTarget), 0) ? imgui_c89_assert_id(277) : ((void)(0));
     g->DragDropWithinTarget = 0;
     if (g->DragDropPayload.Delivery) {
-        imgui_i_clear_drag_drop(imgui_c89_ctx);
+        imgui__clear_drag_drop(imgui_c89_ctx);
     }
 }
 
-void imgui_i_end_error_tooltip(ImGuiContext *imgui_c89_ctx)
+void imgui__end_error_tooltip(ImGuiContext *imgui_c89_ctx)
 {
     imgui_end(imgui_c89_ctx);
 }
@@ -5878,25 +5878,25 @@ void imgui_end_frame(ImGuiContext *imgui_c89_ctx)
     }
     do {
         if (!g->WithinFrameScope) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Forgot to call ImGui::NewFrame()?")) {
+            if (imgui__error_log(imgui_c89_ctx, "Forgot to call ImGui::NewFrame()?")) {
                 imgui_c89_expect((!(g->WithinFrameScope && "Forgot to call ImGui::NewFrame()?")), 0) ? imgui_c89_assert_id(56) : ((void)(0));
             }
             return;
         }
     } while (0);
-    imgui_i_call_context_hooks((&(*g)), ImGuiContextHookType_EndFramePre);
+    imgui__call_context_hooks((&(*g)), ImGuiContextHookType_EndFramePre);
     if (g->IO.ConfigErrorRecovery) {
-        imgui_i_error_recovery_try_to_recover_state(imgui_c89_ctx, (&g->StackSizesInNewFrame));
+        imgui__error_recovery_try_to_recover_state(imgui_c89_ctx, (&g->StackSizesInNewFrame));
     }
     ImGui_ErrorCheckEndFrameSanityChecks__aa168afa1c(imgui_c89_ctx);
-    imgui_i_error_check_end_frame_finalize_error_tooltip(imgui_c89_ctx);
+    imgui__error_check_end_frame_finalize_error_tooltip(imgui_c89_ctx);
     ime_data = (&g->PlatformImeData);
     if ((g->PlatformIO.Platform_SetImeDataFn != 0) && (memcmp(ime_data, (&g->PlatformImeDataPrev), sizeof(ImGuiPlatformImeData)) != 0)) {
         imgui_c89_expect((!(ime_data->ViewportId == ImGui_IMGUI_VIEWPORT_DEFAULT_ID__0e4fa71ad9)), 0) ? imgui_c89_assert_id(57) : ((void)(0));
         viewport = imgui_get_main_viewport(imgui_c89_ctx);
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                imgui_i_debug_log(imgui_c89_ctx, "[io] Calling Platform_SetImeDataFn(): WantVisible: %d, InputPos (%.2f,%.2f) for Viewport 0x%08X\n", ime_data->WantVisible, ime_data->InputPos.x, ime_data->InputPos.y, viewport->ID);
+                imgui__debug_log(imgui_c89_ctx, "[io] Calling Platform_SetImeDataFn(): WantVisible: %d, InputPos (%.2f,%.2f) for Viewport 0x%08X\n", ime_data->WantVisible, ime_data->InputPos.x, ime_data->InputPos.y, viewport->ID);
             }
         } while (0);
         g->PlatformIO.Platform_SetImeDataFn((&(*g)), viewport, ime_data);
@@ -5906,7 +5906,7 @@ void imgui_end_frame(ImGuiContext *imgui_c89_ctx)
     if ((g->CurrentWindow && g->CurrentWindow->IsFallbackWindow) && (g->CurrentWindow->WriteAccessed == 0)) {
         g->CurrentWindow->Active = 0;
         if (g->NavWindow && (g->NavWindow->RootWindow == g->CurrentWindow)) {
-            imgui_i_focus_window(imgui_c89_ctx, 0, 0);
+            imgui__focus_window(imgui_c89_ctx, 0, 0);
         }
     }
     imgui_end(imgui_c89_ctx);
@@ -5915,18 +5915,18 @@ void imgui_end_frame(ImGuiContext *imgui_c89_ctx)
         is_delivered = g->DragDropPayload.Delivery;
         is_elapsed = (((g->DragDropSourceFrameCount + 1) < g->FrameCount) && (((g->DragDropSourceFlags & ImGuiDragDropFlags_PayloadAutoExpire) || (g->DragDropMouseButton == (-1))) || (!imgui_is_mouse_down(imgui_c89_ctx, g->DragDropMouseButton))));
         if (is_delivered || is_elapsed) {
-            imgui_i_clear_drag_drop(imgui_c89_ctx);
+            imgui__clear_drag_drop(imgui_c89_ctx);
         }
     }
     if ((g->DragDropActive && ((g->DragDropSourceFrameCount + 1) < g->FrameCount)) && (!(g->DragDropSourceFlags & ImGuiDragDropFlags_SourceNoPreviewTooltip))) {
         g->DragDropWithinSource = 1;
-        imgui_i_set_tooltip(imgui_c89_ctx, "...");
+        imgui__set_tooltip(imgui_c89_ctx, "...");
         g->DragDropWithinSource = 0;
     }
     g->WithinFrameScope = 0;
     g->FrameCountEnded = g->FrameCount;
     ImGui_UpdateFontsEndFrame__54ad851898(imgui_c89_ctx);
-    imgui_i_update_mouse_moving_window_end_frame(imgui_c89_ctx);
+    imgui__update_mouse_moving_window_end_frame(imgui_c89_ctx);
     ImVector_ImGuiWindow____resize__9ae44f8796(imgui_c89_ctx, ((ImVector_ImGuiWindow_ptr *)(&(g->WindowsTempSortBuffer))), 0);
     ImVector_ImGuiWindow____reserve__604ace7022(imgui_c89_ctx, ((ImVector_ImGuiWindow_ptr *)(&(g->WindowsTempSortBuffer))), g->Windows.Size);
     __range1 = &(g->Windows);
@@ -5954,7 +5954,7 @@ void imgui_end_frame(ImGuiContext *imgui_c89_ctx)
     g->IO.AppFocusLost = 0;
     g->IO.MouseWheel = (g->IO.MouseWheelH = 0.0f);
     ImVector_unsigned_short__resize__b08fe8284a(imgui_c89_ctx, ((ImVector_unsigned_short *)(&(g->IO.InputQueueCharacters))), 0);
-    imgui_i_call_context_hooks((&(*g)), ImGuiContextHookType_EndFramePost);
+    imgui__call_context_hooks((&(*g)), ImGuiContextHookType_EndFramePost);
 }
 
 void imgui_end_group(ImGuiContext *imgui_c89_ctx)
@@ -5977,7 +5977,7 @@ void imgui_end_group(ImGuiContext *imgui_c89_ctx)
     group_data = &((*(ImVector_ImGuiGroupData__back__465d5ab118(((ImVector_ImGuiGroupData *)(&(g->GroupStack)))))));
     imgui_c89_expect((!(group_data->WindowID == window->ID)), 0) ? imgui_c89_assert_id(207) : ((void)(0));
     if (window->DC.IsSetPos) {
-        imgui_i_error_check_using_set_cursor_pos_to_extend_parent_boundaries(imgui_c89_ctx);
+        imgui__error_check_using_set_cursor_pos_to_extend_parent_boundaries(imgui_c89_ctx);
     }
     ImRect_ImRect__b1b06c34ac(&group_bb, &(group_data->BackupCursorPos), (imgui_c89_temporary_0 = ImMax__6e9fc4176a((imgui_c89_temporary_1 = ImMax__6e9fc4176a(&(window->DC.CursorMaxPos), &(g->LastItemData.Rect.Max)), &imgui_c89_temporary_1), &(group_data->BackupCursorPos)), &imgui_c89_temporary_0));
     window->DC.CursorPos = group_data->BackupCursorPos;
@@ -5996,8 +5996,8 @@ void imgui_end_group(ImGuiContext *imgui_c89_ctx)
         return;
     }
     window->DC.CurrLineTextBaseOffset = ImMax__3c7b1bb7d1(window->DC.PrevLineTextBaseOffset, group_data->BackupCurrLineTextBaseOffset);
-    imgui_i_item_size(imgui_c89_ctx, (imgui_c89_temporary_2 = ImRect_GetSize__c91c92deb7(((ImRect *)(&(group_bb)))), &imgui_c89_temporary_2), (-1.0f));
-    imgui_i_item_add(imgui_c89_ctx, &(group_bb), 0, 0, ImGuiItemFlags_NoTabStop);
+    imgui__item_size(imgui_c89_ctx, (imgui_c89_temporary_2 = ImRect_GetSize__c91c92deb7(((ImRect *)(&(group_bb)))), &imgui_c89_temporary_2), (-1.0f));
+    imgui__item_add(imgui_c89_ctx, &(group_bb), 0, 0, ImGuiItemFlags_NoTabStop);
     group_contains_curr_active_id = (((group_data->BackupActiveIdIsAlive != g->ActiveId) && (g->ActiveIdIsAlive == g->ActiveId)) && g->ActiveId);
     group_contains_deactivated_id = ((group_data->BackupDeactivatedIdIsAlive == 0) && (g->DeactivatedItemData.IsAlive == 1));
     if (group_contains_curr_active_id) {
@@ -6036,14 +6036,14 @@ void imgui_end_popup(ImGuiContext *imgui_c89_ctx)
     window = g->CurrentWindow;
     do {
         if (!(((window->Flags & ImGuiWindowFlags_Popup) != 0) && (g->BeginPopupStack.Size > 0))) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling EndPopup() in wrong window!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling EndPopup() in wrong window!")) {
                 imgui_c89_expect((!((((window->Flags & ImGuiWindowFlags_Popup) != 0) && (g->BeginPopupStack.Size > 0)) && "Calling EndPopup() in wrong window!")), 0) ? imgui_c89_assert_id(219) : ((void)(0));
             }
             return;
         }
     } while (0);
     if (g->NavWindow == window) {
-        imgui_i_nav_move_request_try_wrapping(imgui_c89_ctx, window, ImGuiNavMoveFlags_LoopY);
+        imgui__nav_move_request_try_wrapping(imgui_c89_ctx, window, ImGuiNavMoveFlags_LoopY);
     }
     backup_within_end_popup_id = g->WithinEndPopupID;
     backup_within_end_child_id = g->WithinEndChildID;
@@ -6062,7 +6062,7 @@ void imgui_end_tooltip(ImGuiContext *imgui_c89_ctx)
     imgui_end(imgui_c89_ctx);
 }
 
-void imgui_i_error_check_end_frame_finalize_error_tooltip(ImGuiContext *imgui_c89_ctx)
+void imgui__error_check_end_frame_finalize_error_tooltip(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -6070,43 +6070,43 @@ void imgui_i_error_check_end_frame_finalize_error_tooltip(ImGuiContext *imgui_c8
     if ((g->DebugDrawIdConflictsId != 0) && (g->IO.KeyCtrl == 0)) {
         g->DebugDrawIdConflictsCount = g->HoveredIdPreviousFrameItemCount;
     }
-    if (((g->DebugDrawIdConflictsId != 0) && (g->DebugItemPickerActive == 0)) && imgui_i_begin_error_tooltip(imgui_c89_ctx)) {
-        imgui_i_text(imgui_c89_ctx, "Programmer error: %d visible items with conflicting ID!", g->DebugDrawIdConflictsCount);
-        imgui_i_bullet_text(imgui_c89_ctx, "Code should use PushID()/PopID() in loops, or append \"##xx\" to same-label identifiers!");
-        imgui_i_bullet_text(imgui_c89_ctx, "Empty label e.g. Button(\"\") == same ID as parent widget/node. Use Button(\"##xx\") instead!");
-        imgui_i_bullet_text(imgui_c89_ctx, "Set io.ConfigDebugHighlightIdConflicts=false to disable this warning in non-programmers builds.");
+    if (((g->DebugDrawIdConflictsId != 0) && (g->DebugItemPickerActive == 0)) && imgui__begin_error_tooltip(imgui_c89_ctx)) {
+        imgui__text(imgui_c89_ctx, "Programmer error: %d visible items with conflicting ID!", g->DebugDrawIdConflictsCount);
+        imgui__bullet_text(imgui_c89_ctx, "Code should use PushID()/PopID() in loops, or append \"##xx\" to same-label identifiers!");
+        imgui__bullet_text(imgui_c89_ctx, "Empty label e.g. Button(\"\") == same ID as parent widget/node. Use Button(\"##xx\") instead!");
+        imgui__bullet_text(imgui_c89_ctx, "Set io.ConfigDebugHighlightIdConflicts=false to disable this warning in non-programmers builds.");
         imgui_separator(imgui_c89_ctx);
         if (g->IO.ConfigDebugHighlightIdConflictsShowItemPicker) {
-            imgui_i_text(imgui_c89_ctx, "(Hold Ctrl to: use ");
+            imgui__text(imgui_c89_ctx, "(Hold Ctrl to: use ");
             imgui_same_line(imgui_c89_ctx, 0.0f, 0.0f);
             if (imgui_small_button(imgui_c89_ctx, "Item Picker")) {
                 imgui_debug_start_item_picker(imgui_c89_ctx);
             }
             imgui_same_line(imgui_c89_ctx, 0.0f, 0.0f);
-            imgui_i_text(imgui_c89_ctx, " to break in item call-stack, or ");
+            imgui__text(imgui_c89_ctx, " to break in item call-stack, or ");
         } else {
-            imgui_i_text(imgui_c89_ctx, "(Hold Ctrl to: ");
+            imgui__text(imgui_c89_ctx, "(Hold Ctrl to: ");
         }
         imgui_same_line(imgui_c89_ctx, 0.0f, 0.0f);
         imgui_text_link_open_url(imgui_c89_ctx, "read FAQ \"About ID Stack System\"", "https://github.com/ocornut/imgui/blob/master/docs/FAQ.md#qa-usage");
         imgui_same_line(imgui_c89_ctx, 0.0f, 0.0f);
-        imgui_i_text(imgui_c89_ctx, ")");
-        imgui_i_end_error_tooltip(imgui_c89_ctx);
+        imgui__text(imgui_c89_ctx, ")");
+        imgui__end_error_tooltip(imgui_c89_ctx);
     }
-    if ((g->ErrorCountCurrentFrame > 0) && imgui_i_begin_error_tooltip(imgui_c89_ctx)) {
+    if ((g->ErrorCountCurrentFrame > 0) && imgui__begin_error_tooltip(imgui_c89_ctx)) {
         imgui_separator(imgui_c89_ctx);
-        imgui_i_text(imgui_c89_ctx, "(Hold Ctrl to: ");
+        imgui__text(imgui_c89_ctx, "(Hold Ctrl to: ");
         imgui_same_line(imgui_c89_ctx, 0.0f, 0.0f);
         if (imgui_small_button(imgui_c89_ctx, "Enable Asserts")) {
             g->IO.ConfigErrorRecoveryEnableAssert = 1;
         }
         imgui_same_line(imgui_c89_ctx, 0, 0);
-        imgui_i_text(imgui_c89_ctx, ")");
-        imgui_i_end_error_tooltip(imgui_c89_ctx);
+        imgui__text(imgui_c89_ctx, ")");
+        imgui__end_error_tooltip(imgui_c89_ctx);
     }
 }
 
-void imgui_i_error_check_using_set_cursor_pos_to_extend_parent_boundaries(ImGuiContext *imgui_c89_ctx)
+void imgui__error_check_using_set_cursor_pos_to_extend_parent_boundaries(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -6123,14 +6123,14 @@ void imgui_i_error_check_using_set_cursor_pos_to_extend_parent_boundaries(ImGuiC
     }
     do {
         if (!0) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Code uses SetCursorPos()/SetCursorScreenPos() to extend window/parent boundaries.\nPlease submit an item e.g. Dummy() afterwards in order to grow window/parent boundaries.")) {
+            if (imgui__error_log(imgui_c89_ctx, "Code uses SetCursorPos()/SetCursorScreenPos() to extend window/parent boundaries.\nPlease submit an item e.g. Dummy() afterwards in order to grow window/parent boundaries.")) {
                 imgui_c89_expect((!(0 && "Code uses SetCursorPos()/SetCursorScreenPos() to extend window/parent boundaries.\nPlease submit an item e.g. Dummy() afterwards in order to grow window/parent boundaries.")), 0) ? imgui_c89_assert_id(160) : ((void)(0));
             }
         }
     } while (0);
 }
 
-unsigned char imgui_i_error_log(ImGuiContext *imgui_c89_ctx, const char * msg)
+unsigned char imgui__error_log(ImGuiContext *imgui_c89_ctx, const char * msg)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -6143,7 +6143,7 @@ unsigned char imgui_i_error_log(ImGuiContext *imgui_c89_ctx, const char * msg)
         if (g->ErrorFirst) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventError) {
-                    imgui_i_debug_log(imgui_c89_ctx, "[imgui-error] (current settings: Assert=%d, Log=%d, Tooltip=%d)\n", g->IO.ConfigErrorRecoveryEnableAssert, g->IO.ConfigErrorRecoveryEnableDebugLog, g->IO.ConfigErrorRecoveryEnableTooltip);
+                    imgui__debug_log(imgui_c89_ctx, "[imgui-error] (current settings: Assert=%d, Log=%d, Tooltip=%d)\n", g->IO.ConfigErrorRecoveryEnableAssert, g->IO.ConfigErrorRecoveryEnableDebugLog, g->IO.ConfigErrorRecoveryEnableTooltip);
                 } else {
                     g->DebugLogSkippedErrors++;
                 }
@@ -6151,7 +6151,7 @@ unsigned char imgui_i_error_log(ImGuiContext *imgui_c89_ctx, const char * msg)
         }
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventError) {
-                imgui_i_debug_log(imgui_c89_ctx, "[imgui-error] In window '%s': %s\n", (window ? window->Name : "NULL"), msg);
+                imgui__debug_log(imgui_c89_ctx, "[imgui-error] In window '%s': %s\n", (window ? window->Name : "NULL"), msg);
             } else {
                 g->DebugLogSkippedErrors++;
             }
@@ -6159,17 +6159,17 @@ unsigned char imgui_i_error_log(ImGuiContext *imgui_c89_ctx, const char * msg)
     }
     g->ErrorFirst = 0;
     if (g->IO.ConfigErrorRecoveryEnableTooltip) {
-        if (g->WithinFrameScope && imgui_i_begin_error_tooltip(imgui_c89_ctx)) {
+        if (g->WithinFrameScope && imgui__begin_error_tooltip(imgui_c89_ctx)) {
             if (g->ErrorCountCurrentFrame < 20) {
-                imgui_i_text(imgui_c89_ctx, "In window '%s': %s", (window ? window->Name : "NULL"), msg);
+                imgui__text(imgui_c89_ctx, "In window '%s': %s", (window ? window->Name : "NULL"), msg);
                 if (window && ((!window->IsFallbackWindow) || window->WasActive)) {
                     imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(ImGui_GetForegroundDrawList__167528742e(imgui_c89_ctx, window))), &(window->Pos), (imgui_c89_temporary_0 = operator___29d06b7915(&(window->Pos), &(window->Size)), &imgui_c89_temporary_0), ((((((ImU32)(255)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(255)) << 0)), 0.0f, 1.0f, 0);
                 }
             }
             if (g->ErrorCountCurrentFrame == 20) {
-                imgui_i_text(imgui_c89_ctx, "(and more errors)");
+                imgui__text(imgui_c89_ctx, "(and more errors)");
             }
-            imgui_i_end_error_tooltip(imgui_c89_ctx);
+            imgui__end_error_tooltip(imgui_c89_ctx);
         }
         g->ErrorCountCurrentFrame++;
     }
@@ -6179,7 +6179,7 @@ unsigned char imgui_i_error_log(ImGuiContext *imgui_c89_ctx, const char * msg)
     return g->IO.ConfigErrorRecoveryEnableAssert;
 }
 
-void imgui_i_error_recovery_store_state(ImGuiContext *imgui_c89_ctx, ImGuiErrorRecoveryState * state_out)
+void imgui__error_recovery_store_state(ImGuiContext *imgui_c89_ctx, ImGuiErrorRecoveryState * state_out)
 {
     ImGuiContext * g;
 
@@ -6197,7 +6197,7 @@ void imgui_i_error_recovery_store_state(ImGuiContext *imgui_c89_ctx, ImGuiErrorR
     state_out->SizeOfDisabledStack = ((short)(g->DisabledStackSize));
 }
 
-void imgui_i_error_recovery_try_to_recover_state(ImGuiContext *imgui_c89_ctx, const ImGuiErrorRecoveryState * state_in)
+void imgui__error_recovery_try_to_recover_state(ImGuiContext *imgui_c89_ctx, const ImGuiErrorRecoveryState * state_in)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -6209,7 +6209,7 @@ void imgui_i_error_recovery_try_to_recover_state(ImGuiContext *imgui_c89_ctx, co
             if ((g->CurrentTable != 0) && (g->CurrentTable->InnerWindow == g->CurrentWindow)) {
                 do {
                     if (!0) {
-                        if (imgui_i_error_log(imgui_c89_ctx, "Missing EndTable()")) {
+                        if (imgui__error_log(imgui_c89_ctx, "Missing EndTable()")) {
                             imgui_c89_expect((!(0 && "Missing EndTable()")), 0) ? imgui_c89_assert_id(185) : ((void)(0));
                         }
                     }
@@ -6218,7 +6218,7 @@ void imgui_i_error_recovery_try_to_recover_state(ImGuiContext *imgui_c89_ctx, co
             } else {
                 do {
                     if (!0) {
-                        if (imgui_i_error_log(imgui_c89_ctx, "Missing EndChild()")) {
+                        if (imgui__error_log(imgui_c89_ctx, "Missing EndChild()")) {
                             imgui_c89_expect((!(0 && "Missing EndChild()")), 0) ? imgui_c89_assert_id(186) : ((void)(0));
                         }
                     }
@@ -6228,7 +6228,7 @@ void imgui_i_error_recovery_try_to_recover_state(ImGuiContext *imgui_c89_ctx, co
         } else {
             do {
                 if (!0) {
-                    if (imgui_i_error_log(imgui_c89_ctx, "Missing End()")) {
+                    if (imgui__error_log(imgui_c89_ctx, "Missing End()")) {
                         imgui_c89_expect((!(0 && "Missing End()")), 0) ? imgui_c89_assert_id(187) : ((void)(0));
                     }
                 }
@@ -6237,11 +6237,11 @@ void imgui_i_error_recovery_try_to_recover_state(ImGuiContext *imgui_c89_ctx, co
         }
     }
     if (g->CurrentWindowStack.Size == state_in->SizeOfWindowStack) {
-        imgui_i_error_recovery_try_to_recover_window_state(imgui_c89_ctx, state_in);
+        imgui__error_recovery_try_to_recover_window_state(imgui_c89_ctx, state_in);
     }
 }
 
-void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_ctx, const ImGuiErrorRecoveryState * state_in)
+void imgui__error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_ctx, const ImGuiErrorRecoveryState * state_in)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -6250,7 +6250,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while ((g->CurrentTable != 0) && (g->CurrentTable->InnerWindow == g->CurrentWindow)) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing EndTable()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing EndTable()")) {
                     imgui_c89_expect((!(0 && "Missing EndTable()")), 0) ? imgui_c89_assert_id(188) : ((void)(0));
                 }
             }
@@ -6261,7 +6261,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while ((g->CurrentTabBar != 0) && (g->CurrentTabBar->Window == window)) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing EndTabBar()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing EndTabBar()")) {
                     imgui_c89_expect((!(0 && "Missing EndTabBar()")), 0) ? imgui_c89_assert_id(189) : ((void)(0));
                 }
             }
@@ -6271,7 +6271,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while ((g->CurrentMultiSelect != 0) && (g->CurrentMultiSelect->Storage->Window == window)) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing EndMultiSelect()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing EndMultiSelect()")) {
                     imgui_c89_expect((!(0 && "Missing EndMultiSelect()")), 0) ? imgui_c89_assert_id(190) : ((void)(0));
                 }
             }
@@ -6281,7 +6281,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     if (window->DC.MenuBarAppending) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing EndMenuBar()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing EndMenuBar()")) {
                     imgui_c89_expect((!(0 && "Missing EndMenuBar()")), 0) ? imgui_c89_assert_id(191) : ((void)(0));
                 }
             }
@@ -6291,7 +6291,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (window->DC.TreeDepth > state_in->SizeOfTreeStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing TreePop()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing TreePop()")) {
                     imgui_c89_expect((!(0 && "Missing TreePop()")), 0) ? imgui_c89_assert_id(192) : ((void)(0));
                 }
             }
@@ -6301,7 +6301,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (g->GroupStack.Size > state_in->SizeOfGroupStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing EndGroup()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing EndGroup()")) {
                     imgui_c89_expect((!(0 && "Missing EndGroup()")), 0) ? imgui_c89_assert_id(193) : ((void)(0));
                 }
             }
@@ -6312,7 +6312,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (window->IDStack.Size > state_in->SizeOfIDStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing PopID()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing PopID()")) {
                     imgui_c89_expect((!(0 && "Missing PopID()")), 0) ? imgui_c89_assert_id(195) : ((void)(0));
                 }
             }
@@ -6322,7 +6322,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (g->DisabledStackSize > state_in->SizeOfDisabledStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing EndDisabled()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing EndDisabled()")) {
                     imgui_c89_expect((!(0 && "Missing EndDisabled()")), 0) ? imgui_c89_assert_id(196) : ((void)(0));
                 }
             }
@@ -6330,7 +6330,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
         if (g->CurrentItemFlags & ImGuiItemFlags_Disabled) {
             imgui_end_disabled(imgui_c89_ctx);
         } else {
-            imgui_i_end_disabled_override_reenable(imgui_c89_ctx);
+            imgui__end_disabled_override_reenable(imgui_c89_ctx);
             (*(ImVector_ImGuiWindowStackData__back__20779cb287(((ImVector_ImGuiWindowStackData *)(&(g->CurrentWindowStack)))))).DisabledOverrideReenable = 0;
         }
     }
@@ -6338,7 +6338,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (g->ColorStack.Size > state_in->SizeOfColorStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing PopStyleColor()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing PopStyleColor()")) {
                     imgui_c89_expect((!(0 && "Missing PopStyleColor()")), 0) ? imgui_c89_assert_id(198) : ((void)(0));
                 }
             }
@@ -6348,7 +6348,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (g->ItemFlagsStack.Size > state_in->SizeOfItemFlagsStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing PopItemFlag()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing PopItemFlag()")) {
                     imgui_c89_expect((!(0 && "Missing PopItemFlag()")), 0) ? imgui_c89_assert_id(199) : ((void)(0));
                 }
             }
@@ -6358,7 +6358,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (g->StyleVarStack.Size > state_in->SizeOfStyleVarStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing PopStyleVar()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing PopStyleVar()")) {
                     imgui_c89_expect((!(0 && "Missing PopStyleVar()")), 0) ? imgui_c89_assert_id(200) : ((void)(0));
                 }
             }
@@ -6368,7 +6368,7 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (g->FontStack.Size > state_in->SizeOfFontStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing PopFont()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing PopFont()")) {
                     imgui_c89_expect((!(0 && "Missing PopFont()")), 0) ? imgui_c89_assert_id(201) : ((void)(0));
                 }
             }
@@ -6378,16 +6378,16 @@ void imgui_i_error_recovery_try_to_recover_window_state(ImGuiContext *imgui_c89_
     while (g->FocusScopeStack.Size > state_in->SizeOfFocusScopeStack) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Missing PopFocusScope()")) {
+                if (imgui__error_log(imgui_c89_ctx, "Missing PopFocusScope()")) {
                     imgui_c89_expect((!(0 && "Missing PopFocusScope()")), 0) ? imgui_c89_assert_id(202) : ((void)(0));
                 }
             }
         } while (0);
-        imgui_i_pop_focus_scope(imgui_c89_ctx);
+        imgui__pop_focus_scope(imgui_c89_ctx);
     }
 }
 
-ImVec2 imgui_i_find_best_window_pos_for_popup(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+ImVec2 imgui__find_best_window_pos_for_popup(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImRect imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -6409,7 +6409,7 @@ ImVec2 imgui_i_find_best_window_pos_for_popup(ImGuiContext *imgui_c89_ctx, ImGui
     ImRect r_avoid__7351254c;
 
     g = &((*imgui_c89_ctx));
-    r_outer = imgui_i_get_popup_allowed_extent_rect(imgui_c89_ctx, window);
+    r_outer = imgui__get_popup_allowed_extent_rect(imgui_c89_ctx, window);
     if (window->Flags & ImGuiWindowFlags_ChildMenu) {
         imgui_c89_expect((!(g->CurrentWindow == window)), 0) ? imgui_c89_assert_id(222) : ((void)(0));
         parent_window = (*(ImVector_ImGuiWindowStackData__operator____73ed3bddee(((ImVector_ImGuiWindowStackData *)(&(g->CurrentWindowStack))), (g->CurrentWindowStack.Size - 2)))).Window;
@@ -6420,10 +6420,10 @@ ImVec2 imgui_i_find_best_window_pos_for_popup(ImGuiContext *imgui_c89_ctx, ImGui
         } else {
             r_avoid = ImRect_ImRect_value__ca8705754c((parent_window->Pos.x + horizontal_overlap), (-3.40282347E+38f), (((parent_window->Pos.x + parent_window->Size.x) - horizontal_overlap) - parent_window->ScrollbarSizes.x), 3.40282347E+38f);
         }
-        return imgui_i_find_best_window_pos_for_popup_ex(&(window->Pos), &(window->Size), (&window->AutoPosLastDirection), &(r_outer), &(r_avoid), ImGuiPopupPositionPolicy_Default);
+        return imgui__find_best_window_pos_for_popup_ex(&(window->Pos), &(window->Size), (&window->AutoPosLastDirection), &(r_outer), &(r_avoid), ImGuiPopupPositionPolicy_Default);
     }
     if (window->Flags & ImGuiWindowFlags_Popup) {
-        return imgui_i_find_best_window_pos_for_popup_ex(&(window->Pos), &(window->Size), (&window->AutoPosLastDirection), &(r_outer), (imgui_c89_temporary_0 = ImRect_ImRect_value__99b7f05542(&(window->Pos), &(window->Pos)), &imgui_c89_temporary_0), ImGuiPopupPositionPolicy_Default);
+        return imgui__find_best_window_pos_for_popup_ex(&(window->Pos), &(window->Size), (&window->AutoPosLastDirection), &(r_outer), (imgui_c89_temporary_0 = ImRect_ImRect_value__99b7f05542(&(window->Pos), &(window->Pos)), &imgui_c89_temporary_0), ImGuiPopupPositionPolicy_Default);
     }
     if (window->Flags & ImGuiWindowFlags_Tooltip) {
         imgui_c89_expect((!(g->CurrentWindow == window)), 0) ? imgui_c89_assert_id(223) : ((void)(0));
@@ -6442,13 +6442,13 @@ ImVec2 imgui_i_find_best_window_pos_for_popup(ImGuiContext *imgui_c89_ctx, ImGui
         } else {
             r_avoid__7351254c = ImRect_ImRect_value__ca8705754c((ref_pos.x - 16), (ref_pos.y - 8), (ref_pos.x + (24 * scale)), (ref_pos.y + (24 * scale)));
         }
-        return imgui_i_find_best_window_pos_for_popup_ex(&(tooltip_pos__268ac47a), &(window->Size), (&window->AutoPosLastDirection), &(r_outer), &(r_avoid__7351254c), ImGuiPopupPositionPolicy_Tooltip);
+        return imgui__find_best_window_pos_for_popup_ex(&(tooltip_pos__268ac47a), &(window->Size), (&window->AutoPosLastDirection), &(r_outer), &(r_avoid__7351254c), ImGuiPopupPositionPolicy_Tooltip);
     }
     imgui_c89_expect((!0), 0) ? imgui_c89_assert_id(224) : ((void)(0));
     return window->Pos;
 }
 
-ImVec2 imgui_i_find_best_window_pos_for_popup_ex(const ImVec2 * ref_pos, const ImVec2 * size, ImGuiDir * last_dir, const ImRect * r_outer, const ImRect * r_avoid, ImGuiPopupPositionPolicy policy)
+ImVec2 imgui__find_best_window_pos_for_popup_ex(const ImVec2 * ref_pos, const ImVec2 * size, ImGuiDir * last_dir, const ImRect * r_outer, const ImRect * r_avoid, ImGuiPopupPositionPolicy policy)
 {
     ImVec2 imgui_c89_temporary_0;
     ImRect imgui_c89_temporary_1;
@@ -6530,7 +6530,7 @@ ImVec2 imgui_i_find_best_window_pos_for_popup_ex(const ImVec2 * ref_pos, const I
     return pos__568f0836;
 }
 
-ImGuiWindow * imgui_i_find_blocking_modal(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+ImGuiWindow * imgui__find_blocking_modal(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
     ImGuiPopupData * __begin1;
@@ -6558,7 +6558,7 @@ ImGuiWindow * imgui_i_find_blocking_modal(ImGuiContext *imgui_c89_ctx, ImGuiWind
         if (window == 0) {
             return popup_window;
         }
-        if (imgui_i_is_window_within_begin_stack_of(window, popup_window)) {
+        if (imgui__is_window_within_begin_stack_of(window, popup_window)) {
             continue;
         }
         return popup_window;
@@ -6566,7 +6566,7 @@ ImGuiWindow * imgui_i_find_blocking_modal(ImGuiContext *imgui_c89_ctx, ImGuiWind
     return 0;
 }
 
-ImGuiWindow * imgui_i_find_bottom_most_visible_window_within_begin_stack(ImGuiContext *imgui_c89_ctx, ImGuiWindow * parent_window)
+ImGuiWindow * imgui__find_bottom_most_visible_window_within_begin_stack(ImGuiContext *imgui_c89_ctx, ImGuiWindow * parent_window)
 {
     ImGuiContext * g;
     ImGuiWindow * bottom_most_visible_window;
@@ -6575,13 +6575,13 @@ ImGuiWindow * imgui_i_find_bottom_most_visible_window_within_begin_stack(ImGuiCo
 
     g = &((*imgui_c89_ctx));
     bottom_most_visible_window = parent_window;
-    i = imgui_i_find_window_display_index(imgui_c89_ctx, parent_window);
+    i = imgui__find_window_display_index(imgui_c89_ctx, parent_window);
     for (; i >= 0; i--) {
         window = (*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&(g->Windows))), i)));
         if (window->Flags & ImGuiWindowFlags_ChildWindow) {
             continue;
         }
-        if (!imgui_i_is_window_within_begin_stack_of(window, parent_window)) {
+        if (!imgui__is_window_within_begin_stack_of(window, parent_window)) {
             break;
         }
         if (IsWindowActiveAndVisible__5aaaab1da1(window) && (GetWindowDisplayLayer__b50df96c1b(window) <= GetWindowDisplayLayer__b50df96c1b(parent_window))) {
@@ -6591,20 +6591,20 @@ ImGuiWindow * imgui_i_find_bottom_most_visible_window_within_begin_stack(ImGuiCo
     return bottom_most_visible_window;
 }
 
-ImGuiWindow * imgui_i_find_front_most_visible_child_window(ImGuiWindow * window)
+ImGuiWindow * imgui__find_front_most_visible_child_window(ImGuiWindow * window)
 {
     int n;
 
     n = (window->DC.ChildWindows.Size - 1);
     for (; n >= 0; n--) {
         if (IsWindowActiveAndVisible__5aaaab1da1((*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&(window->DC.ChildWindows))), n))))) {
-            return imgui_i_find_front_most_visible_child_window((*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&(window->DC.ChildWindows))), n))));
+            return imgui__find_front_most_visible_child_window((*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&(window->DC.ChildWindows))), n))));
         }
     }
     return window;
 }
 
-void imgui_i_find_hovered_window_ex(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos, unsigned char find_first_and_in_any_viewport, ImGuiWindow ** out_hovered_window, ImGuiWindow ** out_hovered_window_under_moving_window)
+void imgui__find_hovered_window_ex(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos, unsigned char find_first_and_in_any_viewport, ImGuiWindow ** out_hovered_window, ImGuiWindow ** out_hovered_window_under_moving_window)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -6672,7 +6672,7 @@ void imgui_i_find_hovered_window_ex(ImGuiContext *imgui_c89_ctx, const ImVec2 * 
     }
 }
 
-const char * imgui_i_find_rendered_text_end(const char * text, const char * text_end)
+const char * imgui__find_rendered_text_end(const char * text, const char * text_end)
 {
     const char * text_display_end;
 
@@ -6686,7 +6686,7 @@ const char * imgui_i_find_rendered_text_end(const char * text, const char * text
     return text_display_end;
 }
 
-ImGuiSettingsHandler * imgui_i_find_settings_handler(ImGuiContext *imgui_c89_ctx, const char * type_name)
+ImGuiSettingsHandler * imgui__find_settings_handler(ImGuiContext *imgui_c89_ctx, const char * type_name)
 {
     ImGuiContext * g;
     ImGuiID type_hash;
@@ -6696,7 +6696,7 @@ ImGuiSettingsHandler * imgui_i_find_settings_handler(ImGuiContext *imgui_c89_ctx
     ImVector_ImGuiSettingsHandler * __range1;
 
     g = &((*imgui_c89_ctx));
-    type_hash = imgui_i_im_hash_str(type_name, 0, 0);
+    type_hash = imgui__im_hash_str(type_name, 0, 0);
     __range1 = &(g->SettingsHandlers);
     __begin1 = ImVector_ImGuiSettingsHandler__begin__41c5d95368(((ImVector_ImGuiSettingsHandler *)(__range1)));
     __end1 = ImVector_ImGuiSettingsHandler__end__fffe75625d(((ImVector_ImGuiSettingsHandler *)(__range1)));
@@ -6709,7 +6709,7 @@ ImGuiSettingsHandler * imgui_i_find_settings_handler(ImGuiContext *imgui_c89_ctx
     return 0;
 }
 
-ImGuiWindow * imgui_i_find_window_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+ImGuiWindow * imgui__find_window_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
 
@@ -6717,15 +6717,15 @@ ImGuiWindow * imgui_i_find_window_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
     return (ImGuiWindow *)(imgui_storage_get_void_ptr(((ImGuiStorage *)(&(g->WindowsById))), id));
 }
 
-ImGuiWindow * imgui_i_find_window_by_name(ImGuiContext *imgui_c89_ctx, const char * name)
+ImGuiWindow * imgui__find_window_by_name(ImGuiContext *imgui_c89_ctx, const char * name)
 {
     ImGuiID id;
 
-    id = imgui_i_im_hash_str(name, 0, 0);
-    return imgui_i_find_window_by_id(imgui_c89_ctx, id);
+    id = imgui__im_hash_str(name, 0, 0);
+    return imgui__find_window_by_id(imgui_c89_ctx, id);
 }
 
-int imgui_i_find_window_display_index(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+int imgui__find_window_display_index(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
 
@@ -6733,7 +6733,7 @@ int imgui_i_find_window_display_index(ImGuiContext *imgui_c89_ctx, ImGuiWindow *
     return ImVector_ImGuiWindow____index_from_ptr__ef35e2cab6(((ImVector_ImGuiWindow_ptr *)(&(g->Windows))), ImVector_ImGuiWindow____find__ce7a00107f(((ImVector_ImGuiWindow_ptr *)(&(g->Windows))), &(window)));
 }
 
-ImGuiWindowSettings * imgui_i_find_window_settings_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+ImGuiWindowSettings * imgui__find_window_settings_by_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
     ImGuiWindowSettings * settings;
@@ -6748,7 +6748,7 @@ ImGuiWindowSettings * imgui_i_find_window_settings_by_id(ImGuiContext *imgui_c89
     return 0;
 }
 
-ImGuiWindowSettings * imgui_i_find_window_settings_by_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+ImGuiWindowSettings * imgui__find_window_settings_by_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
 
@@ -6756,10 +6756,10 @@ ImGuiWindowSettings * imgui_i_find_window_settings_by_window(ImGuiContext *imgui
     if (window->SettingsOffset != (-1)) {
         return ImChunkStream_ImGuiWindowSettings__ptr_from_offset__7eefabca13(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows))), window->SettingsOffset);
     }
-    return imgui_i_find_window_settings_by_id(imgui_c89_ctx, window->ID);
+    return imgui__find_window_settings_by_id(imgui_c89_ctx, window->ID);
 }
 
-ImGuiKeyChord imgui_i_fixup_key_chord(ImGuiKeyChord key_chord)
+ImGuiKeyChord imgui__fixup_key_chord(ImGuiKeyChord key_chord)
 {
     ImGuiKey key;
 
@@ -6770,7 +6770,7 @@ ImGuiKeyChord imgui_i_fixup_key_chord(ImGuiKeyChord key_chord)
     return key_chord;
 }
 
-void imgui_i_focus_item(ImGuiContext *imgui_c89_ctx)
+void imgui__focus_item(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -6781,25 +6781,25 @@ void imgui_i_focus_item(ImGuiContext *imgui_c89_ctx)
     window = g->CurrentWindow;
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventFocus) {
-            imgui_i_debug_log(imgui_c89_ctx, "FocusItem(0x%08x) in window \"%s\"\n", g->LastItemData.ID, window->Name);
+            imgui__debug_log(imgui_c89_ctx, "FocusItem(0x%08x) in window \"%s\"\n", g->LastItemData.ID, window->Name);
         }
     } while (0);
     if (g->DragDropActive || (g->MovingWindow != 0)) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventFocus) {
-                imgui_i_debug_log(imgui_c89_ctx, "FocusItem() ignored while DragDropActive!\n");
+                imgui__debug_log(imgui_c89_ctx, "FocusItem() ignored while DragDropActive!\n");
             }
         } while (0);
         return;
     }
     move_flags = (((ImGuiNavMoveFlags_IsTabbing | ImGuiNavMoveFlags_FocusApi) | ImGuiNavMoveFlags_NoSetNavCursorVisible) | ImGuiNavMoveFlags_NoSelect);
     scroll_flags = (window->Appearing ? (ImGuiScrollFlags_KeepVisibleEdgeX | ImGuiScrollFlags_AlwaysCenterY) : (ImGuiScrollFlags_KeepVisibleEdgeX | ImGuiScrollFlags_KeepVisibleEdgeY));
-    imgui_i_set_nav_window(imgui_c89_ctx, window);
-    imgui_i_nav_move_request_submit(imgui_c89_ctx, ImGuiDir_None, ImGuiDir_Up, move_flags, scroll_flags);
-    imgui_i_nav_move_request_resolve_with_last_item(imgui_c89_ctx, (&g->NavMoveResultLocal));
+    imgui__set_nav_window(imgui_c89_ctx, window);
+    imgui__nav_move_request_submit(imgui_c89_ctx, ImGuiDir_None, ImGuiDir_Up, move_flags, scroll_flags);
+    imgui__nav_move_request_resolve_with_last_item(imgui_c89_ctx, (&g->NavMoveResultLocal));
 }
 
-void imgui_i_focus_top_most_window_under_one(ImGuiContext *imgui_c89_ctx, ImGuiWindow * under_this_window, ImGuiWindow * ignore_window, ImGuiViewport * filter_viewport, ImGuiFocusRequestFlags flags)
+void imgui__focus_top_most_window_under_one(ImGuiContext *imgui_c89_ctx, ImGuiWindow * under_this_window, ImGuiWindow * ignore_window, ImGuiViewport * filter_viewport, ImGuiFocusRequestFlags flags)
 {
     ImGuiContext * g;
     int start_idx;
@@ -6825,14 +6825,14 @@ void imgui_i_focus_top_most_window_under_one(ImGuiContext *imgui_c89_ctx, ImGuiW
             continue;
         }
         if ((window->Flags & (ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoNavInputs)) != (ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoNavInputs)) {
-            imgui_i_focus_window(imgui_c89_ctx, window, flags);
+            imgui__focus_window(imgui_c89_ctx, window, flags);
             return;
         }
     }
-    imgui_i_focus_window(imgui_c89_ctx, 0, flags);
+    imgui__focus_window(imgui_c89_ctx, 0, flags);
 }
 
-void imgui_i_focus_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiFocusRequestFlags flags)
+void imgui__focus_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiFocusRequestFlags flags)
 {
     ImGuiContext * g;
     ImGuiWindow * blocking_modal;
@@ -6841,17 +6841,17 @@ void imgui_i_focus_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImG
 
     g = &((*imgui_c89_ctx));
     if ((flags & ImGuiFocusRequestFlags_UnlessBelowModal) && (g->NavWindow != window)) {
-        blocking_modal = imgui_i_find_blocking_modal(imgui_c89_ctx, window);
+        blocking_modal = imgui__find_blocking_modal(imgui_c89_ctx, window);
         if (blocking_modal) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventFocus) {
-                    imgui_i_debug_log(imgui_c89_ctx, "[focus] FocusWindow(\"%s\", UnlessBelowModal): prevented by \"%s\".\n", (window ? window->Name : "<NULL>"), blocking_modal->Name);
+                    imgui__debug_log(imgui_c89_ctx, "[focus] FocusWindow(\"%s\", UnlessBelowModal): prevented by \"%s\".\n", (window ? window->Name : "<NULL>"), blocking_modal->Name);
                 }
             } while (0);
             if ((window && (window == window->RootWindow)) && ((window->Flags & ImGuiWindowFlags_NoBringToFrontOnFocus) == 0)) {
-                imgui_i_bring_window_to_display_behind(imgui_c89_ctx, window, blocking_modal);
+                imgui__bring_window_to_display_behind(imgui_c89_ctx, window, blocking_modal);
             }
-            imgui_i_close_popups_over_window(imgui_c89_ctx, imgui_i_get_top_most_popup_modal(imgui_c89_ctx), 0);
+            imgui__close_popups_over_window(imgui_c89_ctx, imgui__get_top_most_popup_modal(imgui_c89_ctx), 0);
             return;
         }
     }
@@ -6859,35 +6859,35 @@ void imgui_i_focus_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImG
         window = ImGui_NavRestoreLastChildNavWindow__382c7592f2(window);
     }
     if (g->NavWindow != window) {
-        imgui_i_set_nav_window(imgui_c89_ctx, window);
+        imgui__set_nav_window(imgui_c89_ctx, window);
         if (window && g->NavHighlightItemUnderNav) {
             g->NavMousePosDirty = 1;
         }
         g->NavId = (window ? window->NavLastIds[0] : 0);
         g->NavLayer = ImGuiNavLayer_Main;
-        imgui_i_set_nav_focus_scope(imgui_c89_ctx, (window ? window->NavRootFocusScopeId : 0));
+        imgui__set_nav_focus_scope(imgui_c89_ctx, (window ? window->NavRootFocusScopeId : 0));
         g->NavIdIsAlive = 0;
         g->NavLastValidSelectionUserData = ((ImGuiSelectionUserData)((-1)));
-        imgui_i_close_popups_over_window(imgui_c89_ctx, window, 0);
+        imgui__close_popups_over_window(imgui_c89_ctx, window, 0);
     }
     imgui_c89_expect((!((window == 0) || (window->RootWindow != 0))), 0) ? imgui_c89_assert_id(234) : ((void)(0));
     focus_front_window = (window ? window->RootWindow : 0);
     display_front_window = (window ? window->RootWindow : 0);
     if (((g->ActiveId != 0) && g->ActiveIdWindow) && (g->ActiveIdWindow->RootWindow != focus_front_window)) {
         if (!g->ActiveIdNoClearOnFocusLoss) {
-            imgui_i_clear_active_id(imgui_c89_ctx);
+            imgui__clear_active_id(imgui_c89_ctx);
         }
     }
     if (!window) {
         return;
     }
-    imgui_i_bring_window_to_focus_front(imgui_c89_ctx, focus_front_window);
+    imgui__bring_window_to_focus_front(imgui_c89_ctx, focus_front_window);
     if (((window->Flags | display_front_window->Flags) & ImGuiWindowFlags_NoBringToFrontOnFocus) == 0) {
-        imgui_i_bring_window_to_display_front(imgui_c89_ctx, display_front_window);
+        imgui__bring_window_to_display_front(imgui_c89_ctx, display_front_window);
     }
 }
 
-void imgui_i_gc_awake_transient_window_buffers(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__gc_awake_transient_window_buffers(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     window->MemoryCompacted = 0;
     ImVector_unsigned_short__reserve__ceba390e44(imgui_c89_ctx, ((ImVector_unsigned_short *)(&(window->DrawList->IdxBuffer))), window->MemoryDrawListIdxCapacity);
@@ -6895,7 +6895,7 @@ void imgui_i_gc_awake_transient_window_buffers(ImGuiContext *imgui_c89_ctx, ImGu
     window->MemoryDrawListIdxCapacity = (window->MemoryDrawListVtxCapacity = 0);
 }
 
-void imgui_i_gc_compact_transient_misc_buffers(ImGuiContext *imgui_c89_ctx)
+void imgui__gc_compact_transient_misc_buffers(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImFontAtlas ** __begin1;
@@ -6909,7 +6909,7 @@ void imgui_i_gc_compact_transient_misc_buffers(ImGuiContext *imgui_c89_ctx)
     ImGuiTextIndex_clear__a95be9f124(imgui_c89_ctx, ((ImGuiTextIndex *)(&(g->InputTextLineIndex))));
     g->MultiSelectTempDataStacked = 0;
     ImVector_ImGuiMultiSelectTempData__clear_destruct__d72b03ea05(imgui_c89_ctx, ((ImVector_ImGuiMultiSelectTempData *)(&(g->MultiSelectTempData))));
-    imgui_i_table_gc_compact_settings(imgui_c89_ctx);
+    imgui__table_gc_compact_settings(imgui_c89_ctx);
     __range1 = &(g->FontAtlases);
     __begin1 = ImVector_ImFontAtlas____begin__9e48a97069(((ImVector_ImFontAtlas_ptr *)(__range1)));
     __end1 = ImVector_ImFontAtlas____end__5b2cfe8a63(((ImVector_ImFontAtlas_ptr *)(__range1)));
@@ -6919,7 +6919,7 @@ void imgui_i_gc_compact_transient_misc_buffers(ImGuiContext *imgui_c89_ctx)
     }
 }
 
-void imgui_i_gc_compact_transient_window_buffers(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__gc_compact_transient_window_buffers(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     window->MemoryCompacted = 1;
     window->MemoryDrawListIdxCapacity = ImMin__16ca668bb0(((int)((window->DrawList->IdxBuffer.Size * 1.04999995f))), window->DrawList->IdxBuffer.Capacity);
@@ -6943,10 +6943,10 @@ ImDrawList * imgui_get_background_draw_list(ImGuiContext *imgui_c89_ctx)
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    return imgui_i_get_background_draw_list(imgui_c89_ctx, ((ImGuiViewport *)((*(ImVector_ImGuiViewportP____operator____2d63c59af3(((ImVector_ImGuiViewportP_ptr *)(&(g->Viewports))), 0))))));
+    return imgui__get_background_draw_list(imgui_c89_ctx, ((ImGuiViewport *)((*(ImVector_ImGuiViewportP____operator____2d63c59af3(((ImVector_ImGuiViewportP_ptr *)(&(g->Viewports))), 0))))));
 }
 
-ImDrawList * imgui_i_get_background_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiViewport * viewport)
+ImDrawList * imgui__get_background_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiViewport * viewport)
 {
     return GetViewportBgFgDrawList__7d4b38226d(imgui_c89_ctx, ((ImGuiViewportP *)(viewport)), 0, "##Background");
 }
@@ -7090,7 +7090,7 @@ ImVec2 imgui_get_cursor_start_pos(ImGuiContext *imgui_c89_ctx)
     return operator___cb7271567d(&(window->DC.CursorStartPos), &(window->Pos));
 }
 
-ImFont * imgui_i_get_default_font(ImGuiContext *imgui_c89_ctx)
+ImFont * imgui__get_default_font(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImFontAtlas * atlas;
@@ -7098,7 +7098,7 @@ ImFont * imgui_i_get_default_font(ImGuiContext *imgui_c89_ctx)
     g = &((*imgui_c89_ctx));
     atlas = g->IO.Fonts;
     if ((atlas->Builder == 0) || (atlas->Fonts.Size == 0)) {
-        imgui_i_im_font_atlas_build_main(imgui_c89_ctx, atlas);
+        imgui__im_font_atlas_build_main(imgui_c89_ctx, atlas);
     }
     return g->IO.FontDefault ? g->IO.FontDefault : (*(ImVector_ImFont____operator____0cce6192b3(((ImVector_ImFont_ptr *)(&(atlas->Fonts))), 0)));
 }
@@ -7151,10 +7151,10 @@ ImDrawList * imgui_get_foreground_draw_list(ImGuiContext *imgui_c89_ctx)
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    return imgui_i_get_foreground_draw_list(imgui_c89_ctx, ((ImGuiViewport *)((*(ImVector_ImGuiViewportP____operator____2d63c59af3(((ImVector_ImGuiViewportP_ptr *)(&(g->Viewports))), 0))))));
+    return imgui__get_foreground_draw_list(imgui_c89_ctx, ((ImGuiViewport *)((*(ImVector_ImGuiViewportP____operator____2d63c59af3(((ImVector_ImGuiViewportP_ptr *)(&(g->Viewports))), 0))))));
 }
 
-ImDrawList * imgui_i_get_foreground_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiViewport * viewport)
+ImDrawList * imgui__get_foreground_draw_list(ImGuiContext *imgui_c89_ctx, ImGuiViewport * viewport)
 {
     return GetViewportBgFgDrawList__7d4b38226d(imgui_c89_ctx, ((ImGuiViewportP *)(viewport)), 1, "##Foreground");
 }
@@ -7186,7 +7186,7 @@ float imgui_get_frame_height_with_spacing(ImGuiContext *imgui_c89_ctx)
     return (g->FontSize + (g->Style.FramePadding.y * 2.0f)) + g->Style.ItemSpacing.y;
 }
 
-ImGuiID imgui_i_get_hovered_id(ImGuiContext *imgui_c89_ctx)
+ImGuiID imgui__get_hovered_id(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -7199,7 +7199,7 @@ ImGuiID imgui_get_id_string_none(ImGuiContext *imgui_c89_ctx, const char * str_i
     ImGuiWindow * window;
 
     window = imgui_c89_ctx->CurrentWindow;
-    return imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0);
+    return imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0);
 }
 
 ImGuiID imgui_get_id_string_string(ImGuiContext *imgui_c89_ctx, const char * str_id_begin, const char * str_id_end)
@@ -7207,7 +7207,7 @@ ImGuiID imgui_get_id_string_string(ImGuiContext *imgui_c89_ctx, const char * str
     ImGuiWindow * window;
 
     window = imgui_c89_ctx->CurrentWindow;
-    return imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id_begin, str_id_end);
+    return imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id_begin, str_id_end);
 }
 
 ImGuiID imgui_get_id_const_pointer_none(ImGuiContext *imgui_c89_ctx, const void * ptr_id)
@@ -7215,7 +7215,7 @@ ImGuiID imgui_get_id_const_pointer_none(ImGuiContext *imgui_c89_ctx, const void 
     ImGuiWindow * window;
 
     window = imgui_c89_ctx->CurrentWindow;
-    return imgui_i_window_get_id_const_pointer(imgui_c89_ctx, ((ImGuiWindow *)(window)), ptr_id);
+    return imgui__window_get_id_const_pointer(imgui_c89_ctx, ((ImGuiWindow *)(window)), ptr_id);
 }
 
 ImGuiID imgui_get_id_int_none(ImGuiContext *imgui_c89_ctx, int int_id)
@@ -7223,31 +7223,31 @@ ImGuiID imgui_get_id_int_none(ImGuiContext *imgui_c89_ctx, int int_id)
     ImGuiWindow * window;
 
     window = imgui_c89_ctx->CurrentWindow;
-    return imgui_i_window_get_id_int(imgui_c89_ctx, ((ImGuiWindow *)(window)), int_id);
+    return imgui__window_get_id_int(imgui_c89_ctx, ((ImGuiWindow *)(window)), int_id);
 }
 
-ImGuiID imgui_i_get_id_with_seed_string_string_id(ImGuiContext *imgui_c89_ctx, const char * str, const char * str_end, ImGuiID seed)
+ImGuiID imgui__get_id_with_seed_string_string_id(ImGuiContext *imgui_c89_ctx, const char * str, const char * str_end, ImGuiID seed)
 {
     ImGuiID id;
     ImGuiContext * g;
 
-    id = imgui_i_im_hash_str(str, (str_end ? (str_end - str) : 0), seed);
+    id = imgui__im_hash_str(str, (str_end ? (str_end - str) : 0), seed);
     g = &((*imgui_c89_ctx));
     if (g->DebugHookIdInfoId == id) {
-        imgui_i_debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_String, str, str_end);
+        imgui__debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_String, str, str_end);
     }
     return id;
 }
 
-ImGuiID imgui_i_get_id_with_seed_int_id(ImGuiContext *imgui_c89_ctx, int n, ImGuiID seed)
+ImGuiID imgui__get_id_with_seed_int_id(ImGuiContext *imgui_c89_ctx, int n, ImGuiID seed)
 {
     ImGuiID id;
     ImGuiContext * g;
 
-    id = imgui_i_im_hash_data((&n), sizeof(n), seed);
+    id = imgui__im_hash_data((&n), sizeof(n), seed);
     g = &((*imgui_c89_ctx));
     if (g->DebugHookIdInfoId == id) {
-        imgui_i_debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_S32, ((void *)(((intptr_t)(n)))), 0);
+        imgui__debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_S32, ((void *)(((intptr_t)(n)))), 0);
     }
     return id;
 }
@@ -7258,7 +7258,7 @@ ImGuiIO * imgui_get_io(ImGuiContext *imgui_c89_ctx)
     return &(imgui_c89_ctx->IO);
 }
 
-ImGuiIO * imgui_i_get_io(ImGuiContext * ctx)
+ImGuiIO * imgui__get_io(ImGuiContext * ctx)
 {
     imgui_c89_expect((!(ctx != 0)), 0) ? imgui_c89_assert_id(46) : ((void)(0));
     return &(ctx->IO);
@@ -7336,7 +7336,7 @@ ImVec2 imgui_get_item_rect_size(ImGuiContext *imgui_c89_ctx)
     return ImRect_GetSize__c91c92deb7(((ImRect *)(&(g->LastItemData.Rect))));
 }
 
-const char * imgui_i_get_key_chord_name(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord)
+const char * imgui__get_key_chord_name(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord)
 {
     ImGuiContext * g;
     ImGuiKey key;
@@ -7347,7 +7347,7 @@ const char * imgui_i_get_key_chord_name(ImGuiContext *imgui_c89_ctx, ImGuiKeyCho
     if (ImGui_IsLRModKey__820ee439dc(key)) {
         key_chord &= (~GetModForLRModKey__30c6172657(key));
     }
-    imgui_i_im_format_string(g->TempKeychordName, ((int)((sizeof(g->TempKeychordName) / sizeof((*g->TempKeychordName))))), "%s%s%s%s%s", ((key_chord & ImGuiMod_Ctrl) ? "Ctrl+" : ""), ((key_chord & ImGuiMod_Shift) ? "Shift+" : ""), ((key_chord & ImGuiMod_Alt) ? "Alt+" : ""), ((key_chord & ImGuiMod_Super) ? "Super+" : ""), (((key != ImGuiKey_None) || (key_chord == ImGuiKey_None)) ? imgui_get_key_name(key) : ""));
+    imgui__im_format_string(g->TempKeychordName, ((int)((sizeof(g->TempKeychordName) / sizeof((*g->TempKeychordName))))), "%s%s%s%s%s", ((key_chord & ImGuiMod_Ctrl) ? "Ctrl+" : ""), ((key_chord & ImGuiMod_Shift) ? "Shift+" : ""), ((key_chord & ImGuiMod_Alt) ? "Alt+" : ""), ((key_chord & ImGuiMod_Super) ? "Super+" : ""), (((key != ImGuiKey_None) || (key_chord == ImGuiKey_None)) ? imgui_get_key_name(key) : ""));
     if ((key == ImGuiKey_None) && (key_chord != 0)) {
         if ((len = strlen(g->TempKeychordName)) != 0) {
             g->TempKeychordName[(len - 1)] = 0;
@@ -7361,10 +7361,10 @@ ImGuiKeyData * ImGui_GetKeyData__35ffe023d5(ImGuiContext *imgui_c89_ctx, ImGuiKe
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    return imgui_i_get_key_data((&(*g)), key);
+    return imgui__get_key_data((&(*g)), key);
 }
 
-ImGuiKeyData * imgui_i_get_key_data(ImGuiContext * ctx, ImGuiKey key)
+ImGuiKeyData * imgui__get_key_data(ImGuiContext * ctx, ImGuiKey key)
 {
     ImGuiContext * g;
 
@@ -7376,7 +7376,7 @@ ImGuiKeyData * imgui_i_get_key_data(ImGuiContext * ctx, ImGuiKey key)
     return &g->IO.KeysData[(key - ImGuiKey_NamedKey_BEGIN)];
 }
 
-ImVec2 imgui_i_get_key_magnitude2d(ImGuiContext *imgui_c89_ctx, ImGuiKey key_left, ImGuiKey key_right, ImGuiKey key_up, ImGuiKey key_down)
+ImVec2 imgui__get_key_magnitude2d(ImGuiContext *imgui_c89_ctx, ImGuiKey key_left, ImGuiKey key_right, ImGuiKey key_up, ImGuiKey key_down)
 {
     return ImVec2_ImVec2_value__c798775144((ImGui_GetKeyData__35ffe023d5(imgui_c89_ctx, key_right)->AnalogValue - ImGui_GetKeyData__35ffe023d5(imgui_c89_ctx, key_left)->AnalogValue), (ImGui_GetKeyData__35ffe023d5(imgui_c89_ctx, key_down)->AnalogValue - ImGui_GetKeyData__35ffe023d5(imgui_c89_ctx, key_up)->AnalogValue));
 }
@@ -7396,7 +7396,7 @@ const char * imgui_get_key_name(ImGuiKey key)
     return imgui_c89_compressed_string_at(GKeyNames__f514c0cf35_data, GKeyNames__f514c0cf35_rules, GKeyNames__f514c0cf35_rule_count, (key - ImGuiKey_NamedKey_BEGIN), GKeyNames__f514c0cf35_buffer);
 }
 
-ImGuiID imgui_i_get_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key)
+ImGuiID imgui__get_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key)
 {
     ImGuiContext * g;
     ImGuiKeyOwnerData * owner_data;
@@ -7437,7 +7437,7 @@ int imgui_get_key_pressed_amount(ImGuiContext *imgui_c89_ctx, ImGuiKey key, floa
         return 0;
     }
     t = key_data->DownDuration;
-    return imgui_i_calc_typematic_repeat_amount((t - g->IO.DeltaTime), t, repeat_delay, repeat_rate);
+    return imgui__calc_typematic_repeat_amount((t - g->IO.DeltaTime), t, repeat_delay, repeat_rate);
 }
 
 ImGuiViewport * imgui_get_main_viewport(ImGuiContext *imgui_c89_ctx)
@@ -7448,7 +7448,7 @@ ImGuiViewport * imgui_get_main_viewport(ImGuiContext *imgui_c89_ctx)
     return (ImGuiViewport *)((*(ImVector_ImGuiViewportP____operator____2d63c59af3(((ImVector_ImGuiViewportP_ptr *)(&(g->Viewports))), 0))));
 }
 
-ImGuiMouseButton imgui_i_get_mouse_button_from_popup_flags(ImGuiPopupFlags flags)
+ImGuiMouseButton imgui__get_mouse_button_from_popup_flags(ImGuiPopupFlags flags)
 {
     if ((flags & ImGuiPopupFlags_InvalidMask_) != 0) {
         return flags & ImGuiPopupFlags_InvalidMask_;
@@ -7514,7 +7514,7 @@ ImVec2 imgui_get_mouse_pos_on_opening_current_popup(ImGuiContext *imgui_c89_ctx)
     return g->IO.MousePos;
 }
 
-float imgui_i_get_nav_tweak_pressed_amount(ImGuiContext *imgui_c89_ctx, ImGuiAxis axis)
+float imgui__get_nav_tweak_pressed_amount(ImGuiContext *imgui_c89_ctx, ImGuiAxis axis)
 {
     ImGuiContext * g;
     float repeat_delay;
@@ -7524,7 +7524,7 @@ float imgui_i_get_nav_tweak_pressed_amount(ImGuiContext *imgui_c89_ctx, ImGuiAxi
     float amount;
 
     g = &((*imgui_c89_ctx));
-    imgui_i_get_typematic_repeat_rate(imgui_c89_ctx, ImGuiInputFlags_RepeatRateNavTweak, (&repeat_delay), (&repeat_rate));
+    imgui__get_typematic_repeat_rate(imgui_c89_ctx, ImGuiInputFlags_RepeatRateNavTweak, (&repeat_delay), (&repeat_rate));
     if (g->NavInputSource == ImGuiInputSource_Gamepad) {
         key_less = ((axis == ImGuiAxis_X) ? ImGuiKey_GamepadDpadLeft : ImGuiKey_GamepadDpadUp);
         key_more = ((axis == ImGuiAxis_X) ? ImGuiKey_GamepadDpadRight : ImGuiKey_GamepadDpadDown);
@@ -7545,13 +7545,13 @@ ImGuiPlatformIO * imgui_get_platform_io(ImGuiContext *imgui_c89_ctx)
     return &(imgui_c89_ctx->PlatformIO);
 }
 
-ImGuiPlatformIO * imgui_i_get_platform_io(ImGuiContext * ctx)
+ImGuiPlatformIO * imgui__get_platform_io(ImGuiContext * ctx)
 {
     imgui_c89_expect((!(ctx != 0)), 0) ? imgui_c89_assert_id(48) : ((void)(0));
     return &(ctx->PlatformIO);
 }
 
-ImRect imgui_i_get_popup_allowed_extent_rect(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+ImRect imgui__get_popup_allowed_extent_rect(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -7612,7 +7612,7 @@ float imgui_get_scroll_y(ImGuiContext *imgui_c89_ctx)
     return window->Scroll.y;
 }
 
-ImGuiKeyRoutingData * imgui_i_get_shortcut_routing_data(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord)
+ImGuiKeyRoutingData * imgui__get_shortcut_routing_data(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord)
 {
     ImGuiKeyRoutingData imgui_c89_temporary_0;
 
@@ -7682,7 +7682,7 @@ const ImVec4 * imgui_get_style_color_vec4(ImGuiContext *imgui_c89_ctx, ImGuiCol 
     return &(style->Colors[idx]);
 }
 
-const ImGuiStyleVarInfo * imgui_i_get_style_var_info(ImGuiStyleVar idx)
+const ImGuiStyleVarInfo * imgui__get_style_var_info(ImGuiStyleVar idx)
 {
     imgui_c89_expect((!((idx >= 0) && (idx < ImGuiStyleVar_COUNT))), 0) ? imgui_c89_assert_id(27) : ((void)(0));
     return &GStyleVarsInfo__8bf288fb74[idx];
@@ -7709,7 +7709,7 @@ double imgui_get_time(ImGuiContext *imgui_c89_ctx)
     return imgui_c89_ctx->Time;
 }
 
-ImGuiWindow * imgui_i_get_top_most_and_visible_popup_modal(ImGuiContext *imgui_c89_ctx)
+ImGuiWindow * imgui__get_top_most_and_visible_popup_modal(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiWindow * popup;
@@ -7728,7 +7728,7 @@ ImGuiWindow * imgui_i_get_top_most_and_visible_popup_modal(ImGuiContext *imgui_c
     return 0;
 }
 
-ImGuiWindow * imgui_i_get_top_most_popup_modal(ImGuiContext *imgui_c89_ctx)
+ImGuiWindow * imgui__get_top_most_popup_modal(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiWindow * popup;
@@ -7747,7 +7747,7 @@ ImGuiWindow * imgui_i_get_top_most_popup_modal(ImGuiContext *imgui_c89_ctx)
     return 0;
 }
 
-void imgui_i_get_typematic_repeat_rate(ImGuiContext *imgui_c89_ctx, ImGuiInputFlags flags, float * repeat_delay, float * repeat_rate)
+void imgui__get_typematic_repeat_rate(ImGuiContext *imgui_c89_ctx, ImGuiInputFlags flags, float * repeat_delay, float * repeat_rate)
 {
     ImGuiContext * g;
 
@@ -7816,7 +7816,7 @@ ImVec2 imgui_get_window_pos(ImGuiContext *imgui_c89_ctx)
     return window->Pos;
 }
 
-ImGuiID imgui_i_get_window_resize_border_id(ImGuiWindow * window, ImGuiDir dir)
+ImGuiID imgui__get_window_resize_border_id(ImGuiWindow * window, ImGuiDir dir)
 {
     int n;
     ImGuiID id;
@@ -7824,19 +7824,19 @@ ImGuiID imgui_i_get_window_resize_border_id(ImGuiWindow * window, ImGuiDir dir)
     imgui_c89_expect((!((dir >= 0) && (dir < 4))), 0) ? imgui_c89_assert_id(70) : ((void)(0));
     n = (((int)(dir)) + 4);
     id = window->ID;
-    id = imgui_i_im_hash_str("#RESIZE", 0, id);
-    id = imgui_i_im_hash_data((&n), sizeof(int), id);
+    id = imgui__im_hash_str("#RESIZE", 0, id);
+    id = imgui__im_hash_data((&n), sizeof(int), id);
     return id;
 }
 
-ImGuiID imgui_i_get_window_resize_corner_id(ImGuiWindow * window, int n)
+ImGuiID imgui__get_window_resize_corner_id(ImGuiWindow * window, int n)
 {
     ImGuiID id;
 
     imgui_c89_expect((!((n >= 0) && (n < 4))), 0) ? imgui_c89_assert_id(69) : ((void)(0));
     id = window->ID;
-    id = imgui_i_im_hash_str("#RESIZE", 0, id);
-    id = imgui_i_im_hash_data((&n), sizeof(int), id);
+    id = imgui__im_hash_str("#RESIZE", 0, id);
+    id = imgui__im_hash_data((&n), sizeof(int), id);
     return id;
 }
 
@@ -7867,7 +7867,7 @@ void imgui_indent(ImGuiContext *imgui_c89_ctx, float indent_w)
     window->DC.CursorPos.x = ((window->Pos.x + window->DC.Indent.x) + window->DC.ColumnsOffset.x);
 }
 
-void imgui_i_initialize(ImGuiContext *imgui_c89_ctx)
+void imgui__initialize(ImGuiContext *imgui_c89_ctx)
 {
     char imgui_c89_temporary_0;
 
@@ -7890,15 +7890,15 @@ void imgui_i_initialize(ImGuiContext *imgui_c89_ctx)
     imgui_c89_expect((!((!g->Initialized) && (!g->SettingsLoaded))), 0) ? imgui_c89_assert_id(35) : ((void)(0));
     ImGuiSettingsHandler_ImGuiSettingsHandler__b1f5a35313(&ini_handler);
     ini_handler.TypeName = "Window";
-    ini_handler.TypeHash = imgui_i_im_hash_str("Window", 0, 0);
+    ini_handler.TypeHash = imgui__im_hash_str("Window", 0, 0);
     ini_handler.ClearAllFn = WindowSettingsHandler_ClearAll__d73d0b1ce9;
     ini_handler.CleanupFn = WindowSettingsHandler_Cleanup__4cd577b2d9;
     ini_handler.ReadOpenFn = WindowSettingsHandler_ReadOpen__21f73b6c73;
     ini_handler.ReadLineFn = WindowSettingsHandler_ReadLine__70cdd5e298;
     ini_handler.ApplyAllFn = WindowSettingsHandler_ApplyAll__f8f8ea6f0a;
     ini_handler.WriteAllFn = WindowSettingsHandler_WriteAll__fe54ab5f3d;
-    imgui_i_add_settings_handler(imgui_c89_ctx, (&ini_handler));
-    imgui_i_table_settings_add_settings_handler(imgui_c89_ctx);
+    imgui__add_settings_handler(imgui_c89_ctx, (&ini_handler));
+    imgui__table_settings_add_settings_handler(imgui_c89_ctx);
     for (imgui_c89_loc_index = 0; imgui_c89_loc_index < 12; ++imgui_c89_loc_index)
         g->LocalizationTable[imgui_c89_loc_index] = imgui_c89_loc_data + imgui_c89_loc_offsets[imgui_c89_loc_index];
     g->PlatformIO.Platform_GetClipboardTextFn = Platform_GetClipboardTextFn_DefaultImpl__adab284fec;
@@ -7929,7 +7929,7 @@ void imgui_i_initialize(ImGuiContext *imgui_c89_ctx)
            sizeof(imgui_c89_char_input_mask));
     atlas = g->IO.Fonts;
     g->DrawListSharedData.Context = (&(*g));
-    imgui_i_register_font_atlas(imgui_c89_ctx, atlas);
+    imgui__register_font_atlas(imgui_c89_ctx, atlas);
     g->Initialized = 1;
 }
 
@@ -7985,7 +7985,7 @@ unsigned char imgui_is_any_mouse_down(ImGuiContext *imgui_c89_ctx)
     return 0;
 }
 
-unsigned char imgui_i_is_clipped_ex(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id)
+unsigned char imgui__is_clipped_ex(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -8002,7 +8002,7 @@ unsigned char imgui_i_is_clipped_ex(ImGuiContext *imgui_c89_ctx, const ImRect * 
     return 0;
 }
 
-unsigned char imgui_i_is_drag_drop_active(ImGuiContext *imgui_c89_ctx)
+unsigned char imgui__is_drag_drop_active(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -8010,7 +8010,7 @@ unsigned char imgui_i_is_drag_drop_active(ImGuiContext *imgui_c89_ctx)
     return g->DragDropActive;
 }
 
-unsigned char imgui_i_is_drag_drop_payload_being_accepted(ImGuiContext *imgui_c89_ctx)
+unsigned char imgui__is_drag_drop_payload_being_accepted(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -8023,7 +8023,7 @@ static unsigned char ImGui_IsGamepadKey__03bb451417(ImGuiKey key)
     return (key >= ImGuiKey_GamepadStart) && (key < (ImGuiKey_GamepadRStickDown + 1));
 }
 
-unsigned char imgui_i_is_in_nav_focus_route(ImGuiContext *imgui_c89_ctx, ImGuiID focus_scope_id)
+unsigned char imgui__is_in_nav_focus_route(ImGuiContext *imgui_c89_ctx, ImGuiID focus_scope_id)
 {
     ImGuiContext * g;
     ImGuiFocusScopeData * __begin1;
@@ -8125,7 +8125,7 @@ unsigned char imgui_is_item_hovered(ImGuiContext *imgui_c89_ctx, ImGuiHoveredFla
     window = g->CurrentWindow;
     do {
         if (!((flags & (~ImGuiHoveredFlags_AllowedMaskForIsItemHovered)) == 0)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Invalid flags for IsItemHovered()!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Invalid flags for IsItemHovered()!")) {
                 imgui_c89_expect((!(((flags & (~ImGuiHoveredFlags_AllowedMaskForIsItemHovered)) == 0) && "Invalid flags for IsItemHovered()!")), 0) ? imgui_c89_assert_id(44) : ((void)(0));
             }
         }
@@ -8165,7 +8165,7 @@ unsigned char imgui_is_item_hovered(ImGuiContext *imgui_c89_ctx, ImGuiHoveredFla
                 }
             }
         }
-        if ((!imgui_i_is_window_content_hoverable(imgui_c89_ctx, window, flags)) && (!(g->LastItemData.ItemFlags & ImGuiItemFlags_NoWindowHoverableCheck))) {
+        if ((!imgui__is_window_content_hoverable(imgui_c89_ctx, window, flags)) && (!(g->LastItemData.ItemFlags & ImGuiItemFlags_NoWindowHoverableCheck))) {
             return 0;
         }
         if ((g->LastItemData.ItemFlags & ImGuiItemFlags_Disabled) && (!(flags & ImGuiHoveredFlags_AllowWhenDisabled))) {
@@ -8184,7 +8184,7 @@ unsigned char imgui_is_item_hovered(ImGuiContext *imgui_c89_ctx, ImGuiHoveredFla
     }
     delay = CalcDelayFromHoveredFlags__fb5cd84567(imgui_c89_ctx, flags);
     if ((delay > 0.0f) || (flags & ImGuiHoveredFlags_Stationary)) {
-        hover_delay_id = ((g->LastItemData.ID != 0) ? g->LastItemData.ID : imgui_i_window_get_id_from_pos(((ImGuiWindow *)(window)), &(g->LastItemData.Rect.Min)));
+        hover_delay_id = ((g->LastItemData.ID != 0) ? g->LastItemData.ID : imgui__window_get_id_from_pos(((ImGuiWindow *)(window)), &(g->LastItemData.Rect.Min)));
         if ((flags & ImGuiHoveredFlags_NoSharedDelay) && (g->HoverItemDelayIdPreviousFrame != hover_delay_id)) {
             g->HoverItemDelayTimer = 0.0f;
         }
@@ -8226,17 +8226,17 @@ unsigned char imgui_is_item_visible(ImGuiContext *imgui_c89_ctx)
 
 unsigned char imgui_is_key_chord_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord)
 {
-    return imgui_i_is_key_chord_pressed(imgui_c89_ctx, key_chord, ImGuiInputFlags_None, ((ImGuiID)(0)));
+    return imgui__is_key_chord_pressed(imgui_c89_ctx, key_chord, ImGuiInputFlags_None, ((ImGuiID)(0)));
 }
 
-unsigned char imgui_i_is_key_chord_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiInputFlags flags, ImGuiID owner_id)
+unsigned char imgui__is_key_chord_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiInputFlags flags, ImGuiID owner_id)
 {
     ImGuiContext * g;
     ImGuiKey mods;
     ImGuiKey key;
 
     g = &((*imgui_c89_ctx));
-    key_chord = imgui_i_fixup_key_chord(key_chord);
+    key_chord = imgui__fixup_key_chord(key_chord);
     mods = ((ImGuiKey)((key_chord & ImGuiMod_Mask_)));
     if (g->IO.KeyMods != mods) {
         return 0;
@@ -8245,7 +8245,7 @@ unsigned char imgui_i_is_key_chord_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKey
     if (key == ImGuiKey_None) {
         key = ImGui_ConvertSingleModFlagToKey__6616862397(mods);
     }
-    if (!imgui_i_is_key_pressed(imgui_c89_ctx, key, (flags & ImGuiInputFlags_RepeatMask_), owner_id)) {
+    if (!imgui__is_key_pressed(imgui_c89_ctx, key, (flags & ImGuiInputFlags_RepeatMask_), owner_id)) {
         return 0;
     }
     return 1;
@@ -8253,10 +8253,10 @@ unsigned char imgui_i_is_key_chord_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKey
 
 unsigned char imgui_is_key_down(ImGuiContext *imgui_c89_ctx, ImGuiKey key)
 {
-    return imgui_i_is_key_down(imgui_c89_ctx, key, ((ImGuiID)(0)));
+    return imgui__is_key_down(imgui_c89_ctx, key, ((ImGuiID)(0)));
 }
 
-unsigned char imgui_i_is_key_down(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID owner_id)
+unsigned char imgui__is_key_down(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID owner_id)
 {
     const ImGuiKeyData * key_data;
 
@@ -8264,13 +8264,13 @@ unsigned char imgui_i_is_key_down(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImG
     if (!key_data->Down) {
         return 0;
     }
-    if (!imgui_i_test_key_owner(imgui_c89_ctx, key, owner_id)) {
+    if (!imgui__test_key_owner(imgui_c89_ctx, key, owner_id)) {
         return 0;
     }
     return 1;
 }
 
-unsigned char imgui_i_is_key_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiInputFlags flags, ImGuiID owner_id)
+unsigned char imgui__is_key_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiInputFlags flags, ImGuiID owner_id)
 {
     const ImGuiKeyData * key_data;
     float t;
@@ -8294,7 +8294,7 @@ unsigned char imgui_i_is_key_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKey key, 
     }
     pressed = (t == 0.0f);
     if ((!pressed) && ((flags & ImGuiInputFlags_Repeat) != 0)) {
-        imgui_i_get_typematic_repeat_rate(imgui_c89_ctx, flags, (&repeat_delay), (&repeat_rate));
+        imgui__get_typematic_repeat_rate(imgui_c89_ctx, flags, (&repeat_delay), (&repeat_rate));
         pressed = ((t > repeat_delay) && (imgui_get_key_pressed_amount(imgui_c89_ctx, key, repeat_delay, repeat_rate) > 0));
         if (pressed && (flags & ImGuiInputFlags_RepeatUntilMask_)) {
             g = &((*imgui_c89_ctx));
@@ -8313,7 +8313,7 @@ unsigned char imgui_i_is_key_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKey key, 
     if (!pressed) {
         return 0;
     }
-    if (!imgui_i_test_key_owner(imgui_c89_ctx, key, owner_id)) {
+    if (!imgui__test_key_owner(imgui_c89_ctx, key, owner_id)) {
         return 0;
     }
     return 1;
@@ -8321,15 +8321,15 @@ unsigned char imgui_i_is_key_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKey key, 
 
 unsigned char imgui_is_key_pressed(ImGuiContext *imgui_c89_ctx, ImGuiKey key, unsigned char repeat)
 {
-    return imgui_i_is_key_pressed(imgui_c89_ctx, key, (repeat ? ImGuiInputFlags_Repeat : ImGuiInputFlags_None), ((ImGuiID)(0)));
+    return imgui__is_key_pressed(imgui_c89_ctx, key, (repeat ? ImGuiInputFlags_Repeat : ImGuiInputFlags_None), ((ImGuiID)(0)));
 }
 
 unsigned char imgui_is_key_released(ImGuiContext *imgui_c89_ctx, ImGuiKey key)
 {
-    return imgui_i_is_key_released(imgui_c89_ctx, key, ((ImGuiID)(0)));
+    return imgui__is_key_released(imgui_c89_ctx, key, ((ImGuiID)(0)));
 }
 
-unsigned char imgui_i_is_key_released(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID owner_id)
+unsigned char imgui__is_key_released(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID owner_id)
 {
     const ImGuiKeyData * key_data;
 
@@ -8337,7 +8337,7 @@ unsigned char imgui_i_is_key_released(ImGuiContext *imgui_c89_ctx, ImGuiKey key,
     if ((key_data->DownDurationPrev < 0.0f) || key_data->Down) {
         return 0;
     }
-    if (!imgui_i_test_key_owner(imgui_c89_ctx, key, owner_id)) {
+    if (!imgui__test_key_owner(imgui_c89_ctx, key, owner_id)) {
         return 0;
     }
     return 1;
@@ -8358,7 +8358,7 @@ static unsigned char ImGui_IsLegacyKey__84069e7935(ImGuiKey key)
     return (key >= 0) && (key < 512);
 }
 
-unsigned char imgui_i_is_mouse_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, ImGuiInputFlags flags, ImGuiID owner_id)
+unsigned char imgui__is_mouse_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, ImGuiInputFlags flags, ImGuiID owner_id)
 {
     ImGuiContext * g;
     float t;
@@ -8376,11 +8376,11 @@ unsigned char imgui_i_is_mouse_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMouseBu
     }
     imgui_c89_expect((!((flags & (~ImGuiInputFlags_SupportedByIsMouseClicked)) == 0)), 0) ? imgui_c89_assert_id(128) : ((void)(0));
     repeat = ((flags & ImGuiInputFlags_Repeat) != 0);
-    pressed = ((t == 0.0f) || ((repeat && (t > g->IO.KeyRepeatDelay)) && (imgui_i_calc_typematic_repeat_amount((t - g->IO.DeltaTime), t, g->IO.KeyRepeatDelay, g->IO.KeyRepeatRate) > 0)));
+    pressed = ((t == 0.0f) || ((repeat && (t > g->IO.KeyRepeatDelay)) && (imgui__calc_typematic_repeat_amount((t - g->IO.DeltaTime), t, g->IO.KeyRepeatDelay, g->IO.KeyRepeatRate) > 0)));
     if (!pressed) {
         return 0;
     }
-    if (!imgui_i_test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), owner_id)) {
+    if (!imgui__test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), owner_id)) {
         return 0;
     }
     return 1;
@@ -8388,7 +8388,7 @@ unsigned char imgui_i_is_mouse_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMouseBu
 
 unsigned char imgui_is_mouse_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, unsigned char repeat)
 {
-    return imgui_i_is_mouse_clicked(imgui_c89_ctx, button, (repeat ? ImGuiInputFlags_Repeat : ImGuiInputFlags_None), ((ImGuiID)(0)));
+    return imgui__is_mouse_clicked(imgui_c89_ctx, button, (repeat ? ImGuiInputFlags_Repeat : ImGuiInputFlags_None), ((ImGuiID)(0)));
 }
 
 unsigned char imgui_is_mouse_double_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button)
@@ -8397,16 +8397,16 @@ unsigned char imgui_is_mouse_double_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMo
 
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!((button >= 0) && (button < ((int)((sizeof(g->IO.MouseDown) / sizeof((*g->IO.MouseDown)))))))), 0) ? imgui_c89_assert_id(132) : ((void)(0));
-    return (g->IO.MouseClickedCount[button] == 2) && imgui_i_test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), ((ImGuiID)(0)));
+    return (g->IO.MouseClickedCount[button] == 2) && imgui__test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), ((ImGuiID)(0)));
 }
 
-unsigned char imgui_i_is_mouse_double_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, ImGuiID owner_id)
+unsigned char imgui__is_mouse_double_clicked(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, ImGuiID owner_id)
 {
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!((button >= 0) && (button < ((int)((sizeof(g->IO.MouseDown) / sizeof((*g->IO.MouseDown)))))))), 0) ? imgui_c89_assert_id(133) : ((void)(0));
-    return (g->IO.MouseClickedCount[button] == 2) && imgui_i_test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), owner_id);
+    return (g->IO.MouseClickedCount[button] == 2) && imgui__test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), owner_id);
 }
 
 unsigned char imgui_is_mouse_down(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button)
@@ -8415,19 +8415,19 @@ unsigned char imgui_is_mouse_down(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton 
 
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!((button >= 0) && (button < ((int)((sizeof(g->IO.MouseDown) / sizeof((*g->IO.MouseDown)))))))), 0) ? imgui_c89_assert_id(125) : ((void)(0));
-    return g->IO.MouseDown[button] && imgui_i_test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), ((ImGuiID)(0)));
+    return g->IO.MouseDown[button] && imgui__test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), ((ImGuiID)(0)));
 }
 
-unsigned char imgui_i_is_mouse_down(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, ImGuiID owner_id)
+unsigned char imgui__is_mouse_down(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, ImGuiID owner_id)
 {
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!((button >= 0) && (button < ((int)((sizeof(g->IO.MouseDown) / sizeof((*g->IO.MouseDown)))))))), 0) ? imgui_c89_assert_id(126) : ((void)(0));
-    return g->IO.MouseDown[button] && imgui_i_test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), owner_id);
+    return g->IO.MouseDown[button] && imgui__test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), owner_id);
 }
 
-unsigned char imgui_i_is_mouse_drag_past_threshold(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, float lock_threshold)
+unsigned char imgui__is_mouse_drag_past_threshold(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, float lock_threshold)
 {
     ImGuiContext * g;
 
@@ -8448,7 +8448,7 @@ unsigned char imgui_is_mouse_dragging(ImGuiContext *imgui_c89_ctx, ImGuiMouseBut
     if (!g->IO.MouseDown[button]) {
         return 0;
     }
-    return imgui_i_is_mouse_drag_past_threshold(imgui_c89_ctx, button, lock_threshold);
+    return imgui__is_mouse_drag_past_threshold(imgui_c89_ctx, button, lock_threshold);
 }
 
 unsigned char imgui_is_mouse_hovering_rect(ImGuiContext *imgui_c89_ctx, const ImVec2 * r_min, const ImVec2 * r_max, unsigned char clip)
@@ -8489,16 +8489,16 @@ unsigned char imgui_is_mouse_released(ImGuiContext *imgui_c89_ctx, ImGuiMouseBut
 
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!((button >= 0) && (button < ((int)((sizeof(g->IO.MouseDown) / sizeof((*g->IO.MouseDown)))))))), 0) ? imgui_c89_assert_id(129) : ((void)(0));
-    return g->IO.MouseReleased[button] && imgui_i_test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), ((ImGuiID)(0)));
+    return g->IO.MouseReleased[button] && imgui__test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), ((ImGuiID)(0)));
 }
 
-unsigned char imgui_i_is_mouse_released(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, ImGuiID owner_id)
+unsigned char imgui__is_mouse_released(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, ImGuiID owner_id)
 {
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!((button >= 0) && (button < ((int)((sizeof(g->IO.MouseDown) / sizeof((*g->IO.MouseDown)))))))), 0) ? imgui_c89_assert_id(130) : ((void)(0));
-    return g->IO.MouseReleased[button] && imgui_i_test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), owner_id);
+    return g->IO.MouseReleased[button] && imgui__test_key_owner(imgui_c89_ctx, ImGui_MouseButtonToKey__2b6640ccb6(button), owner_id);
 }
 
 unsigned char imgui_is_mouse_released_with_delay(ImGuiContext *imgui_c89_ctx, ImGuiMouseButton button, float delay)
@@ -8534,14 +8534,14 @@ unsigned char imgui_is_popup_open(ImGuiContext *imgui_c89_ctx, const char * str_
     ImGuiID id;
 
     g = &((*imgui_c89_ctx));
-    id = ((popup_flags & ImGuiPopupFlags_AnyPopupId) ? 0 : imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->CurrentWindow)), str_id, 0));
+    id = ((popup_flags & ImGuiPopupFlags_AnyPopupId) ? 0 : imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->CurrentWindow)), str_id, 0));
     if ((popup_flags & ImGuiPopupFlags_AnyPopupLevel) && (id != 0)) {
         imgui_c89_expect((!(0 && "Cannot use IsPopupOpen() with a string id and ImGuiPopupFlags_AnyPopupLevel.")), 0) ? imgui_c89_assert_id(214) : ((void)(0));
     }
-    return imgui_i_is_popup_open(imgui_c89_ctx, id, popup_flags);
+    return imgui__is_popup_open(imgui_c89_ctx, id, popup_flags);
 }
 
-unsigned char imgui_i_is_popup_open(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiPopupFlags popup_flags)
+unsigned char imgui__is_popup_open(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiPopupFlags popup_flags)
 {
     ImGuiContext * g;
     int n;
@@ -8569,13 +8569,13 @@ unsigned char imgui_i_is_popup_open(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImG
     }
 }
 
-unsigned char imgui_i_is_popup_open_request_for_item(ImGuiContext *imgui_c89_ctx, ImGuiPopupFlags popup_flags, ImGuiID id)
+unsigned char imgui__is_popup_open_request_for_item(ImGuiContext *imgui_c89_ctx, ImGuiPopupFlags popup_flags, ImGuiID id)
 {
     ImGuiContext * g;
     ImGuiMouseButton mouse_button;
 
     g = &((*imgui_c89_ctx));
-    mouse_button = imgui_i_get_mouse_button_from_popup_flags(popup_flags);
+    mouse_button = imgui__get_mouse_button_from_popup_flags(popup_flags);
     if (imgui_is_mouse_released(imgui_c89_ctx, mouse_button) && imgui_is_item_hovered(imgui_c89_ctx, ImGuiHoveredFlags_AllowWhenBlockedByPopup)) {
         return 1;
     }
@@ -8585,20 +8585,20 @@ unsigned char imgui_i_is_popup_open_request_for_item(ImGuiContext *imgui_c89_ctx
     return 0;
 }
 
-unsigned char imgui_i_is_popup_open_request_for_window(ImGuiContext *imgui_c89_ctx, ImGuiPopupFlags popup_flags)
+unsigned char imgui__is_popup_open_request_for_window(ImGuiContext *imgui_c89_ctx, ImGuiPopupFlags popup_flags)
 {
     ImGuiContext * g;
     ImGuiMouseButton mouse_button;
 
     g = &((*imgui_c89_ctx));
-    mouse_button = imgui_i_get_mouse_button_from_popup_flags(popup_flags);
+    mouse_button = imgui__get_mouse_button_from_popup_flags(popup_flags);
     if (imgui_is_mouse_released(imgui_c89_ctx, mouse_button) && imgui_is_window_hovered(imgui_c89_ctx, ImGuiHoveredFlags_AllowWhenBlockedByPopup)) {
         if ((!(popup_flags & ImGuiPopupFlags_NoOpenOverItems)) || (!imgui_is_any_item_hovered(imgui_c89_ctx))) {
             return 1;
         }
     }
     if (g->NavOpenContextMenuWindowId && g->CurrentWindow->ID) {
-        if (imgui_i_is_window_child_of(g->NavWindow, g->CurrentWindow, 0)) {
+        if (imgui__is_window_child_of(g->NavWindow, g->CurrentWindow, 0)) {
             return 1;
         }
     }
@@ -8626,7 +8626,7 @@ unsigned char imgui_is_rect_visible_vec2(ImGuiContext *imgui_c89_ctx, const ImVe
     return ImRect_Overlaps__02ba25d225(((ImRect *)(&(window->ClipRect))), (imgui_c89_temporary_0 = ImRect_ImRect_value__99b7f05542(rect_min, rect_max), &imgui_c89_temporary_0));
 }
 
-unsigned char imgui_i_is_window_above(ImGuiContext *imgui_c89_ctx, ImGuiWindow * potential_above, ImGuiWindow * potential_below)
+unsigned char imgui__is_window_above(ImGuiContext *imgui_c89_ctx, ImGuiWindow * potential_above, ImGuiWindow * potential_below)
 {
     ImGuiContext * g;
     int display_layer_delta;
@@ -8659,7 +8659,7 @@ unsigned char imgui_is_window_appearing(ImGuiContext *imgui_c89_ctx)
     return window->Appearing;
 }
 
-unsigned char imgui_i_is_window_child_of(ImGuiWindow * window, ImGuiWindow * potential_parent, unsigned char popup_hierarchy)
+unsigned char imgui__is_window_child_of(ImGuiWindow * window, ImGuiWindow * potential_parent, unsigned char popup_hierarchy)
 {
     ImGuiWindow * window_root;
 
@@ -8687,7 +8687,7 @@ unsigned char imgui_is_window_collapsed(ImGuiContext *imgui_c89_ctx)
     return window->Collapsed;
 }
 
-unsigned char imgui_i_is_window_content_hoverable(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiHoveredFlags flags)
+unsigned char imgui__is_window_content_hoverable(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiHoveredFlags flags)
 {
     ImGuiContext * g;
     ImGuiWindow * focused_root_window;
@@ -8707,7 +8707,7 @@ unsigned char imgui_i_is_window_content_hoverable(ImGuiContext *imgui_c89_ctx, I
                     }
                 }
                 if (want_inhibit) {
-                    if (!imgui_i_is_window_within_begin_stack_of(window->RootWindow, focused_root_window)) {
+                    if (!imgui__is_window_within_begin_stack_of(window->RootWindow, focused_root_window)) {
                         return 0;
                     }
                 }
@@ -8739,7 +8739,7 @@ unsigned char imgui_is_window_focused(ImGuiContext *imgui_c89_ctx, ImGuiFocusedF
         cur_window = GetCombinedRootWindow__17d961f5c3(cur_window, popup_hierarchy);
     }
     if (flags & ImGuiFocusedFlags_ChildWindows) {
-        return imgui_i_is_window_child_of(ref_window, cur_window, popup_hierarchy);
+        return imgui__is_window_child_of(ref_window, cur_window, popup_hierarchy);
     } else {
         return ref_window == cur_window;
     }
@@ -8756,7 +8756,7 @@ unsigned char imgui_is_window_hovered(ImGuiContext *imgui_c89_ctx, ImGuiHoveredF
     g = &((*imgui_c89_ctx));
     do {
         if (!((flags & (~ImGuiHoveredFlags_AllowedMaskForIsWindowHovered)) == 0)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Invalid flags for IsWindowHovered()!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Invalid flags for IsWindowHovered()!")) {
                 imgui_c89_expect((!(((flags & (~ImGuiHoveredFlags_AllowedMaskForIsWindowHovered)) == 0) && "Invalid flags for IsWindowHovered()!")), 0) ? imgui_c89_assert_id(90) : ((void)(0));
             }
         }
@@ -8773,7 +8773,7 @@ unsigned char imgui_is_window_hovered(ImGuiContext *imgui_c89_ctx, ImGuiHoveredF
             cur_window = GetCombinedRootWindow__17d961f5c3(cur_window, popup_hierarchy);
         }
         if (flags & ImGuiHoveredFlags_ChildWindows) {
-            result = imgui_i_is_window_child_of(ref_window, cur_window, popup_hierarchy);
+            result = imgui__is_window_child_of(ref_window, cur_window, popup_hierarchy);
         } else {
             result = (ref_window == cur_window);
         }
@@ -8781,7 +8781,7 @@ unsigned char imgui_is_window_hovered(ImGuiContext *imgui_c89_ctx, ImGuiHoveredF
             return 0;
         }
     }
-    if (!imgui_i_is_window_content_hoverable(imgui_c89_ctx, ref_window, flags)) {
+    if (!imgui__is_window_content_hoverable(imgui_c89_ctx, ref_window, flags)) {
         return 0;
     }
     if (!(flags & ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
@@ -8798,7 +8798,7 @@ unsigned char imgui_is_window_hovered(ImGuiContext *imgui_c89_ctx, ImGuiHoveredF
     return 1;
 }
 
-unsigned char imgui_i_is_window_in_begin_stack(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+unsigned char imgui__is_window_in_begin_stack(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
     int n;
@@ -8813,12 +8813,12 @@ unsigned char imgui_i_is_window_in_begin_stack(ImGuiContext *imgui_c89_ctx, ImGu
     return 0;
 }
 
-unsigned char imgui_i_is_window_nav_focusable(ImGuiWindow * window)
+unsigned char imgui__is_window_nav_focusable(ImGuiWindow * window)
 {
     return (window->WasActive && (window == window->RootWindow)) && (!(window->Flags & ImGuiWindowFlags_NoNavFocus));
 }
 
-unsigned char imgui_i_is_window_within_begin_stack_of(ImGuiWindow * window, ImGuiWindow * potential_parent)
+unsigned char imgui__is_window_within_begin_stack_of(ImGuiWindow * window, ImGuiWindow * potential_parent)
 {
     if (window->RootWindow == potential_parent) {
         return 1;
@@ -8832,7 +8832,7 @@ unsigned char imgui_i_is_window_within_begin_stack_of(ImGuiWindow * window, ImGu
     return 0;
 }
 
-unsigned char imgui_i_item_add(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id, const ImRect * nav_bb_arg, ImGuiItemFlags extra_flags)
+unsigned char imgui__item_add(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id, const ImRect * nav_bb_arg, ImGuiItemFlags extra_flags)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -8846,7 +8846,7 @@ unsigned char imgui_i_item_add(ImGuiContext *imgui_c89_ctx, const ImRect * bb, I
     g->LastItemData.ItemFlags = ((g->CurrentItemFlags | g->NextItemData.ItemFlagsSet) | extra_flags);
     g->LastItemData.StatusFlags = ImGuiItemStatusFlags_None;
     if (id != 0) {
-        imgui_i_keep_alive_id(imgui_c89_ctx, id);
+        imgui__keep_alive_id(imgui_c89_ctx, id);
         if (!(g->LastItemData.ItemFlags & ImGuiItemFlags_NoNav)) {
             window->DC.NavLayersActiveMaskNext |= (1 << window->DC.NavLayerCurrent);
             if ((g->NavId == id) || g->NavAnyRequest) {
@@ -8873,7 +8873,7 @@ unsigned char imgui_i_item_add(ImGuiContext *imgui_c89_ctx, const ImRect * bb, I
     }
     if (id != 0) {
         if (id == g->DebugLocateId) {
-            imgui_i_debug_locate_item_resolve_with_last_item(imgui_c89_ctx);
+            imgui__debug_locate_item_resolve_with_last_item(imgui_c89_ctx);
         }
         imgui_c89_expect((!((id != window->ID) && "Cannot have an empty ID at the root of a window. If you need an empty label, use ## and read the FAQ about how the ID Stack works!")), 0) ? imgui_c89_assert_id(203) : ((void)(0));
     }
@@ -8889,7 +8889,7 @@ unsigned char imgui_i_item_add(ImGuiContext *imgui_c89_ctx, const ImRect * bb, I
     return 1;
 }
 
-unsigned char imgui_i_item_hoverable(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id, ImGuiItemFlags item_flags)
+unsigned char imgui__item_hoverable(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id, ImGuiItemFlags item_flags)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -8921,7 +8921,7 @@ unsigned char imgui_i_item_hoverable(ImGuiContext *imgui_c89_ctx, const ImRect *
             return 0;
         }
     }
-    if ((!(item_flags & ImGuiItemFlags_NoWindowHoverableCheck)) && (!imgui_i_is_window_content_hoverable(imgui_c89_ctx, window, ImGuiHoveredFlags_None))) {
+    if ((!(item_flags & ImGuiItemFlags_NoWindowHoverableCheck)) && (!imgui__is_window_content_hoverable(imgui_c89_ctx, window, ImGuiHoveredFlags_None))) {
         g->HoveredIdIsDisabled = 1;
         return 0;
     }
@@ -8929,7 +8929,7 @@ unsigned char imgui_i_item_hoverable(ImGuiContext *imgui_c89_ctx, const ImRect *
         if ((g->DragDropActive && (g->DragDropPayload.SourceId == id)) && (!(g->DragDropSourceFlags & ImGuiDragDropFlags_SourceNoDisableHover))) {
             return 0;
         }
-        imgui_i_set_hovered_id(imgui_c89_ctx, id);
+        imgui__set_hovered_id(imgui_c89_ctx, id);
         if (item_flags & ImGuiItemFlags_AllowOverlap) {
             g->HoveredIdAllowOverlap = 1;
             if (g->HoveredIdPreviousFrame != id) {
@@ -8938,13 +8938,13 @@ unsigned char imgui_i_item_hoverable(ImGuiContext *imgui_c89_ctx, const ImRect *
         }
         if (((id == g->LastItemData.ID) && (g->LastItemData.StatusFlags & ImGuiItemStatusFlags_HasShortcut)) && (g->ActiveId != id)) {
             if (imgui_is_item_hovered(imgui_c89_ctx, (ImGuiHoveredFlags_ForTooltip | ImGuiHoveredFlags_DelayNormal))) {
-                imgui_i_set_tooltip(imgui_c89_ctx, "%s", imgui_i_get_key_chord_name(imgui_c89_ctx, g->LastItemData.Shortcut));
+                imgui__set_tooltip(imgui_c89_ctx, "%s", imgui__get_key_chord_name(imgui_c89_ctx, g->LastItemData.Shortcut));
             }
         }
     }
     if (item_flags & ImGuiItemFlags_Disabled) {
         if ((g->ActiveId == id) && (id != 0)) {
-            imgui_i_clear_active_id(imgui_c89_ctx);
+            imgui__clear_active_id(imgui_c89_ctx);
         }
         g->HoveredIdIsDisabled = 1;
         return 0;
@@ -8967,10 +8967,10 @@ void ImGui_ItemSize__8033f34120(ImGuiContext *imgui_c89_ctx, const ImRect * bb, 
 {
     ImVec2 imgui_c89_temporary_0;
 
-    imgui_i_item_size(imgui_c89_ctx, (imgui_c89_temporary_0 = ImRect_GetSize__c91c92deb7(((ImRect *)(bb))), &imgui_c89_temporary_0), text_baseline_y);
+    imgui__item_size(imgui_c89_ctx, (imgui_c89_temporary_0 = ImRect_GetSize__c91c92deb7(((ImRect *)(bb))), &imgui_c89_temporary_0), text_baseline_y);
 }
 
-void imgui_i_item_size(ImGuiContext *imgui_c89_ctx, const ImVec2 * size, float text_baseline_y)
+void imgui__item_size(ImGuiContext *imgui_c89_ctx, const ImVec2 * size, float text_baseline_y)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -9002,7 +9002,7 @@ void imgui_i_item_size(ImGuiContext *imgui_c89_ctx, const ImVec2 * size, float t
     }
 }
 
-void imgui_i_keep_alive_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+void imgui__keep_alive_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
 
@@ -9021,7 +9021,7 @@ void imgui_load_ini_settings_from_disk(ImGuiContext *imgui_c89_ctx, const char *
     char * file_data;
 
     file_data_size = 0;
-    file_data = ((char *)(imgui_i_im_file_load_to_memory(imgui_c89_ctx, ini_filename, "rb", (&file_data_size), 0)));
+    file_data = ((char *)(imgui__im_file_load_to_memory(imgui_c89_ctx, ini_filename, "rb", (&file_data_size), 0)));
     if (!file_data) {
         return;
     }
@@ -9093,14 +9093,14 @@ void imgui_load_ini_settings_from_memory(ImGuiContext *imgui_c89_ctx, const char
             line_end[(-1)] = 0;
             name_end = (line_end - 1);
             type_start = (line + 1);
-            type_end = ((char *)(((void *)(imgui_i_im_strchr_range(type_start, name_end, 93)))));
-            name_start = (type_end ? imgui_i_im_strchr_range((type_end + 1), name_end, 91) : 0);
+            type_end = ((char *)(((void *)(imgui__im_strchr_range(type_start, name_end, 93)))));
+            name_start = (type_end ? imgui__im_strchr_range((type_end + 1), name_end, 91) : 0);
             if ((!type_end) || (!name_start)) {
                 continue;
             }
             (*type_end) = 0;
             name_start++;
-            entry_handler = imgui_i_find_settings_handler(imgui_c89_ctx, type_start);
+            entry_handler = imgui__find_settings_handler(imgui_c89_ctx, type_start);
             entry_data = (entry_handler ? entry_handler->ReadOpenFn((&(*g)), entry_handler, name_start) : 0);
         } else {
             if ((entry_handler != 0) && (entry_data != 0)) {
@@ -9120,7 +9120,7 @@ void imgui_load_ini_settings_from_memory(ImGuiContext *imgui_c89_ctx, const char
     cleanup_args._DiscardOlderThanDate = 0;
     if (g->IO.ConfigIniSettingsAutoDiscardMonths > 0) {
         cleanup_args.DiscardOlderThanMonths = g->IO.ConfigIniSettingsAutoDiscardMonths;
-        imgui_i_cleanup_ini_settings(imgui_c89_ctx, (&cleanup_args));
+        imgui__cleanup_ini_settings(imgui_c89_ctx, (&cleanup_args));
     }
     __range1__05f47e73 = &(g->SettingsHandlers);
     __begin1__dde041e4 = ImVector_ImGuiSettingsHandler__begin__41c5d95368(((ImVector_ImGuiSettingsHandler *)(__range1__05f47e73)));
@@ -9143,7 +9143,7 @@ const char * ImGui_LocalizeGetMsg__d57d7d5e4e(ImGuiContext *imgui_c89_ctx, ImGui
     return msg ? msg : "*Missing Text*";
 }
 
-void imgui_i_localize_register_entries(ImGuiContext *imgui_c89_ctx, const ImGuiLocEntry * entries, int count)
+void imgui__localize_register_entries(ImGuiContext *imgui_c89_ctx, const ImGuiLocEntry * entries, int count)
 {
     ImGuiContext * g;
     int n;
@@ -9155,7 +9155,7 @@ void imgui_i_localize_register_entries(ImGuiContext *imgui_c89_ctx, const ImGuiL
     }
 }
 
-void imgui_i_log_begin(ImGuiContext *imgui_c89_ctx, ImGuiLogFlags flags, int auto_open_depth)
+void imgui__log_begin(ImGuiContext *imgui_c89_ctx, ImGuiLogFlags flags, int auto_open_depth)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -9218,13 +9218,13 @@ void imgui_log_finish(ImGuiContext *imgui_c89_ctx)
     if (!g->LogEnabled) {
         return;
     }
-    imgui_i_log_text(imgui_c89_ctx, "\n");
+    imgui__log_text(imgui_c89_ctx, "\n");
     switch (g->LogFlags & ImGuiLogFlags_OutputMask_) {
         case ImGuiLogFlags_OutputTTY:
             fflush(g->LogFile);
         break;
         case ImGuiLogFlags_OutputFile:
-            imgui_i_im_file_close(g->LogFile);
+            imgui__im_file_close(g->LogFile);
         break;
         case ImGuiLogFlags_OutputBuffer:
             break;
@@ -9243,7 +9243,7 @@ void imgui_log_finish(ImGuiContext *imgui_c89_ctx)
     imgui_text_buffer_clear(imgui_c89_ctx, ((ImGuiTextBuffer *)(&(g->LogBuffer))));
 }
 
-void imgui_i_log_rendered_text(ImGuiContext *imgui_c89_ctx, const ImVec2 * ref_pos, const char * text, const char * text_end)
+void imgui__log_rendered_text(ImGuiContext *imgui_c89_ctx, const ImVec2 * ref_pos, const char * text, const char * text_end)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -9264,18 +9264,18 @@ void imgui_i_log_rendered_text(ImGuiContext *imgui_c89_ctx, const ImVec2 * ref_p
     suffix = g->LogNextSuffix;
     g->LogNextPrefix = (g->LogNextSuffix = 0);
     if (!text_end) {
-        text_end = imgui_i_find_rendered_text_end(text, text_end);
+        text_end = imgui__find_rendered_text_end(text, text_end);
     }
     log_new_line = (ref_pos && (ref_pos->y > ((g->LogLinePosY + ImMax__3c7b1bb7d1(g->Style.FramePadding.y, g->Style.ItemSpacing.y)) + 1)));
     if (ref_pos) {
         g->LogLinePosY = ref_pos->y;
     }
     if (log_new_line) {
-        imgui_i_log_text(imgui_c89_ctx, "\n");
+        imgui__log_text(imgui_c89_ctx, "\n");
         g->LogLineFirstItem = 1;
     }
     if (prefix) {
-        imgui_i_log_rendered_text(imgui_c89_ctx, ref_pos, prefix, (prefix + strlen(prefix)));
+        imgui__log_rendered_text(imgui_c89_ctx, ref_pos, prefix, (prefix + strlen(prefix)));
     }
     if (g->LogDepthRef > window->DC.TreeDepth) {
         g->LogDepthRef = window->DC.TreeDepth;
@@ -9284,15 +9284,15 @@ void imgui_i_log_rendered_text(ImGuiContext *imgui_c89_ctx, const ImVec2 * ref_p
     text_remaining = text;
     for (; ; ) {
         line_start = text_remaining;
-        line_end = imgui_i_im_streol_range(line_start, text_end);
+        line_end = imgui__im_streol_range(line_start, text_end);
         is_last_line = (line_end == text_end);
         if ((line_start != line_end) || (!is_last_line)) {
             line_length = ((int)((line_end - line_start)));
             indentation = (g->LogLineFirstItem ? (tree_depth * 4) : 1);
-            imgui_i_log_text(imgui_c89_ctx, "%*s%.*s", indentation, "", line_length, line_start);
+            imgui__log_text(imgui_c89_ctx, "%*s%.*s", indentation, "", line_length, line_start);
             g->LogLineFirstItem = 0;
             if ((*line_end) == 10) {
-                imgui_i_log_text(imgui_c89_ctx, "\n");
+                imgui__log_text(imgui_c89_ctx, "\n");
                 g->LogLineFirstItem = 1;
             }
         }
@@ -9302,11 +9302,11 @@ void imgui_i_log_rendered_text(ImGuiContext *imgui_c89_ctx, const ImVec2 * ref_p
         text_remaining = (line_end + 1);
     }
     if (suffix) {
-        imgui_i_log_rendered_text(imgui_c89_ctx, ref_pos, suffix, (suffix + strlen(suffix)));
+        imgui__log_rendered_text(imgui_c89_ctx, ref_pos, suffix, (suffix + strlen(suffix)));
     }
 }
 
-void imgui_i_log_set_next_text_decoration(ImGuiContext *imgui_c89_ctx, const char * prefix, const char * suffix)
+void imgui__log_set_next_text_decoration(ImGuiContext *imgui_c89_ctx, const char * prefix, const char * suffix)
 {
     ImGuiContext * g;
 
@@ -9315,7 +9315,7 @@ void imgui_i_log_set_next_text_decoration(ImGuiContext *imgui_c89_ctx, const cha
     g->LogNextSuffix = suffix;
 }
 
-void imgui_i_log_text(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
+void imgui__log_text(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
 {
     ImGuiContext * g;
     va_list args;
@@ -9340,7 +9340,7 @@ void imgui_log_text_v(ImGuiContext *imgui_c89_ctx, const char * fmt, va_list arg
     LogTextV__99c2b50a06(imgui_c89_ctx, g, fmt, args);
 }
 
-void imgui_i_log_to_buffer(ImGuiContext *imgui_c89_ctx, int auto_open_depth)
+void imgui__log_to_buffer(ImGuiContext *imgui_c89_ctx, int auto_open_depth)
 {
     ImGuiContext * g;
 
@@ -9348,7 +9348,7 @@ void imgui_i_log_to_buffer(ImGuiContext *imgui_c89_ctx, int auto_open_depth)
     if (g->LogEnabled) {
         return;
     }
-    imgui_i_log_begin(imgui_c89_ctx, ImGuiLogFlags_OutputBuffer, auto_open_depth);
+    imgui__log_begin(imgui_c89_ctx, ImGuiLogFlags_OutputBuffer, auto_open_depth);
 }
 
 void imgui_log_to_clipboard(ImGuiContext *imgui_c89_ctx, int auto_open_depth)
@@ -9359,7 +9359,7 @@ void imgui_log_to_clipboard(ImGuiContext *imgui_c89_ctx, int auto_open_depth)
     if (g->LogEnabled) {
         return;
     }
-    imgui_i_log_begin(imgui_c89_ctx, ImGuiLogFlags_OutputClipboard, auto_open_depth);
+    imgui__log_begin(imgui_c89_ctx, ImGuiLogFlags_OutputClipboard, auto_open_depth);
 }
 
 void imgui_log_to_file(ImGuiContext *imgui_c89_ctx, int auto_open_depth, const char * filename)
@@ -9377,12 +9377,12 @@ void imgui_log_to_file(ImGuiContext *imgui_c89_ctx, int auto_open_depth, const c
     if ((!filename) || (!filename[0])) {
         return;
     }
-    f = imgui_i_im_file_open(filename, "ab");
+    f = imgui__im_file_open(filename, "ab");
     if (!f) {
         imgui_c89_expect((!0), 0) ? imgui_c89_assert_id(281) : ((void)(0));
         return;
     }
-    imgui_i_log_begin(imgui_c89_ctx, ImGuiLogFlags_OutputFile, auto_open_depth);
+    imgui__log_begin(imgui_c89_ctx, ImGuiLogFlags_OutputFile, auto_open_depth);
     g->LogFile = f;
 }
 
@@ -9395,11 +9395,11 @@ void imgui_log_to_tty(ImGuiContext *imgui_c89_ctx, int auto_open_depth)
         return;
     }
     (void)(auto_open_depth);
-    imgui_i_log_begin(imgui_c89_ctx, ImGuiLogFlags_OutputTTY, auto_open_depth);
+    imgui__log_begin(imgui_c89_ctx, ImGuiLogFlags_OutputTTY, auto_open_depth);
     g->LogFile = __stdoutp;
 }
 
-void imgui_i_mark_ini_settings_dirty_void(ImGuiContext *imgui_c89_ctx)
+void imgui__mark_ini_settings_dirty_void(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -9409,7 +9409,7 @@ void imgui_i_mark_ini_settings_dirty_void(ImGuiContext *imgui_c89_ctx)
     }
 }
 
-void imgui_i_mark_ini_settings_dirty_window_pointer(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__mark_ini_settings_dirty_window_pointer(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
 
@@ -9421,7 +9421,7 @@ void imgui_i_mark_ini_settings_dirty_window_pointer(ImGuiContext *imgui_c89_ctx,
     }
 }
 
-void imgui_i_mark_item_edited(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+void imgui__mark_item_edited(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
 
@@ -9448,7 +9448,7 @@ void * imgui_mem_alloc(ImGuiContext *imgui_c89_ctx, size_t size)
     ptr = (*GImAllocatorAllocFunc__d8588806d0)(size, GImAllocatorUserData__999b72e926);
     ctx = imgui_c89_ctx;
     if (ctx) {
-        imgui_i_debug_alloc_hook((&ctx->DebugAllocInfo), ctx->FrameCount, ptr, size);
+        imgui__debug_alloc_hook((&ctx->DebugAllocInfo), ctx->FrameCount, ptr, size);
     }
     return ptr;
 }
@@ -9460,7 +9460,7 @@ void imgui_mem_free(ImGuiContext *imgui_c89_ctx, void * ptr)
     if (ptr != 0) {
         ctx = imgui_c89_ctx;
         if (ctx) {
-            imgui_i_debug_alloc_hook((&ctx->DebugAllocInfo), ctx->FrameCount, ptr, ((size_t)((-1))));
+            imgui__debug_alloc_hook((&ctx->DebugAllocInfo), ctx->FrameCount, ptr, ((size_t)((-1))));
         }
     }
     (*GImAllocatorFreeFunc__dde1651d19)(ptr, GImAllocatorUserData__999b72e926);
@@ -9473,7 +9473,7 @@ ImGuiKey ImGui_MouseButtonToKey__2b6640ccb6(ImGuiMouseButton button)
     return (ImGuiKey)((ImGuiKey_MouseLeft + button));
 }
 
-void imgui_i_nav_clear_preferred_pos_for_axis(ImGuiContext *imgui_c89_ctx, ImGuiAxis axis)
+void imgui__nav_clear_preferred_pos_for_axis(ImGuiContext *imgui_c89_ctx, ImGuiAxis axis)
 {
     ImGuiContext * g;
 
@@ -9481,7 +9481,7 @@ void imgui_i_nav_clear_preferred_pos_for_axis(ImGuiContext *imgui_c89_ctx, ImGui
     (*(ImVec2_operator____051d42fa54(((ImVec2 *)(&(g->NavWindow->RootWindowForNav->NavPreferredScoringPosRel[g->NavLayer]))), axis))) = 3.40282347E+38f;
 }
 
-void imgui_i_nav_highlight_activated(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+void imgui__nav_highlight_activated(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
 
@@ -9490,7 +9490,7 @@ void imgui_i_nav_highlight_activated(ImGuiContext *imgui_c89_ctx, ImGuiID id)
     g->NavHighlightActivatedTimer = NAV_ACTIVATE_HIGHLIGHT_TIMER__f5519ec516;
 }
 
-void imgui_i_nav_init_request_apply_result(ImGuiContext *imgui_c89_ctx)
+void imgui__nav_init_request_apply_result(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiNavItemData * result;
@@ -9510,20 +9510,20 @@ void imgui_i_nav_init_request_apply_result(ImGuiContext *imgui_c89_ctx)
     }
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventNav) {
-            imgui_i_debug_log(imgui_c89_ctx, "[nav] NavInitRequest: ApplyResult: NavID 0x%08X in Layer %d Window \"%s\"\n", result->ID, g->NavLayer, g->NavWindow->Name);
+            imgui__debug_log(imgui_c89_ctx, "[nav] NavInitRequest: ApplyResult: NavID 0x%08X in Layer %d Window \"%s\"\n", result->ID, g->NavLayer, g->NavWindow->Name);
         }
     } while (0);
-    imgui_i_set_nav_id(imgui_c89_ctx, result->ID, g->NavLayer, result->FocusScopeId, &(result->RectRel));
+    imgui__set_nav_id(imgui_c89_ctx, result->ID, g->NavLayer, result->FocusScopeId, &(result->RectRel));
     g->NavIdIsAlive = 1;
     if (result->SelectionUserData != ((ImGuiSelectionUserData)((-1)))) {
         g->NavLastValidSelectionUserData = result->SelectionUserData;
     }
     if (g->NavInitRequestFromMove) {
-        imgui_i_set_nav_cursor_visible_after_move(imgui_c89_ctx);
+        imgui__set_nav_cursor_visible_after_move(imgui_c89_ctx);
     }
 }
 
-void imgui_i_nav_init_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, unsigned char force_reinit)
+void imgui__nav_init_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, unsigned char force_reinit)
 {
     ImRect imgui_c89_temporary_0;
 
@@ -9534,7 +9534,7 @@ void imgui_i_nav_init_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, 
     imgui_c89_expect((!(window == g->NavWindow)), 0) ? imgui_c89_assert_id(245) : ((void)(0));
     if (window->Flags & ImGuiWindowFlags_NoNavInputs) {
         g->NavId = 0;
-        imgui_i_set_nav_focus_scope(imgui_c89_ctx, window->NavRootFocusScopeId);
+        imgui__set_nav_focus_scope(imgui_c89_ctx, window->NavRootFocusScopeId);
         return;
     }
     init_for_nav = 0;
@@ -9543,22 +9543,22 @@ void imgui_i_nav_init_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, 
     }
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventNav) {
-            imgui_i_debug_log(imgui_c89_ctx, "[nav] NavInitRequest: from NavInitWindow(), init_for_nav=%d, window=\"%s\", layer=%d\n", init_for_nav, window->Name, g->NavLayer);
+            imgui__debug_log(imgui_c89_ctx, "[nav] NavInitRequest: from NavInitWindow(), init_for_nav=%d, window=\"%s\", layer=%d\n", init_for_nav, window->Name, g->NavLayer);
         }
     } while (0);
     if (init_for_nav) {
-        imgui_i_set_nav_id(imgui_c89_ctx, 0, g->NavLayer, window->NavRootFocusScopeId, (imgui_c89_temporary_0 = ImRect_ImRect_value__30f36f8459(), &imgui_c89_temporary_0));
+        imgui__set_nav_id(imgui_c89_ctx, 0, g->NavLayer, window->NavRootFocusScopeId, (imgui_c89_temporary_0 = ImRect_ImRect_value__30f36f8459(), &imgui_c89_temporary_0));
         g->NavInitRequest = 1;
         g->NavInitRequestFromMove = 0;
         g->NavInitResult.ID = 0;
         ImGui_NavUpdateAnyRequestFlag__f0d45f126b(imgui_c89_ctx);
     } else {
         g->NavId = window->NavLastIds[0];
-        imgui_i_set_nav_focus_scope(imgui_c89_ctx, window->NavRootFocusScopeId);
+        imgui__set_nav_focus_scope(imgui_c89_ctx, window->NavRootFocusScopeId);
     }
 }
 
-void imgui_i_nav_move_request_apply_result(ImGuiContext *imgui_c89_ctx)
+void imgui__nav_move_request_apply_result(ImGuiContext *imgui_c89_ctx)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -9582,12 +9582,12 @@ void imgui_i_nav_move_request_apply_result(ImGuiContext *imgui_c89_ctx)
             g->NavMoveFlags |= ImGuiNavMoveFlags_NoSetNavCursorVisible;
         }
         if ((g->NavId != 0) && ((g->NavMoveFlags & ImGuiNavMoveFlags_NoSetNavCursorVisible) == 0)) {
-            imgui_i_set_nav_cursor_visible_after_move(imgui_c89_ctx);
+            imgui__set_nav_cursor_visible_after_move(imgui_c89_ctx);
         }
-        imgui_i_nav_clear_preferred_pos_for_axis(imgui_c89_ctx, axis);
+        imgui__nav_clear_preferred_pos_for_axis(imgui_c89_ctx, axis);
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventNav) {
-                imgui_i_debug_log(imgui_c89_ctx, "[nav] NavMoveSubmitted but not led to a result!\n");
+                imgui__debug_log(imgui_c89_ctx, "[nav] NavMoveSubmitted but not led to a result!\n");
             }
         } while (0);
         return;
@@ -9605,23 +9605,23 @@ void imgui_i_nav_move_request_apply_result(ImGuiContext *imgui_c89_ctx)
     imgui_c89_expect((!(g->NavWindow && result->Window)), 0) ? imgui_c89_assert_id(252) : ((void)(0));
     if (g->NavLayer == ImGuiNavLayer_Main) {
         rect_abs = ImGui_WindowRectRelToAbs__e42e505160(result->Window, &(result->RectRel));
-        imgui_i_scroll_to_rect_ex(imgui_c89_ctx, result->Window, &(rect_abs), g->NavMoveScrollFlags);
+        imgui__scroll_to_rect_ex(imgui_c89_ctx, result->Window, &(rect_abs), g->NavMoveScrollFlags);
         if (g->NavMoveFlags & ImGuiNavMoveFlags_ScrollToEdgeY) {
             scroll_target = ((g->NavMoveDir == ImGuiDir_Up) ? result->Window->ScrollMax.y : 0.0f);
-            imgui_i_set_scroll_y(result->Window, scroll_target);
+            imgui__set_scroll_y(result->Window, scroll_target);
         }
     }
     if (g->NavWindow != result->Window) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventFocus) {
-                imgui_i_debug_log(imgui_c89_ctx, "[focus] NavMoveRequest: SetNavWindow(\"%s\")\n", result->Window->Name);
+                imgui__debug_log(imgui_c89_ctx, "[focus] NavMoveRequest: SetNavWindow(\"%s\")\n", result->Window->Name);
             }
         } while (0);
         g->NavWindow = result->Window;
         g->NavLastValidSelectionUserData = ((ImGuiSelectionUserData)((-1)));
     }
     if ((g->ActiveId != result->ID) && ((g->NavMoveFlags & ImGuiNavMoveFlags_NoClearActiveId) == 0)) {
-        imgui_i_clear_active_id(imgui_c89_ctx);
+        imgui__clear_active_id(imgui_c89_ctx);
     }
     if (((g->NavId != result->ID) || (g->NavMoveFlags & ImGuiNavMoveFlags_IsPageMove)) && ((g->NavMoveFlags & ImGuiNavMoveFlags_NoSelect) == 0)) {
         g->NavJustMovedFromFocusScopeId = g->NavFocusScopeId;
@@ -9633,11 +9633,11 @@ void imgui_i_nav_move_request_apply_result(ImGuiContext *imgui_c89_ctx)
     }
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventNav) {
-            imgui_i_debug_log(imgui_c89_ctx, "[nav] NavMoveRequest: result NavID 0x%08X in Layer %d Window \"%s\"\n", result->ID, g->NavLayer, g->NavWindow->Name);
+            imgui__debug_log(imgui_c89_ctx, "[nav] NavMoveRequest: result NavID 0x%08X in Layer %d Window \"%s\"\n", result->ID, g->NavLayer, g->NavWindow->Name);
         }
     } while (0);
     preferred_scoring_pos_rel = g->NavWindow->RootWindowForNav->NavPreferredScoringPosRel[g->NavLayer];
-    imgui_i_set_nav_id(imgui_c89_ctx, result->ID, g->NavLayer, result->FocusScopeId, &(result->RectRel));
+    imgui__set_nav_id(imgui_c89_ctx, result->ID, g->NavLayer, result->FocusScopeId, &(result->RectRel));
     if (result->SelectionUserData != ((ImGuiSelectionUserData)((-1)))) {
         g->NavLastValidSelectionUserData = result->SelectionUserData;
     }
@@ -9659,11 +9659,11 @@ void imgui_i_nav_move_request_apply_result(ImGuiContext *imgui_c89_ctx)
         }
     }
     if ((g->NavMoveFlags & ImGuiNavMoveFlags_NoSetNavCursorVisible) == 0) {
-        imgui_i_set_nav_cursor_visible_after_move(imgui_c89_ctx);
+        imgui__set_nav_cursor_visible_after_move(imgui_c89_ctx);
     }
 }
 
-unsigned char imgui_i_nav_move_request_but_no_result_yet(ImGuiContext *imgui_c89_ctx)
+unsigned char imgui__nav_move_request_but_no_result_yet(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -9671,7 +9671,7 @@ unsigned char imgui_i_nav_move_request_but_no_result_yet(ImGuiContext *imgui_c89
     return (g->NavMoveScoringItems && (g->NavMoveResultLocal.ID == 0)) && (g->NavMoveResultOther.ID == 0);
 }
 
-void imgui_i_nav_move_request_cancel(ImGuiContext *imgui_c89_ctx)
+void imgui__nav_move_request_cancel(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -9680,13 +9680,13 @@ void imgui_i_nav_move_request_cancel(ImGuiContext *imgui_c89_ctx)
     ImGui_NavUpdateAnyRequestFlag__f0d45f126b(imgui_c89_ctx);
 }
 
-void imgui_i_nav_move_request_forward(ImGuiContext *imgui_c89_ctx, ImGuiDir move_dir, ImGuiDir clip_dir, ImGuiNavMoveFlags move_flags, ImGuiScrollFlags scroll_flags)
+void imgui__nav_move_request_forward(ImGuiContext *imgui_c89_ctx, ImGuiDir move_dir, ImGuiDir clip_dir, ImGuiNavMoveFlags move_flags, ImGuiScrollFlags scroll_flags)
 {
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!(g->NavMoveForwardToNextFrame == 0)), 0) ? imgui_c89_assert_id(242) : ((void)(0));
-    imgui_i_nav_move_request_cancel(imgui_c89_ctx);
+    imgui__nav_move_request_cancel(imgui_c89_ctx);
     g->NavMoveForwardToNextFrame = 1;
     g->NavMoveDir = move_dir;
     g->NavMoveClipDir = clip_dir;
@@ -9694,7 +9694,7 @@ void imgui_i_nav_move_request_forward(ImGuiContext *imgui_c89_ctx, ImGuiDir move
     g->NavMoveScrollFlags = scroll_flags;
 }
 
-void imgui_i_nav_move_request_resolve_with_last_item(ImGuiContext *imgui_c89_ctx, ImGuiNavItemData * result)
+void imgui__nav_move_request_resolve_with_last_item(ImGuiContext *imgui_c89_ctx, ImGuiNavItemData * result)
 {
     ImGuiContext * g;
 
@@ -9704,7 +9704,7 @@ void imgui_i_nav_move_request_resolve_with_last_item(ImGuiContext *imgui_c89_ctx
     ImGui_NavUpdateAnyRequestFlag__f0d45f126b(imgui_c89_ctx);
 }
 
-void imgui_i_nav_move_request_resolve_with_past_tree_node(ImGuiContext *imgui_c89_ctx, ImGuiNavItemData * result, const ImGuiTreeNodeStackData * tree_node_data)
+void imgui__nav_move_request_resolve_with_past_tree_node(ImGuiContext *imgui_c89_ctx, ImGuiNavItemData * result, const ImGuiTreeNodeStackData * tree_node_data)
 {
     ImGuiContext * g;
 
@@ -9714,11 +9714,11 @@ void imgui_i_nav_move_request_resolve_with_past_tree_node(ImGuiContext *imgui_c8
     g->LastItemData.ItemFlags = (tree_node_data->ItemFlags & (~ImGuiItemFlags_HasSelectionUserData));
     g->LastItemData.NavRect = tree_node_data->NavRect;
     ImGui_NavApplyItemToResult__bec1741e1d(imgui_c89_ctx, result);
-    imgui_i_nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_Y);
+    imgui__nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_Y);
     ImGui_NavUpdateAnyRequestFlag__f0d45f126b(imgui_c89_ctx);
 }
 
-void imgui_i_nav_move_request_submit(ImGuiContext *imgui_c89_ctx, ImGuiDir move_dir, ImGuiDir clip_dir, ImGuiNavMoveFlags move_flags, ImGuiScrollFlags scroll_flags)
+void imgui__nav_move_request_submit(ImGuiContext *imgui_c89_ctx, ImGuiDir move_dir, ImGuiDir clip_dir, ImGuiNavMoveFlags move_flags, ImGuiScrollFlags scroll_flags)
 {
     ImGuiContext * g;
 
@@ -9743,7 +9743,7 @@ void imgui_i_nav_move_request_submit(ImGuiContext *imgui_c89_ctx, ImGuiDir move_
     ImGui_NavUpdateAnyRequestFlag__f0d45f126b(imgui_c89_ctx);
 }
 
-void imgui_i_nav_move_request_try_wrapping(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiNavMoveFlags wrap_flags)
+void imgui__nav_move_request_try_wrapping(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, ImGuiNavMoveFlags wrap_flags)
 {
     ImGuiContext * g;
 
@@ -9754,7 +9754,7 @@ void imgui_i_nav_move_request_try_wrapping(ImGuiContext *imgui_c89_ctx, ImGuiWin
     }
 }
 
-void imgui_i_nav_update_current_window_is_scroll_pushable_x(ImGuiContext *imgui_c89_ctx)
+void imgui__nav_update_current_window_is_scroll_pushable_x(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -9795,7 +9795,7 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
             ImVector_ImGuiContextHook__erase__b855003226(((ImVector_ImGuiContextHook *)(&(g->Hooks))), (&(*(ImVector_ImGuiContextHook__operator____6f11dcba9d(((ImVector_ImGuiContextHook *)(&(g->Hooks))), n)))));
         }
     }
-    imgui_i_call_context_hooks((&(*g)), ImGuiContextHookType_NewFramePre);
+    imgui__call_context_hooks((&(*g)), ImGuiContextHookType_NewFramePre);
     ImGui_ErrorCheckNewFrameSanityChecks__1d34040242(imgui_c89_ctx);
     ImGui_UpdateSettings__6e1f77ef6a(imgui_c89_ctx);
     g->Time += g->IO.DeltaTime;
@@ -9810,7 +9810,7 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
     g->FramerateSecPerFrameCount = ImMin__16ca668bb0((g->FramerateSecPerFrameCount + 1), ((int)((sizeof(g->FramerateSecPerFrame) / sizeof((*g->FramerateSecPerFrame))))));
     g->IO.Framerate = ((g->FramerateSecPerFrameAccum > 0.0f) ? (1.0f / (g->FramerateSecPerFrameAccum / ((float)(g->FramerateSecPerFrameCount)))) : 3.40282347E+38f);
     ImVector_ImGuiInputEvent__resize__fdb34101b5(imgui_c89_ctx, ((ImVector_ImGuiInputEvent *)(&(g->InputEventsTrail))), 0);
-    imgui_i_update_input_events(imgui_c89_ctx, g->IO.ConfigInputTrickleEventQueue);
+    imgui__update_input_events(imgui_c89_ctx, g->IO.ConfigInputTrickleEventQueue);
     ImGui_UpdateViewportsNewFrame__38164dfcfc(imgui_c89_ctx);
     ImGui_UpdateTexturesNewFrame__161a44da5f(imgui_c89_ctx);
     SetupDrawListSharedData__9a095849d9(imgui_c89_ctx);
@@ -9824,7 +9824,7 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
         viewport->DrawDataP.Valid = 0;
     }
     if (g->DragDropActive && (g->DragDropPayload.SourceId == g->ActiveId)) {
-        imgui_i_keep_alive_id(imgui_c89_ctx, g->DragDropPayload.SourceId);
+        imgui__keep_alive_id(imgui_c89_ctx, g->DragDropPayload.SourceId);
     }
     if ((!g->IO.ConfigDebugHighlightIdConflicts) || (!g->IO.KeyCtrl)) {
         g->DebugDrawIdConflictsId = 0;
@@ -9852,10 +9852,10 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
     if (((g->ActiveId != 0) && (g->ActiveIdIsAlive != g->ActiveId)) && (g->ActiveIdPreviousFrame == g->ActiveId)) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventActiveId) {
-                imgui_i_debug_log(imgui_c89_ctx, "NewFrame(): ClearActiveID() 0x%08X because it isn't marked alive anymore!\n", g->ActiveId);
+                imgui__debug_log(imgui_c89_ctx, "NewFrame(): ClearActiveID() 0x%08X because it isn't marked alive anymore!\n", g->ActiveId);
             }
         } while (0);
-        imgui_i_clear_active_id(imgui_c89_ctx);
+        imgui__clear_active_id(imgui_c89_ctx);
     }
     if (g->ActiveId) {
         g->ActiveIdTimer += g->IO.DeltaTime;
@@ -9924,10 +9924,10 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
     g->DragDropWithinTarget = 0;
     g->DragDropHoldJustPressedId = 0;
     if (g->DragDropActive) {
-        owner_id = (g->ActiveId ? g->ActiveId : imgui_i_im_hash_str("##DragDropCancelHandler", 0, 0));
-        if (imgui_i_shortcut(imgui_c89_ctx, ImGuiKey_Escape, ImGuiInputFlags_RouteGlobal, owner_id)) {
-            imgui_i_clear_active_id(imgui_c89_ctx);
-            imgui_i_clear_drag_drop(imgui_c89_ctx);
+        owner_id = (g->ActiveId ? g->ActiveId : imgui__im_hash_str("##DragDropCancelHandler", 0, 0));
+        if (imgui__shortcut(imgui_c89_ctx, ImGuiKey_Escape, ImGuiInputFlags_RouteGlobal, owner_id)) {
+            imgui__clear_active_id(imgui_c89_ctx);
+            imgui__clear_drag_drop(imgui_c89_ctx);
         }
     }
     g->TooltipPreviousWindow = 0;
@@ -9947,12 +9947,12 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
         window->BeginCountPreviousFrame = window->BeginCount;
         window->BeginCount = 0;
         if ((((!window->WasActive) || gc_all) && (!window->MemoryCompacted)) && (window->LastTimeActive < memory_compact_start_time)) {
-            imgui_i_gc_compact_transient_window_buffers(imgui_c89_ctx, window);
+            imgui__gc_compact_transient_window_buffers(imgui_c89_ctx, window);
         }
     }
-    imgui_i_update_hovered_window_and_capture_flags(imgui_c89_ctx, &(g->IO.MousePos));
-    imgui_i_update_mouse_moving_window_new_frame(imgui_c89_ctx);
-    if ((imgui_i_get_top_most_popup_modal(imgui_c89_ctx) != 0) || ((g->NavWindowingTarget != 0) && (g->NavWindowingHighlightAlpha > 0.0f))) {
+    imgui__update_hovered_window_and_capture_flags(imgui_c89_ctx, &(g->IO.MousePos));
+    imgui__update_mouse_moving_window_new_frame(imgui_c89_ctx);
+    if ((imgui__get_top_most_popup_modal(imgui_c89_ctx) != 0) || ((g->NavWindowingTarget != 0) && (g->NavWindowingHighlightAlpha > 0.0f))) {
         g->DimBgRatio = ImMin__f04263da73((g->DimBgRatio + (g->IO.DeltaTime * 6.0f)), 1.0f);
     } else {
         g->DimBgRatio = ImMax__3c7b1bb7d1((g->DimBgRatio - (g->IO.DeltaTime * 10.0f)), 0.0f);
@@ -9965,7 +9965,7 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
     i = 0;
     for (; i < g->TablesLastTimeActive.Size; i++) {
         if (((*(ImVector_float__operator____739fa74fbe(((ImVector_float *)(&(g->TablesLastTimeActive))), i))) >= 0.0f) && ((*(ImVector_float__operator____739fa74fbe(((ImVector_float *)(&(g->TablesLastTimeActive))), i))) < memory_compact_start_time)) {
-            imgui_i_table_gc_compact_transient_buffers_table_pointer(imgui_c89_ctx, imgui_table_pool_at(((ImGuiTablePool *)(&(g->Tables))), i));
+            imgui__table_gc_compact_transient_buffers_table_pointer(imgui_c89_ctx, imgui__table_pool_at(((ImGuiTablePool *)(&(g->Tables))), i));
         }
     }
     __begin1__575c821a = g->TablesTempData;
@@ -9974,15 +9974,15 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
         table_temp_data = &((*__begin1__575c821a));
         imgui_c89_vector_clear(imgui_c89_ctx, (void **)&table_temp_data->ReconcileColumnsRequests, &table_temp_data->ReconcileColumnsRequestsSize, &table_temp_data->ReconcileColumnsRequestsCapacity);
         if ((table_temp_data->LastTimeActive >= 0.0f) && (table_temp_data->LastTimeActive < memory_compact_start_time)) {
-            imgui_i_table_gc_compact_transient_buffers_table_temp_data_pointer(imgui_c89_ctx, (&(*table_temp_data)));
+            imgui__table_gc_compact_transient_buffers_table_temp_data_pointer(imgui_c89_ctx, (&(*table_temp_data)));
         }
     }
     if (g->GcCompactAll) {
-        imgui_i_gc_compact_transient_misc_buffers(imgui_c89_ctx);
+        imgui__gc_compact_transient_misc_buffers(imgui_c89_ctx);
     }
     g->GcCompactAll = 0;
     if (g->NavWindow && (!g->NavWindow->WasActive)) {
-        imgui_i_focus_top_most_window_under_one(imgui_c89_ctx, 0, 0, 0, ImGuiFocusRequestFlags_RestoreFocusedChild);
+        imgui__focus_top_most_window_under_one(imgui_c89_ctx, 0, 0, 0, ImGuiFocusRequestFlags_RestoreFocusedChild);
     }
     ImVector_ImGuiWindowStackData__resize__e7032de2bf(imgui_c89_ctx, ((ImVector_ImGuiWindowStackData *)(&(g->CurrentWindowStack))), 0);
     ImVector_ImGuiPopupData__resize__d01404d3ee(imgui_c89_ctx, ((ImVector_ImGuiPopupData *)(&(g->BeginPopupStack))), 0);
@@ -9998,7 +9998,7 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
         g->DebugBreakInLocateId = 0;
     }
     if ((g->DebugLogAutoDisableFrames > 0) && ((--g->DebugLogAutoDisableFrames) == 0)) {
-        imgui_i_debug_log(imgui_c89_ctx, "(Debug Log: Auto-disabled some ImGuiDebugLogFlags after 2 frames)\n");
+        imgui__debug_log(imgui_c89_ctx, "(Debug Log: Auto-disabled some ImGuiDebugLogFlags after 2 frames)\n");
         g->DebugLogFlags &= (~g->DebugLogAutoDisableFlags);
         g->DebugLogAutoDisableFlags = ImGuiDebugLogFlags_None;
     }
@@ -10007,13 +10007,13 @@ void imgui_new_frame(ImGuiContext *imgui_c89_ctx)
     imgui_begin(imgui_c89_ctx, "Debug##Default", 0, 0);
     imgui_c89_expect((!(g->CurrentWindow->IsFallbackWindow == 1)), 0) ? imgui_c89_assert_id(53) : ((void)(0));
     g->ErrorCountCurrentFrame = 0;
-    imgui_i_error_recovery_store_state(imgui_c89_ctx, (&g->StackSizesInNewFrame));
+    imgui__error_recovery_store_state(imgui_c89_ctx, (&g->StackSizesInNewFrame));
     if (g->IO.ConfigDebugBeginReturnValueLoop) {
         g->DebugBeginReturnValueCullDepth = ((g->DebugBeginReturnValueCullDepth == (-1)) ? 0 : ((g->DebugBeginReturnValueCullDepth + (((g->FrameCount % 4) == 0) ? 1 : 0)) % 10));
     } else {
         g->DebugBeginReturnValueCullDepth = (-1);
     }
-    imgui_i_call_context_hooks((&(*g)), ImGuiContextHookType_NewFramePost);
+    imgui__call_context_hooks((&(*g)), ImGuiContextHookType_NewFramePost);
 }
 
 unsigned char imgui_open_popup_string(ImGuiContext *imgui_c89_ctx, const char * str_id, ImGuiPopupFlags popup_flags)
@@ -10022,21 +10022,21 @@ unsigned char imgui_open_popup_string(ImGuiContext *imgui_c89_ctx, const char * 
     ImGuiID id;
 
     g = &((*imgui_c89_ctx));
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->CurrentWindow)), str_id, 0);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->CurrentWindow)), str_id, 0);
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventPopup) {
-            imgui_i_debug_log(imgui_c89_ctx, "[popup] OpenPopup(\"%s\" -> 0x%08X)\n", str_id, id);
+            imgui__debug_log(imgui_c89_ctx, "[popup] OpenPopup(\"%s\" -> 0x%08X)\n", str_id, id);
         }
     } while (0);
-    return imgui_i_open_popup_ex(imgui_c89_ctx, id, popup_flags);
+    return imgui__open_popup_ex(imgui_c89_ctx, id, popup_flags);
 }
 
 unsigned char imgui_open_popup_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiPopupFlags popup_flags)
 {
-    return imgui_i_open_popup_ex(imgui_c89_ctx, id, popup_flags);
+    return imgui__open_popup_ex(imgui_c89_ctx, id, popup_flags);
 }
 
-unsigned char imgui_i_open_popup_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiPopupFlags popup_flags)
+unsigned char imgui__open_popup_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiPopupFlags popup_flags)
 {
     ImGuiContext * g;
     ImGuiWindow * parent_window;
@@ -10048,7 +10048,7 @@ unsigned char imgui_i_open_popup_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImG
     parent_window = g->CurrentWindow;
     current_stack_size = g->BeginPopupStack.Size;
     if (popup_flags & ImGuiPopupFlags_NoOpenOverExistingPopup) {
-        if (imgui_i_is_popup_open(imgui_c89_ctx, ((ImGuiID)(0)), ImGuiPopupFlags_AnyPopupId)) {
+        if (imgui__is_popup_open(imgui_c89_ctx, ((ImGuiID)(0)), ImGuiPopupFlags_AnyPopupId)) {
             return 0;
         }
     }
@@ -10062,7 +10062,7 @@ unsigned char imgui_i_open_popup_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImG
     popup_ref.OpenMousePos = (imgui_is_mouse_pos_valid(imgui_c89_ctx, (&g->IO.MousePos)) ? g->IO.MousePos : popup_ref.OpenPopupPos);
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventPopup) {
-            imgui_i_debug_log(imgui_c89_ctx, "[popup] OpenPopupEx(0x%08X)\n", id);
+            imgui__debug_log(imgui_c89_ctx, "[popup] OpenPopupEx(0x%08X)\n", id);
         }
     } while (0);
     if (g->OpenPopupStack.Size < (current_stack_size + 1)) {
@@ -10078,7 +10078,7 @@ unsigned char imgui_i_open_popup_ex(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImG
         if (keep_existing) {
             (*(ImVector_ImGuiPopupData__operator____ffd965e503(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), current_stack_size))).OpenFrameCount = popup_ref.OpenFrameCount;
         } else {
-            imgui_i_close_popup_to_level(imgui_c89_ctx, current_stack_size, 1);
+            imgui__close_popup_to_level(imgui_c89_ctx, current_stack_size, 1);
             ImVector_ImGuiPopupData__push_back__01f687f40f(imgui_c89_ctx, ((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack))), &(popup_ref));
         }
         return !keep_existing;
@@ -10092,11 +10092,11 @@ unsigned char imgui_open_popup_on_item_click(ImGuiContext *imgui_c89_ctx, const 
     ImGuiID id;
 
     g = &((*imgui_c89_ctx));
-    if (imgui_i_is_popup_open_request_for_item(imgui_c89_ctx, popup_flags, g->LastItemData.ID)) {
+    if (imgui__is_popup_open_request_for_item(imgui_c89_ctx, popup_flags, g->LastItemData.ID)) {
         window = g->CurrentWindow;
-        id = (str_id ? imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0) : g->LastItemData.ID);
+        id = (str_id ? imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0) : g->LastItemData.ID);
         imgui_c89_expect((!(id != 0)), 0) ? imgui_c89_assert_id(220) : ((void)(0));
-        return imgui_i_open_popup_ex(imgui_c89_ctx, id, popup_flags);
+        return imgui__open_popup_ex(imgui_c89_ctx, id, popup_flags);
     }
     return 0;
 }
@@ -10115,14 +10115,14 @@ void imgui_pop_clip_rect(ImGuiContext *imgui_c89_ctx)
     window->ClipRect = ImRect_ImRect_value__001487ee3c(&((*(ImVector_ImVec4__back__4bb95f8b77(((ImVector_ImVec4 *)(&(window->DrawList->_ClipRectStack))))))));
 }
 
-void imgui_i_pop_focus_scope(ImGuiContext *imgui_c89_ctx)
+void imgui__pop_focus_scope(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
     do {
         if (!(g->FocusScopeStack.Size > g->StackSizesInBeginForCurrentWindow->SizeOfFocusScopeStack)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PopFocusScope() too many times!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PopFocusScope() too many times!")) {
                 imgui_c89_expect((!((g->FocusScopeStack.Size > g->StackSizesInBeginForCurrentWindow->SizeOfFocusScopeStack) && "Calling PopFocusScope() too many times!")), 0) ? imgui_c89_assert_id(99) : ((void)(0));
             }
             return;
@@ -10140,14 +10140,14 @@ void imgui_pop_font(ImGuiContext *imgui_c89_ctx)
     g = &((*imgui_c89_ctx));
     do {
         if (!(g->FontStack.Size > 0)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PopFont() too many times!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PopFont() too many times!")) {
                 imgui_c89_expect((!((g->FontStack.Size > 0) && "Calling PopFont() too many times!")), 0) ? imgui_c89_assert_id(114) : ((void)(0));
             }
             return;
         }
     } while (0);
     font_stack_data = (&(*(ImVector_ImFontStackData__back__38efadd3f3(((ImVector_ImFontStackData *)(&(g->FontStack)))))));
-    imgui_i_set_current_font(imgui_c89_ctx, font_stack_data->Font, font_stack_data->FontSizeBeforeScaling, font_stack_data->FontSizeAfterScaling);
+    imgui__set_current_font(imgui_c89_ctx, font_stack_data->Font, font_stack_data->FontSizeBeforeScaling, font_stack_data->FontSizeAfterScaling);
     ImVector_ImFontStackData__pop_back__cd612d16b7(((ImVector_ImFontStackData *)(&(g->FontStack))));
 }
 
@@ -10158,7 +10158,7 @@ void imgui_pop_id(ImGuiContext *imgui_c89_ctx)
     window = imgui_c89_ctx->CurrentWindow;
     do {
         if (!(window->IDStack.Size > 1)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PopID() too many times!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PopID() too many times!")) {
                 imgui_c89_expect((!((window->IDStack.Size > 1) && "Calling PopID() too many times!")), 0) ? imgui_c89_assert_id(115) : ((void)(0));
             }
             return;
@@ -10174,7 +10174,7 @@ void imgui_pop_item_flag(ImGuiContext *imgui_c89_ctx)
     g = &((*imgui_c89_ctx));
     do {
         if (!(g->ItemFlagsStack.Size > 1)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PopItemFlag() too many times!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PopItemFlag() too many times!")) {
                 imgui_c89_expect((!((g->ItemFlagsStack.Size > 1) && "Calling PopItemFlag() too many times!")), 0) ? imgui_c89_assert_id(85) : ((void)(0));
             }
             return;
@@ -10194,7 +10194,7 @@ void imgui_pop_item_width(ImGuiContext *imgui_c89_ctx)
     if (window->DC.ItemWidthStack.Size <= 0) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Calling PopItemWidth() too many times!")) {
+                if (imgui__error_log(imgui_c89_ctx, "Calling PopItemWidth() too many times!")) {
                     imgui_c89_expect((!(0 && "Calling PopItemWidth() too many times!")), 0) ? imgui_c89_assert_id(205) : ((void)(0));
                 }
             }
@@ -10214,7 +10214,7 @@ void imgui_pop_style_color(ImGuiContext *imgui_c89_ctx, int count)
     if (g->ColorStack.Size < count) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Calling PopStyleColor() too many times!")) {
+                if (imgui__error_log(imgui_c89_ctx, "Calling PopStyleColor() too many times!")) {
                     imgui_c89_expect((!(0 && "Calling PopStyleColor() too many times!")), 0) ? imgui_c89_assert_id(26) : ((void)(0));
                 }
             }
@@ -10240,7 +10240,7 @@ void imgui_pop_style_var(ImGuiContext *imgui_c89_ctx, int count)
     if (g->StyleVarStack.Size < count) {
         do {
             if (!0) {
-                if (imgui_i_error_log(imgui_c89_ctx, "Calling PopStyleVar() too many times!")) {
+                if (imgui__error_log(imgui_c89_ctx, "Calling PopStyleVar() too many times!")) {
                     imgui_c89_expect((!(0 && "Calling PopStyleVar() too many times!")), 0) ? imgui_c89_assert_id(32) : ((void)(0));
                 }
             }
@@ -10249,7 +10249,7 @@ void imgui_pop_style_var(ImGuiContext *imgui_c89_ctx, int count)
     }
     while (count > 0) {
         backup = &((*(ImVector_ImGuiStyleMod__back__aea587bf7e(((ImVector_ImGuiStyleMod *)(&(g->StyleVarStack)))))));
-        var_info = imgui_i_get_style_var_info(backup->VarIdx);
+        var_info = imgui__get_style_var_info(backup->VarIdx);
         data = ImGuiStyleVarInfo_GetVarPtr__ddf3c378df(((ImGuiStyleVarInfo *)(var_info)), (&g->Style));
         if ((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 1)) {
             ((float *)(data))[0] = backup->imgui_c89_unnamed_1f2e9324.BackupFloat[0];
@@ -10278,7 +10278,7 @@ void imgui_pop_text_wrap_pos(ImGuiContext *imgui_c89_ctx)
     window = g->CurrentWindow;
     do {
         if (!(window->DC.TextWrapPosStack.Size > 0)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PopTextWrapPos() too many times!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PopTextWrapPos() too many times!")) {
                 imgui_c89_expect((!((window->DC.TextWrapPosStack.Size > 0) && "Calling PopTextWrapPos() too many times!")), 0) ? imgui_c89_assert_id(89) : ((void)(0));
             }
             return;
@@ -10302,7 +10302,7 @@ void imgui_push_clip_rect(ImGuiContext *imgui_c89_ctx, const ImVec2 * clip_rect_
     window->ClipRect = ImRect_ImRect_value__001487ee3c(&((*(ImVector_ImVec4__back__4bb95f8b77(((ImVector_ImVec4 *)(&(window->DrawList->_ClipRectStack))))))));
 }
 
-void imgui_i_push_focus_scope(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+void imgui__push_focus_scope(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
     ImGuiFocusScopeData data;
@@ -10335,7 +10335,7 @@ void imgui_push_font_float(ImGuiContext *imgui_c89_ctx, ImFont * font, float fon
     if (font_size_base == 0.0f) {
         font_size_base = g->FontSizeBase;
     }
-    imgui_i_set_current_font(imgui_c89_ctx, font, font_size_base, 0.0f);
+    imgui__set_current_font(imgui_c89_ctx, font, font_size_base, 0.0f);
 }
 
 void imgui_push_id_string_none(ImGuiContext *imgui_c89_ctx, const char * str_id)
@@ -10346,7 +10346,7 @@ void imgui_push_id_string_none(ImGuiContext *imgui_c89_ctx, const char * str_id)
 
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id, 0);
     ImVector_unsigned_int__push_back__c86a2609cc(imgui_c89_ctx, ((ImVector_unsigned_int *)(&(window->IDStack))), &(id));
 }
 
@@ -10358,7 +10358,7 @@ void imgui_push_id_string_string(ImGuiContext *imgui_c89_ctx, const char * str_i
 
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
-    id = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id_begin, str_id_end);
+    id = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), str_id_begin, str_id_end);
     ImVector_unsigned_int__push_back__c86a2609cc(imgui_c89_ctx, ((ImVector_unsigned_int *)(&(window->IDStack))), &(id));
 }
 
@@ -10370,7 +10370,7 @@ void imgui_push_id_const_pointer_none(ImGuiContext *imgui_c89_ctx, const void * 
 
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
-    id = imgui_i_window_get_id_const_pointer(imgui_c89_ctx, ((ImGuiWindow *)(window)), ptr_id);
+    id = imgui__window_get_id_const_pointer(imgui_c89_ctx, ((ImGuiWindow *)(window)), ptr_id);
     ImVector_unsigned_int__push_back__c86a2609cc(imgui_c89_ctx, ((ImVector_unsigned_int *)(&(window->IDStack))), &(id));
 }
 
@@ -10382,7 +10382,7 @@ void imgui_push_id_int_none(ImGuiContext *imgui_c89_ctx, int int_id)
 
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
-    id = imgui_i_window_get_id_int(imgui_c89_ctx, ((ImGuiWindow *)(window)), int_id);
+    id = imgui__window_get_id_int(imgui_c89_ctx, ((ImGuiWindow *)(window)), int_id);
     ImVector_unsigned_int__push_back__c86a2609cc(imgui_c89_ctx, ((ImVector_unsigned_int *)(&(window->IDStack))), &(id));
 }
 
@@ -10415,7 +10415,7 @@ void imgui_push_item_width(ImGuiContext *imgui_c89_ctx, float item_width)
     g->NextItemData.HasFlags &= (~ImGuiNextItemDataFlags_HasWidth);
 }
 
-void imgui_i_push_multi_items_widths(ImGuiContext *imgui_c89_ctx, int components, float w_full)
+void imgui__push_multi_items_widths(ImGuiContext *imgui_c89_ctx, int components, float w_full)
 {
     float imgui_c89_temporary_0;
 
@@ -10444,7 +10444,7 @@ void imgui_i_push_multi_items_widths(ImGuiContext *imgui_c89_ctx, int components
     g->NextItemData.HasFlags &= (~ImGuiNextItemDataFlags_HasWidth);
 }
 
-void imgui_i_push_override_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+void imgui__push_override_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -10452,7 +10452,7 @@ void imgui_i_push_override_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
     if (g->DebugHookIdInfoId == id) {
-        imgui_i_debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_ID, 0, 0);
+        imgui__debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_ID, 0, 0);
     }
     ImVector_unsigned_int__push_back__c86a2609cc(imgui_c89_ctx, ((ImVector_unsigned_int *)(&(window->IDStack))), &(id));
 }
@@ -10498,10 +10498,10 @@ void imgui_push_style_var_vec2(ImGuiContext *imgui_c89_ctx, ImGuiStyleVar idx, c
     ImVec2 * pvar;
 
     g = &((*imgui_c89_ctx));
-    var_info = imgui_i_get_style_var_info(idx);
+    var_info = imgui__get_style_var_info(idx);
     do {
         if (!((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 2))) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PushStyleVar() variant with wrong type!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PushStyleVar() variant with wrong type!")) {
                 imgui_c89_expect((!(((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 2)) && "Calling PushStyleVar() variant with wrong type!")), 0) ? imgui_c89_assert_id(31) : ((void)(0));
             }
             return;
@@ -10521,10 +10521,10 @@ void imgui_push_style_var_float(ImGuiContext *imgui_c89_ctx, ImGuiStyleVar idx, 
     float * pvar;
 
     g = &((*imgui_c89_ctx));
-    var_info = imgui_i_get_style_var_info(idx);
+    var_info = imgui__get_style_var_info(idx);
     do {
         if (!((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 1))) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PushStyleVar() variant with wrong type!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PushStyleVar() variant with wrong type!")) {
                 imgui_c89_expect((!(((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 1)) && "Calling PushStyleVar() variant with wrong type!")), 0) ? imgui_c89_assert_id(28) : ((void)(0));
             }
             return;
@@ -10544,10 +10544,10 @@ void imgui_push_style_var_x(ImGuiContext *imgui_c89_ctx, ImGuiStyleVar idx, floa
     ImVec2 * pvar;
 
     g = &((*imgui_c89_ctx));
-    var_info = imgui_i_get_style_var_info(idx);
+    var_info = imgui__get_style_var_info(idx);
     do {
         if (!((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 2))) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PushStyleVar() variant with wrong type!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PushStyleVar() variant with wrong type!")) {
                 imgui_c89_expect((!(((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 2)) && "Calling PushStyleVar() variant with wrong type!")), 0) ? imgui_c89_assert_id(29) : ((void)(0));
             }
             return;
@@ -10567,10 +10567,10 @@ void imgui_push_style_var_y(ImGuiContext *imgui_c89_ctx, ImGuiStyleVar idx, floa
     ImVec2 * pvar;
 
     g = &((*imgui_c89_ctx));
-    var_info = imgui_i_get_style_var_info(idx);
+    var_info = imgui__get_style_var_info(idx);
     do {
         if (!((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 2))) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Calling PushStyleVar() variant with wrong type!")) {
+            if (imgui__error_log(imgui_c89_ctx, "Calling PushStyleVar() variant with wrong type!")) {
                 imgui_c89_expect((!(((var_info->DataType == ImGuiDataType_Float) && (var_info->Count == 2)) && "Calling PushStyleVar() variant with wrong type!")), 0) ? imgui_c89_assert_id(30) : ((void)(0));
             }
             return;
@@ -10597,7 +10597,7 @@ void imgui_push_text_wrap_pos(ImGuiContext *imgui_c89_ctx, float wrap_local_pos_
     window->DC.TextWrapPos = wrap_local_pos_x;
 }
 
-void imgui_i_register_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
+void imgui__register_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
 {
     ImGuiContext * g;
     ImTextureData ** __begin1;
@@ -10611,7 +10611,7 @@ void imgui_i_register_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atla
     }
     atlas->RefCount++;
     ImVector_ImFontAtlas____push_back__1efd58fafe(imgui_c89_ctx, ((ImVector_ImFontAtlas_ptr *)(&(g->FontAtlases))), &(atlas));
-    imgui_i_im_font_atlas_add_draw_list_shared_data(imgui_c89_ctx, atlas, (&g->DrawListSharedData));
+    imgui__im_font_atlas_add_draw_list_shared_data(imgui_c89_ctx, atlas, (&g->DrawListSharedData));
     __range1 = &(atlas->TexList);
     __begin1 = ImVector_ImTextureData____begin__5f590fe7fe(((ImVector_ImTextureData_ptr *)(__range1)));
     __end1 = ImVector_ImTextureData____end__3efe30f1db(((ImVector_ImTextureData_ptr *)(__range1)));
@@ -10621,7 +10621,7 @@ void imgui_i_register_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atla
     }
 }
 
-void imgui_i_register_user_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * tex)
+void imgui__register_user_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * tex)
 {
     ImGuiContext * g;
 
@@ -10630,7 +10630,7 @@ void imgui_i_register_user_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * 
     ImVector_ImTextureData____push_back__dff6905d74(imgui_c89_ctx, ((ImVector_ImTextureData_ptr *)(&(g->UserTextures))), &(tex));
 }
 
-void imgui_i_remove_context_hook(ImGuiContext * ctx, ImGuiID hook_id)
+void imgui__remove_context_hook(ImGuiContext * ctx, ImGuiID hook_id)
 {
     ImGuiContext * g;
     ImGuiContextHook * __begin1;
@@ -10651,13 +10651,13 @@ void imgui_i_remove_context_hook(ImGuiContext * ctx, ImGuiID hook_id)
     }
 }
 
-void imgui_i_remove_settings_handler(ImGuiContext *imgui_c89_ctx, const char * type_name)
+void imgui__remove_settings_handler(ImGuiContext *imgui_c89_ctx, const char * type_name)
 {
     ImGuiContext * g;
     ImGuiSettingsHandler * handler;
 
     g = &((*imgui_c89_ctx));
-    handler = imgui_i_find_settings_handler(imgui_c89_ctx, type_name);
+    handler = imgui__find_settings_handler(imgui_c89_ctx, type_name);
     if (handler) {
         ImVector_ImGuiSettingsHandler__erase__651ef3fdf6(((ImVector_ImGuiSettingsHandler *)(&(g->SettingsHandlers))), handler);
     }
@@ -10700,7 +10700,7 @@ void imgui_render(ImGuiContext *imgui_c89_ctx)
     }
     g->FrameCountRendered = g->FrameCount;
     g->IO.MetricsRenderWindows = 0;
-    imgui_i_call_context_hooks((&(*g)), ImGuiContextHookType_RenderPre);
+    imgui__call_context_hooks((&(*g)), ImGuiContextHookType_RenderPre);
     __range1 = &(g->Viewports);
     __begin1 = ImVector_ImGuiViewportP____begin__134ec71aef(((ImVector_ImGuiViewportP_ptr *)(__range1)));
     __end1 = ImVector_ImGuiViewportP____end__0f9152e835(((ImVector_ImGuiViewportP_ptr *)(__range1)));
@@ -10708,7 +10708,7 @@ void imgui_render(ImGuiContext *imgui_c89_ctx)
         viewport = (*__begin1);
         InitViewportDrawData__913ded8b47(imgui_c89_ctx, viewport);
         if ((viewport->BgFgDrawLists[0] != 0) && (viewport->BgFgDrawListsLastTimeActive[0] == ((float)(g->Time)))) {
-            imgui_i_add_draw_list_to_draw_data_ex(imgui_c89_ctx, (&viewport->DrawDataP), viewport->DrawDataBuilder.Layers[0], imgui_i_get_background_draw_list(imgui_c89_ctx, ((ImGuiViewport *)(viewport))));
+            imgui__add_draw_list_to_draw_data_ex(imgui_c89_ctx, (&viewport->DrawDataP), viewport->DrawDataBuilder.Layers[0], imgui__get_background_draw_list(imgui_c89_ctx, ((ImGuiViewport *)(viewport))));
         }
     }
     ImGui_RenderDimmedBackgrounds__bd35ed39a2(imgui_c89_ctx);
@@ -10731,7 +10731,7 @@ void imgui_render(ImGuiContext *imgui_c89_ctx)
         }
     }
     if (g->IO.MouseDrawCursor && (g->MouseCursor != ImGuiMouseCursor_None)) {
-        imgui_i_render_mouse_cursor(imgui_c89_ctx, g->IO.MousePos, g->Style.MouseCursorScale, g->MouseCursor, ((((((ImU32)(255)) << 24) | (((ImU32)(255)) << 16)) | (((ImU32)(255)) << 8)) | (((ImU32)(255)) << 0)), ((((((ImU32)(255)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(0)) << 0)), ((((((ImU32)(48)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(0)) << 0)));
+        imgui__render_mouse_cursor(imgui_c89_ctx, g->IO.MousePos, g->Style.MouseCursorScale, g->MouseCursor, ((((((ImU32)(255)) << 24) | (((ImU32)(255)) << 16)) | (((ImU32)(255)) << 8)) | (((ImU32)(255)) << 0)), ((((((ImU32)(255)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(0)) << 0)), ((((((ImU32)(48)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(0)) << 0)));
     }
     g->IO.MetricsRenderVertices = (g->IO.MetricsRenderIndices = 0);
     __range1__fd6af3fe = &(g->Viewports);
@@ -10741,7 +10741,7 @@ void imgui_render(ImGuiContext *imgui_c89_ctx)
         viewport__4db51942 = (*__begin1__cbe1a38f);
         FlattenDrawDataIntoSingleLayer__4f0684f0c2(imgui_c89_ctx, (&viewport__4db51942->DrawDataBuilder));
         if ((viewport__4db51942->BgFgDrawLists[1] != 0) && (viewport__4db51942->BgFgDrawListsLastTimeActive[1] == ((float)(g->Time)))) {
-            imgui_i_add_draw_list_to_draw_data_ex(imgui_c89_ctx, (&viewport__4db51942->DrawDataP), viewport__4db51942->DrawDataBuilder.Layers[0], imgui_i_get_foreground_draw_list(imgui_c89_ctx, ((ImGuiViewport *)(viewport__4db51942))));
+            imgui__add_draw_list_to_draw_data_ex(imgui_c89_ctx, (&viewport__4db51942->DrawDataP), viewport__4db51942->DrawDataBuilder.Layers[0], imgui__get_foreground_draw_list(imgui_c89_ctx, ((ImGuiViewport *)(viewport__4db51942))));
         }
         draw_data = (&viewport__4db51942->DrawDataP);
         __range2 = &(draw_data->CmdLists);
@@ -10761,13 +10761,13 @@ void imgui_render(ImGuiContext *imgui_c89_ctx)
         __end2__bba17015 = ImVector_ImFontAtlas____end__5b2cfe8a63(((ImVector_ImFontAtlas_ptr *)(__range2__fa55909b)));
         for (; __begin2__a06f80bc != __end2__bba17015; ++__begin2__a06f80bc) {
             atlas = (*__begin2__a06f80bc);
-            imgui_i_im_font_atlas_debug_log_texture_requests(imgui_c89_ctx, atlas);
+            imgui__im_font_atlas_debug_log_texture_requests(imgui_c89_ctx, atlas);
         }
     }
-    imgui_i_call_context_hooks((&(*g)), ImGuiContextHookType_RenderPost);
+    imgui__call_context_hooks((&(*g)), ImGuiContextHookType_RenderPost);
 }
 
-void imgui_i_render_color_component_marker(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImU32 col, float rounding)
+void imgui__render_color_component_marker(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImU32 col, float rounding)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -10777,10 +10777,10 @@ void imgui_i_render_color_component_marker(ImGuiContext *imgui_c89_ctx, const Im
     }
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
-    imgui_i_render_rect_filled_in_range_h(imgui_c89_ctx, window->DrawList, bb, col, bb->Min.x, ImMin__f04263da73((bb->Min.x + g->Style.ColorMarkerSize), bb->Max.x), rounding);
+    imgui__render_rect_filled_in_range_h(imgui_c89_ctx, window->DrawList, bb, col, bb->Min.x, ImMin__f04263da73((bb->Min.x + g->Style.ColorMarkerSize), bb->Max.x), rounding);
 }
 
-void imgui_i_render_drag_drop_target_rect_ex(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, const ImRect * bb, float rounding)
+void imgui__render_drag_drop_target_rect_ex(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, const ImRect * bb, float rounding)
 {
     ImGuiContext * g;
 
@@ -10789,7 +10789,7 @@ void imgui_i_render_drag_drop_target_rect_ex(ImGuiContext *imgui_c89_ctx, ImDraw
     imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(draw_list)), &(bb->Min), &(bb->Max), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_DragDropTarget, 1.0f), rounding, g->Style.DragDropTargetBorderSize, 0);
 }
 
-void imgui_i_render_drag_drop_target_rect_for_item(ImGuiContext *imgui_c89_ctx, const ImRect * bb)
+void imgui__render_drag_drop_target_rect_for_item(ImGuiContext *imgui_c89_ctx, const ImRect * bb)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -10805,13 +10805,13 @@ void imgui_i_render_drag_drop_target_rect_for_item(ImGuiContext *imgui_c89_ctx, 
     if (push_clip_rect) {
         imgui_draw_list_push_clip_rect_full_screen(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)));
     }
-    imgui_i_render_drag_drop_target_rect_ex(imgui_c89_ctx, window->DrawList, &(bb_display), g->Style.DragDropTargetRounding);
+    imgui__render_drag_drop_target_rect_ex(imgui_c89_ctx, window->DrawList, &(bb_display), g->Style.DragDropTargetRounding);
     if (push_clip_rect) {
         imgui_draw_list_pop_clip_rect(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)));
     }
 }
 
-void imgui_i_render_frame(ImGuiContext *imgui_c89_ctx, ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, unsigned char borders, float rounding)
+void imgui__render_frame(ImGuiContext *imgui_c89_ctx, ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, unsigned char borders, float rounding)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -10832,7 +10832,7 @@ void imgui_i_render_frame(ImGuiContext *imgui_c89_ctx, ImVec2 p_min, ImVec2 p_ma
     }
 }
 
-void imgui_i_render_frame_border(ImGuiContext *imgui_c89_ctx, ImVec2 p_min, ImVec2 p_max, float rounding)
+void imgui__render_frame_border(ImGuiContext *imgui_c89_ctx, ImVec2 p_min, ImVec2 p_max, float rounding)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -10852,7 +10852,7 @@ void imgui_i_render_frame_border(ImGuiContext *imgui_c89_ctx, ImVec2 p_min, ImVe
     }
 }
 
-void imgui_i_render_mouse_cursor(ImGuiContext *imgui_c89_ctx, ImVec2 base_pos, float base_scale, ImGuiMouseCursor mouse_cursor, ImU32 col_fill, ImU32 col_border, ImU32 col_shadow)
+void imgui__render_mouse_cursor(ImGuiContext *imgui_c89_ctx, ImVec2 base_pos, float base_scale, ImGuiMouseCursor mouse_cursor, ImU32 col_fill, ImU32 col_border, ImU32 col_shadow)
 {
     ImRect imgui_c89_temporary_0;
     ImRect imgui_c89_temporary_1;
@@ -10914,7 +10914,7 @@ void imgui_i_render_mouse_cursor(ImGuiContext *imgui_c89_ctx, ImVec2 base_pos, f
         for (imgui_c89_init_uv = 0; imgui_c89_init_uv < 4; ++imgui_c89_init_uv) {
             ImVec2_ImVec2__22b45734f5(&uv[imgui_c89_init_uv]);
         }
-        if (!imgui_i_im_font_atlas_get_mouse_cursor_tex_data(font_atlas, mouse_cursor, (&offset), (&size), (&uv[0]), (&uv[2]))) {
+        if (!imgui__im_font_atlas_get_mouse_cursor_tex_data(font_atlas, mouse_cursor, (&offset), (&size), (&uv[0]), (&uv[2]))) {
             continue;
         }
         pos = operator___cb7271567d(&(base_pos), &(offset));
@@ -10922,7 +10922,7 @@ void imgui_i_render_mouse_cursor(ImGuiContext *imgui_c89_ctx, ImVec2 base_pos, f
         if (!ImRect_Overlaps__02ba25d225(((ImRect *)((imgui_c89_temporary_0 = ImGuiViewportP_GetMainRect__fb7e78d91b(((ImGuiViewportP *)(viewport))), &imgui_c89_temporary_0))), (imgui_c89_temporary_1 = ImRect_ImRect_value__99b7f05542(&(pos), (imgui_c89_temporary_2 = operator___29d06b7915(&(pos), (imgui_c89_temporary_3 = operator___fef625b53c((imgui_c89_temporary_4 = ImVec2_ImVec2_value__c798775144((size.x + 2), (size.y + 2)), &imgui_c89_temporary_4), scale), &imgui_c89_temporary_3)), &imgui_c89_temporary_2)), &imgui_c89_temporary_1))) {
             continue;
         }
-        draw_list = imgui_i_get_foreground_draw_list(imgui_c89_ctx, ((ImGuiViewport *)(viewport)));
+        draw_list = imgui__get_foreground_draw_list(imgui_c89_ctx, ((ImGuiViewport *)(viewport)));
         tex_ref = font_atlas->imgui_c89_unnamed_50ed8dbe.TexRef;
         imgui_draw_list_push_texture(imgui_c89_ctx, ((ImDrawList *)(draw_list)), tex_ref);
         imgui_draw_list_add_image(imgui_c89_ctx, ((ImDrawList *)(draw_list)), tex_ref, (imgui_c89_temporary_5 = operator___29d06b7915(&(pos), (imgui_c89_temporary_6 = operator___fef625b53c((imgui_c89_temporary_7 = ImVec2_ImVec2_value__c798775144(1, 0), &imgui_c89_temporary_7), scale), &imgui_c89_temporary_6)), &imgui_c89_temporary_5), (imgui_c89_temporary_8 = operator___29d06b7915(&(pos), (imgui_c89_temporary_9 = operator___fef625b53c((imgui_c89_temporary_10 = operator___29d06b7915((imgui_c89_temporary_11 = ImVec2_ImVec2_value__c798775144(1, 0), &imgui_c89_temporary_11), &(size)), &imgui_c89_temporary_10), scale), &imgui_c89_temporary_9)), &imgui_c89_temporary_8), &(uv[2]), &(uv[3]), col_shadow);
@@ -10939,7 +10939,7 @@ void imgui_i_render_mouse_cursor(ImGuiContext *imgui_c89_ctx, ImVec2 base_pos, f
     }
 }
 
-void imgui_i_render_nav_cursor(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id, ImGuiNavRenderCursorFlags flags, float rounding)
+void imgui__render_nav_cursor(ImGuiContext *imgui_c89_ctx, const ImRect * bb, ImGuiID id, ImGuiNavRenderCursorFlags flags, float rounding)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -10991,7 +10991,7 @@ void imgui_i_render_nav_cursor(ImGuiContext *imgui_c89_ctx, const ImRect * bb, I
     }
 }
 
-void imgui_i_render_text(ImGuiContext *imgui_c89_ctx, ImVec2 pos, const char * text, const char * text_end, unsigned char hide_text_after_hash)
+void imgui__render_text(ImGuiContext *imgui_c89_ctx, ImVec2 pos, const char * text, const char * text_end, unsigned char hide_text_after_hash)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -11000,7 +11000,7 @@ void imgui_i_render_text(ImGuiContext *imgui_c89_ctx, ImVec2 pos, const char * t
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
     if (hide_text_after_hash) {
-        text_display_end = imgui_i_find_rendered_text_end(text, text_end);
+        text_display_end = imgui__find_rendered_text_end(text, text_end);
     } else {
         if (!text_end) {
             text_end = (text + strlen(text));
@@ -11010,32 +11010,32 @@ void imgui_i_render_text(ImGuiContext *imgui_c89_ctx, ImVec2 pos, const char * t
     if (text != text_display_end) {
         imgui_draw_list_add_text_font_pointer_float_vec2_u32_string_string_float_vec4_pointer(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)), g->Font, g->FontSize, &(pos), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, 1.0f), text, text_display_end, 0.0f, 0);
         if (g->LogEnabled) {
-            imgui_i_log_rendered_text(imgui_c89_ctx, (&pos), text, text_display_end);
+            imgui__log_rendered_text(imgui_c89_ctx, (&pos), text, text_display_end);
         }
     }
 }
 
-void imgui_i_render_text_clipped(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos_min, const ImVec2 * pos_max, const char * text, const char * text_end, const ImVec2 * text_size_if_known, const ImVec2 * align, const ImRect * clip_rect)
+void imgui__render_text_clipped(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos_min, const ImVec2 * pos_max, const char * text, const char * text_end, const ImVec2 * text_size_if_known, const ImVec2 * align, const ImRect * clip_rect)
 {
     const char * text_display_end;
     int text_len;
     ImGuiContext * g;
     ImGuiWindow * window;
 
-    text_display_end = imgui_i_find_rendered_text_end(text, text_end);
+    text_display_end = imgui__find_rendered_text_end(text, text_end);
     text_len = ((int)((text_display_end - text)));
     if (text_len == 0) {
         return;
     }
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
-    imgui_i_render_text_clipped_ex(imgui_c89_ctx, window->DrawList, pos_min, pos_max, text, text_display_end, text_size_if_known, align, clip_rect);
+    imgui__render_text_clipped_ex(imgui_c89_ctx, window->DrawList, pos_min, pos_max, text, text_display_end, text_size_if_known, align, clip_rect);
     if (g->LogEnabled) {
-        imgui_i_log_rendered_text(imgui_c89_ctx, (&(*pos_min)), text, text_display_end);
+        imgui__log_rendered_text(imgui_c89_ctx, (&(*pos_min)), text, text_display_end);
     }
 }
 
-void imgui_i_render_text_clipped_ex(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, const ImVec2 * pos_min, const ImVec2 * pos_max, const char * text, const char * text_display_end, const ImVec2 * text_size_if_known, const ImVec2 * align, const ImRect * clip_rect)
+void imgui__render_text_clipped_ex(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, const ImVec2 * pos_min, const ImVec2 * pos_max, const char * text, const char * text_display_end, const ImVec2 * text_size_if_known, const ImVec2 * align, const ImRect * clip_rect)
 {
     ImVec2 pos;
     ImVec2 text_size;
@@ -11066,7 +11066,7 @@ void imgui_i_render_text_clipped_ex(ImGuiContext *imgui_c89_ctx, ImDrawList * dr
     }
 }
 
-void imgui_i_render_text_ellipsis(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, const ImVec2 * pos_min, const ImVec2 * pos_max, float ellipsis_max_x, const char * text, const char * text_end_full, const ImVec2 * text_size_if_known)
+void imgui__render_text_ellipsis(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, const ImVec2 * pos_min, const ImVec2 * pos_max, float ellipsis_max_x, const char * text, const char * text_end_full, const ImVec2 * text_size_if_known)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -11087,7 +11087,7 @@ void imgui_i_render_text_ellipsis(ImGuiContext *imgui_c89_ctx, ImDrawList * draw
 
     g = &((*imgui_c89_ctx));
     if (text_end_full == 0) {
-        text_end_full = imgui_i_find_rendered_text_end(text, 0);
+        text_end_full = imgui__find_rendered_text_end(text, 0);
     }
     text_size = (text_size_if_known ? (*text_size_if_known) : imgui_calc_text_size(imgui_c89_ctx, text, text_end_full, 0, 0.0f));
     if (text_size.x > (pos_max->x - pos_min->x)) {
@@ -11099,19 +11099,19 @@ void imgui_i_render_text_ellipsis(ImGuiContext *imgui_c89_ctx, ImDrawList * draw
         ellipsis_width = (imgui_font_baked_get_char_advance(imgui_c89_ctx, ((ImFontBaked *)(baked)), font->EllipsisChar) * font_scale);
         text_avail_width = ImMax__3c7b1bb7d1(((ImMax__3c7b1bb7d1(pos_max->x, ellipsis_max_x) - ellipsis_width) - pos_min->x), 1.0f);
         text_size_clipped_x = imgui_font_calc_text_size_a(imgui_c89_ctx, ((ImFont *)(font)), font_size, text_avail_width, 0.0f, text, text_end_full, (&text_end_ellipsis)).x;
-        imgui_i_render_text_clipped_ex(imgui_c89_ctx, draw_list, pos_min, pos_max, text, text_end_ellipsis, (&text_size), (imgui_c89_temporary_0 = ImVec2_ImVec2_value__c798775144(0.0f, 0.0f), &imgui_c89_temporary_0), 0);
+        imgui__render_text_clipped_ex(imgui_c89_ctx, draw_list, pos_min, pos_max, text, text_end_ellipsis, (&text_size), (imgui_c89_temporary_0 = ImVec2_ImVec2_value__c798775144(0.0f, 0.0f), &imgui_c89_temporary_0), 0);
         ImVec4_ImVec4__2b63b1272a(&cpu_fine_clip_rect, pos_min->x, pos_min->y, pos_max->x, pos_max->y);
         ellipsis_pos = ImTrunc__735393dfb3((imgui_c89_temporary_1 = ImVec2_ImVec2_value__c798775144((pos_min->x + text_size_clipped_x), pos_min->y), &imgui_c89_temporary_1));
         imgui_font_render_char(imgui_c89_ctx, ((ImFont *)(font)), draw_list, font_size, &(ellipsis_pos), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, 1.0f), font->EllipsisChar, (&cpu_fine_clip_rect));
     } else {
-        imgui_i_render_text_clipped_ex(imgui_c89_ctx, draw_list, pos_min, pos_max, text, text_end_full, (&text_size), (imgui_c89_temporary_2 = ImVec2_ImVec2_value__c798775144(0.0f, 0.0f), &imgui_c89_temporary_2), 0);
+        imgui__render_text_clipped_ex(imgui_c89_ctx, draw_list, pos_min, pos_max, text, text_end_full, (&text_size), (imgui_c89_temporary_2 = ImVec2_ImVec2_value__c798775144(0.0f, 0.0f), &imgui_c89_temporary_2), 0);
     }
     if (g->LogEnabled) {
-        imgui_i_log_rendered_text(imgui_c89_ctx, (&(*pos_min)), text, text_end_full);
+        imgui__log_rendered_text(imgui_c89_ctx, (&(*pos_min)), text, text_end_full);
     }
 }
 
-void imgui_i_render_text_wrapped(ImGuiContext *imgui_c89_ctx, ImVec2 pos, const char * text, const char * text_end, float wrap_width)
+void imgui__render_text_wrapped(ImGuiContext *imgui_c89_ctx, ImVec2 pos, const char * text, const char * text_end, float wrap_width)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -11124,7 +11124,7 @@ void imgui_i_render_text_wrapped(ImGuiContext *imgui_c89_ctx, ImVec2 pos, const 
     if (text != text_end) {
         imgui_draw_list_add_text_font_pointer_float_vec2_u32_string_string_float_vec4_pointer(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)), g->Font, g->FontSize, &(pos), imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Text, 1.0f), text, text_end, wrap_width, 0);
         if (g->LogEnabled) {
-            imgui_i_log_rendered_text(imgui_c89_ctx, (&pos), text, text_end);
+            imgui__log_rendered_text(imgui_c89_ctx, (&pos), text, text_end);
         }
     }
 }
@@ -11180,12 +11180,12 @@ void imgui_save_ini_settings_to_disk(ImGuiContext *imgui_c89_ctx, const char * i
     }
     ini_data_size = 0;
     ini_data = imgui_save_ini_settings_to_memory(imgui_c89_ctx, (&ini_data_size));
-    f = imgui_i_im_file_open(ini_filename, "wt");
+    f = imgui__im_file_open(ini_filename, "wt");
     if (!f) {
         return;
     }
-    imgui_i_im_file_write(ini_data, sizeof(char), ini_data_size, f);
-    imgui_i_im_file_close(f);
+    imgui__im_file_write(ini_data, sizeof(char), ini_data_size, f);
+    imgui__im_file_close(f);
 }
 
 const char * imgui_save_ini_settings_to_memory(ImGuiContext *imgui_c89_ctx, size_t * out_size)
@@ -11215,7 +11215,7 @@ const char * imgui_save_ini_settings_to_memory(ImGuiContext *imgui_c89_ctx, size
     return imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->SettingsIniData))));
 }
 
-void imgui_i_scale_windows_in_viewport(ImGuiContext *imgui_c89_ctx, ImGuiViewportP * viewport, float scale)
+void imgui__scale_windows_in_viewport(ImGuiContext *imgui_c89_ctx, ImGuiViewportP * viewport, float scale)
 {
     ImGuiContext * g;
     ImGuiWindow ** __begin1;
@@ -11235,22 +11235,22 @@ void imgui_i_scale_windows_in_viewport(ImGuiContext *imgui_c89_ctx, ImGuiViewpor
     }
 }
 
-void imgui_i_scroll_to_item(ImGuiContext *imgui_c89_ctx, ImGuiScrollFlags flags)
+void imgui__scroll_to_item(ImGuiContext *imgui_c89_ctx, ImGuiScrollFlags flags)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
 
     g = &((*imgui_c89_ctx));
     window = g->CurrentWindow;
-    imgui_i_scroll_to_rect_ex(imgui_c89_ctx, window, &(g->LastItemData.NavRect), flags);
+    imgui__scroll_to_rect_ex(imgui_c89_ctx, window, &(g->LastItemData.NavRect), flags);
 }
 
-void imgui_i_scroll_to_rect(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImRect * item_rect, ImGuiScrollFlags flags)
+void imgui__scroll_to_rect(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImRect * item_rect, ImGuiScrollFlags flags)
 {
-    imgui_i_scroll_to_rect_ex(imgui_c89_ctx, window, item_rect, flags);
+    imgui__scroll_to_rect_ex(imgui_c89_ctx, window, item_rect, flags);
 }
 
-ImVec2 imgui_i_scroll_to_rect_ex(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImRect * item_rect, ImGuiScrollFlags flags)
+ImVec2 imgui__scroll_to_rect_ex(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImRect * item_rect, ImGuiScrollFlags flags)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -11290,35 +11290,35 @@ ImVec2 imgui_i_scroll_to_rect_ex(ImGuiContext *imgui_c89_ctx, ImGuiWindow * wind
     can_be_fully_visible_y = ((((ImRect_GetHeight__bcfe92168a(((ImRect *)(item_rect))) + (g->Style.ItemSpacing.y * 2.0f)) <= ImRect_GetHeight__bcfe92168a(((ImRect *)(&(scroll_rect))))) || (window->AutoFitFramesY > 0)) || ((window->Flags & ImGuiWindowFlags_AlwaysAutoResize) != 0));
     if ((flags & ImGuiScrollFlags_KeepVisibleEdgeX) && (!fully_visible_x)) {
         if ((item_rect->Min.x < scroll_rect.Min.x) || (!can_be_fully_visible_x)) {
-            imgui_i_set_scroll_from_pos_x(window, ((item_rect->Min.x - g->Style.ItemSpacing.x) - window->Pos.x), 0.0f);
+            imgui__set_scroll_from_pos_x(window, ((item_rect->Min.x - g->Style.ItemSpacing.x) - window->Pos.x), 0.0f);
         } else {
             if (item_rect->Max.x >= scroll_rect.Max.x) {
-                imgui_i_set_scroll_from_pos_x(window, ((item_rect->Max.x + g->Style.ItemSpacing.x) - window->Pos.x), 1.0f);
+                imgui__set_scroll_from_pos_x(window, ((item_rect->Max.x + g->Style.ItemSpacing.x) - window->Pos.x), 1.0f);
             }
         }
     } else {
         if (((flags & ImGuiScrollFlags_KeepVisibleCenterX) && (!fully_visible_x)) || (flags & ImGuiScrollFlags_AlwaysCenterX)) {
             if (can_be_fully_visible_x) {
-                imgui_i_set_scroll_from_pos_x(window, (ImTrunc__ae7a4018f8(((item_rect->Min.x + item_rect->Max.x) * 0.5f)) - window->Pos.x), 0.5f);
+                imgui__set_scroll_from_pos_x(window, (ImTrunc__ae7a4018f8(((item_rect->Min.x + item_rect->Max.x) * 0.5f)) - window->Pos.x), 0.5f);
             } else {
-                imgui_i_set_scroll_from_pos_x(window, (item_rect->Min.x - window->Pos.x), 0.0f);
+                imgui__set_scroll_from_pos_x(window, (item_rect->Min.x - window->Pos.x), 0.0f);
             }
         }
     }
     if ((flags & ImGuiScrollFlags_KeepVisibleEdgeY) && (!fully_visible_y)) {
         if ((item_rect->Min.y < scroll_rect.Min.y) || (!can_be_fully_visible_y)) {
-            imgui_i_set_scroll_from_pos_y(window, ((item_rect->Min.y - g->Style.ItemSpacing.y) - window->Pos.y), 0.0f);
+            imgui__set_scroll_from_pos_y(window, ((item_rect->Min.y - g->Style.ItemSpacing.y) - window->Pos.y), 0.0f);
         } else {
             if (item_rect->Max.y >= scroll_rect.Max.y) {
-                imgui_i_set_scroll_from_pos_y(window, ((item_rect->Max.y + g->Style.ItemSpacing.y) - window->Pos.y), 1.0f);
+                imgui__set_scroll_from_pos_y(window, ((item_rect->Max.y + g->Style.ItemSpacing.y) - window->Pos.y), 1.0f);
             }
         }
     } else {
         if (((flags & ImGuiScrollFlags_KeepVisibleCenterY) && (!fully_visible_y)) || (flags & ImGuiScrollFlags_AlwaysCenterY)) {
             if (can_be_fully_visible_y) {
-                imgui_i_set_scroll_from_pos_y(window, (ImTrunc__ae7a4018f8(((item_rect->Min.y + item_rect->Max.y) * 0.5f)) - window->Pos.y), 0.5f);
+                imgui__set_scroll_from_pos_y(window, (ImTrunc__ae7a4018f8(((item_rect->Min.y + item_rect->Max.y) * 0.5f)) - window->Pos.y), 0.5f);
             } else {
-                imgui_i_set_scroll_from_pos_y(window, (item_rect->Min.y - window->Pos.y), 0.0f);
+                imgui__set_scroll_from_pos_y(window, (item_rect->Min.y - window->Pos.y), 0.0f);
             }
         }
     }
@@ -11331,12 +11331,12 @@ ImVec2 imgui_i_scroll_to_rect_ex(ImGuiContext *imgui_c89_ctx, ImGuiWindow * wind
         if ((in_flags & (ImGuiScrollFlags_AlwaysCenterY | ImGuiScrollFlags_KeepVisibleCenterY)) != 0) {
             in_flags = ((in_flags & (~ImGuiScrollFlags_MaskY_)) | ImGuiScrollFlags_KeepVisibleEdgeY);
         }
-        operator____6e144c17f2(&(delta_scroll), (imgui_c89_temporary_4 = imgui_i_scroll_to_rect_ex(imgui_c89_ctx, window->ParentWindow, (imgui_c89_temporary_5 = ImRect_ImRect_value__99b7f05542((imgui_c89_temporary_6 = operator___cb7271567d(&(item_rect->Min), &(delta_scroll)), &imgui_c89_temporary_6), (imgui_c89_temporary_7 = operator___cb7271567d(&(item_rect->Max), &(delta_scroll)), &imgui_c89_temporary_7)), &imgui_c89_temporary_5), in_flags), &imgui_c89_temporary_4));
+        operator____6e144c17f2(&(delta_scroll), (imgui_c89_temporary_4 = imgui__scroll_to_rect_ex(imgui_c89_ctx, window->ParentWindow, (imgui_c89_temporary_5 = ImRect_ImRect_value__99b7f05542((imgui_c89_temporary_6 = operator___cb7271567d(&(item_rect->Min), &(delta_scroll)), &imgui_c89_temporary_6), (imgui_c89_temporary_7 = operator___cb7271567d(&(item_rect->Max), &(delta_scroll)), &imgui_c89_temporary_7)), &imgui_c89_temporary_5), in_flags), &imgui_c89_temporary_4));
     }
     return delta_scroll;
 }
 
-void imgui_i_set_active_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindow * window)
+void imgui__set_active_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindow * window)
 {
     ImGuiContext * g;
     ImGuiDeactivatedItemData * deactivated_data;
@@ -11349,22 +11349,22 @@ void imgui_i_set_active_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindow 
         deactivated_data->HasBeenEditedBefore = g->ActiveIdHasBeenEditedBefore;
         deactivated_data->IsAlive = (g->ActiveIdIsAlive == g->ActiveId);
         if (g->InputTextState.ID == g->ActiveId) {
-            imgui_i_input_text_deactivate_hook(imgui_c89_ctx, g->ActiveId);
+            imgui__input_text_deactivate_hook(imgui_c89_ctx, g->ActiveId);
         }
         if ((g->MovingWindow != 0) && (g->ActiveId == g->MovingWindow->MoveId)) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventActiveId) {
-                    imgui_i_debug_log(imgui_c89_ctx, "SetActiveID() cancel MovingWindow\n");
+                    imgui__debug_log(imgui_c89_ctx, "SetActiveID() cancel MovingWindow\n");
                 }
             } while (0);
-            imgui_i_stop_mouse_moving_window(imgui_c89_ctx);
+            imgui__stop_mouse_moving_window(imgui_c89_ctx);
         }
     }
     g->ActiveIdIsJustActivated = (g->ActiveId != id);
     if (g->ActiveIdIsJustActivated) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventActiveId) {
-                imgui_i_debug_log(imgui_c89_ctx, "SetActiveID() 0x%08X in \"%s\"%*s(previously 0x%08X in \"%s\")\n", id, (window ? window->Name : ""), ImMax__55d6006f6c(0, (20 - ((int)((window ? strlen(window->Name) : 0))))), "", g->ActiveId, (g->ActiveIdWindow ? g->ActiveIdWindow->Name : ""));
+                imgui__debug_log(imgui_c89_ctx, "SetActiveID() 0x%08X in \"%s\"%*s(previously 0x%08X in \"%s\")\n", id, (window ? window->Name : ""), ImMax__55d6006f6c(0, (20 - ((int)((window ? strlen(window->Name) : 0))))), "", g->ActiveId, (g->ActiveIdWindow ? g->ActiveIdWindow->Name : ""));
             }
         } while (0);
         g->ActiveIdTimer = 0.0f;
@@ -11392,7 +11392,7 @@ void imgui_i_set_active_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindow 
     g->ActiveIdUsingAllKeyboardKeys = 0;
 }
 
-void imgui_i_set_active_id_using_all_keyboard_keys(ImGuiContext *imgui_c89_ctx)
+void imgui__set_active_id_using_all_keyboard_keys(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -11400,7 +11400,7 @@ void imgui_i_set_active_id_using_all_keyboard_keys(ImGuiContext *imgui_c89_ctx)
     imgui_c89_expect((!(g->ActiveId != 0)), 0) ? imgui_c89_assert_id(61) : ((void)(0));
     g->ActiveIdUsingNavDirMask = ((1 << ImGuiDir_COUNT) - 1);
     g->ActiveIdUsingAllKeyboardKeys = 1;
-    imgui_i_nav_move_request_cancel(imgui_c89_ctx);
+    imgui__nav_move_request_cancel(imgui_c89_ctx);
 }
 
 void imgui_set_allocator_functions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void * user_data)
@@ -11420,9 +11420,9 @@ void imgui_set_clipboard_text(ImGuiContext *imgui_c89_ctx, const char * text)
     }
 }
 
-void imgui_i_set_context_name(ImGuiContext * ctx, const char * name)
+void imgui__set_context_name(ImGuiContext * ctx, const char * name)
 {
-    imgui_i_im_strncpy(ctx->ContextName, name, ((int)((sizeof(ctx->ContextName) / sizeof((*ctx->ContextName))))));
+    imgui__im_strncpy(ctx->ContextName, name, ((int)((sizeof(ctx->ContextName) / sizeof((*ctx->ContextName))))));
 }
 
 void imgui_set_current_context(ImGuiContext * ctx)
@@ -11430,7 +11430,7 @@ void imgui_set_current_context(ImGuiContext * ctx)
     GImGui = ctx;
 }
 
-void imgui_i_set_current_font(ImGuiContext *imgui_c89_ctx, ImFont * font, float font_size_before_scaling, float font_size_after_scaling)
+void imgui__set_current_font(ImGuiContext *imgui_c89_ctx, ImFont * font, float font_size_before_scaling, float font_size_after_scaling)
 {
     ImGuiContext * g;
     ImFontAtlas * atlas;
@@ -11438,14 +11438,14 @@ void imgui_i_set_current_font(ImGuiContext *imgui_c89_ctx, ImFont * font, float 
     g = &((*imgui_c89_ctx));
     g->Font = font;
     g->FontSizeBase = font_size_before_scaling;
-    imgui_i_update_current_font_size(imgui_c89_ctx, font_size_after_scaling);
+    imgui__update_current_font_size(imgui_c89_ctx, font_size_after_scaling);
     if (font != 0) {
         imgui_c89_expect((!(font && imgui_font_is_loaded(((ImFont *)(font))))), 0) ? imgui_c89_assert_id(109) : ((void)(0));
         imgui_c89_expect((!(font->Scale > 0.0f)), 0) ? imgui_c89_assert_id(110) : ((void)(0));
         atlas = font->OwnerAtlas;
         g->DrawListSharedData.FontAtlas = atlas;
         g->DrawListSharedData.Font = font;
-        imgui_i_im_font_atlas_update_draw_lists_shared_data(atlas);
+        imgui__im_font_atlas_update_draw_lists_shared_data(atlas);
         if (g->CurrentWindow != 0) {
             imgui_draw_list_set_texture(imgui_c89_ctx, ((ImDrawList *)(g->CurrentWindow->DrawList)), atlas->imgui_c89_unnamed_50ed8dbe.TexRef);
         }
@@ -11506,7 +11506,7 @@ unsigned char imgui_set_drag_drop_payload(ImGuiContext *imgui_c89_ctx, const cha
     imgui_c89_expect((!((cond == ImGuiCond_Always) || (cond == ImGuiCond_Once))), 0) ? imgui_c89_assert_id(268) : ((void)(0));
     imgui_c89_expect((!(payload->SourceId != 0)), 0) ? imgui_c89_assert_id(269) : ((void)(0));
     if ((cond == ImGuiCond_Always) || (payload->DataFrameCount == (-1))) {
-        imgui_i_im_strncpy(payload->DataType, type, ((int)((sizeof(payload->DataType) / sizeof((*payload->DataType))))));
+        imgui__im_strncpy(payload->DataType, type, ((int)((sizeof(payload->DataType) / sizeof((*payload->DataType))))));
         ImVector_unsigned_char__resize__c4c804ad65(imgui_c89_ctx, ((ImVector_unsigned_char *)(&(g->DragDropPayloadBufHeap))), 0);
         if (data_size > sizeof(g->DragDropPayloadBufLocal)) {
             ImVector_unsigned_char__resize__c4c804ad65(imgui_c89_ctx, ((ImVector_unsigned_char *)(&(g->DragDropPayloadBufHeap))), ((int)(data_size)));
@@ -11527,7 +11527,7 @@ unsigned char imgui_set_drag_drop_payload(ImGuiContext *imgui_c89_ctx, const cha
     return (g->DragDropAcceptFrameCount == g->FrameCount) || (g->DragDropAcceptFrameCount == (g->FrameCount - 1));
 }
 
-void imgui_i_set_focus_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindow * window)
+void imgui__set_focus_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindow * window)
 {
     ImGuiContext * g;
     ImGuiNavLayer nav_layer;
@@ -11535,12 +11535,12 @@ void imgui_i_set_focus_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindow *
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!(id != 0)), 0) ? imgui_c89_assert_id(237) : ((void)(0));
     if (g->NavWindow != window) {
-        imgui_i_set_nav_window(imgui_c89_ctx, window);
+        imgui__set_nav_window(imgui_c89_ctx, window);
     }
     nav_layer = window->DC.NavLayerCurrent;
     g->NavId = id;
     g->NavLayer = nav_layer;
-    imgui_i_set_nav_focus_scope(imgui_c89_ctx, g->CurrentFocusScopeId);
+    imgui__set_nav_focus_scope(imgui_c89_ctx, g->CurrentFocusScopeId);
     window->NavLastIds[nav_layer] = id;
     if (g->LastItemData.ID == id) {
         window->NavRectRel[nav_layer] = ImGui_WindowRectAbsToRel__7725b098d7(window, &(g->LastItemData.NavRect));
@@ -11556,11 +11556,11 @@ void imgui_i_set_focus_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiWindow *
             g->NavCursorVisible = 0;
         }
     }
-    imgui_i_nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_X);
-    imgui_i_nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_Y);
+    imgui__nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_X);
+    imgui__nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_Y);
 }
 
-void imgui_i_set_font_rasterizer_density(ImGuiContext *imgui_c89_ctx, float rasterizer_density)
+void imgui__set_font_rasterizer_density(ImGuiContext *imgui_c89_ctx, float rasterizer_density)
 {
     ImGuiContext * g;
 
@@ -11570,10 +11570,10 @@ void imgui_i_set_font_rasterizer_density(ImGuiContext *imgui_c89_ctx, float rast
         return;
     }
     g->FontRasterizerDensity = rasterizer_density;
-    imgui_i_update_current_font_size(imgui_c89_ctx, 0.0f);
+    imgui__update_current_font_size(imgui_c89_ctx, 0.0f);
 }
 
-void imgui_i_set_hovered_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
+void imgui__set_hovered_id(ImGuiContext *imgui_c89_ctx, ImGuiID id)
 {
     ImGuiContext * g;
 
@@ -11602,16 +11602,16 @@ void imgui_set_item_default_focus(ImGuiContext *imgui_c89_ctx)
     ImGui_NavApplyItemToResult__bec1741e1d(imgui_c89_ctx, (&g->NavInitResult));
     ImGui_NavUpdateAnyRequestFlag__f0d45f126b(imgui_c89_ctx);
     if (!ImRect_Contains__c9916e1cff(((ImRect *)(&(window->ClipRect))), &(g->LastItemData.Rect))) {
-        imgui_i_scroll_to_rect_ex(imgui_c89_ctx, window, &(g->LastItemData.Rect), ImGuiScrollFlags_None);
+        imgui__scroll_to_rect_ex(imgui_c89_ctx, window, &(g->LastItemData.Rect), ImGuiScrollFlags_None);
     }
 }
 
 unsigned char imgui_set_item_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key)
 {
-    return imgui_i_set_item_key_owner(imgui_c89_ctx, key, ImGuiInputFlags_None);
+    return imgui__set_item_key_owner(imgui_c89_ctx, key, ImGuiInputFlags_None);
 }
 
-unsigned char imgui_i_set_item_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiInputFlags flags)
+unsigned char imgui__set_item_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiInputFlags flags)
 {
     ImGuiContext * g;
     ImGuiID id;
@@ -11626,16 +11626,16 @@ unsigned char imgui_i_set_item_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey k
     }
     if (((g->HoveredId == id) && (flags & ImGuiInputFlags_CondHovered)) || ((g->ActiveId == id) && (flags & ImGuiInputFlags_CondActive))) {
         imgui_c89_expect((!((flags & (~ImGuiInputFlags_SupportedBySetItemKeyOwner)) == 0)), 0) ? imgui_c89_assert_id(149) : ((void)(0));
-        if (!imgui_i_test_key_owner(imgui_c89_ctx, key, id)) {
+        if (!imgui__test_key_owner(imgui_c89_ctx, key, id)) {
             return 0;
         }
-        imgui_i_set_key_owner(imgui_c89_ctx, key, id, (flags & (~ImGuiInputFlags_CondMask_)));
+        imgui__set_key_owner(imgui_c89_ctx, key, id, (flags & (~ImGuiInputFlags_CondMask_)));
         return 1;
     }
     return 0;
 }
 
-void imgui_i_set_item_tooltip(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
+void imgui__set_item_tooltip(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
 {
     va_list args;
 
@@ -11653,7 +11653,7 @@ void imgui_set_item_tooltip_v(ImGuiContext *imgui_c89_ctx, const char * fmt, va_
     }
 }
 
-void imgui_i_set_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID owner_id, ImGuiInputFlags flags)
+void imgui__set_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID owner_id, ImGuiInputFlags flags)
 {
     ImGuiContext * g;
     ImGuiKeyOwnerData * owner_data;
@@ -11667,22 +11667,22 @@ void imgui_i_set_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID ow
     owner_data->LockThisFrame = (((flags & ImGuiInputFlags_LockThisFrame) != 0) || owner_data->LockUntilRelease);
 }
 
-void imgui_i_set_key_owners_for_key_chord(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiID owner_id, ImGuiInputFlags flags)
+void imgui__set_key_owners_for_key_chord(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiID owner_id, ImGuiInputFlags flags)
 {
     if (key_chord & ImGuiMod_Ctrl) {
-        imgui_i_set_key_owner(imgui_c89_ctx, ImGuiMod_Ctrl, owner_id, flags);
+        imgui__set_key_owner(imgui_c89_ctx, ImGuiMod_Ctrl, owner_id, flags);
     }
     if (key_chord & ImGuiMod_Shift) {
-        imgui_i_set_key_owner(imgui_c89_ctx, ImGuiMod_Shift, owner_id, flags);
+        imgui__set_key_owner(imgui_c89_ctx, ImGuiMod_Shift, owner_id, flags);
     }
     if (key_chord & ImGuiMod_Alt) {
-        imgui_i_set_key_owner(imgui_c89_ctx, ImGuiMod_Alt, owner_id, flags);
+        imgui__set_key_owner(imgui_c89_ctx, ImGuiMod_Alt, owner_id, flags);
     }
     if (key_chord & ImGuiMod_Super) {
-        imgui_i_set_key_owner(imgui_c89_ctx, ImGuiMod_Super, owner_id, flags);
+        imgui__set_key_owner(imgui_c89_ctx, ImGuiMod_Super, owner_id, flags);
     }
     if (key_chord & (~ImGuiMod_Mask_)) {
-        imgui_i_set_key_owner(imgui_c89_ctx, ((ImGuiKey)((key_chord & (~ImGuiMod_Mask_)))), owner_id, flags);
+        imgui__set_key_owner(imgui_c89_ctx, ((ImGuiKey)((key_chord & (~ImGuiMod_Mask_)))), owner_id, flags);
     }
 }
 
@@ -11698,30 +11698,30 @@ void imgui_set_keyboard_focus_here(ImGuiContext *imgui_c89_ctx, int offset)
     imgui_c89_expect((!(offset >= (-1))), 0) ? imgui_c89_assert_id(102) : ((void)(0));
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventFocus) {
-            imgui_i_debug_log(imgui_c89_ctx, "SetKeyboardFocusHere(%d) in window \"%s\"\n", offset, window->Name);
+            imgui__debug_log(imgui_c89_ctx, "SetKeyboardFocusHere(%d) in window \"%s\"\n", offset, window->Name);
         }
     } while (0);
     if (g->DragDropActive || (g->MovingWindow != 0)) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventFocus) {
-                imgui_i_debug_log(imgui_c89_ctx, "SetKeyboardFocusHere() ignored while DragDropActive!\n");
+                imgui__debug_log(imgui_c89_ctx, "SetKeyboardFocusHere() ignored while DragDropActive!\n");
             }
         } while (0);
         return;
     }
-    imgui_i_set_nav_window(imgui_c89_ctx, window);
+    imgui__set_nav_window(imgui_c89_ctx, window);
     move_flags = (((ImGuiNavMoveFlags_IsTabbing | ImGuiNavMoveFlags_Activate) | ImGuiNavMoveFlags_FocusApi) | ImGuiNavMoveFlags_NoSetNavCursorVisible);
     scroll_flags = (window->Appearing ? (ImGuiScrollFlags_KeepVisibleEdgeX | ImGuiScrollFlags_AlwaysCenterY) : (ImGuiScrollFlags_KeepVisibleEdgeX | ImGuiScrollFlags_KeepVisibleEdgeY));
-    imgui_i_nav_move_request_submit(imgui_c89_ctx, ImGuiDir_None, ((offset < 0) ? ImGuiDir_Up : ImGuiDir_Down), move_flags, scroll_flags);
+    imgui__nav_move_request_submit(imgui_c89_ctx, ImGuiDir_None, ((offset < 0) ? ImGuiDir_Up : ImGuiDir_Down), move_flags, scroll_flags);
     if (offset == (-1)) {
-        imgui_i_nav_move_request_resolve_with_last_item(imgui_c89_ctx, (&g->NavMoveResultLocal));
+        imgui__nav_move_request_resolve_with_last_item(imgui_c89_ctx, (&g->NavMoveResultLocal));
     } else {
         g->NavTabbingDir = 1;
         g->NavTabbingCounter = (offset + 1);
     }
 }
 
-void imgui_i_set_last_item_data(ImGuiContext *imgui_c89_ctx, ImGuiID item_id, ImGuiItemFlags item_flags, ImGuiItemStatusFlags status_flags, const ImRect * item_rect)
+void imgui__set_last_item_data(ImGuiContext *imgui_c89_ctx, ImGuiID item_id, ImGuiItemFlags item_flags, ImGuiItemStatusFlags status_flags, const ImRect * item_rect)
 {
     ImGuiContext * g;
 
@@ -11755,7 +11755,7 @@ void imgui_set_nav_cursor_visible(ImGuiContext *imgui_c89_ctx, unsigned char vis
     g->NavCursorVisible = visible;
 }
 
-void imgui_i_set_nav_cursor_visible_after_move(ImGuiContext *imgui_c89_ctx)
+void imgui__set_nav_cursor_visible_after_move(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -11778,7 +11778,7 @@ void imgui_i_set_nav_cursor_visible_after_move(ImGuiContext *imgui_c89_ctx)
     g->NavHighlightItemUnderNav = (g->NavMousePosDirty = 1);
 }
 
-void imgui_i_set_nav_focus_scope(ImGuiContext *imgui_c89_ctx, ImGuiID focus_scope_id)
+void imgui__set_nav_focus_scope(ImGuiContext *imgui_c89_ctx, ImGuiID focus_scope_id)
 {
     ImGuiFocusScopeData imgui_c89_temporary_0;
     ImGuiFocusScopeData imgui_c89_temporary_1;
@@ -11813,7 +11813,7 @@ void imgui_i_set_nav_focus_scope(ImGuiContext *imgui_c89_ctx, ImGuiID focus_scop
     imgui_c89_expect((!(g->NavFocusRoute.Size < 100)), 0) ? imgui_c89_assert_id(101) : ((void)(0));
 }
 
-void imgui_i_set_nav_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiNavLayer nav_layer, ImGuiID focus_scope_id, const ImRect * rect_rel)
+void imgui__set_nav_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiNavLayer nav_layer, ImGuiID focus_scope_id, const ImRect * rect_rel)
 {
     ImGuiContext * g;
 
@@ -11822,14 +11822,14 @@ void imgui_i_set_nav_id(ImGuiContext *imgui_c89_ctx, ImGuiID id, ImGuiNavLayer n
     imgui_c89_expect((!((nav_layer == ImGuiNavLayer_Main) || (nav_layer == ImGuiNavLayer_Menu))), 0) ? imgui_c89_assert_id(236) : ((void)(0));
     g->NavId = id;
     g->NavLayer = nav_layer;
-    imgui_i_set_nav_focus_scope(imgui_c89_ctx, focus_scope_id);
+    imgui__set_nav_focus_scope(imgui_c89_ctx, focus_scope_id);
     g->NavWindow->NavLastIds[nav_layer] = id;
     g->NavWindow->NavRectRel[nav_layer] = (*rect_rel);
-    imgui_i_nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_X);
-    imgui_i_nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_Y);
+    imgui__nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_X);
+    imgui__nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_Y);
 }
 
-void imgui_i_set_nav_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__set_nav_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
 
@@ -11837,7 +11837,7 @@ void imgui_i_set_nav_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
     if (g->NavWindow != window) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventFocus) {
-                imgui_i_debug_log(imgui_c89_ctx, "[focus] SetNavWindow(\"%s\")\n", (window ? window->Name : "<NULL>"));
+                imgui__debug_log(imgui_c89_ctx, "[focus] SetNavWindow(\"%s\")\n", (window ? window->Name : "<NULL>"));
             }
         } while (0);
         g->NavWindow = window;
@@ -11948,7 +11948,7 @@ void imgui_set_next_window_pos(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos, 
     g->NextWindowData.PosCond = (cond ? cond : ImGuiCond_Always);
 }
 
-void imgui_i_set_next_window_refresh_policy(ImGuiContext *imgui_c89_ctx, ImGuiWindowRefreshFlags flags)
+void imgui__set_next_window_refresh_policy(ImGuiContext *imgui_c89_ctx, ImGuiWindowRefreshFlags flags)
 {
     ImGuiContext * g;
 
@@ -11988,7 +11988,7 @@ void imgui_set_next_window_size_constraints(ImGuiContext *imgui_c89_ctx, const I
     g->NextWindowData.SizeCallbackUserData = custom_callback_user_data;
 }
 
-void imgui_i_set_scroll_from_pos_x(ImGuiWindow * window, float local_x, float center_x_ratio)
+void imgui__set_scroll_from_pos_x(ImGuiWindow * window, float local_x, float center_x_ratio)
 {
     imgui_c89_expect((!((center_x_ratio >= 0.0f) && (center_x_ratio <= 1.0f))), 0) ? imgui_c89_assert_id(210) : ((void)(0));
     window->ScrollTarget.x = ((float)(((int)((((local_x - window->DecoOuterSizeX1) - window->DecoInnerSizeX1) + window->Scroll.x)))));
@@ -12001,10 +12001,10 @@ void imgui_set_scroll_from_pos_x(ImGuiContext *imgui_c89_ctx, float local_x, flo
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    imgui_i_set_scroll_from_pos_x(g->CurrentWindow, local_x, center_x_ratio);
+    imgui__set_scroll_from_pos_x(g->CurrentWindow, local_x, center_x_ratio);
 }
 
-void imgui_i_set_scroll_from_pos_y(ImGuiWindow * window, float local_y, float center_y_ratio)
+void imgui__set_scroll_from_pos_y(ImGuiWindow * window, float local_y, float center_y_ratio)
 {
     imgui_c89_expect((!((center_y_ratio >= 0.0f) && (center_y_ratio <= 1.0f))), 0) ? imgui_c89_assert_id(211) : ((void)(0));
     window->ScrollTarget.y = ((float)(((int)((((local_y - window->DecoOuterSizeY1) - window->DecoInnerSizeY1) + window->Scroll.y)))));
@@ -12017,7 +12017,7 @@ void imgui_set_scroll_from_pos_y(ImGuiContext *imgui_c89_ctx, float local_y, flo
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    imgui_i_set_scroll_from_pos_y(g->CurrentWindow, local_y, center_y_ratio);
+    imgui__set_scroll_from_pos_y(g->CurrentWindow, local_y, center_y_ratio);
 }
 
 void imgui_set_scroll_here_x(ImGuiContext *imgui_c89_ctx, float center_x_ratio)
@@ -12031,7 +12031,7 @@ void imgui_set_scroll_here_x(ImGuiContext *imgui_c89_ctx, float center_x_ratio)
     window = g->CurrentWindow;
     spacing_x = ImMax__3c7b1bb7d1(window->WindowPadding.x, g->Style.ItemSpacing.x);
     target_pos_x = ImLerp__95dd708a82((g->LastItemData.Rect.Min.x - spacing_x), (g->LastItemData.Rect.Max.x + spacing_x), center_x_ratio);
-    imgui_i_set_scroll_from_pos_x(window, (target_pos_x - window->Pos.x), center_x_ratio);
+    imgui__set_scroll_from_pos_x(window, (target_pos_x - window->Pos.x), center_x_ratio);
     window->ScrollTargetEdgeSnapDist.x = ImMax__3c7b1bb7d1(0.0f, (window->WindowPadding.x - spacing_x));
 }
 
@@ -12046,11 +12046,11 @@ void imgui_set_scroll_here_y(ImGuiContext *imgui_c89_ctx, float center_y_ratio)
     window = g->CurrentWindow;
     spacing_y = ImMax__3c7b1bb7d1(window->WindowPadding.y, g->Style.ItemSpacing.y);
     target_pos_y = ImLerp__95dd708a82((window->DC.CursorPosPrevLine.y - spacing_y), ((window->DC.CursorPosPrevLine.y + window->DC.PrevLineSize.y) + spacing_y), center_y_ratio);
-    imgui_i_set_scroll_from_pos_y(window, (target_pos_y - window->Pos.y), center_y_ratio);
+    imgui__set_scroll_from_pos_y(window, (target_pos_y - window->Pos.y), center_y_ratio);
     window->ScrollTargetEdgeSnapDist.y = ImMax__3c7b1bb7d1(0.0f, (window->WindowPadding.y - spacing_y));
 }
 
-void imgui_i_set_scroll_x(ImGuiWindow * window, float scroll_x)
+void imgui__set_scroll_x(ImGuiWindow * window, float scroll_x)
 {
     window->ScrollTarget.x = scroll_x;
     window->ScrollTargetCenterRatio.x = 0.0f;
@@ -12062,10 +12062,10 @@ void imgui_set_scroll_x(ImGuiContext *imgui_c89_ctx, float scroll_x)
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    imgui_i_set_scroll_x(g->CurrentWindow, scroll_x);
+    imgui__set_scroll_x(g->CurrentWindow, scroll_x);
 }
 
-void imgui_i_set_scroll_y(ImGuiWindow * window, float scroll_y)
+void imgui__set_scroll_y(ImGuiWindow * window, float scroll_y)
 {
     window->ScrollTarget.y = scroll_y;
     window->ScrollTargetCenterRatio.y = 0.0f;
@@ -12077,10 +12077,10 @@ void imgui_set_scroll_y(ImGuiContext *imgui_c89_ctx, float scroll_y)
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    imgui_i_set_scroll_y(g->CurrentWindow, scroll_y);
+    imgui__set_scroll_y(g->CurrentWindow, scroll_y);
 }
 
-unsigned char imgui_i_set_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiInputFlags flags, ImGuiID owner_id)
+unsigned char imgui__set_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiInputFlags flags, ImGuiID owner_id)
 {
     ImGuiContext * g;
     ImGuiKey key;
@@ -12101,7 +12101,7 @@ unsigned char imgui_i_set_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKey
     if (flags & ImGuiInputFlags_RouteOverActive) {
         imgui_c89_expect((!(flags & (ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteFocused))), 0) ? imgui_c89_assert_id(123) : ((void)(0));
     }
-    key_chord = imgui_i_fixup_key_chord(key_chord);
+    key_chord = imgui__fixup_key_chord(key_chord);
     if (g->DebugBreakInShortcutRouting == key_chord) {
         imgui_c89_debugtrap();
     }
@@ -12113,7 +12113,7 @@ unsigned char imgui_i_set_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKey
     if (flags & ImGuiInputFlags_RouteAlways) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventInputRouting) {
-                imgui_i_debug_log(imgui_c89_ctx, "SetShortcutRouting(%s, flags=%04X, owner_id=0x%08X) -> always, no register\n", imgui_i_get_key_chord_name(imgui_c89_ctx, key_chord), flags, owner_id);
+                imgui__debug_log(imgui_c89_ctx, "SetShortcutRouting(%s, flags=%04X, owner_id=0x%08X) -> always, no register\n", imgui__get_key_chord_name(imgui_c89_ctx, key_chord), flags, owner_id);
             }
         } while (0);
         return 1;
@@ -12125,7 +12125,7 @@ unsigned char imgui_i_set_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKey
         if (g->IO.WantTextInput && IsKeyChordPotentiallyCharInput__4e5bf73a83(imgui_c89_ctx, key_chord)) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventInputRouting) {
-                    imgui_i_debug_log(imgui_c89_ctx, "SetShortcutRouting(%s, flags=%04X, owner_id=0x%08X) -> filtered as potential char input\n", imgui_i_get_key_chord_name(imgui_c89_ctx, key_chord), flags, owner_id);
+                    imgui__debug_log(imgui_c89_ctx, "SetShortcutRouting(%s, flags=%04X, owner_id=0x%08X) -> filtered as potential char input\n", imgui__get_key_chord_name(imgui_c89_ctx, key_chord), flags, owner_id);
                 }
             } while (0);
             return 0;
@@ -12147,13 +12147,13 @@ unsigned char imgui_i_set_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKey
     score = CalcRoutingScore__418cec4afb(imgui_c89_ctx, focus_scope_id, owner_id, flags);
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventInputRouting) {
-            imgui_i_debug_log(imgui_c89_ctx, "SetShortcutRouting(%s, flags=%04X, owner_id=0x%08X) -> score %d\n", imgui_i_get_key_chord_name(imgui_c89_ctx, key_chord), flags, owner_id, score);
+            imgui__debug_log(imgui_c89_ctx, "SetShortcutRouting(%s, flags=%04X, owner_id=0x%08X) -> score %d\n", imgui__get_key_chord_name(imgui_c89_ctx, key_chord), flags, owner_id, score);
         }
     } while (0);
     if (score == 0) {
         return 0;
     }
-    routing_data = imgui_i_get_shortcut_routing_data(imgui_c89_ctx, key_chord);
+    routing_data = imgui__get_shortcut_routing_data(imgui_c89_ctx, key_chord);
     if (score > routing_data->RoutingNextScore) {
         routing_data->RoutingNext = owner_id;
         routing_data->RoutingNextScore = ((ImU16)(score));
@@ -12161,7 +12161,7 @@ unsigned char imgui_i_set_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKey
     if (routing_data->RoutingCurr == owner_id) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventInputRouting) {
-                imgui_i_debug_log(imgui_c89_ctx, "--> granting current route\n");
+                imgui__debug_log(imgui_c89_ctx, "--> granting current route\n");
             }
         } while (0);
     }
@@ -12176,7 +12176,7 @@ void imgui_set_state_storage(ImGuiContext *imgui_c89_ctx, ImGuiStorage * tree)
     window->DC.StateStorage = (tree ? tree : (&window->StateStorage));
 }
 
-void imgui_i_set_tooltip(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
+void imgui__set_tooltip(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
 {
     va_list args;
 
@@ -12187,14 +12187,14 @@ void imgui_i_set_tooltip(ImGuiContext *imgui_c89_ctx, const char * fmt, ...)
 
 void imgui_set_tooltip_v(ImGuiContext *imgui_c89_ctx, const char * fmt, va_list args)
 {
-    if (!imgui_i_begin_tooltip_ex(imgui_c89_ctx, ImGuiTooltipFlags_OverridePrevious, ImGuiWindowFlags_None)) {
+    if (!imgui__begin_tooltip_ex(imgui_c89_ctx, ImGuiTooltipFlags_OverridePrevious, ImGuiWindowFlags_None)) {
         return;
     }
     imgui_text_v(imgui_c89_ctx, fmt, args);
     imgui_end_tooltip(imgui_c89_ctx);
 }
 
-void imgui_i_set_window_collapsed(ImGuiWindow * window, unsigned char collapsed, ImGuiCond cond)
+void imgui__set_window_collapsed(ImGuiWindow * window, unsigned char collapsed, ImGuiCond cond)
 {
     if (cond && ((window->SetWindowCollapsedAllowFlags & cond) == 0)) {
         return;
@@ -12210,20 +12210,20 @@ void imgui_set_window_collapsed_string_bool_cond(ImGuiContext *imgui_c89_ctx, co
 {
     ImGuiWindow * window;
 
-    window = imgui_i_find_window_by_name(imgui_c89_ctx, name);
+    window = imgui__find_window_by_name(imgui_c89_ctx, name);
     if (window) {
-        imgui_i_set_window_collapsed(window, collapsed, cond);
+        imgui__set_window_collapsed(window, collapsed, cond);
     }
 }
 
 void imgui_set_window_collapsed_bool_cond_none(ImGuiContext *imgui_c89_ctx, unsigned char collapsed, ImGuiCond cond)
 {
-    imgui_i_set_window_collapsed(imgui_c89_ctx->CurrentWindow, collapsed, cond);
+    imgui__set_window_collapsed(imgui_c89_ctx->CurrentWindow, collapsed, cond);
 }
 
 void imgui_set_window_focus_none(ImGuiContext *imgui_c89_ctx)
 {
-    imgui_i_focus_window(imgui_c89_ctx, imgui_c89_ctx->CurrentWindow, 0);
+    imgui__focus_window(imgui_c89_ctx, imgui_c89_ctx->CurrentWindow, 0);
 }
 
 void imgui_set_window_focus_string(ImGuiContext *imgui_c89_ctx, const char * name)
@@ -12231,12 +12231,12 @@ void imgui_set_window_focus_string(ImGuiContext *imgui_c89_ctx, const char * nam
     ImGuiWindow * window;
 
     if (name) {
-        window = imgui_i_find_window_by_name(imgui_c89_ctx, name);
+        window = imgui__find_window_by_name(imgui_c89_ctx, name);
         if (window) {
-            imgui_i_focus_window(imgui_c89_ctx, window, 0);
+            imgui__focus_window(imgui_c89_ctx, window, 0);
         }
     } else {
-        imgui_i_focus_window(imgui_c89_ctx, 0, 0);
+        imgui__focus_window(imgui_c89_ctx, 0, 0);
     }
 }
 
@@ -12247,16 +12247,16 @@ void imgui_set_window_font_scale(ImGuiContext *imgui_c89_ctx, float scale)
     imgui_c89_expect((!(scale > 0.0f)), 0) ? imgui_c89_assert_id(98) : ((void)(0));
     window = ImGui_GetCurrentWindow__f542a96313(imgui_c89_ctx);
     window->FontWindowScale = scale;
-    imgui_i_update_current_font_size(imgui_c89_ctx, 0.0f);
+    imgui__update_current_font_size(imgui_c89_ctx, 0.0f);
 }
 
-void imgui_i_set_window_hidden_and_skip_items_for_current_frame(ImGuiWindow * window)
+void imgui__set_window_hidden_and_skip_items_for_current_frame(ImGuiWindow * window)
 {
     window->Hidden = (window->SkipItems = 1);
     window->HiddenFramesCanSkipItems = 1;
 }
 
-void imgui_i_set_window_hit_test_hole(ImGuiWindow * window, const ImVec2 * pos, const ImVec2 * size)
+void imgui__set_window_hit_test_hole(ImGuiWindow * window, const ImVec2 * pos, const ImVec2 * size)
 {
     ImVec2 imgui_c89_temporary_0;
 
@@ -12270,10 +12270,10 @@ void imgui_set_window_pos_vec2_cond_none(ImGuiContext *imgui_c89_ctx, const ImVe
     ImGuiWindow * window;
 
     window = ImGui_GetCurrentWindowRead__c7df9c532e(imgui_c89_ctx);
-    imgui_i_set_window_pos(imgui_c89_ctx, window, pos, cond);
+    imgui__set_window_pos(imgui_c89_ctx, window, pos, cond);
 }
 
-void imgui_i_set_window_pos(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImVec2 * pos, ImGuiCond cond)
+void imgui__set_window_pos(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImVec2 * pos, ImGuiCond cond)
 {
     ImVec2 old_pos;
     ImVec2 offset;
@@ -12290,7 +12290,7 @@ void imgui_i_set_window_pos(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, c
     if ((offset.x == 0.0f) && (offset.y == 0.0f)) {
         return;
     }
-    imgui_i_mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
+    imgui__mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
     operator____6e144c17f2(&(window->DC.CursorPos), &(offset));
     operator____6e144c17f2(&(window->DC.CursorMaxPos), &(offset));
     operator____6e144c17f2(&(window->DC.IdealMaxPos), &(offset));
@@ -12301,18 +12301,18 @@ void imgui_set_window_pos_string_vec2_cond(ImGuiContext *imgui_c89_ctx, const ch
 {
     ImGuiWindow * window;
 
-    window = imgui_i_find_window_by_name(imgui_c89_ctx, name);
+    window = imgui__find_window_by_name(imgui_c89_ctx, name);
     if (window) {
-        imgui_i_set_window_pos(imgui_c89_ctx, window, pos, cond);
+        imgui__set_window_pos(imgui_c89_ctx, window, pos, cond);
     }
 }
 
 void imgui_set_window_size_vec2_cond_none(ImGuiContext *imgui_c89_ctx, const ImVec2 * size, ImGuiCond cond)
 {
-    imgui_i_set_window_size(imgui_c89_ctx, imgui_c89_ctx->CurrentWindow, size, cond);
+    imgui__set_window_size(imgui_c89_ctx, imgui_c89_ctx->CurrentWindow, size, cond);
 }
 
-void imgui_i_set_window_size(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImVec2 * size, ImGuiCond cond)
+void imgui__set_window_size(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImVec2 * size, ImGuiCond cond)
 {
     ImVec2 old_size;
 
@@ -12339,7 +12339,7 @@ void imgui_i_set_window_size(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, 
         window->SizeFull.y = ((float)(((int)(size->y))));
     }
     if ((old_size.x != window->SizeFull.x) || (old_size.y != window->SizeFull.y)) {
-        imgui_i_mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
+        imgui__mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
     }
 }
 
@@ -12347,23 +12347,23 @@ void imgui_set_window_size_string_vec2_cond(ImGuiContext *imgui_c89_ctx, const c
 {
     ImGuiWindow * window;
 
-    window = imgui_i_find_window_by_name(imgui_c89_ctx, name);
+    window = imgui__find_window_by_name(imgui_c89_ctx, name);
     if (window) {
-        imgui_i_set_window_size(imgui_c89_ctx, window, size, cond);
+        imgui__set_window_size(imgui_c89_ctx, window, size, cond);
     }
 }
 
-void imgui_i_set_window_viewport(ImGuiWindow * window, ImGuiViewportP * viewport)
+void imgui__set_window_viewport(ImGuiWindow * window, ImGuiViewportP * viewport)
 {
     window->Viewport = viewport;
 }
 
 unsigned char imgui_shortcut(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiInputFlags flags)
 {
-    return imgui_i_shortcut(imgui_c89_ctx, key_chord, flags, ((ImGuiID)(0)));
+    return imgui__shortcut(imgui_c89_ctx, key_chord, flags, ((ImGuiID)(0)));
 }
 
-unsigned char imgui_i_shortcut(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiInputFlags flags, ImGuiID owner_id)
+unsigned char imgui__shortcut(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiInputFlags flags, ImGuiID owner_id)
 {
     ImGuiContext * g;
 
@@ -12377,16 +12377,16 @@ unsigned char imgui_i_shortcut(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_ch
     if (g->CurrentItemFlags & ImGuiItemFlags_Disabled) {
         return 0;
     }
-    if (!imgui_i_set_shortcut_routing(imgui_c89_ctx, key_chord, flags, owner_id)) {
+    if (!imgui__set_shortcut_routing(imgui_c89_ctx, key_chord, flags, owner_id)) {
         return 0;
     }
     if (((flags & ImGuiInputFlags_Repeat) != 0) && ((flags & ImGuiInputFlags_RepeatUntilMask_) == 0)) {
         flags |= ImGuiInputFlags_RepeatUntilKeyModsChange;
     }
-    if (!imgui_i_is_key_chord_pressed(imgui_c89_ctx, key_chord, flags, owner_id)) {
+    if (!imgui__is_key_chord_pressed(imgui_c89_ctx, key_chord, flags, owner_id)) {
         return 0;
     }
-    imgui_i_set_key_owners_for_key_chord(imgui_c89_ctx, (key_chord & ImGuiMod_Mask_), owner_id, 0);
+    imgui__set_key_owners_for_key_chord(imgui_c89_ctx, (key_chord & ImGuiMod_Mask_), owner_id, 0);
     imgui_c89_expect((!((flags & (~ImGuiInputFlags_SupportedByShortcut)) == 0)), 0) ? imgui_c89_assert_id(151) : ((void)(0));
     return 1;
 }
@@ -12412,7 +12412,7 @@ void imgui_show_debug_log_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_
     }
     all_enable_flags = (ImGuiDebugLogFlags_EventMask_ & (~ImGuiDebugLogFlags_EventInputRouting));
     imgui_checkbox_flags_int_pointer_int(imgui_c89_ctx, "All", (&g->DebugLogFlags), all_enable_flags);
-    imgui_i_set_item_tooltip(imgui_c89_ctx, "(except InputRouting which is spammy)");
+    imgui__set_item_tooltip(imgui_c89_ctx, "(except InputRouting which is spammy)");
     ShowDebugLogFlag__9600378b7c(imgui_c89_ctx, "Errors", ImGuiDebugLogFlags_EventError);
     ShowDebugLogFlag__9600378b7c(imgui_c89_ctx, "ActiveId", ImGuiDebugLogFlags_EventActiveId);
     ShowDebugLogFlag__9600378b7c(imgui_c89_ctx, "Clipper", ImGuiDebugLogFlags_EventClipper);
@@ -12448,12 +12448,12 @@ void imgui_show_debug_log_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_
     imgui_begin_child_string(imgui_c89_ctx, "##log", (imgui_c89_temporary_1 = ImVec2_ImVec2_value__c798775144(0.0f, 0.0f), &imgui_c89_temporary_1), ImGuiChildFlags_Borders, (ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar));
     backup_log_flags = g->DebugLogFlags;
     g->DebugLogFlags &= (~ImGuiDebugLogFlags_EventClipper);
-    imgui_i_list_clipper_init(&clipper);
+    imgui__list_clipper_init(&clipper);
     imgui_list_clipper_begin(imgui_c89_ctx, ((ImGuiListClipper *)(&(clipper))), ImGuiTextIndex_size__44439b5563(((ImGuiTextIndex *)(&(g->DebugLogIndex)))), (-1.0f));
     while (imgui_list_clipper_step(imgui_c89_ctx, ((ImGuiListClipper *)(&(clipper))))) {
         line_no = clipper.DisplayStart;
         for (; line_no < clipper.DisplayEnd; line_no++) {
-            imgui_i_debug_text_unformatted_with_locate_item(imgui_c89_ctx, ImGuiTextIndex_get_line_begin__5b804528d7(((ImGuiTextIndex *)(&(g->DebugLogIndex))), imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))), line_no), ImGuiTextIndex_get_line_end__433c94708a(((ImGuiTextIndex *)(&(g->DebugLogIndex))), imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))), line_no));
+            imgui__debug_text_unformatted_with_locate_item(imgui_c89_ctx, ImGuiTextIndex_get_line_begin__5b804528d7(((ImGuiTextIndex *)(&(g->DebugLogIndex))), imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))), line_no), ImGuiTextIndex_get_line_end__433c94708a(((ImGuiTextIndex *)(&(g->DebugLogIndex))), imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->DebugLogBuf)))), line_no));
         }
     }
     g->DebugLogFlags = backup_log_flags;
@@ -12462,10 +12462,10 @@ void imgui_show_debug_log_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_
     }
     imgui_end_child(imgui_c89_ctx);
     imgui_end(imgui_c89_ctx);
-    imgui_i_list_clipper_destroy(imgui_c89_ctx, &(clipper));
+    imgui__list_clipper_destroy(imgui_c89_ctx, &(clipper));
 }
 
-void imgui_i_show_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
+void imgui__show_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
 {
     ImVec2 imgui_c89_temporary_0;
     ImVec2 imgui_c89_temporary_1;
@@ -12510,38 +12510,38 @@ void imgui_i_show_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
         style->_NextFrameFontSizeBase = style->FontSizeBase;
     }
     imgui_same_line(imgui_c89_ctx, 0.0f, 0.0f);
-    imgui_i_text(imgui_c89_ctx, " (out %.2f)", imgui_get_font_size(imgui_c89_ctx));
+    imgui__text(imgui_c89_ctx, " (out %.2f)", imgui_get_font_size(imgui_c89_ctx));
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
     MetricsHelpMarker__e17b4bb69f(imgui_c89_ctx, "- This is scaling font only. General scaling will come later.");
     imgui_drag_float(imgui_c89_ctx, "FontScaleMain", (&style->FontScaleMain), 0.0199999996f, 0.5f, 4.0f, "%.3f", 0);
     imgui_drag_float(imgui_c89_ctx, "FontScaleDpi", (&style->FontScaleDpi), 0.0199999996f, 0.5f, 4.0f, "%.3f", 0);
     if ((io->BackendFlags & ImGuiBackendFlags_RendererHasTextures) == 0) {
-        imgui_i_bullet_text(imgui_c89_ctx, "Warning: Font scaling will NOT be smooth, because\nImGuiBackendFlags_RendererHasTextures is not set!");
-        imgui_i_bullet_text(imgui_c89_ctx, "For instructions, see:");
+        imgui__bullet_text(imgui_c89_ctx, "Warning: Font scaling will NOT be smooth, because\nImGuiBackendFlags_RendererHasTextures is not set!");
+        imgui__bullet_text(imgui_c89_ctx, "For instructions, see:");
         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
         imgui_text_link_open_url(imgui_c89_ctx, "docs/BACKENDS.md", "https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md");
     }
-    imgui_i_bullet_text(imgui_c89_ctx, "Load a nice font for better results!");
-    imgui_i_bullet_text(imgui_c89_ctx, "Please submit feedback:");
+    imgui__bullet_text(imgui_c89_ctx, "Load a nice font for better results!");
+    imgui__bullet_text(imgui_c89_ctx, "Please submit feedback:");
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
     imgui_text_link_open_url(imgui_c89_ctx, "#8465", "https://github.com/ocornut/imgui/issues/8465");
-    imgui_i_bullet_text(imgui_c89_ctx, "Read FAQ for more details:");
+    imgui__bullet_text(imgui_c89_ctx, "Read FAQ for more details:");
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
     imgui_text_link_open_url(imgui_c89_ctx, "dearimgui.com/faq", "https://www.dearimgui.com/faq/");
     imgui_separator_text(imgui_c89_ctx, "Font List");
     cfg = (&g->DebugMetricsConfig);
     imgui_checkbox(imgui_c89_ctx, "Show font preview", (&cfg->ShowFontPreview));
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "Loader", "Loader: '%s'", (atlas->FontLoaderName ? atlas->FontLoaderName : "NULL"))) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "Loader", "Loader: '%s'", (atlas->FontLoaderName ? atlas->FontLoaderName : "NULL"))) {
         loader_current = atlas->FontLoader;
         imgui_begin_disabled(imgui_c89_ctx, (!atlas->RendererHasTextures));
-        loader_stbtruetype = imgui_i_im_font_atlas_get_font_loader_for_stb_truetype();
+        loader_stbtruetype = imgui__im_font_atlas_get_font_loader_for_stb_truetype();
         if (imgui_radio_button_bool_none(imgui_c89_ctx, "stb_truetype", (loader_current == loader_stbtruetype))) {
             imgui_font_atlas_set_font_loader(imgui_c89_ctx, ((ImFontAtlas *)(atlas)), loader_stbtruetype);
         }
         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
         imgui_begin_disabled(imgui_c89_ctx, 1);
         imgui_radio_button_bool_none(imgui_c89_ctx, "FreeType", 0);
-        imgui_i_set_item_tooltip(imgui_c89_ctx, "Requires #define IMGUI_ENABLE_FREETYPE + imgui_freetype.cpp.");
+        imgui__set_item_tooltip(imgui_c89_ctx, "Requires #define IMGUI_ENABLE_FREETYPE + imgui_freetype.cpp.");
         imgui_end_disabled(imgui_c89_ctx);
         imgui_end_disabled(imgui_c89_ctx);
         imgui_tree_pop(imgui_c89_ctx);
@@ -12552,7 +12552,7 @@ void imgui_i_show_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
     for (; __begin1 != __end1; ++__begin1) {
         font = (*__begin1);
         imgui_push_id_const_pointer_none(imgui_c89_ctx, font);
-        imgui_i_debug_node_font(imgui_c89_ctx, font);
+        imgui__debug_node_font(imgui_c89_ctx, font);
         imgui_pop_id(imgui_c89_ctx);
     }
     imgui_separator_text(imgui_c89_ctx, "Font Atlas");
@@ -12561,27 +12561,27 @@ void imgui_i_show_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
     }
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
     if (imgui_button(imgui_c89_ctx, "Grow", (imgui_c89_temporary_1 = ImVec2_ImVec2_value__c798775144(0, 0), &imgui_c89_temporary_1))) {
-        imgui_i_im_font_atlas_texture_grow(imgui_c89_ctx, atlas, (-1), (-1));
+        imgui__im_font_atlas_texture_grow(imgui_c89_ctx, atlas, (-1), (-1));
     }
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
     if (imgui_button(imgui_c89_ctx, "Clear All", (imgui_c89_temporary_2 = ImVec2_ImVec2_value__c798775144(0, 0), &imgui_c89_temporary_2))) {
-        imgui_i_im_font_atlas_build_clear(imgui_c89_ctx, atlas);
+        imgui__im_font_atlas_build_clear(imgui_c89_ctx, atlas);
     }
-    imgui_i_set_item_tooltip(imgui_c89_ctx, "Destroy cache and custom rectangles.");
+    imgui__set_item_tooltip(imgui_c89_ctx, "Destroy cache and custom rectangles.");
     tex_n = 0;
     for (; tex_n < atlas->TexList.Size; tex_n++) {
         tex = (*(ImVector_ImTextureData____operator____841043161f(((ImVector_ImTextureData_ptr *)(&(atlas->TexList))), tex_n)));
         if (tex_n > 0) {
             imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
         }
-        imgui_i_text(imgui_c89_ctx, "Tex: %dx%d", tex->Width, tex->Height);
+        imgui__text(imgui_c89_ctx, "Tex: %dx%d", tex->Width, tex->Height);
     }
     packed_surface_sqrt = ((int)(sqrtf(((float)(atlas->Builder->RectsPackedSurface)))));
     discarded_surface_sqrt = ((int)(sqrtf(((float)(atlas->Builder->RectsDiscardedSurface)))));
-    imgui_i_text(imgui_c89_ctx, "Packed rects: %d, area: about %d px ~%dx%d px", atlas->Builder->RectsPackedCount, atlas->Builder->RectsPackedSurface, packed_surface_sqrt, packed_surface_sqrt);
-    imgui_i_text(imgui_c89_ctx, "incl. Discarded rects: %d, area: about %d px ~%dx%d px", atlas->Builder->RectsDiscardedCount, atlas->Builder->RectsDiscardedSurface, discarded_surface_sqrt, discarded_surface_sqrt);
+    imgui__text(imgui_c89_ctx, "Packed rects: %d, area: about %d px ~%dx%d px", atlas->Builder->RectsPackedCount, atlas->Builder->RectsPackedSurface, packed_surface_sqrt, packed_surface_sqrt);
+    imgui__text(imgui_c89_ctx, "incl. Discarded rects: %d, area: about %d px ~%dx%d px", atlas->Builder->RectsDiscardedCount, atlas->Builder->RectsDiscardedSurface, discarded_surface_sqrt, discarded_surface_sqrt);
     highlight_r_id = (-1);
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "Rects Index", "Rects Index (%d)", atlas->Builder->RectsPackedCount)) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "Rects Index", "Rects Index (%d)", atlas->Builder->RectsPackedCount)) {
         imgui_push_style_var_float(imgui_c89_ctx, ImGuiStyleVar_ImageBorderSize, 1.0f);
         if (imgui_begin_table(imgui_c89_ctx, "##table", 2, ((ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders) | ImGuiTableFlags_ScrollY), (imgui_c89_temporary_3 = ImVec2_ImVec2_value__c798775144(0.0f, (imgui_get_text_line_height_with_spacing(imgui_c89_ctx) * 12)), &imgui_c89_temporary_3), 0.0f)) {
             __range3 = &(atlas->Builder->RectsIndex);
@@ -12593,7 +12593,7 @@ void imgui_i_show_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
                     id = ImFontAtlasRectId_Make__76050ffe54(ImVector_ImFontAtlasRectEntry__index_from_ptr__6330f5b866(((ImVector_ImFontAtlasRectEntry *)(&(atlas->Builder->RectsIndex))), (&(*entry))), entry->Generation);
                     ImFontAtlasRect_ImFontAtlasRect__a33e8f2147(&r);
                     imgui_font_atlas_get_custom_rect(imgui_c89_ctx, ((ImFontAtlas *)(atlas)), id, (&r));
-                    imgui_i_im_format_string_to_temp_buffer(imgui_c89_ctx, (&buf), 0, "ID:%08X, used:%d, { w:%3d, h:%3d } { x:%4d, y:%4d }", id, entry->IsUsed, r.w, r.h, r.x, r.y);
+                    imgui__im_format_string_to_temp_buffer(imgui_c89_ctx, (&buf), 0, "ID:%08X, used:%d, { w:%3d, h:%3d } { x:%4d, y:%4d }", id, entry->IsUsed, r.w, r.h, r.x, r.y);
                     imgui_table_next_column(imgui_c89_ctx);
                     imgui_selectable_bool(imgui_c89_ctx, buf, 0, 0, (imgui_c89_temporary_4 = ImVec2_ImVec2_value__c798775144(0, 0), &imgui_c89_temporary_4));
                     if (imgui_is_item_hovered(imgui_c89_ctx, 0)) {
@@ -12617,7 +12617,7 @@ void imgui_i_show_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
         if (tex_n__b5f77415 == (atlas->TexList.Size - 1)) {
             imgui_set_next_item_open(imgui_c89_ctx, 1, ImGuiCond_Once);
         }
-        imgui_i_debug_node_texture(imgui_c89_ctx, (*(ImVector_ImTextureData____operator____841043161f(((ImVector_ImTextureData_ptr *)(&(atlas->TexList))), tex_n__b5f77415))), ((atlas->TexList.Size - 1) - tex_n__b5f77415), ((highlight_r_id != (-1)) ? (&highlight_r) : 0));
+        imgui__debug_node_texture(imgui_c89_ctx, (*(ImVector_ImTextureData____operator____841043161f(((ImVector_ImTextureData_ptr *)(&(atlas->TexList))), tex_n__b5f77415))), ((atlas->TexList.Size - 1) - tex_n__b5f77415), ((highlight_r_id != (-1)) ? (&highlight_r) : 0));
     }
 }
 
@@ -12686,7 +12686,7 @@ void imgui_show_id_stack_tool_window(ImGuiContext *imgui_c89_ctx, unsigned char 
     tool = (&g->DebugIDStackTool);
     tool->LastActiveFrame = g->FrameCount;
     result_path = DebugItemPathQuery_GetResultAsPath__aa90603966(imgui_c89_ctx, query, tool->OptHexEncodeNonAsciiChars);
-    imgui_i_text(imgui_c89_ctx, "0x%08X", query->MainID);
+    imgui__text(imgui_c89_ctx, "0x%08X", query->MainID);
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
     MetricsHelpMarker__e17b4bb69f(imgui_c89_ctx, "Hover an item with the mouse to display elements of the ID Stack leading to the item's final ID.\nEach level of the stack correspond to a PushID() call.\nAll levels of the stack are hashed together to make the final ID of a widget (ID displayed at the bottom level of the stack).\nRead FAQ entry about the ID stack for details.");
     time_since_copy = (((float)(g->Time)) - tool->CopyToClipboardLastTime);
@@ -12696,12 +12696,12 @@ void imgui_show_id_stack_tool_window(ImGuiContext *imgui_c89_ctx, unsigned char 
     imgui_checkbox(imgui_c89_ctx, "Ctrl+C: copy path", (&tool->OptCopyToClipboardOnCtrlC));
     imgui_pop_style_var(imgui_c89_ctx, 1);
     imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-    imgui_i_text_colored(imgui_c89_ctx, (imgui_c89_temporary_1 = ((((time_since_copy >= 0.0f) && (time_since_copy < 0.75f)) && (fmodf(time_since_copy, 0.25f) < (0.25f * 0.5f))) ? ImVec4_ImVec4_value__2df7b774e7(1.0f, 1.0f, 0.300000012f, 1.0f) : ImVec4_ImVec4_value__f629ee1d0b()), &imgui_c89_temporary_1), "*COPIED*");
+    imgui__text_colored(imgui_c89_ctx, (imgui_c89_temporary_1 = ((((time_since_copy >= 0.0f) && (time_since_copy < 0.75f)) && (fmodf(time_since_copy, 0.25f) < (0.25f * 0.5f))) ? ImVec4_ImVec4_value__2df7b774e7(1.0f, 1.0f, 0.300000012f, 1.0f) : ImVec4_ImVec4_value__f629ee1d0b()), &imgui_c89_temporary_1), "*COPIED*");
     if (tool->OptCopyToClipboardOnCtrlC && imgui_shortcut(imgui_c89_ctx, (ImGuiMod_Ctrl | ImGuiKey_C), (ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_RouteOverFocused))) {
         tool->CopyToClipboardLastTime = ((float)(g->Time));
         imgui_set_clipboard_text(imgui_c89_ctx, result_path);
     }
-    imgui_i_text(imgui_c89_ctx, "- Path \"%s\"", (query->Complete ? result_path : ""));
+    imgui__text(imgui_c89_ctx, "- Path \"%s\"", (query->Complete ? result_path : ""));
     imgui_separator(imgui_c89_ctx);
     if ((query->Results.Size > 0) && imgui_begin_table(imgui_c89_ctx, "##table", 3, ImGuiTableFlags_Borders, (imgui_c89_temporary_2 = ImVec2_ImVec2_value__c798775144(0.0f, 0.0f), &imgui_c89_temporary_2), 0.0f)) {
         id_width = imgui_calc_text_size(imgui_c89_ctx, "0xDDDDDDDD", 0, 0, (-1.0f)).x;
@@ -12713,12 +12713,12 @@ void imgui_show_id_stack_tool_window(ImGuiContext *imgui_c89_ctx, unsigned char 
         for (; n < query->Results.Size; n++) {
             info = (&(*(ImVector_ImGuiStackLevelInfo__operator____1f3ef8e74b(((ImVector_ImGuiStackLevelInfo *)(&(query->Results))), n))));
             imgui_table_next_column(imgui_c89_ctx);
-            imgui_i_text(imgui_c89_ctx, "0x%08X", ((n > 0) ? (*(ImVector_ImGuiStackLevelInfo__operator____1f3ef8e74b(((ImVector_ImGuiStackLevelInfo *)(&(query->Results))), (n - 1)))).ID : 0));
+            imgui__text(imgui_c89_ctx, "0x%08X", ((n > 0) ? (*(ImVector_ImGuiStackLevelInfo__operator____1f3ef8e74b(((ImVector_ImGuiStackLevelInfo *)(&(query->Results))), (n - 1)))).ID : 0));
             imgui_table_next_column(imgui_c89_ctx);
             DebugItemPathQuery_FormatLevelInfo__8f7d2a5cfc(imgui_c89_ctx, query, n, 1, g->TempBuffer.Data, g->TempBuffer.Size);
             imgui_text_unformatted(imgui_c89_ctx, g->TempBuffer.Data, 0);
             imgui_table_next_column(imgui_c89_ctx);
-            imgui_i_text(imgui_c89_ctx, "0x%08X", info->ID);
+            imgui__text(imgui_c89_ctx, "0x%08X", info->ID);
             if (n == (query->Results.Size - 1)) {
                 imgui_table_set_bg_color(imgui_c89_ctx, ImGuiTableBgTarget_CellBg, imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_Header, 1.0f), (-1));
             }
@@ -12868,15 +12868,15 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
         imgui_end(imgui_c89_ctx);
         return;
     }
-    imgui_i_debug_break_clear_data(imgui_c89_ctx);
-    imgui_i_text(imgui_c89_ctx, "Dear ImGui %s (%d)", "1.92.9b", 19291);
+    imgui__debug_break_clear_data(imgui_c89_ctx);
+    imgui__text(imgui_c89_ctx, "Dear ImGui %s (%d)", "1.92.9b", 19291);
     if (g->ContextName[0] != 0) {
         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-        imgui_i_text(imgui_c89_ctx, "(Context Name: \"%s\")", g->ContextName);
+        imgui__text(imgui_c89_ctx, "(Context Name: \"%s\")", g->ContextName);
     }
-    imgui_i_text(imgui_c89_ctx, "Application average %.3f ms/frame (%.1f FPS)", (1000.0f / io->Framerate), io->Framerate);
-    imgui_i_text(imgui_c89_ctx, "%d vertices, %d indices (%d triangles)", io->MetricsRenderVertices, io->MetricsRenderIndices, (io->MetricsRenderIndices / 3));
-    imgui_i_text(imgui_c89_ctx, "%d visible windows, %d current allocations", io->MetricsRenderWindows, (g->DebugAllocInfo.TotalAllocCount - g->DebugAllocInfo.TotalFreeCount));
+    imgui__text(imgui_c89_ctx, "Application average %.3f ms/frame (%.1f FPS)", (1000.0f / io->Framerate), io->Framerate);
+    imgui__text(imgui_c89_ctx, "%d vertices, %d indices (%d triangles)", io->MetricsRenderVertices, io->MetricsRenderIndices, (io->MetricsRenderIndices / 3));
+    imgui__text(imgui_c89_ctx, "%d visible windows, %d current allocations", io->MetricsRenderWindows, (g->DebugAllocInfo.TotalAllocCount - g->DebugAllocInfo.TotalFreeCount));
     imgui_separator(imgui_c89_ctx);
     memset(&wrt_rects_names, 0, sizeof(wrt_rects_names));
     wrt_rects_names[0] = "OuterRect";
@@ -12908,7 +12908,7 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
         cfg->ShowTablesRectsType = TRT_WorkRect;
     }
     if (imgui_tree_node(imgui_c89_ctx, "Tools")) {
-        imgui_i_separator_text_ex(imgui_c89_ctx, 0, "Debug breaks", 0, (imgui_calc_text_size(imgui_c89_ctx, "(?)", 0, 0, (-1.0f)).x + g->Style.SeparatorTextPadding.x));
+        imgui__separator_text_ex(imgui_c89_ctx, 0, "Debug breaks", 0, (imgui_calc_text_size(imgui_c89_ctx, "(?)", 0, 0, (-1.0f)).x + g->Style.SeparatorTextPadding.x));
         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
         MetricsHelpMarker__e17b4bb69f(imgui_c89_ctx, "Will call the IM_DEBUG_BREAK() macro to break in debugger.\nWarning: If you don't have a debugger attached, this will probably crash.");
         if (imgui_checkbox(imgui_c89_ctx, "Show Item Picker", (&g->DebugItemPickerActive)) && g->DebugItemPickerActive) {
@@ -12928,12 +12928,12 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
         imgui_set_next_item_width(imgui_c89_ctx, (imgui_get_font_size(imgui_c89_ctx) * 12));
         cfg->ShowWindowsRects |= imgui_combo_stringconst_pointer_int_int_none(imgui_c89_ctx, "##show_windows_rect_type", (&cfg->ShowWindowsRectsType), wrt_rects_names, WRT_Count, WRT_Count);
         if (cfg->ShowWindowsRects && (g->NavWindow != 0)) {
-            imgui_i_bullet_text(imgui_c89_ctx, "'%s':", g->NavWindow->Name);
+            imgui__bullet_text(imgui_c89_ctx, "'%s':", g->NavWindow->Name);
             imgui_indent(imgui_c89_ctx, 0.0f);
             rect_n = 0;
             for (; rect_n < WRT_Count; rect_n++) {
                 r = ImGui_ShowMetricsWindow_bool____Funcs_GetWindowRect__379cde1df5(g->NavWindow, rect_n);
-                imgui_i_text(imgui_c89_ctx, "(%6.1f,%6.1f) (%6.1f,%6.1f) Size (%6.1f,%6.1f) %s", r.Min.x, r.Min.y, r.Max.x, r.Max.y, ImRect_GetWidth__7eeda790fc(((ImRect *)(&(r)))), ImRect_GetHeight__bcfe92168a(((ImRect *)(&(r)))), wrt_rects_names[rect_n]);
+                imgui__text(imgui_c89_ctx, "(%6.1f,%6.1f) (%6.1f,%6.1f) Size (%6.1f,%6.1f) %s", r.Min.x, r.Min.y, r.Max.x, r.Max.y, ImRect_GetWidth__7eeda790fc(((ImRect *)(&(r)))), ImRect_GetHeight__bcfe92168a(((ImRect *)(&(r)))), wrt_rects_names[rect_n]);
             }
             imgui_unindent(imgui_c89_ctx, 0.0f);
         }
@@ -12943,12 +12943,12 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
         cfg->ShowTablesRects |= imgui_combo_stringconst_pointer_int_int_none(imgui_c89_ctx, "##show_table_rects_type", (&cfg->ShowTablesRectsType), trt_rects_names, TRT_Count, TRT_Count);
         if (cfg->ShowTablesRects && (g->NavWindow != 0)) {
             table_n = 0;
-            for (; table_n < imgui_table_pool_map_size(((ImGuiTablePool *)(&(g->Tables)))); table_n++) {
-                table = imgui_table_pool_map_at(((ImGuiTablePool *)(&(g->Tables))), table_n);
+            for (; table_n < imgui__table_pool_map_size(((ImGuiTablePool *)(&(g->Tables)))); table_n++) {
+                table = imgui__table_pool_map_at(((ImGuiTablePool *)(&(g->Tables))), table_n);
                 if (((table == 0) || (table->LastFrameActive < (g->FrameCount - 1))) || ((table->OuterWindow != g->NavWindow) && (table->InnerWindow != g->NavWindow))) {
                     continue;
                 }
-                imgui_i_bullet_text(imgui_c89_ctx, "Table 0x%08X (%d columns, in '%s')", table->ID, table->ColumnsCount, table->OuterWindow->Name);
+                imgui__bullet_text(imgui_c89_ctx, "Table 0x%08X (%d columns, in '%s')", table->ID, table->ColumnsCount, table->OuterWindow->Name);
                 if (imgui_is_item_hovered(imgui_c89_ctx, 0)) {
                     imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(ImGui_GetForegroundDrawList__167528742e(imgui_c89_ctx, table->OuterWindow))), (imgui_c89_temporary_0 = operator___cb7271567d(&(table->OuterRect.Min), (imgui_c89_temporary_1 = ImVec2_ImVec2_value__c798775144(1, 1), &imgui_c89_temporary_1)), &imgui_c89_temporary_0), (imgui_c89_temporary_2 = operator___29d06b7915(&(table->OuterRect.Max), (imgui_c89_temporary_3 = ImVec2_ImVec2_value__c798775144(1, 1), &imgui_c89_temporary_3)), &imgui_c89_temporary_2), ((((((ImU32)(255)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(255)) << 8)) | (((ImU32)(255)) << 0)), 0.0f, 2.0f, 0);
                 }
@@ -12962,7 +12962,7 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
                         column_n = 0;
                         for (; column_n < table->ColumnsCount; column_n++) {
                             r__16810d0b = ImGui_ShowMetricsWindow_bool____Funcs_GetTableRect__d985bcf319(table, rect_n__ce58d08c, column_n);
-                            imgui_i_im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "(%6.1f,%6.1f) (%6.1f,%6.1f) Size (%6.1f,%6.1f) Col %d %s", r__16810d0b.Min.x, r__16810d0b.Min.y, r__16810d0b.Max.x, r__16810d0b.Max.y, ImRect_GetWidth__7eeda790fc(((ImRect *)(&(r__16810d0b)))), ImRect_GetHeight__bcfe92168a(((ImRect *)(&(r__16810d0b)))), column_n, trt_rects_names[rect_n__ce58d08c]);
+                            imgui__im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "(%6.1f,%6.1f) (%6.1f,%6.1f) Size (%6.1f,%6.1f) Col %d %s", r__16810d0b.Min.x, r__16810d0b.Min.y, r__16810d0b.Max.x, r__16810d0b.Max.y, ImRect_GetWidth__7eeda790fc(((ImRect *)(&(r__16810d0b)))), ImRect_GetHeight__bcfe92168a(((ImRect *)(&(r__16810d0b)))), column_n, trt_rects_names[rect_n__ce58d08c]);
                             imgui_selectable_bool(imgui_c89_ctx, buf, 0, 0, (imgui_c89_temporary_4 = ImVec2_ImVec2_value__c798775144(0, 0), &imgui_c89_temporary_4));
                             if (imgui_is_item_hovered(imgui_c89_ctx, 0)) {
                                 imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(ImGui_GetForegroundDrawList__167528742e(imgui_c89_ctx, table->OuterWindow))), (imgui_c89_temporary_5 = operator___cb7271567d(&(r__16810d0b.Min), (imgui_c89_temporary_6 = ImVec2_ImVec2_value__c798775144(1, 1), &imgui_c89_temporary_6)), &imgui_c89_temporary_5), (imgui_c89_temporary_7 = operator___29d06b7915(&(r__16810d0b.Max), (imgui_c89_temporary_8 = ImVec2_ImVec2_value__c798775144(1, 1), &imgui_c89_temporary_8)), &imgui_c89_temporary_7), ((((((ImU32)(255)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(255)) << 8)) | (((ImU32)(255)) << 0)), 0.0f, 2.0f, 0);
@@ -12970,7 +12970,7 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
                         }
                     } else {
                         r__a30a4a3b = ImGui_ShowMetricsWindow_bool____Funcs_GetTableRect__d985bcf319(table, rect_n__ce58d08c, (-1));
-                        imgui_i_im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "(%6.1f,%6.1f) (%6.1f,%6.1f) Size (%6.1f,%6.1f) %s", r__a30a4a3b.Min.x, r__a30a4a3b.Min.y, r__a30a4a3b.Max.x, r__a30a4a3b.Max.y, ImRect_GetWidth__7eeda790fc(((ImRect *)(&(r__a30a4a3b)))), ImRect_GetHeight__bcfe92168a(((ImRect *)(&(r__a30a4a3b)))), trt_rects_names[rect_n__ce58d08c]);
+                        imgui__im_format_string(buf, ((int)((sizeof(buf) / sizeof((*buf))))), "(%6.1f,%6.1f) (%6.1f,%6.1f) Size (%6.1f,%6.1f) %s", r__a30a4a3b.Min.x, r__a30a4a3b.Min.y, r__a30a4a3b.Max.x, r__a30a4a3b.Max.y, ImRect_GetWidth__7eeda790fc(((ImRect *)(&(r__a30a4a3b)))), ImRect_GetHeight__bcfe92168a(((ImRect *)(&(r__a30a4a3b)))), trt_rects_names[rect_n__ce58d08c]);
                         imgui_selectable_bool(imgui_c89_ctx, buf, 0, 0, (imgui_c89_temporary_9 = ImVec2_ImVec2_value__c798775144(0, 0), &imgui_c89_temporary_9));
                         if (imgui_is_item_hovered(imgui_c89_ctx, 0)) {
                             imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(ImGui_GetForegroundDrawList__167528742e(imgui_c89_ctx, table->OuterWindow))), (imgui_c89_temporary_10 = operator___cb7271567d(&(r__a30a4a3b.Min), (imgui_c89_temporary_11 = ImVec2_ImVec2_value__c798775144(1, 1), &imgui_c89_temporary_11)), &imgui_c89_temporary_10), (imgui_c89_temporary_12 = operator___29d06b7915(&(r__a30a4a3b.Max), (imgui_c89_temporary_13 = ImVec2_ImVec2_value__c798775144(1, 1), &imgui_c89_temporary_13)), &imgui_c89_temporary_12), ((((((ImU32)(255)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(255)) << 8)) | (((ImU32)(255)) << 0)), 0.0f, 2.0f, 0);
@@ -12997,9 +12997,9 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "Windows", "Windows (%d)", g->Windows.Size)) {
-        imgui_i_debug_node_windows_list(imgui_c89_ctx, (&g->Windows), "By display order");
-        imgui_i_debug_node_windows_list(imgui_c89_ctx, (&g->WindowsFocusOrder), "By focus order (root windows)");
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "Windows", "Windows (%d)", g->Windows.Size)) {
+        imgui__debug_node_windows_list(imgui_c89_ctx, (&g->Windows), "By display order");
+        imgui__debug_node_windows_list(imgui_c89_ctx, (&g->WindowsFocusOrder), "By focus order (root windows)");
         if (imgui_tree_node(imgui_c89_ctx, "By submission order (begin stack)")) {
             temp_buffer = &(g->WindowsTempSortBuffer);
             ImVector_ImGuiWindow____resize__9ae44f8796(imgui_c89_ctx, ((ImVector_ImGuiWindow_ptr *)(temp_buffer)), 0);
@@ -13013,7 +13013,7 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
                 }
             }
             ImQsort__c5a9d8474e(temp_buffer->Data, ((size_t)(temp_buffer->Size)), sizeof(ImGuiWindow *), ImGui_ShowMetricsWindow_bool____Func_WindowComparerByBeginOrder__9be45fe8a1);
-            imgui_i_debug_node_windows_list_by_begin_stack_parent(imgui_c89_ctx, temp_buffer->Data, temp_buffer->Size, 0);
+            imgui__debug_node_windows_list_by_begin_stack_parent(imgui_c89_ctx, temp_buffer->Data, temp_buffer->Size, 0);
             imgui_tree_pop(imgui_c89_ctx);
         }
         imgui_tree_pop(imgui_c89_ctx);
@@ -13026,7 +13026,7 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
         viewport = (*__begin1);
         drawlist_count += viewport->DrawDataP.CmdLists.Size;
     }
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "DrawLists", "DrawLists (%d)", drawlist_count)) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "DrawLists", "DrawLists (%d)", drawlist_count)) {
         imgui_checkbox(imgui_c89_ctx, "Show ImDrawCmd mesh when hovering", (&cfg->ShowDrawCmdMesh));
         imgui_checkbox(imgui_c89_ctx, "Show ImDrawCmd bounding boxes when hovering", (&cfg->ShowDrawCmdBoundingBoxes));
         __range2 = &(g->Viewports);
@@ -13039,12 +13039,12 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
             __end3__e398291c = ImVector_ImDrawList____end__151818158d(((ImVector_ImDrawList_ptr *)(__range3__cd83e888)));
             for (; __begin3__df283961 != __end3__e398291c; ++__begin3__df283961) {
                 draw_list = (*__begin3__df283961);
-                imgui_i_debug_node_draw_list(imgui_c89_ctx, 0, viewport__826e7c63, draw_list, "DrawList");
+                imgui__debug_node_draw_list(imgui_c89_ctx, 0, viewport__826e7c63, draw_list, "DrawList");
             }
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "Viewports", "Viewports (%d)", g->Viewports.Size)) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "Viewports", "Viewports (%d)", g->Viewports.Size)) {
         imgui_set_next_item_open(imgui_c89_ctx, 1, ImGuiCond_Once);
         if (imgui_tree_node(imgui_c89_ctx, "Windows Minimap")) {
             RenderViewportsThumbnails__ebe091b375(imgui_c89_ctx);
@@ -13056,7 +13056,7 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
         __end2__654bfbdc = ImVector_ImGuiViewportP____end__0f9152e835(((ImVector_ImGuiViewportP_ptr *)(__range2__1bd70648)));
         for (; __begin2__1f7bcd73 != __end2__654bfbdc; ++__begin2__1f7bcd73) {
             viewport__dc0c3736 = (*__begin2__1f7bcd73);
-            imgui_i_debug_node_viewport(imgui_c89_ctx, viewport__dc0c3736);
+            imgui__debug_node_viewport(imgui_c89_ctx, viewport__dc0c3736);
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
@@ -13065,67 +13065,67 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
     __end1__4dbb86ad = ImVector_ImFontAtlas____end__5b2cfe8a63(((ImVector_ImFontAtlas_ptr *)(__range1__9b1c71f8)));
     for (; __begin1__a688ffe8 != __end1__4dbb86ad; ++__begin1__a688ffe8) {
         atlas = (*__begin1__a688ffe8);
-        if (imgui_i_tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)(atlas)), "Fonts (%d), Textures (%d)", atlas->Fonts.Size, atlas->TexList.Size)) {
-            imgui_i_show_font_atlas(imgui_c89_ctx, atlas);
+        if (imgui__tree_node_const_pointer_string_varargs(imgui_c89_ctx, ((void *)(atlas)), "Fonts (%d), Textures (%d)", atlas->Fonts.Size, atlas->TexList.Size)) {
+            imgui__show_font_atlas(imgui_c89_ctx, atlas);
             imgui_tree_pop(imgui_c89_ctx);
         }
     }
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "Popups", "Popups (%d)", g->OpenPopupStack.Size)) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "Popups", "Popups (%d)", g->OpenPopupStack.Size)) {
         __range2__f38efb28 = &(g->OpenPopupStack);
         __begin2__3bec2136 = ImVector_ImGuiPopupData__begin__54803cb369(((ImVector_ImGuiPopupData *)(__range2__f38efb28)));
         __end2__e1ce4b7b = ImVector_ImGuiPopupData__end__6d6bad0146(((ImVector_ImGuiPopupData *)(__range2__f38efb28)));
         for (; __begin2__3bec2136 != __end2__e1ce4b7b; ++__begin2__3bec2136) {
             popup_data = &((*__begin2__3bec2136));
             window__5c025145 = popup_data->Window;
-            imgui_i_bullet_text(imgui_c89_ctx, "PopupID: %08x, Window: '%s' (%s%s), RestoreNavWindow '%s', ParentWindow '%s'", popup_data->PopupId, (window__5c025145 ? window__5c025145->Name : "NULL"), ((window__5c025145 && (window__5c025145->Flags & ImGuiWindowFlags_ChildWindow)) ? "Child;" : ""), ((window__5c025145 && (window__5c025145->Flags & ImGuiWindowFlags_ChildMenu)) ? "Menu;" : ""), (popup_data->RestoreNavWindow ? popup_data->RestoreNavWindow->Name : "NULL"), ((window__5c025145 && window__5c025145->ParentWindow) ? window__5c025145->ParentWindow->Name : "NULL"));
+            imgui__bullet_text(imgui_c89_ctx, "PopupID: %08x, Window: '%s' (%s%s), RestoreNavWindow '%s', ParentWindow '%s'", popup_data->PopupId, (window__5c025145 ? window__5c025145->Name : "NULL"), ((window__5c025145 && (window__5c025145->Flags & ImGuiWindowFlags_ChildWindow)) ? "Child;" : ""), ((window__5c025145 && (window__5c025145->Flags & ImGuiWindowFlags_ChildMenu)) ? "Menu;" : ""), (popup_data->RestoreNavWindow ? popup_data->RestoreNavWindow->Name : "NULL"), ((window__5c025145 && window__5c025145->ParentWindow) ? window__5c025145->ParentWindow->Name : "NULL"));
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "TabBars", "Tab Bars (%d)", ImPool_ImGuiTabBar__GetAliveCount__6a4edfd46b(((ImPool_ImGuiTabBar *)(&(g->TabBars)))))) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "TabBars", "Tab Bars (%d)", ImPool_ImGuiTabBar__GetAliveCount__6a4edfd46b(((ImPool_ImGuiTabBar *)(&(g->TabBars)))))) {
         n = 0;
         for (; n < ImPool_ImGuiTabBar__GetMapSize__c478c86514(((ImPool_ImGuiTabBar *)(&(g->TabBars)))); n++) {
             tab_bar = ImPool_ImGuiTabBar__TryGetMapData__3cee31d06b(((ImPool_ImGuiTabBar *)(&(g->TabBars))), n);
             if (tab_bar) {
                 imgui_push_id_const_pointer_none(imgui_c89_ctx, tab_bar);
-                imgui_i_debug_node_tab_bar(imgui_c89_ctx, tab_bar, "TabBar");
+                imgui__debug_node_tab_bar(imgui_c89_ctx, tab_bar, "TabBar");
                 imgui_pop_id(imgui_c89_ctx);
             }
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "Tables", "Tables (%d)", imgui_table_pool_alive_count(((ImGuiTablePool *)(&(g->Tables)))))) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "Tables", "Tables (%d)", imgui__table_pool_alive_count(((ImGuiTablePool *)(&(g->Tables)))))) {
         n__04b7c85b = 0;
-        for (; n__04b7c85b < imgui_table_pool_map_size(((ImGuiTablePool *)(&(g->Tables)))); n__04b7c85b++) {
-            table__3fd716c4 = imgui_table_pool_map_at(((ImGuiTablePool *)(&(g->Tables))), n__04b7c85b);
+        for (; n__04b7c85b < imgui__table_pool_map_size(((ImGuiTablePool *)(&(g->Tables)))); n__04b7c85b++) {
+            table__3fd716c4 = imgui__table_pool_map_at(((ImGuiTablePool *)(&(g->Tables))), n__04b7c85b);
             if (table__3fd716c4) {
-                imgui_i_debug_node_table(imgui_c89_ctx, table__3fd716c4);
+                imgui__debug_node_table(imgui_c89_ctx, table__3fd716c4);
             }
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
     if (imgui_tree_node(imgui_c89_ctx, "InputText")) {
-        imgui_i_debug_node_input_text_state(imgui_c89_ctx, (&g->InputTextState));
+        imgui__debug_node_input_text_state(imgui_c89_ctx, (&g->InputTextState));
         imgui_tree_pop(imgui_c89_ctx);
     }
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "TypingSelect", "TypingSelect (%d)", ((g->TypingSelectState.SearchBuffer[0] != 0) ? 1 : 0))) {
-        imgui_i_debug_node_typing_select_state(imgui_c89_ctx, (&g->TypingSelectState));
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "TypingSelect", "TypingSelect (%d)", ((g->TypingSelectState.SearchBuffer[0] != 0) ? 1 : 0))) {
+        imgui__debug_node_typing_select_state(imgui_c89_ctx, (&g->TypingSelectState));
         imgui_tree_pop(imgui_c89_ctx);
     }
-    if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "MultiSelect", "MultiSelect (%d)", ImPool_ImGuiMultiSelectState__GetAliveCount__f6de0a3560(((ImPool_ImGuiMultiSelectState *)(&(g->MultiSelectStorage)))))) {
+    if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "MultiSelect", "MultiSelect (%d)", ImPool_ImGuiMultiSelectState__GetAliveCount__f6de0a3560(((ImPool_ImGuiMultiSelectState *)(&(g->MultiSelectStorage)))))) {
         bs = (&g->BoxSelectState);
-        imgui_i_bullet_text(imgui_c89_ctx, "BoxSelect ID=0x%08X, Starting = %d, Active %d", bs->ID, bs->IsStarting, bs->IsActive);
+        imgui__bullet_text(imgui_c89_ctx, "BoxSelect ID=0x%08X, Starting = %d, Active %d", bs->ID, bs->IsStarting, bs->IsActive);
         n__91200d83 = 0;
         for (; n__91200d83 < ImPool_ImGuiMultiSelectState__GetMapSize__dc5ea40406(((ImPool_ImGuiMultiSelectState *)(&(g->MultiSelectStorage)))); n__91200d83++) {
             state = ImPool_ImGuiMultiSelectState__TryGetMapData__b557a99d12(((ImPool_ImGuiMultiSelectState *)(&(g->MultiSelectStorage))), n__91200d83);
             if (state) {
-                imgui_i_debug_node_multi_select_state(imgui_c89_ctx, state);
+                imgui__debug_node_multi_select_state(imgui_c89_ctx, state);
             }
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
     if (imgui_tree_node(imgui_c89_ctx, "Settings")) {
         if (imgui_small_button(imgui_c89_ctx, "Clear")) {
-            imgui_i_clear_ini_settings(imgui_c89_ctx);
+            imgui__clear_ini_settings(imgui_c89_ctx);
         }
         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
         if (imgui_small_button(imgui_c89_ctx, "Save to memory")) {
@@ -13137,13 +13137,13 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
         }
         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
         if (g->IO.IniFilename) {
-            imgui_i_text(imgui_c89_ctx, "\"%s\"", g->IO.IniFilename);
+            imgui__text(imgui_c89_ctx, "\"%s\"", g->IO.IniFilename);
         } else {
             imgui_text_unformatted(imgui_c89_ctx, "<NULL>", 0);
         }
-        imgui_i_text(imgui_c89_ctx, "SettingsDirtyTimer %.2f", g->SettingsDirtyTimer);
+        imgui__text(imgui_c89_ctx, "SettingsDirtyTimer %.2f", g->SettingsDirtyTimer);
         highlight_older_than_date = 0;
-        imgui_i_text(imgui_c89_ctx, "SessionDate: %d", platform_io->Platform_SessionDate);
+        imgui__text(imgui_c89_ctx, "SessionDate: %d", platform_io->Platform_SessionDate);
         imgui_begin_disabled(imgui_c89_ctx, (platform_io->Platform_SessionDate == 0));
         imgui_checkbox(imgui_c89_ctx, "Highlight Entries Older Than", (&cfg->SettingsHighlightOldEntries));
         imgui_set_next_item_width(imgui_c89_ctx, (imgui_get_font_size(imgui_c89_ctx) * 8));
@@ -13164,40 +13164,40 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
             cleanup_args._DiscardOlderThanDate = 0;
             cleanup_args.DiscardOlderThanMonths = cfg->SettingsDiscardMonths;
             if (imgui_button(imgui_c89_ctx, "Discard", (imgui_c89_temporary_14 = ImVec2_ImVec2_value__c798775144(0, 0), &imgui_c89_temporary_14))) {
-                imgui_i_cleanup_ini_settings(imgui_c89_ctx, (&cleanup_args));
+                imgui__cleanup_ini_settings(imgui_c89_ctx, (&cleanup_args));
             }
         }
         imgui_end_disabled(imgui_c89_ctx);
         imgui_checkbox(imgui_c89_ctx, "io.ConfigDebugIniSettings", (&io->ConfigDebugIniSettings));
-        if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "SettingsHandlers", "Settings handlers: (%d)", g->SettingsHandlers.Size)) {
+        if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "SettingsHandlers", "Settings handlers: (%d)", g->SettingsHandlers.Size)) {
             __range3__4798190a = &(g->SettingsHandlers);
             __begin3__9eb7b78c = ImVector_ImGuiSettingsHandler__begin__41c5d95368(((ImVector_ImGuiSettingsHandler *)(__range3__4798190a)));
             __end3__a0d222da = ImVector_ImGuiSettingsHandler__end__fffe75625d(((ImVector_ImGuiSettingsHandler *)(__range3__4798190a)));
             for (; __begin3__9eb7b78c != __end3__a0d222da; ++__begin3__9eb7b78c) {
                 handler = &((*__begin3__9eb7b78c));
-                imgui_i_bullet_text(imgui_c89_ctx, "\"%s\"", handler->TypeName);
+                imgui__bullet_text(imgui_c89_ctx, "\"%s\"", handler->TypeName);
             }
             imgui_tree_pop(imgui_c89_ctx);
         }
-        if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "SettingsWindows", "Settings packed data: Windows: %d bytes", ImChunkStream_ImGuiWindowSettings__size__9df9cf9d41(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows)))))) {
+        if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "SettingsWindows", "Settings packed data: Windows: %d bytes", ImChunkStream_ImGuiWindowSettings__size__9df9cf9d41(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows)))))) {
             settings = ImChunkStream_ImGuiWindowSettings__begin__5a1ae0aa1a(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows))));
             for (; settings != 0; settings = ImChunkStream_ImGuiWindowSettings__next_chunk__9e9f5eb3ed(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows))), settings)) {
                 ImGui_ShowMetricsWindow_bool____ScopedHighlightOlderThan_ScopedHighlightOlderThan__e5d8667f56(imgui_c89_ctx, &scoped_highlight, highlight_older_than_date, settings->LastUsedDate);
-                imgui_i_debug_node_window_settings(imgui_c89_ctx, settings);
+                imgui__debug_node_window_settings(imgui_c89_ctx, settings);
                 ImGui_ShowMetricsWindow_bool____ScopedHighlightOlderThan_dtor_ScopedHighlightOlderThan__0dbdfe63aa(imgui_c89_ctx, &(scoped_highlight));
             }
             imgui_tree_pop(imgui_c89_ctx);
         }
-        if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "SettingsTables", "Settings packed data: Tables: %d bytes", ImChunkStream_ImGuiTableSettings__size__b16421cfdf(((ImChunkStream_ImGuiTableSettings *)(&(g->SettingsTables)))))) {
+        if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "SettingsTables", "Settings packed data: Tables: %d bytes", ImChunkStream_ImGuiTableSettings__size__b16421cfdf(((ImChunkStream_ImGuiTableSettings *)(&(g->SettingsTables)))))) {
             settings__b27fd9ee = ImChunkStream_ImGuiTableSettings__begin__f2068e0963(((ImChunkStream_ImGuiTableSettings *)(&(g->SettingsTables))));
             for (; settings__b27fd9ee != 0; settings__b27fd9ee = ImChunkStream_ImGuiTableSettings__next_chunk__b4a289c3c3(((ImChunkStream_ImGuiTableSettings *)(&(g->SettingsTables))), settings__b27fd9ee)) {
                 ImGui_ShowMetricsWindow_bool____ScopedHighlightOlderThan_ScopedHighlightOlderThan__e5d8667f56(imgui_c89_ctx, &scoped_highlight__ab2889f7, highlight_older_than_date, settings__b27fd9ee->LastUsedDate);
-                imgui_i_debug_node_table_settings(imgui_c89_ctx, settings__b27fd9ee, 0);
+                imgui__debug_node_table_settings(imgui_c89_ctx, settings__b27fd9ee, 0);
                 ImGui_ShowMetricsWindow_bool____ScopedHighlightOlderThan_dtor_ScopedHighlightOlderThan__0dbdfe63aa(imgui_c89_ctx, &(scoped_highlight__ab2889f7));
             }
             imgui_tree_pop(imgui_c89_ctx);
         }
-        if (imgui_i_tree_node_string_string_varargs(imgui_c89_ctx, "SettingsIniData", "Settings unpacked data (.ini): %d bytes", imgui_text_buffer_size(((ImGuiTextBuffer *)(&(g->SettingsIniData)))))) {
+        if (imgui__tree_node_string_string_varargs(imgui_c89_ctx, "SettingsIniData", "Settings unpacked data (.ini): %d bytes", imgui_text_buffer_size(((ImGuiTextBuffer *)(&(g->SettingsIniData)))))) {
             imgui_input_text_multiline(imgui_c89_ctx, "##Ini", ((char *)(((void *)(imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->SettingsIniData)))))))), g->SettingsIniData.Buf.Size, (imgui_c89_temporary_15 = ImVec2_ImVec2_value__c798775144((-1.17549435E-38f), (imgui_get_text_line_height(imgui_c89_ctx) * 20)), &imgui_c89_temporary_15), ImGuiInputTextFlags_ReadOnly, 0, 0);
             imgui_tree_pop(imgui_c89_ctx);
         }
@@ -13205,111 +13205,111 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
     }
     if (imgui_tree_node(imgui_c89_ctx, "Memory allocations")) {
         info = (&g->DebugAllocInfo);
-        imgui_i_text(imgui_c89_ctx, "%d current allocations", (info->TotalAllocCount - info->TotalFreeCount));
-        imgui_i_text(imgui_c89_ctx, "Releasing selected unused buffers after: %.2f secs", g->IO.ConfigMemoryCompactTimer);
+        imgui__text(imgui_c89_ctx, "%d current allocations", (info->TotalAllocCount - info->TotalFreeCount));
+        imgui__text(imgui_c89_ctx, "Releasing selected unused buffers after: %.2f secs", g->IO.ConfigMemoryCompactTimer);
         if (imgui_small_button(imgui_c89_ctx, "GC now")) {
             g->GcCompactAll = 1;
         }
-        imgui_i_text(imgui_c89_ctx, "Recent frames with allocations:");
+        imgui__text(imgui_c89_ctx, "Recent frames with allocations:");
         buf_size = ((int)((sizeof(info->LastEntriesBuf) / sizeof((*info->LastEntriesBuf)))));
         n__fd7b5ca5 = (buf_size - 1);
         for (; n__fd7b5ca5 >= 0; n__fd7b5ca5--) {
             entry = (&info->LastEntriesBuf[(((info->LastEntriesIdx - n__fd7b5ca5) + buf_size) % buf_size)]);
-            imgui_i_bullet_text(imgui_c89_ctx, "Frame %06d: %+3d ( %2d alloc, %2d free )", entry->FrameCount, (entry->AllocCount - entry->FreeCount), entry->AllocCount, entry->FreeCount);
+            imgui__bullet_text(imgui_c89_ctx, "Frame %06d: %+3d ( %2d alloc, %2d free )", entry->FrameCount, (entry->AllocCount - entry->FreeCount), entry->AllocCount, entry->FreeCount);
             if (n__fd7b5ca5 == 0) {
                 imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-                imgui_i_text(imgui_c89_ctx, "<- %d frames ago", (g->FrameCount - entry->FrameCount));
+                imgui__text(imgui_c89_ctx, "<- %d frames ago", (g->FrameCount - entry->FrameCount));
             }
         }
         imgui_tree_pop(imgui_c89_ctx);
     }
     if (imgui_tree_node(imgui_c89_ctx, "Inputs")) {
-        imgui_i_text(imgui_c89_ctx, "KEYBOARD/GAMEPAD/MOUSE KEYS");
+        imgui__text(imgui_c89_ctx, "KEYBOARD/GAMEPAD/MOUSE KEYS");
         imgui_indent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "Keys down:");
+        imgui__text(imgui_c89_ctx, "Keys down:");
         key = ImGuiKey_NamedKey_BEGIN;
         for (; key < ImGuiKey_NamedKey_END; key = ((ImGuiKey)((key + 1)))) {
             if (!imgui_is_key_down(imgui_c89_ctx, key)) {
                 continue;
             }
             imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-            imgui_i_text(imgui_c89_ctx, (ImGui_IsNamedKey__b97b20a7d0(key) ? "\"%s\"" : "\"%s\" %d"), imgui_get_key_name(key), key);
+            imgui__text(imgui_c89_ctx, (ImGui_IsNamedKey__b97b20a7d0(key) ? "\"%s\"" : "\"%s\" %d"), imgui_get_key_name(key), key);
             imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-            imgui_i_text(imgui_c89_ctx, "(%.02f)", ImGui_GetKeyData__35ffe023d5(imgui_c89_ctx, key)->DownDuration);
+            imgui__text(imgui_c89_ctx, "(%.02f)", ImGui_GetKeyData__35ffe023d5(imgui_c89_ctx, key)->DownDuration);
         }
-        imgui_i_text(imgui_c89_ctx, "Keys pressed:");
+        imgui__text(imgui_c89_ctx, "Keys pressed:");
         key__2e839f82 = ImGuiKey_NamedKey_BEGIN;
         for (; key__2e839f82 < ImGuiKey_NamedKey_END; key__2e839f82 = ((ImGuiKey)((key__2e839f82 + 1)))) {
             if (!imgui_is_key_pressed(imgui_c89_ctx, key__2e839f82, 1)) {
                 continue;
             }
             imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-            imgui_i_text(imgui_c89_ctx, (ImGui_IsNamedKey__b97b20a7d0(key__2e839f82) ? "\"%s\"" : "\"%s\" %d"), imgui_get_key_name(key__2e839f82), key__2e839f82);
+            imgui__text(imgui_c89_ctx, (ImGui_IsNamedKey__b97b20a7d0(key__2e839f82) ? "\"%s\"" : "\"%s\" %d"), imgui_get_key_name(key__2e839f82), key__2e839f82);
         }
-        imgui_i_text(imgui_c89_ctx, "Keys released:");
+        imgui__text(imgui_c89_ctx, "Keys released:");
         key__cc84572e = ImGuiKey_NamedKey_BEGIN;
         for (; key__cc84572e < ImGuiKey_NamedKey_END; key__cc84572e = ((ImGuiKey)((key__cc84572e + 1)))) {
             if (!imgui_is_key_released(imgui_c89_ctx, key__cc84572e)) {
                 continue;
             }
             imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-            imgui_i_text(imgui_c89_ctx, (ImGui_IsNamedKey__b97b20a7d0(key__cc84572e) ? "\"%s\"" : "\"%s\" %d"), imgui_get_key_name(key__cc84572e), key__cc84572e);
+            imgui__text(imgui_c89_ctx, (ImGui_IsNamedKey__b97b20a7d0(key__cc84572e) ? "\"%s\"" : "\"%s\" %d"), imgui_get_key_name(key__cc84572e), key__cc84572e);
         }
-        imgui_i_text(imgui_c89_ctx, "Keys mods: %s%s%s%s", (io->KeyCtrl ? "Ctrl " : ""), (io->KeyShift ? "Shift " : ""), (io->KeyAlt ? "Alt " : ""), (io->KeySuper ? "Super " : ""));
-        imgui_i_text(imgui_c89_ctx, "Chars queue:");
+        imgui__text(imgui_c89_ctx, "Keys mods: %s%s%s%s", (io->KeyCtrl ? "Ctrl " : ""), (io->KeyShift ? "Shift " : ""), (io->KeyAlt ? "Alt " : ""), (io->KeySuper ? "Super " : ""));
+        imgui__text(imgui_c89_ctx, "Chars queue:");
         i = 0;
         for (; i < io->InputQueueCharacters.Size; i++) {
             c = (*(ImVector_unsigned_short__operator____6927bb710f(((ImVector_unsigned_short *)(&(io->InputQueueCharacters))), i)));
             imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-            imgui_i_text(imgui_c89_ctx, "'%c' (0x%04X)", (((c > 32) && (c <= 255)) ? ((char)(c)) : 63), c);
+            imgui__text(imgui_c89_ctx, "'%c' (0x%04X)", (((c > 32) && (c <= 255)) ? ((char)(c)) : 63), c);
         }
-        imgui_i_debug_render_keyboard_preview(imgui_c89_ctx, imgui_get_window_draw_list(imgui_c89_ctx));
+        imgui__debug_render_keyboard_preview(imgui_c89_ctx, imgui_get_window_draw_list(imgui_c89_ctx));
         imgui_unindent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "MOUSE STATE");
+        imgui__text(imgui_c89_ctx, "MOUSE STATE");
         imgui_indent(imgui_c89_ctx, 0.0f);
         if (imgui_is_mouse_pos_valid(imgui_c89_ctx, 0)) {
-            imgui_i_text(imgui_c89_ctx, "Mouse pos: (%g, %g)", io->MousePos.x, io->MousePos.y);
+            imgui__text(imgui_c89_ctx, "Mouse pos: (%g, %g)", io->MousePos.x, io->MousePos.y);
         } else {
-            imgui_i_text(imgui_c89_ctx, "Mouse pos: <INVALID>");
+            imgui__text(imgui_c89_ctx, "Mouse pos: <INVALID>");
         }
-        imgui_i_text(imgui_c89_ctx, "Mouse delta: (%g, %g)", io->MouseDelta.x, io->MouseDelta.y);
+        imgui__text(imgui_c89_ctx, "Mouse delta: (%g, %g)", io->MouseDelta.x, io->MouseDelta.y);
         count = ((int)((sizeof(io->MouseDown) / sizeof((*io->MouseDown)))));
-        imgui_i_text(imgui_c89_ctx, "Mouse down:");
+        imgui__text(imgui_c89_ctx, "Mouse down:");
         i__606e11ab = 0;
         for (; i__606e11ab < count; i__606e11ab++) {
             if (imgui_is_mouse_down(imgui_c89_ctx, i__606e11ab)) {
                 imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-                imgui_i_text(imgui_c89_ctx, "b%d (%.02f secs)", i__606e11ab, io->MouseDownDuration[i__606e11ab]);
+                imgui__text(imgui_c89_ctx, "b%d (%.02f secs)", i__606e11ab, io->MouseDownDuration[i__606e11ab]);
             }
         }
-        imgui_i_text(imgui_c89_ctx, "Mouse clicked:");
+        imgui__text(imgui_c89_ctx, "Mouse clicked:");
         i__047a2a76 = 0;
         for (; i__047a2a76 < count; i__047a2a76++) {
             if (imgui_is_mouse_clicked(imgui_c89_ctx, i__047a2a76, 0)) {
                 imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-                imgui_i_text(imgui_c89_ctx, "b%d (%d)", i__047a2a76, io->MouseClickedCount[i__047a2a76]);
+                imgui__text(imgui_c89_ctx, "b%d (%d)", i__047a2a76, io->MouseClickedCount[i__047a2a76]);
             }
         }
-        imgui_i_text(imgui_c89_ctx, "Mouse released:");
+        imgui__text(imgui_c89_ctx, "Mouse released:");
         i__84a4249a = 0;
         for (; i__84a4249a < count; i__84a4249a++) {
             if (imgui_is_mouse_released(imgui_c89_ctx, i__84a4249a)) {
                 imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-                imgui_i_text(imgui_c89_ctx, "b%d", i__84a4249a);
+                imgui__text(imgui_c89_ctx, "b%d", i__84a4249a);
             }
         }
-        imgui_i_text(imgui_c89_ctx, "Mouse wheel: %.1f", io->MouseWheel);
-        imgui_i_text(imgui_c89_ctx, "MouseStationaryTimer: %.2f", g->MouseStationaryTimer);
-        imgui_i_text(imgui_c89_ctx, "Mouse source: %s", GetMouseSourceName__d027b9c362(io->MouseSource));
-        imgui_i_text(imgui_c89_ctx, "Pen Pressure: %.1f", io->PenPressure);
+        imgui__text(imgui_c89_ctx, "Mouse wheel: %.1f", io->MouseWheel);
+        imgui__text(imgui_c89_ctx, "MouseStationaryTimer: %.2f", g->MouseStationaryTimer);
+        imgui__text(imgui_c89_ctx, "Mouse source: %s", GetMouseSourceName__d027b9c362(io->MouseSource));
+        imgui__text(imgui_c89_ctx, "Pen Pressure: %.1f", io->PenPressure);
         imgui_unindent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "MOUSE WHEELING");
+        imgui__text(imgui_c89_ctx, "MOUSE WHEELING");
         imgui_indent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "WheelingWindow: '%s'", (g->WheelingWindow ? g->WheelingWindow->Name : "NULL"));
-        imgui_i_text(imgui_c89_ctx, "WheelingWindowReleaseTimer: %.2f", g->WheelingWindowReleaseTimer);
-        imgui_i_text(imgui_c89_ctx, "WheelingAxisAvg[] = { %.3f, %.3f }, Main Axis: %s", g->WheelingAxisAvg.x, g->WheelingAxisAvg.y, ((g->WheelingAxisAvg.x > g->WheelingAxisAvg.y) ? "X" : ((g->WheelingAxisAvg.x < g->WheelingAxisAvg.y) ? "Y" : "<none>")));
+        imgui__text(imgui_c89_ctx, "WheelingWindow: '%s'", (g->WheelingWindow ? g->WheelingWindow->Name : "NULL"));
+        imgui__text(imgui_c89_ctx, "WheelingWindowReleaseTimer: %.2f", g->WheelingWindowReleaseTimer);
+        imgui__text(imgui_c89_ctx, "WheelingAxisAvg[] = { %.3f, %.3f }, Main Axis: %s", g->WheelingAxisAvg.x, g->WheelingAxisAvg.y, ((g->WheelingAxisAvg.x > g->WheelingAxisAvg.y) ? "X" : ((g->WheelingAxisAvg.x < g->WheelingAxisAvg.y) ? "Y" : "<none>")));
         imgui_unindent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "KEY OWNERS");
+        imgui__text(imgui_c89_ctx, "KEY OWNERS");
         imgui_indent(imgui_c89_ctx, 0.0f);
         if (imgui_begin_child_string(imgui_c89_ctx, "##owners", (imgui_c89_temporary_16 = ImVec2_ImVec2_value__c798775144((-1.17549435E-38f), (imgui_get_text_line_height_with_spacing(imgui_c89_ctx) * 8)), &imgui_c89_temporary_16), (ImGuiChildFlags_FrameStyle | ImGuiChildFlags_ResizeY), ImGuiWindowFlags_NoSavedSettings)) {
             key__1b67a12b = ImGuiKey_NamedKey_BEGIN;
@@ -13318,13 +13318,13 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
                 if (owner_data->OwnerCurr == ((ImGuiID)((-1)))) {
                     continue;
                 }
-                imgui_i_text(imgui_c89_ctx, "%s: 0x%08X%s", imgui_get_key_name(key__1b67a12b), owner_data->OwnerCurr, (owner_data->LockUntilRelease ? " LockUntilRelease" : (owner_data->LockThisFrame ? " LockThisFrame" : "")));
-                imgui_i_debug_locate_item_on_hover(imgui_c89_ctx, owner_data->OwnerCurr);
+                imgui__text(imgui_c89_ctx, "%s: 0x%08X%s", imgui_get_key_name(key__1b67a12b), owner_data->OwnerCurr, (owner_data->LockUntilRelease ? " LockUntilRelease" : (owner_data->LockThisFrame ? " LockThisFrame" : "")));
+                imgui__debug_locate_item_on_hover(imgui_c89_ctx, owner_data->OwnerCurr);
             }
         }
         imgui_end_child(imgui_c89_ctx);
         imgui_unindent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "SHORTCUT ROUTING");
+        imgui__text(imgui_c89_ctx, "SHORTCUT ROUTING");
         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
         MetricsHelpMarker__e17b4bb69f(imgui_c89_ctx, "Declared shortcut routes automatically set key owner when mods matches.");
         imgui_indent(imgui_c89_ctx, 0.0f);
@@ -13336,11 +13336,11 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
                 for (; idx != (-1); ) {
                     routing_data = (&(*(ImVector_ImGuiKeyRoutingData__operator____babc40ac17(((ImVector_ImGuiKeyRoutingData *)(&(rt->Entries))), idx))));
                     key_chord = (key__91eee3a3 | routing_data->Mods);
-                    imgui_i_text(imgui_c89_ctx, "%s: 0x%08X (scored %d)", imgui_i_get_key_chord_name(imgui_c89_ctx, key_chord), routing_data->RoutingCurr, routing_data->RoutingCurrScore);
-                    imgui_i_debug_locate_item_on_hover(imgui_c89_ctx, routing_data->RoutingCurr);
+                    imgui__text(imgui_c89_ctx, "%s: 0x%08X (scored %d)", imgui__get_key_chord_name(imgui_c89_ctx, key_chord), routing_data->RoutingCurr, routing_data->RoutingCurrScore);
+                    imgui__debug_locate_item_on_hover(imgui_c89_ctx, routing_data->RoutingCurr);
                     if (g->IO.ConfigDebugIsDebuggerPresent) {
                         imgui_same_line(imgui_c89_ctx, 0.0f, (-1.0f));
-                        if (imgui_i_debug_break_button(imgui_c89_ctx, "**DebugBreak**", "in SetShortcutRouting() for this KeyChord")) {
+                        if (imgui__debug_break_button(imgui_c89_ctx, "**DebugBreak**", "in SetShortcutRouting() for this KeyChord")) {
                             g->DebugBreakInShortcutRouting = key_chord;
                         }
                     }
@@ -13349,50 +13349,50 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
             }
         }
         imgui_end_child(imgui_c89_ctx);
-        imgui_i_text(imgui_c89_ctx, "(ActiveIdUsing: AllKeyboardKeys: %d, NavDirMask: 0x%X)", g->ActiveIdUsingAllKeyboardKeys, g->ActiveIdUsingNavDirMask);
+        imgui__text(imgui_c89_ctx, "(ActiveIdUsing: AllKeyboardKeys: %d, NavDirMask: 0x%X)", g->ActiveIdUsingAllKeyboardKeys, g->ActiveIdUsingNavDirMask);
         imgui_unindent(imgui_c89_ctx, 0.0f);
         imgui_tree_pop(imgui_c89_ctx);
     }
     if (imgui_tree_node(imgui_c89_ctx, "Internal state")) {
-        imgui_i_text(imgui_c89_ctx, "WINDOWING");
+        imgui__text(imgui_c89_ctx, "WINDOWING");
         imgui_indent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "HoveredWindow: '%s'", (g->HoveredWindow ? g->HoveredWindow->Name : "NULL"));
-        imgui_i_text(imgui_c89_ctx, "HoveredWindow->Root: '%s'", (g->HoveredWindow ? g->HoveredWindow->RootWindow->Name : "NULL"));
-        imgui_i_text(imgui_c89_ctx, "HoveredWindowUnderMovingWindow: '%s'", (g->HoveredWindowUnderMovingWindow ? g->HoveredWindowUnderMovingWindow->Name : "NULL"));
-        imgui_i_text(imgui_c89_ctx, "MovingWindow: '%s'", (g->MovingWindow ? g->MovingWindow->Name : "NULL"));
+        imgui__text(imgui_c89_ctx, "HoveredWindow: '%s'", (g->HoveredWindow ? g->HoveredWindow->Name : "NULL"));
+        imgui__text(imgui_c89_ctx, "HoveredWindow->Root: '%s'", (g->HoveredWindow ? g->HoveredWindow->RootWindow->Name : "NULL"));
+        imgui__text(imgui_c89_ctx, "HoveredWindowUnderMovingWindow: '%s'", (g->HoveredWindowUnderMovingWindow ? g->HoveredWindowUnderMovingWindow->Name : "NULL"));
+        imgui__text(imgui_c89_ctx, "MovingWindow: '%s'", (g->MovingWindow ? g->MovingWindow->Name : "NULL"));
         imgui_unindent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "ITEMS");
+        imgui__text(imgui_c89_ctx, "ITEMS");
         imgui_indent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "ActiveId: 0x%08X/0x%08X (%.2f sec), AllowOverlap: %d, Source: %s", g->ActiveId, g->ActiveIdPreviousFrame, g->ActiveIdTimer, g->ActiveIdAllowOverlap, GetInputSourceName__2efdd5bc58(g->ActiveIdSource));
-        imgui_i_debug_locate_item_on_hover(imgui_c89_ctx, g->ActiveId);
-        imgui_i_text(imgui_c89_ctx, "ActiveIdWindow: '%s'", (g->ActiveIdWindow ? g->ActiveIdWindow->Name : "NULL"));
-        imgui_i_text(imgui_c89_ctx, "ActiveIdUsing: AllKeyboardKeys: %d, NavDirMask: %X", g->ActiveIdUsingAllKeyboardKeys, g->ActiveIdUsingNavDirMask);
-        imgui_i_text(imgui_c89_ctx, "HoveredId: 0x%08X (%.2f sec), AllowOverlap: %d", g->HoveredIdPreviousFrame, g->HoveredIdTimer, g->HoveredIdAllowOverlap);
-        imgui_i_text(imgui_c89_ctx, "HoverItemDelayId: 0x%08X, Timer: %.2f, ClearTimer: %.2f", g->HoverItemDelayId, g->HoverItemDelayTimer, g->HoverItemDelayClearTimer);
-        imgui_i_text(imgui_c89_ctx, "DragDrop: %d, SourceId = 0x%08X, Payload \"%s\" (%d bytes)", g->DragDropActive, g->DragDropPayload.SourceId, g->DragDropPayload.DataType, g->DragDropPayload.DataSize);
-        imgui_i_debug_locate_item_on_hover(imgui_c89_ctx, g->DragDropPayload.SourceId);
+        imgui__text(imgui_c89_ctx, "ActiveId: 0x%08X/0x%08X (%.2f sec), AllowOverlap: %d, Source: %s", g->ActiveId, g->ActiveIdPreviousFrame, g->ActiveIdTimer, g->ActiveIdAllowOverlap, GetInputSourceName__2efdd5bc58(g->ActiveIdSource));
+        imgui__debug_locate_item_on_hover(imgui_c89_ctx, g->ActiveId);
+        imgui__text(imgui_c89_ctx, "ActiveIdWindow: '%s'", (g->ActiveIdWindow ? g->ActiveIdWindow->Name : "NULL"));
+        imgui__text(imgui_c89_ctx, "ActiveIdUsing: AllKeyboardKeys: %d, NavDirMask: %X", g->ActiveIdUsingAllKeyboardKeys, g->ActiveIdUsingNavDirMask);
+        imgui__text(imgui_c89_ctx, "HoveredId: 0x%08X (%.2f sec), AllowOverlap: %d", g->HoveredIdPreviousFrame, g->HoveredIdTimer, g->HoveredIdAllowOverlap);
+        imgui__text(imgui_c89_ctx, "HoverItemDelayId: 0x%08X, Timer: %.2f, ClearTimer: %.2f", g->HoverItemDelayId, g->HoverItemDelayTimer, g->HoverItemDelayClearTimer);
+        imgui__text(imgui_c89_ctx, "DragDrop: %d, SourceId = 0x%08X, Payload \"%s\" (%d bytes)", g->DragDropActive, g->DragDropPayload.SourceId, g->DragDropPayload.DataType, g->DragDropPayload.DataSize);
+        imgui__debug_locate_item_on_hover(imgui_c89_ctx, g->DragDropPayload.SourceId);
         imgui_unindent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "NAV,FOCUS");
+        imgui__text(imgui_c89_ctx, "NAV,FOCUS");
         imgui_indent(imgui_c89_ctx, 0.0f);
-        imgui_i_text(imgui_c89_ctx, "NavWindow: '%s'", (g->NavWindow ? g->NavWindow->Name : "NULL"));
-        imgui_i_text(imgui_c89_ctx, "NavId: 0x%08X, NavLayer: %d", g->NavId, g->NavLayer);
-        imgui_i_debug_locate_item_on_hover(imgui_c89_ctx, g->NavId);
-        imgui_i_text(imgui_c89_ctx, "NavInputSource: %s", GetInputSourceName__2efdd5bc58(g->NavInputSource));
-        imgui_i_text(imgui_c89_ctx, "NavLastValidSelectionUserData = %lld (0x%llX)", g->NavLastValidSelectionUserData, g->NavLastValidSelectionUserData);
-        imgui_i_text(imgui_c89_ctx, "NavActive: %d, NavVisible: %d", g->IO.NavActive, g->IO.NavVisible);
-        imgui_i_text(imgui_c89_ctx, "NavActivateId/DownId/PressedId: %08X/%08X/%08X", g->NavActivateId, g->NavActivateDownId, g->NavActivatePressedId);
-        imgui_i_text(imgui_c89_ctx, "NavActivateFlags: %04X", g->NavActivateFlags);
-        imgui_i_text(imgui_c89_ctx, "NavCursorVisible: %d, NavHighlightItemUnderNav: %d", g->NavCursorVisible, g->NavHighlightItemUnderNav);
-        imgui_i_text(imgui_c89_ctx, "NavFocusScopeId = 0x%08X", g->NavFocusScopeId);
-        imgui_i_text(imgui_c89_ctx, "NavFocusRoute[] = ");
+        imgui__text(imgui_c89_ctx, "NavWindow: '%s'", (g->NavWindow ? g->NavWindow->Name : "NULL"));
+        imgui__text(imgui_c89_ctx, "NavId: 0x%08X, NavLayer: %d", g->NavId, g->NavLayer);
+        imgui__debug_locate_item_on_hover(imgui_c89_ctx, g->NavId);
+        imgui__text(imgui_c89_ctx, "NavInputSource: %s", GetInputSourceName__2efdd5bc58(g->NavInputSource));
+        imgui__text(imgui_c89_ctx, "NavLastValidSelectionUserData = %lld (0x%llX)", g->NavLastValidSelectionUserData, g->NavLastValidSelectionUserData);
+        imgui__text(imgui_c89_ctx, "NavActive: %d, NavVisible: %d", g->IO.NavActive, g->IO.NavVisible);
+        imgui__text(imgui_c89_ctx, "NavActivateId/DownId/PressedId: %08X/%08X/%08X", g->NavActivateId, g->NavActivateDownId, g->NavActivatePressedId);
+        imgui__text(imgui_c89_ctx, "NavActivateFlags: %04X", g->NavActivateFlags);
+        imgui__text(imgui_c89_ctx, "NavCursorVisible: %d, NavHighlightItemUnderNav: %d", g->NavCursorVisible, g->NavHighlightItemUnderNav);
+        imgui__text(imgui_c89_ctx, "NavFocusScopeId = 0x%08X", g->NavFocusScopeId);
+        imgui__text(imgui_c89_ctx, "NavFocusRoute[] = ");
         path_n = (g->NavFocusRoute.Size - 1);
         for (; path_n >= 0; path_n--) {
             focus_scope = &((*(ImVector_ImGuiFocusScopeData__operator____1a421e0b66(((ImVector_ImGuiFocusScopeData *)(&(g->NavFocusRoute))), path_n))));
             imgui_same_line(imgui_c89_ctx, 0.0f, 0.0f);
-            imgui_i_text(imgui_c89_ctx, "0x%08X/", focus_scope->ID);
-            imgui_i_set_item_tooltip(imgui_c89_ctx, "In window \"%s\"", imgui_i_find_window_by_id(imgui_c89_ctx, focus_scope->WindowID)->Name);
+            imgui__text(imgui_c89_ctx, "0x%08X/", focus_scope->ID);
+            imgui__set_item_tooltip(imgui_c89_ctx, "In window \"%s\"", imgui__find_window_by_id(imgui_c89_ctx, focus_scope->WindowID)->Name);
         }
-        imgui_i_text(imgui_c89_ctx, "NavWindowingTarget: '%s'", (g->NavWindowingTarget ? g->NavWindowingTarget->Name : "NULL"));
+        imgui__text(imgui_c89_ctx, "NavWindowingTarget: '%s'", (g->NavWindowingTarget ? g->NavWindowingTarget->Name : "NULL"));
         imgui_unindent(imgui_c89_ctx, 0.0f);
         imgui_tree_pop(imgui_c89_ctx);
     }
@@ -13411,7 +13411,7 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
                 imgui_draw_list_add_rect_float_draw_flags(imgui_c89_ctx, ((ImDrawList *)(draw_list__03b37842)), &(r__11b23a7f.Min), &(r__11b23a7f.Max), ((((((ImU32)(255)) << 24) | (((ImU32)(128)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(255)) << 0)), 0.0f, 1.0f, 0);
             }
             if (cfg->ShowWindowsBeginOrder && (!(window__59db2f6f->Flags & ImGuiWindowFlags_ChildWindow))) {
-                imgui_i_im_format_string(buf__25cfbfad, ((int)((sizeof(buf__25cfbfad) / sizeof((*buf__25cfbfad))))), "%d", window__59db2f6f->BeginOrderWithinContext);
+                imgui__im_format_string(buf__25cfbfad, ((int)((sizeof(buf__25cfbfad) / sizeof((*buf__25cfbfad))))), "%d", window__59db2f6f->BeginOrderWithinContext);
                 font_size = imgui_get_font_size(imgui_c89_ctx);
                 imgui_draw_list_add_rect_filled(imgui_c89_ctx, ((ImDrawList *)(draw_list__03b37842)), &(window__59db2f6f->Pos), (imgui_c89_temporary_18 = operator___29d06b7915(&(window__59db2f6f->Pos), (imgui_c89_temporary_19 = ImVec2_ImVec2_value__c798775144(font_size, font_size), &imgui_c89_temporary_19)), &imgui_c89_temporary_18), ((((((ImU32)(255)) << 24) | (((ImU32)(100)) << 16)) | (((ImU32)(100)) << 8)) | (((ImU32)(200)) << 0)), 0.0f, 0);
                 imgui_draw_list_add_text_vec2_u32_string_string_none_none_none_none(imgui_c89_ctx, ((ImDrawList *)(draw_list__03b37842)), &(window__59db2f6f->Pos), ((((((ImU32)(255)) << 24) | (((ImU32)(255)) << 16)) | (((ImU32)(255)) << 8)) | (((ImU32)(255)) << 0)), buf__25cfbfad, 0);
@@ -13420,8 +13420,8 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
     }
     if (cfg->ShowTablesRects) {
         table_n__f90acaac = 0;
-        for (; table_n__f90acaac < imgui_table_pool_map_size(((ImGuiTablePool *)(&(g->Tables)))); table_n__f90acaac++) {
-            table__2f294bca = imgui_table_pool_map_at(((ImGuiTablePool *)(&(g->Tables))), table_n__f90acaac);
+        for (; table_n__f90acaac < imgui__table_pool_map_size(((ImGuiTablePool *)(&(g->Tables)))); table_n__f90acaac++) {
+            table__2f294bca = imgui__table_pool_map_at(((ImGuiTablePool *)(&(g->Tables))), table_n__f90acaac);
             if ((table__2f294bca == 0) || (table__2f294bca->LastFrameActive < (g->FrameCount - 1))) {
                 continue;
             }
@@ -13443,7 +13443,7 @@ void imgui_show_metrics_window(ImGuiContext *imgui_c89_ctx, unsigned char * p_op
     imgui_end(imgui_c89_ctx);
 }
 
-void imgui_i_shutdown(ImGuiContext *imgui_c89_ctx)
+void imgui__shutdown(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImFontAtlas ** __begin1;
@@ -13454,14 +13454,14 @@ void imgui_i_shutdown(ImGuiContext *imgui_c89_ctx)
     g = &((*imgui_c89_ctx));
     do {
         if (!(g->IO.BackendPlatformUserData == 0)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Forgot to shutdown Platform backend?")) {
+            if (imgui__error_log(imgui_c89_ctx, "Forgot to shutdown Platform backend?")) {
                 imgui_c89_expect((!((g->IO.BackendPlatformUserData == 0) && "Forgot to shutdown Platform backend?")), 0) ? imgui_c89_assert_id(36) : ((void)(0));
             }
         }
     } while (0);
     do {
         if (!(g->IO.BackendRendererUserData == 0)) {
-            if (imgui_i_error_log(imgui_c89_ctx, "Forgot to shutdown Renderer backend?")) {
+            if (imgui__error_log(imgui_c89_ctx, "Forgot to shutdown Renderer backend?")) {
                 imgui_c89_expect((!((g->IO.BackendRendererUserData == 0) && "Forgot to shutdown Renderer backend?")), 0) ? imgui_c89_assert_id(37) : ((void)(0));
             }
         }
@@ -13471,7 +13471,7 @@ void imgui_i_shutdown(ImGuiContext *imgui_c89_ctx)
     __end1 = ImVector_ImFontAtlas____end__5b2cfe8a63(((ImVector_ImFontAtlas_ptr *)(__range1)));
     for (; __begin1 != __end1; ++__begin1) {
         atlas = (*__begin1);
-        imgui_i_unregister_font_atlas(imgui_c89_ctx, atlas);
+        imgui__unregister_font_atlas(imgui_c89_ctx, atlas);
         if (atlas->OwnerContext == (&(*g))) {
             imgui_c89_expect((!((atlas->RefCount == 0) && "Destroying context owning a ImFontAtlas which is still used elsewhere!")), 0) ? imgui_c89_assert_id(38) : ((void)(0));
             if (atlas->RefCount == 0) {
@@ -13487,7 +13487,7 @@ void imgui_i_shutdown(ImGuiContext *imgui_c89_ctx)
     if (g->SettingsLoaded && (g->IO.IniFilename != 0)) {
         imgui_save_ini_settings_to_disk(imgui_c89_ctx, g->IO.IniFilename);
     }
-    imgui_i_call_context_hooks((&(*g)), ImGuiContextHookType_Shutdown);
+    imgui__call_context_hooks((&(*g)), ImGuiContextHookType_Shutdown);
     ImVector_ImGuiWindow____clear_delete__5769ba6525(imgui_c89_ctx, ((ImVector_ImGuiWindow_ptr *)(&(g->Windows))));
     ImVector_ImGuiWindow____clear__1d17ee68c0(imgui_c89_ctx, ((ImVector_ImGuiWindow_ptr *)(&(g->WindowsFocusOrder))));
     ImVector_ImGuiWindow____clear__1d17ee68c0(imgui_c89_ctx, ((ImVector_ImGuiWindow_ptr *)(&(g->WindowsTempSortBuffer))));
@@ -13510,7 +13510,7 @@ void imgui_i_shutdown(ImGuiContext *imgui_c89_ctx)
     ImVector_ImGuiPtrOrIndex__clear__8f5c5fb88c(imgui_c89_ctx, ((ImVector_ImGuiPtrOrIndex *)(&(g->CurrentTabBarStack))));
     ImVector_ImGuiShrinkWidthItem__clear__1036700073(imgui_c89_ctx, ((ImVector_ImGuiShrinkWidthItem *)(&(g->ShrinkWidthBuffer))));
     ImVector_ImGuiListClipperData__clear_destruct__92cd8ecdab(imgui_c89_ctx, ((ImVector_ImGuiListClipperData *)(&(g->ClipperTempData))));
-    imgui_table_pool_clear(imgui_c89_ctx, ((ImGuiTablePool *)(&(g->Tables))));
+    imgui__table_pool_clear(imgui_c89_ctx, ((ImGuiTablePool *)(&(g->Tables))));
     imgui_c89_vector_clear(imgui_c89_ctx, (void **)&g->TablesTempData, &g->TablesTempDataSize, &g->TablesTempDataCapacity);
     ImVector_ImDrawChannel__clear__de3ff3e70a(imgui_c89_ctx, ((ImVector_ImDrawChannel *)(&(g->DrawChannelsTempMergeBuffer))));
     ImPool_ImGuiMultiSelectState__Clear__71ce0ef2a2(imgui_c89_ctx, ((ImPool_ImGuiMultiSelectState *)(&(g->MultiSelectStorage))));
@@ -13524,7 +13524,7 @@ void imgui_i_shutdown(ImGuiContext *imgui_c89_ctx)
     ImVector_ImGuiSettingsHandler__clear__faea943eb5(imgui_c89_ctx, ((ImVector_ImGuiSettingsHandler *)(&(g->SettingsHandlers))));
     if (g->LogFile) {
         if (g->LogFile != __stdoutp) {
-            imgui_i_im_file_close(g->LogFile);
+            imgui__im_file_close(g->LogFile);
         }
         g->LogFile = 0;
     }
@@ -13534,20 +13534,20 @@ void imgui_i_shutdown(ImGuiContext *imgui_c89_ctx)
     g->Initialized = 0;
 }
 
-void imgui_i_start_mouse_moving_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__start_mouse_moving_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
     unsigned char can_move_window;
 
     g = &((*imgui_c89_ctx));
-    imgui_i_focus_window(imgui_c89_ctx, window, 0);
-    imgui_i_set_active_id(imgui_c89_ctx, window->MoveId, window);
+    imgui__focus_window(imgui_c89_ctx, window, 0);
+    imgui__set_active_id(imgui_c89_ctx, window->MoveId, window);
     if (g->IO.ConfigNavCursorVisibleAuto) {
         g->NavCursorVisible = 0;
     }
     g->ActiveIdClickOffset = operator___cb7271567d(&(g->IO.MouseClickedPos[0]), &(window->RootWindow->Pos));
     g->ActiveIdNoClearOnFocusLoss = 1;
-    imgui_i_set_active_id_using_all_keyboard_keys(imgui_c89_ctx);
+    imgui__set_active_id_using_all_keyboard_keys(imgui_c89_ctx);
     can_move_window = 1;
     if ((window->Flags & ImGuiWindowFlags_NoMove) || (window->RootWindow->Flags & ImGuiWindowFlags_NoMove)) {
         can_move_window = 0;
@@ -13557,7 +13557,7 @@ void imgui_i_start_mouse_moving_window(ImGuiContext *imgui_c89_ctx, ImGuiWindow 
     }
 }
 
-void imgui_i_stop_mouse_moving_window(ImGuiContext *imgui_c89_ctx)
+void imgui__stop_mouse_moving_window(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
 
@@ -13578,7 +13578,7 @@ ImGuiTableInstanceData * ImGui_TableGetInstanceData__27767b51c6(ImGuiTable * tab
     return &(*((ImGuiTableInstanceData *)imgui_c89_vector_at(table->InstanceDataExtra, table->InstanceDataExtraSize, (instance_no - 1), sizeof(*table->InstanceDataExtra), 2262)));
 }
 
-void imgui_i_teleport_mouse_pos(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos)
+void imgui__teleport_mouse_pos(ImGuiContext *imgui_c89_ctx, const ImVec2 * pos)
 {
     ImGuiContext * g;
 
@@ -13596,7 +13596,7 @@ unsigned char ImGui_TempInputIsActive__3488146d16(ImGuiContext *imgui_c89_ctx, I
     return ((g->TempInputId == id) && (g->ActiveId == id)) || (g->InputTextDeactivatedState.ID == id);
 }
 
-unsigned char imgui_i_test_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID owner_id)
+unsigned char imgui__test_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key, ImGuiID owner_id)
 {
     ImGuiContext * g;
     ImGuiKeyOwnerData * owner_data;
@@ -13625,14 +13625,14 @@ unsigned char imgui_i_test_key_owner(ImGuiContext *imgui_c89_ctx, ImGuiKey key, 
     return 1;
 }
 
-unsigned char imgui_i_test_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiID owner_id)
+unsigned char imgui__test_shortcut_routing(ImGuiContext *imgui_c89_ctx, ImGuiKeyChord key_chord, ImGuiID owner_id)
 {
     ImGuiID routing_id;
     ImGuiKeyRoutingData * routing_data;
 
     routing_id = GetRoutingIdFromOwnerId__9ba6383c9a(imgui_c89_ctx, owner_id);
-    key_chord = imgui_i_fixup_key_chord(key_chord);
-    routing_data = imgui_i_get_shortcut_routing_data(imgui_c89_ctx, key_chord);
+    key_chord = imgui__fixup_key_chord(key_chord);
+    routing_data = imgui__get_shortcut_routing_data(imgui_c89_ctx, key_chord);
     return routing_data->RoutingCurr == routing_id;
 }
 
@@ -13647,7 +13647,7 @@ void imgui_unindent(ImGuiContext *imgui_c89_ctx, float indent_w)
     window->DC.CursorPos.x = ((window->Pos.x + window->DC.Indent.x) + window->DC.ColumnsOffset.x);
 }
 
-void imgui_i_unregister_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
+void imgui__unregister_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
 {
     ImGuiContext * g;
     ImTextureData ** __begin1;
@@ -13657,7 +13657,7 @@ void imgui_i_unregister_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * at
 
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!(atlas->RefCount > 0)), 0) ? imgui_c89_assert_id(108) : ((void)(0));
-    imgui_i_im_font_atlas_remove_draw_list_shared_data(atlas, (&g->DrawListSharedData));
+    imgui__im_font_atlas_remove_draw_list_shared_data(atlas, (&g->DrawListSharedData));
     ImVector_ImFontAtlas____find_erase__b636e397c6(((ImVector_ImFontAtlas_ptr *)(&(g->FontAtlases))), &(atlas));
     atlas->RefCount--;
     __range1 = &(atlas->TexList);
@@ -13669,7 +13669,7 @@ void imgui_i_unregister_font_atlas(ImGuiContext *imgui_c89_ctx, ImFontAtlas * at
     }
 }
 
-void imgui_i_unregister_user_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * tex)
+void imgui__unregister_user_texture(ImGuiContext *imgui_c89_ctx, ImTextureData * tex)
 {
     ImGuiContext * g;
 
@@ -13679,7 +13679,7 @@ void imgui_i_unregister_user_texture(ImGuiContext *imgui_c89_ctx, ImTextureData 
     ImVector_ImTextureData____find_erase__1716c03711(((ImVector_ImTextureData_ptr *)(&(g->UserTextures))), &(tex));
 }
 
-void imgui_i_update_current_font_size(ImGuiContext *imgui_c89_ctx, float restore_font_size_after_scaling)
+void imgui__update_current_font_size(ImGuiContext *imgui_c89_ctx, float restore_font_size_after_scaling)
 {
     ImGuiContext * g;
     ImGuiWindow * window;
@@ -13722,7 +13722,7 @@ void imgui_i_update_current_font_size(ImGuiContext *imgui_c89_ctx, float restore
     g->DrawListSharedData.FontScale = g->FontBakedScale;
 }
 
-void imgui_i_update_hovered_window_and_capture_flags(ImGuiContext *imgui_c89_ctx, const ImVec2 * mouse_pos)
+void imgui__update_hovered_window_and_capture_flags(ImGuiContext *imgui_c89_ctx, const ImVec2 * mouse_pos)
 {
     ImGuiContext * g;
     ImGuiIO * io;
@@ -13741,10 +13741,10 @@ void imgui_i_update_hovered_window_and_capture_flags(ImGuiContext *imgui_c89_ctx
     io = &(g->IO);
     g->WindowsBorderHoverPadding = ImMax__3c7b1bb7d1(ImMax__3c7b1bb7d1(g->Style.TouchExtraPadding.x, g->Style.TouchExtraPadding.y), g->Style.WindowBorderHoverPadding);
     clear_hovered_windows = 0;
-    imgui_i_find_hovered_window_ex(imgui_c89_ctx, mouse_pos, 0, (&g->HoveredWindow), (&g->HoveredWindowUnderMovingWindow));
+    imgui__find_hovered_window_ex(imgui_c89_ctx, mouse_pos, 0, (&g->HoveredWindow), (&g->HoveredWindowUnderMovingWindow));
     g->HoveredWindowBeforeClear = g->HoveredWindow;
-    modal_window = imgui_i_get_top_most_popup_modal(imgui_c89_ctx);
-    if ((modal_window && g->HoveredWindow) && (!imgui_i_is_window_within_begin_stack_of(g->HoveredWindow->RootWindow, modal_window))) {
+    modal_window = imgui__get_top_most_popup_modal(imgui_c89_ctx);
+    if ((modal_window && g->HoveredWindow) && (!imgui__is_window_within_begin_stack_of(g->HoveredWindow->RootWindow, modal_window))) {
         clear_hovered_windows = 1;
     }
     if (io->ConfigFlags & ImGuiConfigFlags_NoMouse) {
@@ -13798,7 +13798,7 @@ void imgui_i_update_hovered_window_and_capture_flags(ImGuiContext *imgui_c89_ctx
     io->WantTextInput = ((g->WantTextInputNextFrame != (-1)) ? (g->WantTextInputNextFrame != 0) : 0);
 }
 
-void imgui_i_update_input_events(ImGuiContext *imgui_c89_ctx, unsigned char trickle_fast_inputs)
+void imgui__update_input_events(ImGuiContext *imgui_c89_ctx, unsigned char trickle_fast_inputs)
 {
     unsigned short imgui_c89_temporary_0;
 
@@ -13946,7 +13946,7 @@ void imgui_i_update_input_events(ImGuiContext *imgui_c89_ctx, unsigned char tric
     }
 }
 
-void imgui_i_update_mouse_moving_window_end_frame(ImGuiContext *imgui_c89_ctx)
+void imgui__update_mouse_moving_window_end_frame(ImGuiContext *imgui_c89_ctx)
 {
     ImRect imgui_c89_temporary_0;
 
@@ -13966,12 +13966,12 @@ void imgui_i_update_mouse_moving_window_end_frame(ImGuiContext *imgui_c89_ctx)
         return;
     }
     hovered_window = g->HoveredWindow;
-    if (imgui_i_is_mouse_clicked(imgui_c89_ctx, 0, ImGuiInputFlags_None, ((ImGuiID)((-1))))) {
+    if (imgui__is_mouse_clicked(imgui_c89_ctx, 0, ImGuiInputFlags_None, ((ImGuiID)((-1))))) {
         hovered_root = (hovered_window ? hovered_window->RootWindow : 0);
-        is_closed_popup = ((hovered_root && (hovered_root->Flags & ImGuiWindowFlags_Popup)) && (!imgui_i_is_popup_open(imgui_c89_ctx, hovered_root->PopupId, ImGuiPopupFlags_AnyPopupLevel)));
+        is_closed_popup = ((hovered_root && (hovered_root->Flags & ImGuiWindowFlags_Popup)) && (!imgui__is_popup_open(imgui_c89_ctx, hovered_root->PopupId, ImGuiPopupFlags_AnyPopupLevel)));
         is_queued_focus_request = (g->NavMoveSubmitted && (g->NavMoveFlags & ImGuiNavMoveFlags_FocusApi));
         if (((hovered_window != 0) && (!is_closed_popup)) && (!is_queued_focus_request)) {
-            imgui_i_start_mouse_moving_window(imgui_c89_ctx, hovered_window);
+            imgui__start_mouse_moving_window(imgui_c89_ctx, hovered_window);
             if ((hovered_window->BgClickFlags & ImGuiWindowBgClickFlags_Move) == 0) {
                 if (!(hovered_root->Flags & ImGuiWindowFlags_NoTitleBar)) {
                     if (!ImRect_Contains__60a2869552(((ImRect *)((imgui_c89_temporary_0 = ImGuiWindow_TitleBarRect__f94973910d(((ImGuiWindow *)(hovered_root))), &imgui_c89_temporary_0))), &(g->IO.MouseClickedPos[0]))) {
@@ -13985,18 +13985,18 @@ void imgui_i_update_mouse_moving_window_end_frame(ImGuiContext *imgui_c89_ctx)
             }
         } else {
             if ((hovered_window == 0) && (g->NavWindow != 0)) {
-                imgui_i_focus_window(imgui_c89_ctx, 0, ImGuiFocusRequestFlags_UnlessBelowModal);
+                imgui__focus_window(imgui_c89_ctx, 0, ImGuiFocusRequestFlags_UnlessBelowModal);
             }
         }
     }
-    if ((g->HoveredId == 0) && imgui_i_is_mouse_clicked(imgui_c89_ctx, 1, ImGuiInputFlags_None, ((ImGuiID)((-1))))) {
-        modal = imgui_i_get_top_most_popup_modal(imgui_c89_ctx);
-        hovered_window_above_modal = (hovered_window && ((modal == 0) || imgui_i_is_window_above(imgui_c89_ctx, hovered_window, modal)));
-        imgui_i_close_popups_over_window(imgui_c89_ctx, (hovered_window_above_modal ? hovered_window : modal), 1);
+    if ((g->HoveredId == 0) && imgui__is_mouse_clicked(imgui_c89_ctx, 1, ImGuiInputFlags_None, ((ImGuiID)((-1))))) {
+        modal = imgui__get_top_most_popup_modal(imgui_c89_ctx);
+        hovered_window_above_modal = (hovered_window && ((modal == 0) || imgui__is_window_above(imgui_c89_ctx, hovered_window, modal)));
+        imgui__close_popups_over_window(imgui_c89_ctx, (hovered_window_above_modal ? hovered_window : modal), 1);
     }
 }
 
-void imgui_i_update_mouse_moving_window_new_frame(ImGuiContext *imgui_c89_ctx)
+void imgui__update_mouse_moving_window_new_frame(ImGuiContext *imgui_c89_ctx)
 {
     ImGuiContext * g;
     ImGuiWindow * moving_window;
@@ -14004,28 +14004,28 @@ void imgui_i_update_mouse_moving_window_new_frame(ImGuiContext *imgui_c89_ctx)
 
     g = &((*imgui_c89_ctx));
     if (g->MovingWindow != 0) {
-        imgui_i_keep_alive_id(imgui_c89_ctx, g->ActiveId);
+        imgui__keep_alive_id(imgui_c89_ctx, g->ActiveId);
         imgui_c89_expect((!(g->MovingWindow && g->MovingWindow->RootWindow)), 0) ? imgui_c89_assert_id(50) : ((void)(0));
         moving_window = g->MovingWindow->RootWindow;
         if (g->IO.MouseDown[0] && imgui_is_mouse_pos_valid(imgui_c89_ctx, (&g->IO.MousePos))) {
             pos = operator___cb7271567d(&(g->IO.MousePos), &(g->ActiveIdClickOffset));
-            imgui_i_set_window_pos(imgui_c89_ctx, moving_window, &(pos), ImGuiCond_Always);
-            imgui_i_focus_window(imgui_c89_ctx, g->MovingWindow, 0);
+            imgui__set_window_pos(imgui_c89_ctx, moving_window, &(pos), ImGuiCond_Always);
+            imgui__focus_window(imgui_c89_ctx, g->MovingWindow, 0);
         } else {
-            imgui_i_stop_mouse_moving_window(imgui_c89_ctx);
-            imgui_i_clear_active_id(imgui_c89_ctx);
+            imgui__stop_mouse_moving_window(imgui_c89_ctx);
+            imgui__clear_active_id(imgui_c89_ctx);
         }
     } else {
         if (g->ActiveIdWindow && (g->ActiveIdWindow->MoveId == g->ActiveId)) {
-            imgui_i_keep_alive_id(imgui_c89_ctx, g->ActiveId);
+            imgui__keep_alive_id(imgui_c89_ctx, g->ActiveId);
             if (!g->IO.MouseDown[0]) {
-                imgui_i_clear_active_id(imgui_c89_ctx);
+                imgui__clear_active_id(imgui_c89_ctx);
             }
         }
     }
 }
 
-void imgui_i_update_window_parent_and_root_links(ImGuiWindow * window, ImGuiWindowFlags flags, ImGuiWindow * parent_window)
+void imgui__update_window_parent_and_root_links(ImGuiWindow * window, ImGuiWindowFlags flags, ImGuiWindow * parent_window)
 {
     window->ParentWindow = parent_window;
     window->RootWindow = (window->RootWindowPopupTree = (window->RootWindowForTitleBarHighlight = (window->RootWindowForNav = window)));
@@ -14044,7 +14044,7 @@ void imgui_i_update_window_parent_and_root_links(ImGuiWindow * window, ImGuiWind
     }
 }
 
-void imgui_i_update_window_skip_refresh(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
+void imgui__update_window_skip_refresh(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window)
 {
     ImGuiContext * g;
 
@@ -14061,12 +14061,12 @@ void imgui_i_update_window_skip_refresh(ImGuiContext *imgui_c89_ctx, ImGuiWindow
             return;
         }
         if ((g->NextWindowData.RefreshFlagsVal & ImGuiWindowRefreshFlags_RefreshOnHover) && g->HoveredWindow) {
-            if ((window->RootWindow == g->HoveredWindow->RootWindow) || imgui_i_is_window_within_begin_stack_of(g->HoveredWindow->RootWindow, window)) {
+            if ((window->RootWindow == g->HoveredWindow->RootWindow) || imgui__is_window_within_begin_stack_of(g->HoveredWindow->RootWindow, window)) {
                 return;
             }
         }
         if ((g->NextWindowData.RefreshFlagsVal & ImGuiWindowRefreshFlags_RefreshOnFocus) && g->NavWindow) {
-            if ((window->RootWindow == g->NavWindow->RootWindow) || imgui_i_is_window_within_begin_stack_of(g->NavWindow->RootWindow, window)) {
+            if ((window->RootWindow == g->NavWindow->RootWindow) || imgui__is_window_within_begin_stack_of(g->NavWindow->RootWindow, window)) {
                 return;
             }
         }
@@ -14565,16 +14565,16 @@ static void ImGuiComboPreviewData_ImGuiComboPreviewData__8b5c09f2df(ImGuiComboPr
     memset(((void *)(self)), 0, sizeof((*self)));
 }
 
-void imgui_i_context_init(ImGuiContext *imgui_c89_ctx, ImGuiContext *self, ImFontAtlas * shared_font_atlas)
+void imgui__context_init(ImGuiContext *imgui_c89_ctx, ImGuiContext *self, ImFontAtlas * shared_font_atlas)
 {
     int imgui_c89_array_index_0;
 
     memset(self, 0, sizeof(*self));
-    imgui_i_io_init(&self->IO);
-    imgui_i_platform_io_init(&self->PlatformIO);
-    imgui_i_style_init(imgui_c89_ctx, &self->Style);
+    imgui__io_init(&self->IO);
+    imgui__platform_io_init(&self->PlatformIO);
+    imgui__style_init(imgui_c89_ctx, &self->Style);
     ImVector_ImFontAtlas____ImVector__b22ffeb0d1(&self->FontAtlases);
-    imgui_i_im_draw_list_shared_data_init(&self->DrawListSharedData);
+    imgui__im_draw_list_shared_data_init(&self->DrawListSharedData);
     ImVector_ImGuiInputEvent__ImVector__99c9f3022b(&self->InputEventsQueue);
     ImVector_ImGuiInputEvent__ImVector__99c9f3022b(&self->InputEventsTrail);
     ImVector_ImGuiWindow____ImVector__b73b5e16e2(&self->Windows);
@@ -14623,7 +14623,7 @@ void imgui_i_context_init(ImGuiContext *imgui_c89_ctx, ImGuiContext *self, ImFon
     ImRect_ImRect__1bc503c88f(&self->DragDropTargetClipRect);
     ImVector_unsigned_char__ImVector__dd9c86aa77(&self->DragDropPayloadBufHeap);
     ImVector_ImGuiListClipperData__ImVector__8fa955fc74(&self->ClipperTempData);
-    imgui_table_pool_init(&self->Tables);
+    imgui__table_pool_init(&self->Tables);
     ImVector_float__ImVector__1f8a67dfe8(&self->TablesLastTimeActive);
     ImVector_ImDrawChannel__ImVector__d8e467bf77(&self->DrawChannelsTempMergeBuffer);
     ImPool_ImGuiTabBar__ImPool__5e53af34d2(&self->TabBars);
@@ -14633,12 +14633,12 @@ void imgui_i_context_init(ImGuiContext *imgui_c89_ctx, ImGuiContext *self, ImFon
     ImVector_ImGuiMultiSelectTempData__ImVector__2f9b913f22(&self->MultiSelectTempData);
     ImPool_ImGuiMultiSelectState__ImPool__ba39374218(&self->MultiSelectStorage);
     ImVec2_ImVec2__22b45734f5(&self->MouseLastValidPos);
-    imgui_i_input_text_state_init(imgui_c89_ctx, &self->InputTextState);
+    imgui__input_text_state_init(imgui_c89_ctx, &self->InputTextState);
     memset(&self->InputTextLineIndex, 0, sizeof(self->InputTextLineIndex));
     ImVector_int__ImVector__d5f35838fe(&self->InputTextLineIndex.Offsets);
     self->InputTextLineIndex.EndOffset = 0;
     ImGuiInputTextDeactivatedState_ImGuiInputTextDeactivatedState__e80f96e1eb(&self->InputTextDeactivatedState);
-    imgui_i_im_font_baked_init(&self->InputTextPasswordFontBackupBaked);
+    imgui__im_font_baked_init(&self->InputTextPasswordFontBackupBaked);
     memset(&self->DataTypeZeroValue, 0, sizeof(self->DataTypeZeroValue));
     ImVec4_ImVec4__711f95b97f(&self->ColorPickerRef);
     ImGuiComboPreviewData_ImGuiComboPreviewData__8b5c09f2df(&self->ComboPreviewData);
@@ -14730,14 +14730,14 @@ void imgui_i_context_init(ImGuiContext *imgui_c89_ctx, ImGuiContext *self, ImFon
     memset(self->TempKeychordName, 0, sizeof(self->TempKeychordName));
 }
 
-void imgui_i_context_destroy_body(ImGuiContext *imgui_c89_ctx, ImGuiContext *self)
+void imgui__context_destroy_body(ImGuiContext *imgui_c89_ctx, ImGuiContext *self)
 {
     imgui_c89_expect((!((self->Initialized == 0) && "Forgot to call DestroyContext()?")), 0) ? imgui_c89_assert_id(34) : ((void)(0));
 }
 
-void imgui_i_context_destroy(ImGuiContext *imgui_c89_ctx, ImGuiContext *self)
+void imgui__context_destroy(ImGuiContext *imgui_c89_ctx, ImGuiContext *self)
 {
-    imgui_i_context_destroy_body(imgui_c89_ctx, self);
+    imgui__context_destroy_body(imgui_c89_ctx, self);
     ImVector_char__dtor_ImVector__0fbf250d7d(imgui_c89_ctx, &(((*self)).TempBuffer));
     ImVector_char__dtor_ImVector__0fbf250d7d(imgui_c89_ctx, &(((((*self)).DebugItemPathQuery).ResultPathBuf).Buf));
     ImVector_char__dtor_ImVector__0fbf250d7d(imgui_c89_ctx, &(((((*self)).DebugItemPathQuery).ResultsDescBuf).Buf));
@@ -14758,7 +14758,7 @@ void imgui_i_context_destroy(ImGuiContext *imgui_c89_ctx, ImGuiContext *self)
     ImVector_float__dtor_ImVector__cbbee571ef(imgui_c89_ctx, &((((*self)).InputTextPasswordFontBackupBaked).IndexAdvanceX));
     ImVector_char__dtor_ImVector__0fbf250d7d(imgui_c89_ctx, &((((*self)).InputTextDeactivatedState).TextA));
     ImVector_int__dtor_ImVector__9ac5f2e1c1(imgui_c89_ctx, &((((*self)).InputTextLineIndex).Offsets));
-    imgui_i_input_text_state_destroy(imgui_c89_ctx, &(((*self)).InputTextState));
+    imgui__input_text_state_destroy(imgui_c89_ctx, &(((*self)).InputTextState));
     ImPool_ImGuiMultiSelectState__dtor_ImPool__fb1d8095e7(imgui_c89_ctx, &(((*self)).MultiSelectStorage));
     ImVector_ImGuiMultiSelectTempData__dtor_ImVector__250c2c5149(imgui_c89_ctx, &(((*self)).MultiSelectTempData));
     ImVector_ImGuiShrinkWidthItem__dtor_ImVector__97be11713f(imgui_c89_ctx, &(((*self)).ShrinkWidthBuffer));
@@ -14766,7 +14766,7 @@ void imgui_i_context_destroy(ImGuiContext *imgui_c89_ctx, ImGuiContext *self)
     ImPool_ImGuiTabBar__dtor_ImPool__3df3442a84(imgui_c89_ctx, &(((*self)).TabBars));
     ImVector_ImDrawChannel__dtor_ImVector__d899c79bdf(imgui_c89_ctx, &(((*self)).DrawChannelsTempMergeBuffer));
     ImVector_float__dtor_ImVector__cbbee571ef(imgui_c89_ctx, &(((*self)).TablesLastTimeActive));
-    imgui_table_pool_fini(imgui_c89_ctx, &(((*self)).Tables));
+    imgui__table_pool_fini(imgui_c89_ctx, &(((*self)).Tables));
     imgui_c89_vector_destroy(imgui_c89_ctx, ((*self)).TablesTempData);
     ImVector_ImGuiListClipperData__dtor_ImVector__f6c4d7b2ce(imgui_c89_ctx, &(((*self)).ClipperTempData));
     ImVector_unsigned_char__dtor_ImVector__f47bcae332(imgui_c89_ctx, &(((*self)).DragDropPayloadBufHeap));
@@ -14790,7 +14790,7 @@ void imgui_i_context_destroy(ImGuiContext *imgui_c89_ctx, ImGuiContext *self)
     ImVector_ImGuiWindow____dtor_ImVector__e780d35da8(imgui_c89_ctx, &(((*self)).Windows));
     ImVector_ImGuiInputEvent__dtor_ImVector__ad78a2c618(imgui_c89_ctx, &(((*self)).InputEventsTrail));
     ImVector_ImGuiInputEvent__dtor_ImVector__ad78a2c618(imgui_c89_ctx, &(((*self)).InputEventsQueue));
-    imgui_i_im_draw_list_shared_data_destroy(imgui_c89_ctx, &(((*self)).DrawListSharedData));
+    imgui__im_draw_list_shared_data_destroy(imgui_c89_ctx, &(((*self)).DrawListSharedData));
     ImVector_ImFontAtlas____dtor_ImVector__5228b43699(imgui_c89_ctx, &(((*self)).FontAtlases));
     ImVector_ImTextureData____dtor_ImVector__a5e3735b22(imgui_c89_ctx, &((((*self)).PlatformIO).Textures));
     ImVector_unsigned_short__dtor_ImVector__17f975c613(imgui_c89_ctx, &((((*self)).IO).InputQueueCharacters));
@@ -14901,7 +14901,7 @@ void imgui_io_add_input_characters_utf8(ImGuiContext *imgui_c89_ctx, ImGuiIO *se
     str_end = (str + strlen(str));
     while ((*str) != 0) {
         c = 0;
-        str += imgui_i_im_text_char_from_utf8((&c), str, str_end);
+        str += imgui__im_text_char_from_utf8((&c), str, str_end);
         imgui_io_add_input_character(imgui_c89_ctx, ((ImGuiIO *)(self)), c);
     }
 }
@@ -14948,7 +14948,7 @@ void imgui_io_add_key_analog_event(ImGuiContext *imgui_c89_ctx, ImGuiIO *self, I
         }
     }
     latest_event = FindLatestInputEvent__85a83c5c52((&(*g)), ImGuiInputEventType_Key, ((int)(key)));
-    key_data = imgui_i_get_key_data((&(*g)), key);
+    key_data = imgui__get_key_data((&(*g)), key);
     latest_key_down = (latest_event ? latest_event->imgui_c89_unnamed_e911c36c.Key.Down : key_data->Down);
     latest_key_analog = (latest_event ? latest_event->imgui_c89_unnamed_e911c36c.Key.AnalogValue : key_data->AnalogValue);
     if ((latest_key_down == down) && (latest_key_analog == analog_value)) {
@@ -15002,7 +15002,7 @@ void imgui_io_add_mouse_button_event(ImGuiContext *imgui_c89_ctx, ImGuiIO *self,
         if (latest_super_event ? latest_super_event->imgui_c89_unnamed_e911c36c.Key.Down : g->IO.KeySuper) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                    imgui_i_debug_log(imgui_c89_ctx, "[io] Super+Left Click aliased into Right Click\n");
+                    imgui__debug_log(imgui_c89_ctx, "[io] Super+Left Click aliased into Right Click\n");
                 }
             } while (0);
             self->MouseCtrlLeftAsRightClick = 1;
@@ -15131,7 +15131,7 @@ void imgui_io_clear_input_mouse(ImGuiIO *self)
     self->MouseWheel = (self->MouseWheelH = 0.0f);
 }
 
-void imgui_i_io_init(ImGuiIO *self)
+void imgui__io_init(ImGuiIO *self)
 {
     int imgui_c89_array_index_0;
     int imgui_c89_array_index_1;
@@ -15316,13 +15316,13 @@ void imgui_list_clipper_begin(ImGuiContext *imgui_c89_ctx, ImGuiListClipper *sel
     window = g->CurrentWindow;
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventClipper) {
-            imgui_i_debug_log(imgui_c89_ctx, "Clipper: Begin(%d,%.2f) in '%s'\n", items_count, items_height, window->Name);
+            imgui__debug_log(imgui_c89_ctx, "Clipper: Begin(%d,%.2f) in '%s'\n", items_count, items_height, window->Name);
         }
     } while (0);
     table = g->CurrentTable;
     if (table) {
         if (table->IsInsideRow) {
-            imgui_i_table_end_row(imgui_c89_ctx, table);
+            imgui__table_end_row(imgui_c89_ctx, table);
         }
     }
     self->StartPosY = window->DC.CursorPos.y;
@@ -15350,7 +15350,7 @@ void imgui_list_clipper_end(ImGuiContext *imgui_c89_ctx, ImGuiListClipper *self)
         g = &((*self->Ctx));
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventClipper) {
-                imgui_i_debug_log(imgui_c89_ctx, "Clipper: End() in '%s'\n", g->CurrentWindow->Name);
+                imgui__debug_log(imgui_c89_ctx, "Clipper: End() in '%s'\n", g->CurrentWindow->Name);
             }
         } while (0);
         if (((self->ItemsCount >= 0) && (self->ItemsCount < 2147483647)) && (self->DisplayStart >= 0)) {
@@ -15368,7 +15368,7 @@ void imgui_list_clipper_end(ImGuiContext *imgui_c89_ctx, ImGuiListClipper *self)
     self->ItemsCount = (-1);
 }
 
-void imgui_i_list_clipper_init(ImGuiListClipper *self)
+void imgui__list_clipper_init(ImGuiListClipper *self)
 {
     memset(((void *)(self)), 0, sizeof((*self)));
 }
@@ -15415,27 +15415,27 @@ unsigned char imgui_list_clipper_step(ImGuiContext *imgui_c89_ctx, ImGuiListClip
     if (g->CurrentTable && (g->CurrentTable->IsUnfrozenRows == 0)) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventClipper) {
-                imgui_i_debug_log(imgui_c89_ctx, "Clipper: Step(): inside frozen table row.\n");
+                imgui__debug_log(imgui_c89_ctx, "Clipper: Step(): inside frozen table row.\n");
             }
         } while (0);
     }
     if (need_items_height && (self->ItemsHeight > 0.0f)) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventClipper) {
-                imgui_i_debug_log(imgui_c89_ctx, "Clipper: Step(): computed ItemsHeight: %.2f.\n", self->ItemsHeight);
+                imgui__debug_log(imgui_c89_ctx, "Clipper: Step(): computed ItemsHeight: %.2f.\n", self->ItemsHeight);
             }
         } while (0);
     }
     if (ret) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventClipper) {
-                imgui_i_debug_log(imgui_c89_ctx, "Clipper: Step(): display %d to %d.\n", self->DisplayStart, self->DisplayEnd);
+                imgui__debug_log(imgui_c89_ctx, "Clipper: Step(): display %d to %d.\n", self->DisplayStart, self->DisplayEnd);
             }
         } while (0);
     } else {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventClipper) {
-                imgui_i_debug_log(imgui_c89_ctx, "Clipper: Step(): End.\n");
+                imgui__debug_log(imgui_c89_ctx, "Clipper: Step(): End.\n");
             }
         } while (0);
         imgui_list_clipper_end(imgui_c89_ctx, ((ImGuiListClipper *)(self)));
@@ -15443,14 +15443,14 @@ unsigned char imgui_list_clipper_step(ImGuiContext *imgui_c89_ctx, ImGuiListClip
     return ret;
 }
 
-void imgui_i_list_clipper_destroy_body(ImGuiContext *imgui_c89_ctx, ImGuiListClipper *self)
+void imgui__list_clipper_destroy_body(ImGuiContext *imgui_c89_ctx, ImGuiListClipper *self)
 {
     imgui_list_clipper_end(imgui_c89_ctx, ((ImGuiListClipper *)(self)));
 }
 
-void imgui_i_list_clipper_destroy(ImGuiContext *imgui_c89_ctx, ImGuiListClipper *self)
+void imgui__list_clipper_destroy(ImGuiContext *imgui_c89_ctx, ImGuiListClipper *self)
 {
-    imgui_i_list_clipper_destroy_body(imgui_c89_ctx, self);
+    imgui__list_clipper_destroy_body(imgui_c89_ctx, self);
 }
 
 static void ImGuiListClipperData_ImGuiListClipperData__7494a965b8(ImGuiListClipperData *self)
@@ -15654,7 +15654,7 @@ void imgui_platform_io_clear_renderer_handlers(ImGuiPlatformIO *self)
     self->DrawCallback_ResetRenderState = (self->DrawCallback_SetSamplerLinear = (self->DrawCallback_SetSamplerNearest = 0));
 }
 
-void imgui_i_platform_io_init(ImGuiPlatformIO *self)
+void imgui__platform_io_init(ImGuiPlatformIO *self)
 {
     ImVector_ImTextureData____ImVector__ad4479a99e(&self->Textures);
     memset(((void *)(self)), 0, sizeof((*self)));
@@ -15729,7 +15729,7 @@ float imgui_storage_get_float(ImGuiStorage *self, ImGuiID key, float default_val
 {
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(((ImGuiStoragePair *)(self->Data.Data)), ((ImGuiStoragePair *)((self->Data.Data + self->Data.Size))), key);
+    it = imgui__im_lower_bound(((ImGuiStoragePair *)(self->Data.Data)), ((ImGuiStoragePair *)((self->Data.Data + self->Data.Size))), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         return default_val;
     }
@@ -15742,7 +15742,7 @@ float * imgui_storage_get_float_ref(ImGuiContext *imgui_c89_ctx, ImGuiStorage *s
 
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
+    it = imgui__im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         it = ImVector_ImGuiStoragePair__insert__8dbdeb8b39(imgui_c89_ctx, ((ImVector_ImGuiStoragePair *)(&(self->Data))), it, (imgui_c89_temporary_0 = ImGuiStoragePair_ImGuiStoragePair_value__dad4207f4d(key, default_val), &imgui_c89_temporary_0));
     }
@@ -15753,7 +15753,7 @@ int imgui_storage_get_int(ImGuiStorage *self, ImGuiID key, int default_val)
 {
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(((ImGuiStoragePair *)(self->Data.Data)), ((ImGuiStoragePair *)((self->Data.Data + self->Data.Size))), key);
+    it = imgui__im_lower_bound(((ImGuiStoragePair *)(self->Data.Data)), ((ImGuiStoragePair *)((self->Data.Data + self->Data.Size))), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         return default_val;
     }
@@ -15766,7 +15766,7 @@ int * imgui_storage_get_int_ref(ImGuiContext *imgui_c89_ctx, ImGuiStorage *self,
 
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
+    it = imgui__im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         it = ImVector_ImGuiStoragePair__insert__8dbdeb8b39(imgui_c89_ctx, ((ImVector_ImGuiStoragePair *)(&(self->Data))), it, (imgui_c89_temporary_0 = ImGuiStoragePair_ImGuiStoragePair_value__a7819c3db3(key, default_val), &imgui_c89_temporary_0));
     }
@@ -15777,7 +15777,7 @@ void * imgui_storage_get_void_ptr(ImGuiStorage *self, ImGuiID key)
 {
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(((ImGuiStoragePair *)(self->Data.Data)), ((ImGuiStoragePair *)((self->Data.Data + self->Data.Size))), key);
+    it = imgui__im_lower_bound(((ImGuiStoragePair *)(self->Data.Data)), ((ImGuiStoragePair *)((self->Data.Data + self->Data.Size))), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         return 0;
     }
@@ -15790,7 +15790,7 @@ void ** imgui_storage_get_void_ptr_ref(ImGuiContext *imgui_c89_ctx, ImGuiStorage
 
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
+    it = imgui__im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         it = ImVector_ImGuiStoragePair__insert__8dbdeb8b39(imgui_c89_ctx, ((ImVector_ImGuiStoragePair *)(&(self->Data))), it, (imgui_c89_temporary_0 = ImGuiStoragePair_ImGuiStoragePair_value__f57879209d(key, default_val), &imgui_c89_temporary_0));
     }
@@ -15818,7 +15818,7 @@ void imgui_storage_set_float(ImGuiContext *imgui_c89_ctx, ImGuiStorage *self, Im
 
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
+    it = imgui__im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         ImVector_ImGuiStoragePair__insert__8dbdeb8b39(imgui_c89_ctx, ((ImVector_ImGuiStoragePair *)(&(self->Data))), it, (imgui_c89_temporary_0 = ImGuiStoragePair_ImGuiStoragePair_value__dad4207f4d(key, val), &imgui_c89_temporary_0));
     } else {
@@ -15832,7 +15832,7 @@ void imgui_storage_set_int(ImGuiContext *imgui_c89_ctx, ImGuiStorage *self, ImGu
 
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
+    it = imgui__im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         ImVector_ImGuiStoragePair__insert__8dbdeb8b39(imgui_c89_ctx, ((ImVector_ImGuiStoragePair *)(&(self->Data))), it, (imgui_c89_temporary_0 = ImGuiStoragePair_ImGuiStoragePair_value__a7819c3db3(key, val), &imgui_c89_temporary_0));
     } else {
@@ -15846,7 +15846,7 @@ void imgui_storage_set_void_ptr(ImGuiContext *imgui_c89_ctx, ImGuiStorage *self,
 
     ImGuiStoragePair * it;
 
-    it = imgui_i_im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
+    it = imgui__im_lower_bound(self->Data.Data, (self->Data.Data + self->Data.Size), key);
     if ((it == (self->Data.Data + self->Data.Size)) || (it->key != key)) {
         ImVector_ImGuiStoragePair__insert__8dbdeb8b39(imgui_c89_ctx, ((ImVector_ImGuiStoragePair *)(&(self->Data))), it, (imgui_c89_temporary_0 = ImGuiStoragePair_ImGuiStoragePair_value__f57879209d(key, val), &imgui_c89_temporary_0));
     } else {
@@ -15872,7 +15872,7 @@ static void ImGuiStoragePair_ImGuiStoragePair__b1f69b4572(ImGuiStoragePair *self
     self->imgui_c89_unnamed_ae97675b.val_f = _val;
 }
 
-void imgui_i_style_init(ImGuiContext *imgui_c89_ctx, ImGuiStyle *self)
+void imgui__style_init(ImGuiContext *imgui_c89_ctx, ImGuiStyle *self)
 {
     int imgui_c89_array_index_0;
 
@@ -16066,7 +16066,7 @@ void ImGuiTabItem_ImGuiTabItem__9e73f47f28(ImGuiTabItem *self)
     self->BeginOrder = (self->IndexDuringLayout = (-1));
 }
 
-void imgui_table_fini(ImGuiContext *imgui_c89_ctx, ImGuiTable *self)
+void imgui__table_fini(ImGuiContext *imgui_c89_ctx, ImGuiTable *self)
 {
     imgui_mem_free(imgui_c89_ctx, self->RawData);
     imgui_c89_vector_destroy(imgui_c89_ctx, ((*self)).SortSpecsMulti);
@@ -16098,7 +16098,7 @@ void imgui_text_buffer_append(ImGuiContext *imgui_c89_ctx, ImGuiTextBuffer *self
     (*(ImVector_char__operator____80421f14cc(((ImVector_char *)(&(self->Buf))), ((write_off - 1) + len)))) = 0;
 }
 
-void imgui_i_text_buffer_appendf(ImGuiContext *imgui_c89_ctx, ImGuiTextBuffer *self, const char * fmt, ...)
+void imgui__text_buffer_appendf(ImGuiContext *imgui_c89_ctx, ImGuiTextBuffer *self, const char * fmt, ...)
 {
     va_list args;
 
@@ -16116,7 +16116,7 @@ void imgui_text_buffer_appendfv(ImGuiContext *imgui_c89_ctx, ImGuiTextBuffer *se
     int new_capacity;
 
     __builtin_va_copy(args_copy, args);
-    len = imgui_i_im_format_string_v(0, 0, fmt, args);
+    len = imgui__im_format_string_v(0, 0, fmt, args);
     if (len <= 0) {
         va_end(args_copy);
         return;
@@ -16128,7 +16128,7 @@ void imgui_text_buffer_appendfv(ImGuiContext *imgui_c89_ctx, ImGuiTextBuffer *se
         ImVector_char__reserve__a13dbd8026(imgui_c89_ctx, ((ImVector_char *)(&(self->Buf))), ((needed_sz > new_capacity) ? needed_sz : new_capacity));
     }
     ImVector_char__resize__4f5f852684(imgui_c89_ctx, ((ImVector_char *)(&(self->Buf))), needed_sz);
-    imgui_i_im_format_string_v((&(*(ImVector_char__operator____80421f14cc(((ImVector_char *)(&(self->Buf))), (write_off - 1))))), (((size_t)(len)) + 1), fmt, args_copy);
+    imgui__im_format_string_v((&(*(ImVector_char__operator____80421f14cc(((ImVector_char *)(&(self->Buf))), (write_off - 1))))), (((size_t)(len)) + 1), fmt, args_copy);
     va_end(args_copy);
 }
 
@@ -16229,13 +16229,13 @@ unsigned char imgui_text_filter_draw(ImGuiContext *imgui_c89_ctx, ImGuiTextFilte
     return value_changed;
 }
 
-void imgui_i_text_filter_init(ImGuiContext *imgui_c89_ctx, ImGuiTextFilter *self, const char * default_filter)
+void imgui__text_filter_init(ImGuiContext *imgui_c89_ctx, ImGuiTextFilter *self, const char * default_filter)
 {
     ImVector_ImGuiTextFilter_ImGuiTextRange__ImVector__3760996726(&self->Filters);
     self->InputBuf[0] = 0;
     self->CountGrep = 0;
     if (default_filter) {
-        imgui_i_im_strncpy(self->InputBuf, default_filter, ((int)((sizeof(self->InputBuf) / sizeof((*self->InputBuf))))));
+        imgui__im_strncpy(self->InputBuf, default_filter, ((int)((sizeof(self->InputBuf) / sizeof((*self->InputBuf))))));
         imgui_text_filter_build(imgui_c89_ctx, ((ImGuiTextFilter *)(self)));
     }
 }
@@ -16267,11 +16267,11 @@ unsigned char imgui_text_filter_pass_filter(ImGuiTextFilter *self, const char * 
             continue;
         }
         if (f->b[0] == 45) {
-            if (imgui_i_im_stristr(text, text_end, (f->b + 1), f->e) != 0) {
+            if (imgui__im_stristr(text, text_end, (f->b + 1), f->e) != 0) {
                 return 0;
             }
         } else {
-            if (imgui_i_im_stristr(text, text_end, f->b, f->e) != 0) {
+            if (imgui__im_stristr(text, text_end, f->b, f->e) != 0) {
                 return 1;
             }
         }
@@ -16316,7 +16316,7 @@ void imgui_text_range_split(ImGuiContext *imgui_c89_ctx, ImGuiTextFilter_ImGuiTe
     }
 }
 
-void imgui_i_text_index_append(ImGuiContext *imgui_c89_ctx, ImGuiTextIndex *self, const char * base, int old_size, int new_size)
+void imgui__text_index_append(ImGuiContext *imgui_c89_ctx, ImGuiTextIndex *self, const char * base, int old_size, int new_size)
 {
     int imgui_c89_temporary_0;
 
@@ -16457,52 +16457,52 @@ static void ImGuiViewportP_dtor_ImGuiViewportP__c1d9ceb15f(ImGuiContext *imgui_c
     ImVector_ImDrawList____dtor_ImVector__6807174401(imgui_c89_ctx, &((((*self)).DrawDataP).CmdLists));
 }
 
-ImGuiID imgui_i_window_get_id_string_string(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, const char * str, const char * str_end)
+ImGuiID imgui__window_get_id_string_string(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, const char * str, const char * str_end)
 {
     ImGuiID seed;
     ImGuiID id;
     ImGuiContext * g;
 
     seed = (*(ImVector_unsigned_int__back__2320fb1e8e(((ImVector_unsigned_int *)(&(self->IDStack))))));
-    id = imgui_i_im_hash_str(str, (str_end ? (str_end - str) : 0), seed);
+    id = imgui__im_hash_str(str, (str_end ? (str_end - str) : 0), seed);
     g = &((*self->Ctx));
     if (g->DebugHookIdInfoId == id) {
-        imgui_i_debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_String, str, str_end);
+        imgui__debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_String, str, str_end);
     }
     return id;
 }
 
-ImGuiID imgui_i_window_get_id_const_pointer(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, const void * ptr)
+ImGuiID imgui__window_get_id_const_pointer(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, const void * ptr)
 {
     ImGuiID seed;
     ImGuiID id;
     ImGuiContext * g;
 
     seed = (*(ImVector_unsigned_int__back__2320fb1e8e(((ImVector_unsigned_int *)(&(self->IDStack))))));
-    id = imgui_i_im_hash_data((&ptr), sizeof(void *), seed);
+    id = imgui__im_hash_data((&ptr), sizeof(void *), seed);
     g = &((*self->Ctx));
     if (g->DebugHookIdInfoId == id) {
-        imgui_i_debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_Pointer, ptr, 0);
+        imgui__debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_Pointer, ptr, 0);
     }
     return id;
 }
 
-ImGuiID imgui_i_window_get_id_int(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, int n)
+ImGuiID imgui__window_get_id_int(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, int n)
 {
     ImGuiID seed;
     ImGuiID id;
     ImGuiContext * g;
 
     seed = (*(ImVector_unsigned_int__back__2320fb1e8e(((ImVector_unsigned_int *)(&(self->IDStack))))));
-    id = imgui_i_im_hash_data((&n), sizeof(n), seed);
+    id = imgui__im_hash_data((&n), sizeof(n), seed);
     g = &((*self->Ctx));
     if (g->DebugHookIdInfoId == id) {
-        imgui_i_debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_S32, ((void *)(((intptr_t)(n)))), 0);
+        imgui__debug_hook_id_info(imgui_c89_ctx, id, ImGuiDataType_S32, ((void *)(((intptr_t)(n)))), 0);
     }
     return id;
 }
 
-ImGuiID imgui_i_window_get_id_from_pos(ImGuiWindow *self, const ImVec2 * p_abs)
+ImGuiID imgui__window_get_id_from_pos(ImGuiWindow *self, const ImVec2 * p_abs)
 {
     ImGuiID seed;
     ImVec2 p_rel;
@@ -16510,11 +16510,11 @@ ImGuiID imgui_i_window_get_id_from_pos(ImGuiWindow *self, const ImVec2 * p_abs)
 
     seed = (*(ImVector_unsigned_int__back__2320fb1e8e(((ImVector_unsigned_int *)(&(self->IDStack))))));
     p_rel = ImGui_WindowPosAbsToRel__d80e1f0105(self, p_abs);
-    id = imgui_i_im_hash_data((&p_rel), sizeof(p_rel), seed);
+    id = imgui__im_hash_data((&p_rel), sizeof(p_rel), seed);
     return id;
 }
 
-ImGuiID imgui_i_window_get_id_from_rectangle(ImGuiWindow *self, const ImRect * r_abs)
+ImGuiID imgui__window_get_id_from_rectangle(ImGuiWindow *self, const ImRect * r_abs)
 {
     ImGuiID seed;
     ImRect r_rel;
@@ -16522,11 +16522,11 @@ ImGuiID imgui_i_window_get_id_from_rectangle(ImGuiWindow *self, const ImRect * r
 
     seed = (*(ImVector_unsigned_int__back__2320fb1e8e(((ImVector_unsigned_int *)(&(self->IDStack))))));
     r_rel = ImGui_WindowRectAbsToRel__7725b098d7(self, r_abs);
-    id = imgui_i_im_hash_data((&r_rel), sizeof(r_rel), seed);
+    id = imgui__im_hash_data((&r_rel), sizeof(r_rel), seed);
     return id;
 }
 
-void imgui_i_window_init(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, ImGuiContext * ctx, const char * name)
+void imgui__window_init(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, ImGuiContext * ctx, const char * name)
 {
     int imgui_c89_array_index_0;
     int imgui_c89_array_index_1;
@@ -16577,7 +16577,7 @@ void imgui_i_window_init(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, ImGuiCo
     memset(&self->StateStorage, 0, sizeof(self->StateStorage));
     ImVector_ImGuiStoragePair__ImVector__a22baf84e2(&self->StateStorage.Data);
     ImVector_ImGuiOldColumns__ImVector__6700ad2cdb(&self->ColumnsStorage);
-    imgui_i_im_draw_list_init(imgui_c89_ctx, &self->DrawListInst, 0);
+    imgui__im_draw_list_init(imgui_c89_ctx, &self->DrawListInst, 0);
     memset(&self->NavRectRel, 0, sizeof(self->NavRectRel));
     for (imgui_c89_array_index_0 = 0; imgui_c89_array_index_0 < 2; ++imgui_c89_array_index_0) {
         ImRect_ImRect__1bc503c88f(&self->NavRectRel[imgui_c89_array_index_0]);
@@ -16588,11 +16588,11 @@ void imgui_i_window_init(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self, ImGuiCo
     }
     memset(((void *)(self)), 0, sizeof((*self)));
     self->Ctx = ctx;
-    self->Name = imgui_i_im_strdup(imgui_c89_ctx, name);
+    self->Name = imgui__im_strdup(imgui_c89_ctx, name);
     self->NameBufLen = (((int)(strlen(name))) + 1);
-    self->ID = imgui_i_im_hash_str(name, 0, 0);
+    self->ID = imgui__im_hash_str(name, 0, 0);
     ImVector_unsigned_int__push_back__c86a2609cc(imgui_c89_ctx, ((ImVector_unsigned_int *)(&(self->IDStack))), &(self->ID));
-    self->MoveId = imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(self)), "#MOVE", 0);
+    self->MoveId = imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(self)), "#MOVE", 0);
     self->ScrollTarget = ImVec2_ImVec2_value__c798775144(3.40282347E+38f, 3.40282347E+38f);
     self->ScrollTargetCenterRatio = ImVec2_ImVec2_value__c798775144(0.5f, 0.5f);
     self->AutoPosLastDirection = ImGuiDir_None;
@@ -16628,17 +16628,17 @@ static ImRect ImGuiWindow_TitleBarRect__f94973910d(ImGuiWindow *self)
     return ImRect_ImRect_value__99b7f05542(&(self->Pos), (imgui_c89_temporary_0 = ImVec2_ImVec2_value__c798775144((self->Pos.x + self->SizeFull.x), (self->Pos.y + self->TitleBarHeight)), &imgui_c89_temporary_0));
 }
 
-void imgui_i_window_destroy_body(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self)
+void imgui__window_destroy_body(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self)
 {
     imgui_c89_expect((!(self->DrawList == (&self->DrawListInst))), 0) ? imgui_c89_assert_id(41) : ((void)(0));
     IM_DELETE__c357ebd5f3(imgui_c89_ctx, self->Name);
     ImVector_ImGuiOldColumns__clear_destruct__ff4d2b0baa(imgui_c89_ctx, ((ImVector_ImGuiOldColumns *)(&(self->ColumnsStorage))));
 }
 
-void imgui_i_window_destroy(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self)
+void imgui__window_destroy(ImGuiContext *imgui_c89_ctx, ImGuiWindow *self)
 {
-    imgui_i_window_destroy_body(imgui_c89_ctx, self);
-    imgui_i_im_draw_list_destroy(imgui_c89_ctx, &(((*self)).DrawListInst));
+    imgui__window_destroy_body(imgui_c89_ctx, self);
+    imgui__im_draw_list_destroy(imgui_c89_ctx, &(((*self)).DrawListInst));
     ImVector_ImGuiOldColumns__dtor_ImVector__e304b2170c(imgui_c89_ctx, &(((*self)).ColumnsStorage));
     ImVector_ImGuiStoragePair__dtor_ImVector__b2dac07a8e(imgui_c89_ctx, &((((*self)).StateStorage).Data));
     ImVector_float__dtor_ImVector__cbbee571ef(imgui_c89_ctx, &((((*self)).DC).TextWrapPosStack));
@@ -16764,7 +16764,7 @@ static void ImPool_ImGuiTabBar__dtor_ImPool__3df3442a84(ImGuiContext *imgui_c89_
     ImVector_ImGuiTabBar__dtor_ImVector__62672d4ad0(imgui_c89_ctx, &(((*self)).Buf));
 }
 
-static void imgui_table_pool_clear(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self)
+static void imgui__table_pool_clear(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self)
 {
     int idx;
     int n;
@@ -16772,7 +16772,7 @@ static void imgui_table_pool_clear(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *
     for (n = 0; n < self->Map.Data.Size; n++) {
         idx = self->Map.Data.Data[n].imgui_c89_unnamed_ae97675b.val_i;
         if (idx != -1) {
-            imgui_table_fini(imgui_c89_ctx, self->Data + idx);
+            imgui__table_fini(imgui_c89_ctx, self->Data + idx);
         }
     }
     imgui_storage_clear(imgui_c89_ctx, &self->Map);
@@ -16781,27 +16781,27 @@ static void imgui_table_pool_clear(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *
     self->FreeIdx = self->AliveCount = 0;
 }
 
-static int imgui_table_pool_alive_count(ImGuiTablePool *self)
+static int imgui__table_pool_alive_count(ImGuiTablePool *self)
 {
     return self->AliveCount;
 }
 
-ImGuiTable * imgui_table_pool_at(ImGuiTablePool *self, ImPoolIdx n)
+ImGuiTable * imgui__table_pool_at(ImGuiTablePool *self, ImPoolIdx n)
 {
     return self->Data + n;
 }
 
-int imgui_table_pool_map_size(ImGuiTablePool *self)
+int imgui__table_pool_map_size(ImGuiTablePool *self)
 {
     return self->Map.Data.Size;
 }
 
-static void imgui_table_pool_init(ImGuiTablePool *self)
+static void imgui__table_pool_init(ImGuiTablePool *self)
 {
     memset(self, 0, sizeof(*self));
 }
 
-ImGuiTable * imgui_table_pool_map_at(ImGuiTablePool *self, ImPoolIdx n)
+ImGuiTable * imgui__table_pool_map_at(ImGuiTablePool *self, ImPoolIdx n)
 {
     int idx;
 
@@ -16809,9 +16809,9 @@ ImGuiTable * imgui_table_pool_map_at(ImGuiTablePool *self, ImPoolIdx n)
     return idx == -1 ? 0 : self->Data + idx;
 }
 
-static void imgui_table_pool_fini(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self)
+static void imgui__table_pool_fini(ImGuiContext *imgui_c89_ctx, ImGuiTablePool *self)
 {
-    imgui_table_pool_clear(imgui_c89_ctx, self);
+    imgui__table_pool_clear(imgui_c89_ctx, self);
 }
 
 void ImRect_Add__3d3cf3b5dc(ImRect *self, const ImRect * r)
@@ -19134,7 +19134,7 @@ static void AddWindowToDrawData__f6f8f8e2ed(ImGuiContext *imgui_c89_ctx, ImGuiWi
     if (window->DrawList->_Splitter._Count > 1) {
         imgui_draw_list_channels_merge(imgui_c89_ctx, ((ImDrawList *)(window->DrawList)));
     }
-    imgui_i_add_draw_list_to_draw_data_ex(imgui_c89_ctx, (&viewport->DrawDataP), viewport->DrawDataBuilder.Layers[layer], window->DrawList);
+    imgui__add_draw_list_to_draw_data_ex(imgui_c89_ctx, (&viewport->DrawDataP), viewport->DrawDataBuilder.Layers[layer], window->DrawList);
     __range1 = &(window->DC.ChildWindows);
     __begin1 = ImVector_ImGuiWindow____begin__eb2698ed6f(((ImVector_ImGuiWindow_ptr *)(__range1)));
     __end1 = ImVector_ImGuiWindow____end__2f408eec38(((ImVector_ImGuiWindow_ptr *)(__range1)));
@@ -19537,7 +19537,7 @@ static ImGuiWindow * CreateNewWindow__47f6c0c606(ImGuiContext *imgui_c89_ctx, co
     imgui_storage_set_void_ptr(imgui_c89_ctx, ((ImGuiStorage *)(&(g->WindowsById))), window->ID, window);
     settings = 0;
     if (!(flags & ImGuiWindowFlags_NoSavedSettings)) {
-        if ((settings = imgui_i_find_window_settings_by_window(imgui_c89_ctx, window)) != 0) {
+        if ((settings = imgui__find_window_settings_by_window(imgui_c89_ctx, window)) != 0) {
             window->SettingsOffset = ImChunkStream_ImGuiWindowSettings__offset_from_ptr__394b9fa7cb(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows))), settings);
         }
     }
@@ -19567,17 +19567,17 @@ static int DebugItemPathQuery_FormatLevelInfo__8f7d2a5cfc(ImGuiContext *imgui_c8
     ImGuiWindow * window;
 
     info = (&(*(ImVector_ImGuiStackLevelInfo__operator____1f3ef8e74b(((ImVector_ImGuiStackLevelInfo *)(&(query->Results))), n))));
-    window = (((info->DescOffset == (-1)) && (n == 0)) ? imgui_i_find_window_by_id(imgui_c89_ctx, info->ID) : 0);
+    window = (((info->DescOffset == (-1)) && (n == 0)) ? imgui__find_window_by_id(imgui_c89_ctx, info->ID) : 0);
     if (window) {
-        return imgui_i_im_format_string(buf, buf_size, (format_for_ui ? "\"%s\" [window]" : "%s"), imgui_i_im_hash_skip_uncontributing_prefix(window->Name));
+        return imgui__im_format_string(buf, buf_size, (format_for_ui ? "\"%s\" [window]" : "%s"), imgui__im_hash_skip_uncontributing_prefix(window->Name));
     }
     if (info->QuerySuccess) {
-        return imgui_i_im_format_string(buf, buf_size, ((format_for_ui && (info->DataType == ImGuiDataType_String)) ? "\"%s\"" : "%s"), imgui_i_im_hash_skip_uncontributing_prefix((&(*(ImVector_char__operator____80421f14cc(((ImVector_char *)(&(query->ResultsDescBuf.Buf))), info->DescOffset))))));
+        return imgui__im_format_string(buf, buf_size, ((format_for_ui && (info->DataType == ImGuiDataType_String)) ? "\"%s\"" : "%s"), imgui__im_hash_skip_uncontributing_prefix((&(*(ImVector_char__operator____80421f14cc(((ImVector_char *)(&(query->ResultsDescBuf.Buf))), info->DescOffset))))));
     }
     if (query->Step < query->Results.Size) {
         return (*buf) = 0;
     }
-    return imgui_i_im_format_string(buf, buf_size, "???");
+    return imgui__im_format_string(buf, buf_size, "???");
 }
 
 static const char * DebugItemPathQuery_GetResultAsPath__aa90603966(ImGuiContext *imgui_c89_ctx, ImGuiDebugItemPathQuery * query, unsigned char hex_encode_non_ascii_chars)
@@ -19597,7 +19597,7 @@ static const char * DebugItemPathQuery_GetResultAsPath__aa90603966(ImGuiContext 
         imgui_text_buffer_append(imgui_c89_ctx, ((ImGuiTextBuffer *)(buf)), ((stack_n == 0) ? "//" : "/"), 0);
         p = level_desc;
         for (; (*p) != 0; ) {
-            p_next = (p + imgui_i_im_text_char_from_utf8((&c), p, 0));
+            p_next = (p + imgui__im_text_char_from_utf8((&c), p, 0));
             if (c == 47) {
                 imgui_text_buffer_append(imgui_c89_ctx, ((ImGuiTextBuffer *)(buf)), "\\", 0);
             }
@@ -19605,7 +19605,7 @@ static const char * DebugItemPathQuery_GetResultAsPath__aa90603966(ImGuiContext 
                 imgui_text_buffer_append(imgui_c89_ctx, ((ImGuiTextBuffer *)(buf)), p, p_next);
             } else {
                 for (; p < p_next; p++) {
-                    imgui_i_text_buffer_appendf(imgui_c89_ctx, ((ImGuiTextBuffer *)(buf)), "\\x%02x", ((unsigned char)((*p))));
+                    imgui__text_buffer_appendf(imgui_c89_ctx, ((ImGuiTextBuffer *)(buf)), "\\x%02x", ((unsigned char)((*p))));
                 }
             }
             p = p_next;
@@ -19656,13 +19656,13 @@ static void DebugPrintInputEvent__b395e0ee07(ImGuiContext *imgui_c89_ctx, const 
         if ((e->imgui_c89_unnamed_e911c36c.MousePos.PosX == (-3.40282347E+38f)) && (e->imgui_c89_unnamed_e911c36c.MousePos.PosY == (-3.40282347E+38f))) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                    imgui_i_debug_log(imgui_c89_ctx, "[io] %s: MousePos (-FLT_MAX, -FLT_MAX)\n", prefix);
+                    imgui__debug_log(imgui_c89_ctx, "[io] %s: MousePos (-FLT_MAX, -FLT_MAX)\n", prefix);
                 }
             } while (0);
         } else {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                    imgui_i_debug_log(imgui_c89_ctx, "[io] %s: MousePos (%.1f, %.1f) (%s)\n", prefix, e->imgui_c89_unnamed_e911c36c.MousePos.PosX, e->imgui_c89_unnamed_e911c36c.MousePos.PosY, GetMouseSourceName__d027b9c362(e->imgui_c89_unnamed_e911c36c.MousePos.MouseSource));
+                    imgui__debug_log(imgui_c89_ctx, "[io] %s: MousePos (%.1f, %.1f) (%s)\n", prefix, e->imgui_c89_unnamed_e911c36c.MousePos.PosX, e->imgui_c89_unnamed_e911c36c.MousePos.PosY, GetMouseSourceName__d027b9c362(e->imgui_c89_unnamed_e911c36c.MousePos.MouseSource));
                 }
             } while (0);
         }
@@ -19671,7 +19671,7 @@ static void DebugPrintInputEvent__b395e0ee07(ImGuiContext *imgui_c89_ctx, const 
     if (e->Type == ImGuiInputEventType_MouseButton) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                imgui_i_debug_log(imgui_c89_ctx, "[io] %s: MouseButton %d %s (%s)\n", prefix, e->imgui_c89_unnamed_e911c36c.MouseButton.Button, (e->imgui_c89_unnamed_e911c36c.MouseButton.Down ? "Down" : "Up"), GetMouseSourceName__d027b9c362(e->imgui_c89_unnamed_e911c36c.MouseButton.MouseSource));
+                imgui__debug_log(imgui_c89_ctx, "[io] %s: MouseButton %d %s (%s)\n", prefix, e->imgui_c89_unnamed_e911c36c.MouseButton.Button, (e->imgui_c89_unnamed_e911c36c.MouseButton.Down ? "Down" : "Up"), GetMouseSourceName__d027b9c362(e->imgui_c89_unnamed_e911c36c.MouseButton.MouseSource));
             }
         } while (0);
         return;
@@ -19679,7 +19679,7 @@ static void DebugPrintInputEvent__b395e0ee07(ImGuiContext *imgui_c89_ctx, const 
     if (e->Type == ImGuiInputEventType_MouseWheel) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                imgui_i_debug_log(imgui_c89_ctx, "[io] %s: MouseWheel (%.3f, %.3f) (%s)\n", prefix, e->imgui_c89_unnamed_e911c36c.MouseWheel.WheelX, e->imgui_c89_unnamed_e911c36c.MouseWheel.WheelY, GetMouseSourceName__d027b9c362(e->imgui_c89_unnamed_e911c36c.MouseWheel.MouseSource));
+                imgui__debug_log(imgui_c89_ctx, "[io] %s: MouseWheel (%.3f, %.3f) (%s)\n", prefix, e->imgui_c89_unnamed_e911c36c.MouseWheel.WheelX, e->imgui_c89_unnamed_e911c36c.MouseWheel.WheelY, GetMouseSourceName__d027b9c362(e->imgui_c89_unnamed_e911c36c.MouseWheel.MouseSource));
             }
         } while (0);
         return;
@@ -19687,16 +19687,16 @@ static void DebugPrintInputEvent__b395e0ee07(ImGuiContext *imgui_c89_ctx, const 
     if (e->Type == ImGuiInputEventType_Key) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                imgui_i_debug_log(imgui_c89_ctx, "[io] %s: Key \"%s\" %s\n", prefix, imgui_get_key_name(e->imgui_c89_unnamed_e911c36c.Key.Key), (e->imgui_c89_unnamed_e911c36c.Key.Down ? "Down" : "Up"));
+                imgui__debug_log(imgui_c89_ctx, "[io] %s: Key \"%s\" %s\n", prefix, imgui_get_key_name(e->imgui_c89_unnamed_e911c36c.Key.Key), (e->imgui_c89_unnamed_e911c36c.Key.Down ? "Down" : "Up"));
             }
         } while (0);
         return;
     }
     if (e->Type == ImGuiInputEventType_Text) {
-        imgui_i_im_text_char_to_utf8(buf, e->imgui_c89_unnamed_e911c36c.Text.Char);
+        imgui__im_text_char_to_utf8(buf, e->imgui_c89_unnamed_e911c36c.Text.Char);
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                imgui_i_debug_log(imgui_c89_ctx, "[io] %s: Text: '%s' (U+%08X)\n", prefix, buf, e->imgui_c89_unnamed_e911c36c.Text.Char);
+                imgui__debug_log(imgui_c89_ctx, "[io] %s: Text: '%s' (U+%08X)\n", prefix, buf, e->imgui_c89_unnamed_e911c36c.Text.Char);
             }
         } while (0);
         return;
@@ -19704,7 +19704,7 @@ static void DebugPrintInputEvent__b395e0ee07(ImGuiContext *imgui_c89_ctx, const 
     if (e->Type == ImGuiInputEventType_Focus) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-                imgui_i_debug_log(imgui_c89_ctx, "[io] %s: AppFocused %d\n", prefix, e->imgui_c89_unnamed_e911c36c.AppFocused.Focused);
+                imgui__debug_log(imgui_c89_ctx, "[io] %s: AppFocused %d\n", prefix, e->imgui_c89_unnamed_e911c36c.AppFocused.Focused);
             }
         } while (0);
         return;
@@ -19785,7 +19785,7 @@ static ImGuiWindow * FindWindowNavFocusable__56757c85f4(ImGuiContext *imgui_c89_
     g = &((*imgui_c89_ctx));
     i = i_start;
     for (; ((i >= 0) && (i < g->WindowsFocusOrder.Size)) && (i != i_stop); i += dir) {
-        if (imgui_i_is_window_nav_focusable((*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&(g->WindowsFocusOrder))), i))))) {
+        if (imgui__is_window_nav_focusable((*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&(g->WindowsFocusOrder))), i))))) {
             return *(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&(g->WindowsFocusOrder))), i));
         }
     }
@@ -19827,9 +19827,9 @@ static const char * FormatTextureRefForDebugDisplay__69309e42e0(char * buf, int 
     buf_p = buf;
     buf_end = (buf + buf_size);
     if (tex_ref._TexData != 0) {
-        buf_p += imgui_i_im_format_string(buf_p, (buf_end - buf_p), "#%03d: ", tex_ref._TexData->UniqueID);
+        buf_p += imgui__im_format_string(buf_p, (buf_end - buf_p), "#%03d: ", tex_ref._TexData->UniqueID);
     }
-    imgui_i_im_format_string(buf_p, (buf_end - buf_p), "0x%X", imgui_i_debug_texture_id_to_u64(imgui_texture_ref_get_tex_id(((ImTextureRef *)(&(tex_ref))))));
+    imgui__im_format_string(buf_p, (buf_end - buf_p), "0x%X", imgui__debug_texture_id_to_u64(imgui_texture_ref_get_tex_id(((ImTextureRef *)(&(tex_ref))))));
     return buf;
 }
 
@@ -20034,7 +20034,7 @@ static void ImBezierCubicClosestPointCasteljauStep__e5469f0937(const ImVec2 * p,
     d3 = ((d3 >= 0) ? d3 : (-d3));
     if (((d2 + d3) * (d2 + d3)) < (tess_tol * ((dx * dx) + (dy * dy)))) {
         ImVec2_ImVec2__2b588b6e68(&p_current, x4, y4);
-        p_line = imgui_i_im_line_closest_point(p_last, &(p_current), p);
+        p_line = imgui__im_line_closest_point(p_last, &(p_current), p);
         dist2 = ImLengthSqr__a1d968fcc5((imgui_c89_temporary_0 = operator___cb7271567d(p, &(p_line)), &imgui_c89_temporary_0));
         if (dist2 < (*p_closest_dist2)) {
             (*p_closest) = p_line;
@@ -20092,7 +20092,7 @@ static void ImGuiListClipper_SeekCursorAndSetupPrevLine__542b63129e(ImGuiContext
     table = g->CurrentTable;
     if (table) {
         if (table->IsInsideRow) {
-            imgui_i_table_end_row(imgui_c89_ctx, table);
+            imgui__table_end_row(imgui_c89_ctx, table);
         }
         row_increase = ((int)(((off_y / line_height) + 0.5f)));
         if ((row_increase > 0) && ((clipper->Flags & ImGuiListClipperFlags_NoSetTableRowCounters) == 0)) {
@@ -20173,7 +20173,7 @@ static unsigned char ImGuiListClipper_StepInternal__bb7c4d103c(ImGuiContext *img
     imgui_c89_expect((!((data != 0) && "Called ImGuiListClipper::Step() too many times, or before ImGuiListClipper::Begin() ?")), 0) ? imgui_c89_assert_id(21) : ((void)(0));
     table = g->CurrentTable;
     if (table && table->IsInsideRow) {
-        imgui_i_table_end_row(imgui_c89_ctx, table);
+        imgui__table_end_row(imgui_c89_ctx, table);
     }
     if ((clipper->ItemsCount == 0) || GetSkipItemForListClipping__c0bef6728f(imgui_c89_ctx)) {
         return 0;
@@ -20213,7 +20213,7 @@ static unsigned char ImGuiListClipper_StepInternal__bb7c4d103c(ImGuiContext *img
         if (clipper->ItemsHeight <= 0.0f) {
             do {
                 if (!(clipper->ItemsHeight > 0.0f)) {
-                    if (imgui_i_error_log(imgui_c89_ctx, "ImGuiListClipper: Failed to calculate item height! First item hasn't been submitted by user code, or has not moved the cursor vertically!")) {
+                    if (imgui__error_log(imgui_c89_ctx, "ImGuiListClipper: Failed to calculate item height! First item hasn't been submitted by user code, or has not moved the cursor vertically!")) {
                         imgui_c89_expect((!((clipper->ItemsHeight > 0.0f) && "ImGuiListClipper: Failed to calculate item height! First item hasn't been submitted by user code, or has not moved the cursor vertically!")), 0) ? imgui_c89_assert_id(23) : ((void)(0));
                     }
                 }
@@ -20420,15 +20420,15 @@ static ImGuiID LastItemOverlayButtonForNullId__bc59f3147e(ImGuiContext *imgui_c8
     g = &((*imgui_c89_ctx));
     imgui_c89_expect((!(g->LastItemData.ID == 0)), 0) ? imgui_c89_assert_id(135) : ((void)(0));
     window = g->CurrentWindow;
-    id = imgui_i_window_get_id_from_rectangle(((ImGuiWindow *)(window)), &(g->LastItemData.Rect));
-    if (g->IO.MouseClicked[mouse_button] && imgui_i_item_hoverable(imgui_c89_ctx, &(g->LastItemData.Rect), id, g->LastItemData.ItemFlags)) {
-        imgui_i_set_active_id(imgui_c89_ctx, id, window);
-        imgui_i_focus_window(imgui_c89_ctx, window, 0);
+    id = imgui__window_get_id_from_rectangle(((ImGuiWindow *)(window)), &(g->LastItemData.Rect));
+    if (g->IO.MouseClicked[mouse_button] && imgui__item_hoverable(imgui_c89_ctx, &(g->LastItemData.Rect), id, g->LastItemData.ItemFlags)) {
+        imgui__set_active_id(imgui_c89_ctx, id, window);
+        imgui__focus_window(imgui_c89_ctx, window, 0);
     } else {
         if (g->ActiveId == id) {
-            imgui_i_keep_alive_id(imgui_c89_ctx, id);
+            imgui__keep_alive_id(imgui_c89_ctx, id);
             if (!g->IO.MouseDown[mouse_button]) {
-                imgui_i_clear_active_id(imgui_c89_ctx);
+                imgui__clear_active_id(imgui_c89_ctx);
             }
         }
     }
@@ -20450,7 +20450,7 @@ static void LockWheelingWindow__1db6f12b27(ImGuiContext *imgui_c89_ctx, ImGuiWin
     }
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventIO) {
-            imgui_i_debug_log(imgui_c89_ctx, "[io] LockWheelingWindow() \"%s\"\n", (window ? window->Name : "NULL"));
+            imgui__debug_log(imgui_c89_ctx, "[io] LockWheelingWindow() \"%s\"\n", (window ? window->Name : "NULL"));
         }
     } while (0);
     g->WheelingWindow = window;
@@ -20466,7 +20466,7 @@ static void LogTextV__99c2b50a06(ImGuiContext *imgui_c89_ctx, ImGuiContext * g, 
     if (g->LogFile) {
         ImVector_char__resize__4f5f852684(imgui_c89_ctx, ((ImVector_char *)(&(g->LogBuffer.Buf))), 0);
         imgui_text_buffer_appendfv(imgui_c89_ctx, ((ImGuiTextBuffer *)(&(g->LogBuffer))), fmt, args);
-        imgui_i_im_file_write(imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->LogBuffer)))), sizeof(char), ((ImU64)(imgui_text_buffer_size(((ImGuiTextBuffer *)(&(g->LogBuffer)))))), g->LogFile);
+        imgui__im_file_write(imgui_text_buffer_c_str(((ImGuiTextBuffer *)(&(g->LogBuffer)))), sizeof(char), ((ImU64)(imgui_text_buffer_size(((ImGuiTextBuffer *)(&(g->LogBuffer)))))), g->LogFile);
     } else {
         imgui_text_buffer_appendfv(imgui_c89_ctx, ((ImGuiTextBuffer *)(&(g->LogBuffer))), fmt, args);
     }
@@ -20480,7 +20480,7 @@ void * MallocWrapper__0d59de03a2(size_t size, void * user_data)
 
 static void MetricsHelpMarker__e17b4bb69f(ImGuiContext *imgui_c89_ctx, const char * desc)
 {
-    imgui_i_text_disabled(imgui_c89_ctx, "(?)");
+    imgui__text_disabled(imgui_c89_ctx, "(?)");
     if (imgui_begin_item_tooltip(imgui_c89_ctx)) {
         imgui_push_text_wrap_pos(imgui_c89_ctx, (imgui_get_font_size(imgui_c89_ctx) * 35.0f));
         imgui_text_unformatted(imgui_c89_ctx, desc, 0);
@@ -20642,7 +20642,7 @@ static void RenderViewportsThumbnails__ebe091b375(ImGuiContext *imgui_c89_ctx)
     for (; __begin1 != __end1; ++__begin1) {
         viewport = (*__begin1);
         ImRect_ImRect__b1b06c34ac(&viewport_draw_bb, (imgui_c89_temporary_2 = operator___29d06b7915(&(off), (imgui_c89_temporary_3 = operator___fef625b53c(&(viewport->Pos), SCALE), &imgui_c89_temporary_3)), &imgui_c89_temporary_2), (imgui_c89_temporary_4 = operator___29d06b7915(&(off), (imgui_c89_temporary_5 = operator___fef625b53c((imgui_c89_temporary_6 = operator___29d06b7915(&(viewport->Pos), &(viewport->Size)), &imgui_c89_temporary_6), SCALE), &imgui_c89_temporary_5)), &imgui_c89_temporary_4));
-        imgui_i_debug_render_viewport_thumbnail(imgui_c89_ctx, window->DrawList, viewport, &(viewport_draw_bb));
+        imgui__debug_render_viewport_thumbnail(imgui_c89_ctx, window->DrawList, viewport, &(viewport_draw_bb));
     }
     imgui_dummy(imgui_c89_ctx, (imgui_c89_temporary_7 = operator___fef625b53c((imgui_c89_temporary_8 = ImRect_GetSize__c91c92deb7(((ImRect *)(&(bb_full)))), &imgui_c89_temporary_8), SCALE), &imgui_c89_temporary_7));
 }
@@ -20716,7 +20716,7 @@ static void SetCurrentWindow__f02a6e67f9(ImGuiContext *imgui_c89_ctx, ImGuiWindo
     g = &((*imgui_c89_ctx));
     g->CurrentWindow = window;
     g->StackSizesInBeginForCurrentWindow = (g->CurrentWindow ? (&(*(ImVector_ImGuiWindowStackData__back__20779cb287(((ImVector_ImGuiWindowStackData *)(&(g->CurrentWindowStack)))))).StackSizesInBegin) : 0);
-    g->CurrentTable = ((window && (window->DC.CurrentTableIdx != (-1))) ? imgui_table_pool_at(((ImGuiTablePool *)(&(g->Tables))), window->DC.CurrentTableIdx) : 0);
+    g->CurrentTable = ((window && (window->DC.CurrentTableIdx != (-1))) ? imgui__table_pool_at(((ImGuiTablePool *)(&(g->Tables))), window->DC.CurrentTableIdx) : 0);
     g->CurrentDpiScale = 1.0f;
     if (window) {
         if (g->IO.BackendFlags & ImGuiBackendFlags_RendererHasTextures) {
@@ -20725,9 +20725,9 @@ static void SetCurrentWindow__f02a6e67f9(ImGuiContext *imgui_c89_ctx, ImGuiWindo
         }
         backup_skip_items = window->SkipItems;
         window->SkipItems = 0;
-        imgui_i_update_current_font_size(imgui_c89_ctx, 0.0f);
+        imgui__update_current_font_size(imgui_c89_ctx, 0.0f);
         window->SkipItems = backup_skip_items;
-        imgui_i_nav_update_current_window_is_scroll_pushable_x(imgui_c89_ctx);
+        imgui__nav_update_current_window_is_scroll_pushable_x(imgui_c89_ctx);
     }
 }
 
@@ -20780,7 +20780,7 @@ static void SetupDrawListSharedData__9a095849d9(ImGuiContext *imgui_c89_ctx)
     }
     g->DrawListSharedData.ClipRectFullscreen = ImRect_ToVec4__80b1b7e70a(((ImRect *)(&(virtual_space))));
     g->DrawListSharedData.CurveTessellationTol = g->Style.CurveTessellationTol;
-    imgui_i_im_draw_list_shared_data_set_circle_tessellation_max_error(((ImDrawListSharedData *)(&(g->DrawListSharedData))), g->Style.CircleTessellationMaxError);
+    imgui__im_draw_list_shared_data_set_circle_tessellation_max_error(((ImDrawListSharedData *)(&(g->DrawListSharedData))), g->Style.CircleTessellationMaxError);
     g->DrawListSharedData.InitialFlags = ImDrawListFlags_None;
     if (g->Style.AntiAliasedLines) {
         g->DrawListSharedData.InitialFlags |= ImDrawListFlags_AntiAliasedLines;
@@ -20819,9 +20819,9 @@ static void ShowDebugLogFlag__9600378b7c(ImGuiContext *imgui_c89_ctx, const char
     }
     if (highlight_errors) {
         imgui_pop_style_color(imgui_c89_ctx, 1);
-        imgui_i_set_item_tooltip(imgui_c89_ctx, "%d past errors skipped.", g->DebugLogSkippedErrors);
+        imgui__set_item_tooltip(imgui_c89_ctx, "%d past errors skipped.", g->DebugLogSkippedErrors);
     } else {
-        imgui_i_set_item_tooltip(imgui_c89_ctx, "Hold Shift when clicking to enable for 2 frames only (useful for spammy log entries)");
+        imgui__set_item_tooltip(imgui_c89_ctx, "Hold Shift when clicking to enable for 2 frames only (useful for spammy log entries)");
     }
 }
 
@@ -20845,7 +20845,7 @@ static void WindowSettingsHandler_ApplyAll__f8f8ea6f0a(ImGuiContext * ctx, ImGui
     settings = ImChunkStream_ImGuiWindowSettings__begin__5a1ae0aa1a(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows))));
     for (; settings != 0; settings = ImChunkStream_ImGuiWindowSettings__next_chunk__9e9f5eb3ed(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows))), settings)) {
         if (settings->WantApply) {
-            window = imgui_i_find_window_by_id(ctx, settings->ID);
+            window = imgui__find_window_by_id(ctx, settings->ID);
             if (window) {
                 ApplyWindowSettings__ea02555a22(window, settings);
             }
@@ -20927,12 +20927,12 @@ static void * WindowSettingsHandler_ReadOpen__21f73b6c73(ImGuiContext * arg_0, I
     ImGuiID id;
     ImGuiWindowSettings * settings;
 
-    id = imgui_i_im_hash_str(name, 0, 0);
-    settings = imgui_i_find_window_settings_by_id(arg_0, id);
+    id = imgui__im_hash_str(name, 0, 0);
+    settings = imgui__find_window_settings_by_id(arg_0, id);
     if (settings) {
         (*settings) = ImGuiWindowSettings_ImGuiWindowSettings_value__b4f6060a0c();
     } else {
-        settings = imgui_i_create_new_window_settings(arg_0, name);
+        settings = imgui__create_new_window_settings(arg_0, name);
     }
     settings->ID = id;
     settings->WantApply = 1;
@@ -20960,9 +20960,9 @@ static void WindowSettingsHandler_WriteAll__fe54ab5f3d(ImGuiContext * ctx, ImGui
         if (window->Flags & ImGuiWindowFlags_NoSavedSettings) {
             continue;
         }
-        settings = imgui_i_find_window_settings_by_window(ctx, window);
+        settings = imgui__find_window_settings_by_window(ctx, window);
         if (!settings) {
-            settings = imgui_i_create_new_window_settings(ctx, window->Name);
+            settings = imgui__create_new_window_settings(ctx, window->Name);
             settings->LastUsedDate = g->SessionDate;
             window->SettingsOffset = ImChunkStream_ImGuiWindowSettings__offset_from_ptr__394b9fa7cb(((ImChunkStream_ImGuiWindowSettings *)(&(g->SettingsWindows))), settings);
         }
@@ -20981,21 +20981,21 @@ static void WindowSettingsHandler_WriteAll__fe54ab5f3d(ImGuiContext * ctx, ImGui
             continue;
         }
         settings_name = ImGuiWindowSettings_GetName__fb7cfc2069(((ImGuiWindowSettings *)(settings__d8bc70f7)));
-        imgui_i_text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "[%s][%s]\n", handler->TypeName, settings_name);
+        imgui__text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "[%s][%s]\n", handler->TypeName, settings_name);
         if (settings__d8bc70f7->IsChild) {
-            imgui_i_text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "IsChild=1\n");
-            imgui_i_text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "Size=%d,%d\n", settings__d8bc70f7->Size.x, settings__d8bc70f7->Size.y);
+            imgui__text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "IsChild=1\n");
+            imgui__text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "Size=%d,%d\n", settings__d8bc70f7->Size.x, settings__d8bc70f7->Size.y);
         } else {
-            imgui_i_text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "Pos=%d,%d\n", settings__d8bc70f7->Pos.x, settings__d8bc70f7->Pos.y);
-            imgui_i_text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "Size=%d,%d\n", settings__d8bc70f7->Size.x, settings__d8bc70f7->Size.y);
+            imgui__text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "Pos=%d,%d\n", settings__d8bc70f7->Pos.x, settings__d8bc70f7->Pos.y);
+            imgui__text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "Size=%d,%d\n", settings__d8bc70f7->Size.x, settings__d8bc70f7->Size.y);
             if (settings__d8bc70f7->Collapsed) {
-                imgui_i_text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "Collapsed=1\n");
+                imgui__text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "Collapsed=1\n");
             }
         }
         if (g->IO.ConfigIniSettingsSaveLastUsedDate) {
             last_used_date = ImGuiPackedDate_Unpack__6d04c4f8e1(((ImGuiPackedDate *)(&(settings__d8bc70f7->LastUsedDate))));
             if (last_used_date) {
-                imgui_i_text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "LastUsed=%08d\n", last_used_date);
+                imgui__text_buffer_appendf(ctx, ((ImGuiTextBuffer *)(buf)), "LastUsed=%08d\n", last_used_date);
             }
         }
         imgui_text_buffer_append(ctx, ((ImGuiTextBuffer *)(buf)), "\n", 0);
@@ -21094,13 +21094,13 @@ static void ImGui_ItemHandleShortcut__0826a8e6ed(ImGuiContext *imgui_c89_ctx, Im
         g->LastItemData.StatusFlags |= ImGuiItemStatusFlags_HasShortcut;
         g->LastItemData.Shortcut = g->NextItemData.Shortcut;
     }
-    if ((!imgui_i_shortcut(imgui_c89_ctx, g->NextItemData.Shortcut, (flags & ImGuiInputFlags_SupportedByShortcut), id)) || (g->NavActivateId != 0)) {
+    if ((!imgui__shortcut(imgui_c89_ctx, g->NextItemData.Shortcut, (flags & ImGuiInputFlags_SupportedByShortcut), id)) || (g->NavActivateId != 0)) {
         return;
     }
     g->NavActivateId = id;
     g->NavActivateFlags = (ImGuiActivateFlags_PreferInput | ImGuiActivateFlags_FromShortcut);
     g->NavActivateDownId = (g->NavActivatePressedId = id);
-    imgui_i_nav_highlight_activated(imgui_c89_ctx, id);
+    imgui__nav_highlight_activated(imgui_c89_ctx, id);
 }
 
 static void ImGui_NavApplyItemToResult__bec1741e1d(ImGuiContext *imgui_c89_ctx, ImGuiNavItemData * result)
@@ -21190,7 +21190,7 @@ static void ImGui_NavEndFrame__80ea606f06(ImGuiContext *imgui_c89_ctx)
     if (g->NavWindowingTarget != 0) {
         ImGui_NavUpdateWindowingOverlay__ae4c10b81b(imgui_c89_ctx);
     }
-    if (((g->NavWindow && imgui_i_nav_move_request_but_no_result_yet(imgui_c89_ctx)) && (g->NavMoveFlags & ImGuiNavMoveFlags_WrapMask_)) && ((g->NavMoveFlags & ImGuiNavMoveFlags_Forwarded) == 0)) {
+    if (((g->NavWindow && imgui__nav_move_request_but_no_result_yet(imgui_c89_ctx)) && (g->NavMoveFlags & ImGuiNavMoveFlags_WrapMask_)) && ((g->NavMoveFlags & ImGuiNavMoveFlags_Forwarded) == 0)) {
         ImGui_NavUpdateCreateWrappingRequest__4927795b50(imgui_c89_ctx);
     }
 }
@@ -21255,10 +21255,10 @@ static void ImGui_NavProcessItem__a9f9cffb14(ImGuiContext *imgui_c89_ctx)
     }
     if (g->NavId == id) {
         if (g->NavWindow != window) {
-            imgui_i_set_nav_window(imgui_c89_ctx, window);
+            imgui__set_nav_window(imgui_c89_ctx, window);
         }
         g->NavLayer = window->DC.NavLayerCurrent;
-        imgui_i_set_nav_focus_scope(imgui_c89_ctx, g->CurrentFocusScopeId);
+        imgui__set_nav_focus_scope(imgui_c89_ctx, g->CurrentFocusScopeId);
         g->NavFocusScopeId = g->CurrentFocusScopeId;
         g->NavIdIsAlive = 1;
         g->NavIdItemFlags = item_flags;
@@ -21296,7 +21296,7 @@ static void ImGui_NavProcessItemForTabbingRequest__210e019c5b(ImGuiContext *imgu
             ImGui_NavApplyItemToResult__bec1741e1d(imgui_c89_ctx, (&g->NavTabbingResultFirst));
         }
         if ((can_stop && (g->NavTabbingCounter > 0)) && ((--g->NavTabbingCounter) == 0)) {
-            imgui_i_nav_move_request_resolve_with_last_item(imgui_c89_ctx, result);
+            imgui__nav_move_request_resolve_with_last_item(imgui_c89_ctx, result);
         } else {
             if (g->NavId == id) {
                 g->NavTabbingCounter = 1;
@@ -21317,7 +21317,7 @@ static void ImGui_NavProcessItemForTabbingRequest__210e019c5b(ImGuiContext *imgu
         } else {
             if (g->NavTabbingDir == 0) {
                 if (can_stop && (g->NavId == id)) {
-                    imgui_i_nav_move_request_resolve_with_last_item(imgui_c89_ctx, result);
+                    imgui__nav_move_request_resolve_with_last_item(imgui_c89_ctx, result);
                 }
                 if (can_stop && (g->NavTabbingResultFirst.ID == 0)) {
                     ImGui_NavApplyItemToResult__bec1741e1d(imgui_c89_ctx, (&g->NavTabbingResultFirst));
@@ -21349,17 +21349,17 @@ static void ImGui_NavRestoreLayer__be2983b3fe(ImGuiContext *imgui_c89_ctx, ImGui
         if (prev_nav_window) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventFocus) {
-                    imgui_i_debug_log(imgui_c89_ctx, "[focus] NavRestoreLayer: from \"%s\" to SetNavWindow(\"%s\")\n", prev_nav_window->Name, g->NavWindow->Name);
+                    imgui__debug_log(imgui_c89_ctx, "[focus] NavRestoreLayer: from \"%s\" to SetNavWindow(\"%s\")\n", prev_nav_window->Name, g->NavWindow->Name);
                 }
             } while (0);
         }
     }
     window = g->NavWindow;
     if (window->NavLastIds[layer] != 0) {
-        imgui_i_set_nav_id(imgui_c89_ctx, window->NavLastIds[layer], layer, 0, &(window->NavRectRel[layer]));
+        imgui__set_nav_id(imgui_c89_ctx, window->NavLastIds[layer], layer, 0, &(window->NavRectRel[layer]));
     } else {
         g->NavLayer = layer;
-        imgui_i_nav_init_window(imgui_c89_ctx, window, 1);
+        imgui__nav_init_window(imgui_c89_ctx, window, 1);
     }
 }
 
@@ -21516,13 +21516,13 @@ static void ImGui_NavUpdate__1e171efced(ImGuiContext *imgui_c89_ctx)
     g->NavJustMovedToId = 0;
     g->NavJustMovedToFocusScopeId = (g->NavJustMovedFromFocusScopeId = 0);
     if (g->NavInitResult.ID != 0) {
-        imgui_i_nav_init_request_apply_result(imgui_c89_ctx);
+        imgui__nav_init_request_apply_result(imgui_c89_ctx);
     }
     g->NavInitRequest = 0;
     g->NavInitRequestFromMove = 0;
     g->NavInitResult.ID = 0;
     if (g->NavMoveSubmitted) {
-        imgui_i_nav_move_request_apply_result(imgui_c89_ctx);
+        imgui__nav_move_request_apply_result(imgui_c89_ctx);
     }
     g->NavTabbingCounter = 0;
     g->NavMoveSubmitted = (g->NavMoveScoringItems = 0);
@@ -21553,11 +21553,11 @@ static void ImGui_NavUpdate__1e171efced(ImGuiContext *imgui_c89_ctx)
     g->NavActivateId = (g->NavActivateDownId = (g->NavActivatePressedId = 0));
     g->NavActivateFlags = ImGuiActivateFlags_None;
     if (((((g->NavId != 0) && g->NavCursorVisible) && (!g->NavWindowingTarget)) && g->NavWindow) && (!(g->NavWindow->Flags & ImGuiWindowFlags_NoNavInputs))) {
-        activate_down = ((nav_keyboard_active && imgui_i_is_key_down(imgui_c89_ctx, ImGuiKey_Space, ((ImGuiID)((-1))))) || (nav_gamepad_active && imgui_i_is_key_down(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceRight : ImGuiKey_GamepadFaceDown), ((ImGuiID)((-1))))));
-        activate_pressed = (activate_down && ((nav_keyboard_active && imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_Space, 0, ((ImGuiID)((-1))))) || (nav_gamepad_active && imgui_i_is_key_pressed(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceRight : ImGuiKey_GamepadFaceDown), 0, ((ImGuiID)((-1)))))));
-        input_pressed_keyboard = (nav_keyboard_active && (imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_Enter, 0, ((ImGuiID)((-1)))) || imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_KeypadEnter, 0, ((ImGuiID)((-1))))));
+        activate_down = ((nav_keyboard_active && imgui__is_key_down(imgui_c89_ctx, ImGuiKey_Space, ((ImGuiID)((-1))))) || (nav_gamepad_active && imgui__is_key_down(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceRight : ImGuiKey_GamepadFaceDown), ((ImGuiID)((-1))))));
+        activate_pressed = (activate_down && ((nav_keyboard_active && imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_Space, 0, ((ImGuiID)((-1))))) || (nav_gamepad_active && imgui__is_key_pressed(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceRight : ImGuiKey_GamepadFaceDown), 0, ((ImGuiID)((-1)))))));
+        input_pressed_keyboard = (nav_keyboard_active && (imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_Enter, 0, ((ImGuiID)((-1)))) || imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_KeypadEnter, 0, ((ImGuiID)((-1))))));
         input_pressed_gamepad = 0;
-        if (((activate_down && nav_gamepad_active) && imgui_i_is_key_down(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceRight : ImGuiKey_GamepadFaceDown), ((ImGuiID)((-1))))) && (g->NavIdItemFlags & ImGuiItemFlags_Inputable)) {
+        if (((activate_down && nav_gamepad_active) && imgui__is_key_down(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceRight : ImGuiKey_GamepadFaceDown), ((ImGuiID)((-1))))) && (g->NavIdItemFlags & ImGuiItemFlags_Inputable)) {
             if ((ImGui_GetKeyData__35ffe023d5(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceRight : ImGuiKey_GamepadFaceDown))->DownDurationPrev < NAV_ACTIVATE_INPUT_WITH_GAMEPAD_DELAY__3115185be6) && (ImGui_GetKeyData__35ffe023d5(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceRight : ImGuiKey_GamepadFaceDown))->DownDuration >= NAV_ACTIVATE_INPUT_WITH_GAMEPAD_DELAY__3115185be6)) {
                 input_pressed_gamepad = 1;
             }
@@ -21575,7 +21575,7 @@ static void ImGui_NavUpdate__1e171efced(ImGuiContext *imgui_c89_ctx)
         }
         if (((g->ActiveId == 0) || (g->ActiveId == g->NavId)) && ((activate_pressed || input_pressed_keyboard) || input_pressed_gamepad)) {
             g->NavActivatePressedId = g->NavId;
-            imgui_i_nav_highlight_activated(imgui_c89_ctx, g->NavId);
+            imgui__nav_highlight_activated(imgui_c89_ctx, g->NavId);
         }
     }
     if (g->NavWindow && (g->NavWindow->Flags & ImGuiWindowFlags_NoNavInputs)) {
@@ -21611,20 +21611,20 @@ static void ImGui_NavUpdate__1e171efced(ImGuiContext *imgui_c89_ctx)
         move_dir = g->NavMoveDir;
         if (((window->DC.NavLayersActiveMask == 0) && window->DC.NavWindowHasScrollY) && (move_dir != ImGuiDir_None)) {
             if ((move_dir == ImGuiDir_Left) || (move_dir == ImGuiDir_Right)) {
-                imgui_i_set_scroll_x(window, ImTrunc__ae7a4018f8((window->Scroll.x + (((move_dir == ImGuiDir_Left) ? (-1.0f) : (+1.0f)) * scroll_speed))));
+                imgui__set_scroll_x(window, ImTrunc__ae7a4018f8((window->Scroll.x + (((move_dir == ImGuiDir_Left) ? (-1.0f) : (+1.0f)) * scroll_speed))));
             }
             if ((move_dir == ImGuiDir_Up) || (move_dir == ImGuiDir_Down)) {
-                imgui_i_set_scroll_y(window, ImTrunc__ae7a4018f8((window->Scroll.y + (((move_dir == ImGuiDir_Up) ? (-1.0f) : (+1.0f)) * scroll_speed))));
+                imgui__set_scroll_y(window, ImTrunc__ae7a4018f8((window->Scroll.y + (((move_dir == ImGuiDir_Up) ? (-1.0f) : (+1.0f)) * scroll_speed))));
             }
         }
         if (nav_gamepad_active) {
-            scroll_dir = imgui_i_get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_GamepadLStickLeft, ImGuiKey_GamepadLStickRight, ImGuiKey_GamepadLStickUp, ImGuiKey_GamepadLStickDown);
+            scroll_dir = imgui__get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_GamepadLStickLeft, ImGuiKey_GamepadLStickRight, ImGuiKey_GamepadLStickUp, ImGuiKey_GamepadLStickDown);
             tweak_factor = (imgui_is_key_down(imgui_c89_ctx, ImGuiKey_GamepadL1) ? (1.0f / 10.0f) : (imgui_is_key_down(imgui_c89_ctx, ImGuiKey_GamepadR1) ? 10.0f : 1.0f));
             if ((scroll_dir.x != 0.0f) && window->ScrollbarX) {
-                imgui_i_set_scroll_x(window, ImTrunc__ae7a4018f8((window->Scroll.x + ((scroll_dir.x * scroll_speed) * tweak_factor))));
+                imgui__set_scroll_x(window, ImTrunc__ae7a4018f8((window->Scroll.x + ((scroll_dir.x * scroll_speed) * tweak_factor))));
             }
             if (scroll_dir.y != 0.0f) {
-                imgui_i_set_scroll_y(window, ImTrunc__ae7a4018f8((window->Scroll.y + ((scroll_dir.y * scroll_speed) * tweak_factor))));
+                imgui__set_scroll_y(window, ImTrunc__ae7a4018f8((window->Scroll.y + ((scroll_dir.y * scroll_speed) * tweak_factor))));
             }
         }
     }
@@ -21633,7 +21633,7 @@ static void ImGui_NavUpdate__1e171efced(ImGuiContext *imgui_c89_ctx)
         g->NavHighlightItemUnderNav = (set_mouse_pos = 0);
     }
     if ((set_mouse_pos && io->ConfigNavMoveSetMousePos) && (io->BackendFlags & ImGuiBackendFlags_HasSetMousePos)) {
-        imgui_i_teleport_mouse_pos(imgui_c89_ctx, (imgui_c89_temporary_0 = ImGui_NavCalcPreferredRefPos__f47b7eee9a(imgui_c89_ctx, ImGuiWindowFlags_Popup), &imgui_c89_temporary_0));
+        imgui__teleport_mouse_pos(imgui_c89_ctx, (imgui_c89_temporary_0 = ImGui_NavCalcPreferredRefPos__f47b7eee9a(imgui_c89_ctx, ImGuiWindowFlags_Popup), &imgui_c89_temporary_0));
     }
     g->NavScoringDebugCount = 0;
 }
@@ -21663,31 +21663,31 @@ static void ImGui_NavUpdateCancelRequest__0b93595c17(ImGuiContext *imgui_c89_ctx
     g = &((*imgui_c89_ctx));
     nav_gamepad_active = (((g->IO.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad) != 0) && ((g->IO.BackendFlags & ImGuiBackendFlags_HasGamepad) != 0));
     nav_keyboard_active = ((g->IO.ConfigFlags & ImGuiConfigFlags_NavEnableKeyboard) != 0);
-    if ((!(nav_keyboard_active && imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_Escape, 0, ((ImGuiID)((-1)))))) && (!(nav_gamepad_active && imgui_i_is_key_pressed(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceDown : ImGuiKey_GamepadFaceRight), 0, ((ImGuiID)((-1))))))) {
+    if ((!(nav_keyboard_active && imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_Escape, 0, ((ImGuiID)((-1)))))) && (!(nav_gamepad_active && imgui__is_key_pressed(imgui_c89_ctx, (g->IO.ConfigNavSwapGamepadButtons ? ImGuiKey_GamepadFaceDown : ImGuiKey_GamepadFaceRight), 0, ((ImGuiID)((-1))))))) {
         return;
     }
     do {
         if (g->DebugLogFlags & ImGuiDebugLogFlags_EventNav) {
-            imgui_i_debug_log(imgui_c89_ctx, "[nav] NavUpdateCancelRequest()\n");
+            imgui__debug_log(imgui_c89_ctx, "[nav] NavUpdateCancelRequest()\n");
         }
     } while (0);
     if (g->ActiveId != 0) {
-        imgui_i_clear_active_id(imgui_c89_ctx);
+        imgui__clear_active_id(imgui_c89_ctx);
     } else {
         if (g->NavLayer != ImGuiNavLayer_Main) {
             ImGui_NavRestoreLayer__be2983b3fe(imgui_c89_ctx, ImGuiNavLayer_Main);
-            imgui_i_set_nav_cursor_visible_after_move(imgui_c89_ctx);
+            imgui__set_nav_cursor_visible_after_move(imgui_c89_ctx);
         } else {
             if (((g->NavWindow && (g->NavWindow != g->NavWindow->RootWindow)) && (!(g->NavWindow->RootWindowForNav->Flags & ImGuiWindowFlags_Popup))) && g->NavWindow->RootWindowForNav->ParentWindow) {
                 child_window = g->NavWindow->RootWindowForNav;
                 parent_window = child_window->ParentWindow;
                 imgui_c89_expect((!(child_window->ChildId != 0)), 0) ? imgui_c89_assert_id(253) : ((void)(0));
-                imgui_i_focus_window(imgui_c89_ctx, parent_window, 0);
-                imgui_i_set_nav_id(imgui_c89_ctx, child_window->ChildId, ImGuiNavLayer_Main, 0, (imgui_c89_temporary_0 = ImGui_WindowRectAbsToRel__7725b098d7(parent_window, (imgui_c89_temporary_1 = ImGuiWindow_Rect__460e84dccd(((ImGuiWindow *)(child_window))), &imgui_c89_temporary_1)), &imgui_c89_temporary_0));
-                imgui_i_set_nav_cursor_visible_after_move(imgui_c89_ctx);
+                imgui__focus_window(imgui_c89_ctx, parent_window, 0);
+                imgui__set_nav_id(imgui_c89_ctx, child_window->ChildId, ImGuiNavLayer_Main, 0, (imgui_c89_temporary_0 = ImGui_WindowRectAbsToRel__7725b098d7(parent_window, (imgui_c89_temporary_1 = ImGuiWindow_Rect__460e84dccd(((ImGuiWindow *)(child_window))), &imgui_c89_temporary_1)), &imgui_c89_temporary_0));
+                imgui__set_nav_cursor_visible_after_move(imgui_c89_ctx);
             } else {
                 if (((g->OpenPopupStack.Size > 0) && ((*(ImVector_ImGuiPopupData__back__fad4ca1016(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack)))))).Window != 0)) && (!((*(ImVector_ImGuiPopupData__back__fad4ca1016(((ImVector_ImGuiPopupData *)(&(g->OpenPopupStack)))))).Window->Flags & ImGuiWindowFlags_Modal))) {
-                    imgui_i_close_popup_to_level(imgui_c89_ctx, (g->OpenPopupStack.Size - 1), 1);
+                    imgui__close_popup_to_level(imgui_c89_ctx, (g->OpenPopupStack.Size - 1), 1);
                 } else {
                     if (g->IO.ConfigNavEscapeClearFocusItem || g->IO.ConfigNavEscapeClearFocusWindow) {
                         if (g->NavWindow && (g->NavWindow->Flags & ImGuiWindowFlags_Popup)) {
@@ -21698,7 +21698,7 @@ static void ImGui_NavUpdateCancelRequest__0b93595c17(ImGuiContext *imgui_c89_ctx
                         g->NavId = 0;
                     }
                     if (g->IO.ConfigNavEscapeClearFocusWindow) {
-                        imgui_i_focus_window(imgui_c89_ctx, 0, 0);
+                        imgui__focus_window(imgui_c89_ctx, 0, 0);
                     }
                 }
             }
@@ -21721,18 +21721,18 @@ static void ImGui_NavUpdateContextMenuRequest__9d27896cf6(ImGuiContext *imgui_c8
         return;
     }
     request = 0;
-    request |= (nav_keyboard_active && (imgui_i_is_key_released(imgui_c89_ctx, ImGuiKey_Menu, ((ImGuiID)((-1)))) || (imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_F10, ImGuiInputFlags_None, ((ImGuiID)((-1)))) && (g->IO.KeyMods == ImGuiMod_Shift))));
-    request |= (nav_gamepad_active && imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_GamepadFaceUp, ImGuiInputFlags_None, ((ImGuiID)((-1)))));
+    request |= (nav_keyboard_active && (imgui__is_key_released(imgui_c89_ctx, ImGuiKey_Menu, ((ImGuiID)((-1)))) || (imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_F10, ImGuiInputFlags_None, ((ImGuiID)((-1)))) && (g->IO.KeyMods == ImGuiMod_Shift))));
+    request |= (nav_gamepad_active && imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_GamepadFaceUp, ImGuiInputFlags_None, ((ImGuiID)((-1)))));
     if (!request) {
         return;
     }
     g->NavOpenContextMenuItemId = g->NavId;
     g->NavOpenContextMenuWindowId = g->NavWindow->ID;
-    if ((g->NavId == imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->NavWindow)), "#CLOSE", 0)) || (g->NavId == imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->NavWindow)), "#COLLAPSE", 0))) {
+    if ((g->NavId == imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->NavWindow)), "#CLOSE", 0)) || (g->NavId == imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(g->NavWindow)), "#COLLAPSE", 0))) {
         g->NavOpenContextMenuItemId = g->NavWindow->MoveId;
     }
     g->NavInputSource = ImGuiInputSource_Keyboard;
-    imgui_i_set_nav_cursor_visible_after_move(imgui_c89_ctx);
+    imgui__set_nav_cursor_visible_after_move(imgui_c89_ctx);
 }
 
 static void ImGui_NavUpdateCreateMoveRequest__8fe8cc504c(ImGuiContext *imgui_c89_ctx)
@@ -21771,7 +21771,7 @@ static void ImGui_NavUpdateCreateMoveRequest__8fe8cc504c(ImGuiContext *imgui_c89
         imgui_c89_expect((!(g->NavMoveFlags & ImGuiNavMoveFlags_Forwarded)), 0) ? imgui_c89_assert_id(249) : ((void)(0));
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventNav) {
-                imgui_i_debug_log(imgui_c89_ctx, "[nav] NavMoveRequestForward %d\n", g->NavMoveDir);
+                imgui__debug_log(imgui_c89_ctx, "[nav] NavMoveRequestForward %d\n", g->NavMoveDir);
             }
         } while (0);
     } else {
@@ -21782,8 +21782,8 @@ static void ImGui_NavUpdateCreateMoveRequest__8fe8cc504c(ImGuiContext *imgui_c89
             repeat_mode = (ImGuiInputFlags_Repeat | ((ImGuiInputFlags)(ImGuiInputFlags_RepeatRateNavMove)));
             for (imgui_c89_nav_dir = ImGuiDir_Left; imgui_c89_nav_dir <= ImGuiDir_Down; ++imgui_c89_nav_dir) {
                 if ((!ImGui_IsActiveIdUsingNavDir__6cce0cd6b7(imgui_c89_ctx, imgui_c89_nav_dir)) &&
-                    ((nav_gamepad_active && imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_GamepadDpadLeft + imgui_c89_nav_dir, repeat_mode, ((ImGuiID)((-1))))) ||
-                     (nav_keyboard_active && imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_LeftArrow + imgui_c89_nav_dir, repeat_mode, ((ImGuiID)((-1))))))) {
+                    ((nav_gamepad_active && imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_GamepadDpadLeft + imgui_c89_nav_dir, repeat_mode, ((ImGuiID)((-1))))) ||
+                     (nav_keyboard_active && imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_LeftArrow + imgui_c89_nav_dir, repeat_mode, ((ImGuiID)((-1))))))) {
                     g->NavMoveDir = imgui_c89_nav_dir;
                 }
             }
@@ -21797,12 +21797,12 @@ static void ImGui_NavUpdateCreateMoveRequest__8fe8cc504c(ImGuiContext *imgui_c89
     }
     g->NavMoveForwardToNextFrame = 0;
     if (g->NavMoveDir != ImGuiDir_None) {
-        imgui_i_nav_move_request_submit(imgui_c89_ctx, g->NavMoveDir, g->NavMoveClipDir, g->NavMoveFlags, g->NavMoveScrollFlags);
+        imgui__nav_move_request_submit(imgui_c89_ctx, g->NavMoveDir, g->NavMoveClipDir, g->NavMoveFlags, g->NavMoveScrollFlags);
     }
     if (g->NavMoveSubmitted && (g->NavId == 0)) {
         do {
             if (g->DebugLogFlags & ImGuiDebugLogFlags_EventNav) {
-                imgui_i_debug_log(imgui_c89_ctx, "[nav] NavInitRequest: from move, window \"%s\", layer=%d\n", (window ? window->Name : "<NULL>"), g->NavLayer);
+                imgui__debug_log(imgui_c89_ctx, "[nav] NavInitRequest: from move, window \"%s\", layer=%d\n", (window ? window->Name : "<NULL>"), g->NavLayer);
             }
         } while (0);
         g->NavInitRequest = (g->NavInitRequestFromMove = 1);
@@ -21819,7 +21819,7 @@ static void ImGui_NavUpdateCreateMoveRequest__8fe8cc504c(ImGuiContext *imgui_c89
         if ((clamp_x || clamp_y) && (!ImRect_Contains__c9916e1cff(((ImRect *)(&(inner_rect_rel))), &(window->NavRectRel[g->NavLayer])))) {
             do {
                 if (g->DebugLogFlags & ImGuiDebugLogFlags_EventNav) {
-                    imgui_i_debug_log(imgui_c89_ctx, "[nav] NavMoveRequest: clamp NavRectRel for gamepad move\n");
+                    imgui__debug_log(imgui_c89_ctx, "[nav] NavMoveRequest: clamp NavRectRel for gamepad move\n");
                 }
             } while (0);
             pad_x = ImMin__f04263da73(ImRect_GetWidth__7eeda790fc(((ImRect *)(&(inner_rect_rel)))), (window->FontRefSize * 0.5f));
@@ -21868,7 +21868,7 @@ static void ImGui_NavUpdateCreateTabbingRequest__9d24e7cb88(ImGuiContext *imgui_
     if ((((window == 0) || (g->NavWindowingTarget != 0)) || (window->Flags & ImGuiWindowFlags_NoNavInputs)) || (!g->ConfigNavEnableTabbing)) {
         return;
     }
-    tab_pressed = ((imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_Tab, ImGuiInputFlags_Repeat, ((ImGuiID)((-1)))) && (!g->IO.KeyCtrl)) && (!g->IO.KeyAlt));
+    tab_pressed = ((imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_Tab, ImGuiInputFlags_Repeat, ((ImGuiID)((-1)))) && (!g->IO.KeyCtrl)) && (!g->IO.KeyAlt));
     if (!tab_pressed) {
         return;
     }
@@ -21881,7 +21881,7 @@ static void ImGui_NavUpdateCreateTabbingRequest__9d24e7cb88(ImGuiContext *imgui_
     move_flags = (ImGuiNavMoveFlags_IsTabbing | ImGuiNavMoveFlags_Activate);
     scroll_flags = (window->Appearing ? (ImGuiScrollFlags_KeepVisibleEdgeX | ImGuiScrollFlags_AlwaysCenterY) : (ImGuiScrollFlags_KeepVisibleEdgeX | ImGuiScrollFlags_KeepVisibleEdgeY));
     clip_dir = ((g->NavTabbingDir < 0) ? ImGuiDir_Up : ImGuiDir_Down);
-    imgui_i_nav_move_request_submit(imgui_c89_ctx, ImGuiDir_None, clip_dir, move_flags, scroll_flags);
+    imgui__nav_move_request_submit(imgui_c89_ctx, ImGuiDir_None, clip_dir, move_flags, scroll_flags);
     g->NavTabbingCounter = (-1);
 }
 
@@ -21930,9 +21930,9 @@ static void ImGui_NavUpdateCreateWrappingRequest__4927795b50(ImGuiContext *imgui
         return;
     }
     window->NavRectRel[g->NavLayer] = bb_rel;
-    imgui_i_nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_X);
-    imgui_i_nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_Y);
-    imgui_i_nav_move_request_forward(imgui_c89_ctx, g->NavMoveDir, clip_dir, move_flags, g->NavMoveScrollFlags);
+    imgui__nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_X);
+    imgui__nav_clear_preferred_pos_for_axis(imgui_c89_ctx, ImGuiAxis_Y);
+    imgui__nav_move_request_forward(imgui_c89_ctx, g->NavMoveDir, clip_dir, move_flags, g->NavMoveScrollFlags);
 }
 
 static float ImGui_NavUpdatePageUpPageDown__b0585bd5d8(ImGuiContext *imgui_c89_ctx)
@@ -21952,10 +21952,10 @@ static float ImGui_NavUpdatePageUpPageDown__b0585bd5d8(ImGuiContext *imgui_c89_c
     if ((window->Flags & ImGuiWindowFlags_NoNavInputs) || (g->NavWindowingTarget != 0)) {
         return 0.0f;
     }
-    page_up_held = imgui_i_is_key_down(imgui_c89_ctx, ImGuiKey_PageUp, ((ImGuiID)((-1))));
-    page_down_held = imgui_i_is_key_down(imgui_c89_ctx, ImGuiKey_PageDown, ((ImGuiID)((-1))));
-    home_pressed = imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_Home, ImGuiInputFlags_Repeat, ((ImGuiID)((-1))));
-    end_pressed = imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_End, ImGuiInputFlags_Repeat, ((ImGuiID)((-1))));
+    page_up_held = imgui__is_key_down(imgui_c89_ctx, ImGuiKey_PageUp, ((ImGuiID)((-1))));
+    page_down_held = imgui__is_key_down(imgui_c89_ctx, ImGuiKey_PageDown, ((ImGuiID)((-1))));
+    home_pressed = imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_Home, ImGuiInputFlags_Repeat, ((ImGuiID)((-1))));
+    end_pressed = imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_End, ImGuiInputFlags_Repeat, ((ImGuiID)((-1))));
     if ((page_up_held == page_down_held) && (home_pressed == end_pressed)) {
         return 0.0f;
     }
@@ -21963,17 +21963,17 @@ static float ImGui_NavUpdatePageUpPageDown__b0585bd5d8(ImGuiContext *imgui_c89_c
         ImGui_NavRestoreLayer__be2983b3fe(imgui_c89_ctx, ImGuiNavLayer_Main);
     }
     if (((window->DC.NavLayersActiveMask & (1 << ImGuiNavLayer_Main)) == 0) && window->DC.NavWindowHasScrollY) {
-        if (imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_PageUp, ImGuiInputFlags_Repeat, ((ImGuiID)((-1))))) {
-            imgui_i_set_scroll_y(window, (window->Scroll.y - ImRect_GetHeight__bcfe92168a(((ImRect *)(&(window->InnerRect))))));
+        if (imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_PageUp, ImGuiInputFlags_Repeat, ((ImGuiID)((-1))))) {
+            imgui__set_scroll_y(window, (window->Scroll.y - ImRect_GetHeight__bcfe92168a(((ImRect *)(&(window->InnerRect))))));
         } else {
-            if (imgui_i_is_key_pressed(imgui_c89_ctx, ImGuiKey_PageDown, ImGuiInputFlags_Repeat, ((ImGuiID)((-1))))) {
-                imgui_i_set_scroll_y(window, (window->Scroll.y + ImRect_GetHeight__bcfe92168a(((ImRect *)(&(window->InnerRect))))));
+            if (imgui__is_key_pressed(imgui_c89_ctx, ImGuiKey_PageDown, ImGuiInputFlags_Repeat, ((ImGuiID)((-1))))) {
+                imgui__set_scroll_y(window, (window->Scroll.y + ImRect_GetHeight__bcfe92168a(((ImRect *)(&(window->InnerRect))))));
             } else {
                 if (home_pressed) {
-                    imgui_i_set_scroll_y(window, 0.0f);
+                    imgui__set_scroll_y(window, 0.0f);
                 } else {
                     if (end_pressed) {
-                        imgui_i_set_scroll_y(window, window->ScrollMax.y);
+                        imgui__set_scroll_y(window, window->ScrollMax.y);
                     }
                 }
             }
@@ -22060,7 +22060,7 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
     io = &(g->IO);
     apply_focus_window = 0;
     apply_toggle_layer = 0;
-    modal_window = imgui_i_get_top_most_popup_modal(imgui_c89_ctx);
+    modal_window = imgui__get_top_most_popup_modal(imgui_c89_ctx);
     allow_windowing = (modal_window == 0);
     if (!allow_windowing) {
         g->NavWindowingTarget = 0;
@@ -22071,12 +22071,12 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
             g->NavWindowingTargetAnim = 0;
         }
     }
-    owner_id = imgui_i_im_hash_str("##NavUpdateWindowing", 0, 0);
+    owner_id = imgui__im_hash_str("##NavUpdateWindowing", 0, 0);
     nav_gamepad_active = (((io->ConfigFlags & ImGuiConfigFlags_NavEnableGamepad) != 0) && ((io->BackendFlags & ImGuiBackendFlags_HasGamepad) != 0));
     nav_keyboard_active = ((io->ConfigFlags & ImGuiConfigFlags_NavEnableKeyboard) != 0);
-    keyboard_next_window = ((allow_windowing && g->ConfigNavWindowingKeyNext) && imgui_i_shortcut(imgui_c89_ctx, g->ConfigNavWindowingKeyNext, (ImGuiInputFlags_Repeat | ImGuiInputFlags_RouteAlways), owner_id));
-    keyboard_prev_window = ((allow_windowing && g->ConfigNavWindowingKeyPrev) && imgui_i_shortcut(imgui_c89_ctx, g->ConfigNavWindowingKeyPrev, (ImGuiInputFlags_Repeat | ImGuiInputFlags_RouteAlways), owner_id));
-    start_toggling_with_gamepad = ((nav_gamepad_active && (!g->NavWindowingTarget)) && imgui_i_shortcut(imgui_c89_ctx, ImGuiKey_GamepadFaceLeft, ImGuiInputFlags_RouteAlways, owner_id));
+    keyboard_next_window = ((allow_windowing && g->ConfigNavWindowingKeyNext) && imgui__shortcut(imgui_c89_ctx, g->ConfigNavWindowingKeyNext, (ImGuiInputFlags_Repeat | ImGuiInputFlags_RouteAlways), owner_id));
+    keyboard_prev_window = ((allow_windowing && g->ConfigNavWindowingKeyPrev) && imgui__shortcut(imgui_c89_ctx, g->ConfigNavWindowingKeyPrev, (ImGuiInputFlags_Repeat | ImGuiInputFlags_RouteAlways), owner_id));
+    start_toggling_with_gamepad = ((nav_gamepad_active && (!g->NavWindowingTarget)) && imgui__shortcut(imgui_c89_ctx, ImGuiKey_GamepadFaceLeft, ImGuiInputFlags_RouteAlways, owner_id));
     start_windowing_with_gamepad = (allow_windowing && start_toggling_with_gamepad);
     start_windowing_with_keyboard = ((allow_windowing && (!g->NavWindowingTarget)) && (keyboard_next_window || keyboard_prev_window));
     just_started_windowing_from_null_focus = 0;
@@ -22086,7 +22086,7 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
         g->NavWindowingInputSource = (g->NavInputSource = ImGuiInputSource_Gamepad);
     }
     if (start_windowing_with_gamepad || start_windowing_with_keyboard) {
-        window = ((g->NavWindow && imgui_i_is_window_nav_focusable(g->NavWindow)) ? g->NavWindow : FindWindowNavFocusable__56757c85f4(imgui_c89_ctx, (g->WindowsFocusOrder.Size - 1), (-2147483647), (-1)));
+        window = ((g->NavWindow && imgui__is_window_nav_focusable(g->NavWindow)) ? g->NavWindow : FindWindowNavFocusable__56757c85f4(imgui_c89_ctx, (g->WindowsFocusOrder.Size - 1), (-2147483647), (-1)));
         if (window) {
             if (start_windowing_with_keyboard || g->ConfigNavWindowingWithGamepad) {
                 g->NavWindowingTarget = (g->NavWindowingTargetAnim = window->RootWindow);
@@ -22098,7 +22098,7 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
                 just_started_windowing_from_null_focus = 1;
             }
             if (keyboard_next_window || keyboard_prev_window) {
-                imgui_i_set_key_owners_for_key_chord(imgui_c89_ctx, ((g->ConfigNavWindowingKeyNext | g->ConfigNavWindowingKeyPrev) & ImGuiMod_Mask_), owner_id, 0);
+                imgui__set_key_owners_for_key_chord(imgui_c89_ctx, ((g->ConfigNavWindowingKeyNext | g->ConfigNavWindowingKeyPrev) & ImGuiMod_Mask_), owner_id, 0);
             }
         }
     }
@@ -22145,7 +22145,7 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
         __end2 = (__range2 + 2);
         for (; __begin2 != __end2; ++__begin2) {
             windowing_toggle_key = (*__begin2);
-            if (nav_keyboard_active && imgui_i_is_key_pressed(imgui_c89_ctx, windowing_toggle_key, 0, ((ImGuiID)((-1))))) {
+            if (nav_keyboard_active && imgui__is_key_pressed(imgui_c89_ctx, windowing_toggle_key, 0, ((ImGuiID)((-1))))) {
                 windowing_toggle_layer_start = 1;
                 g->NavWindowingToggleLayer = 1;
                 g->NavWindowingToggleKey = windowing_toggle_key;
@@ -22161,7 +22161,7 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
             if ((windowing_toggle_layer_start == 0) && (g->LastKeyboardKeyPressTime == g->Time)) {
                 g->NavWindowingToggleLayer = 0;
             } else {
-                if ((imgui_i_test_key_owner(imgui_c89_ctx, g->NavWindowingToggleKey, ((ImGuiID)((-1)))) == 0) || (imgui_i_test_key_owner(imgui_c89_ctx, ImGuiMod_Alt, ((ImGuiID)((-1)))) == 0)) {
+                if ((imgui__test_key_owner(imgui_c89_ctx, g->NavWindowingToggleKey, ((ImGuiID)((-1)))) == 0) || (imgui__test_key_owner(imgui_c89_ctx, ImGuiMod_Alt, ((ImGuiID)((-1)))) == 0)) {
                     g->NavWindowingToggleLayer = 0;
                 }
             }
@@ -22180,10 +22180,10 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
     if (g->NavWindowingTarget && (!(g->NavWindowingTarget->Flags & ImGuiWindowFlags_NoMove))) {
         ImVec2_ImVec2__22b45734f5(&nav_move_dir);
         if ((g->NavInputSource == ImGuiInputSource_Keyboard) && (!io->KeyShift)) {
-            nav_move_dir = imgui_i_get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_LeftArrow, ImGuiKey_RightArrow, ImGuiKey_UpArrow, ImGuiKey_DownArrow);
+            nav_move_dir = imgui__get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_LeftArrow, ImGuiKey_RightArrow, ImGuiKey_UpArrow, ImGuiKey_DownArrow);
         }
         if (g->NavInputSource == ImGuiInputSource_Gamepad) {
-            nav_move_dir = imgui_i_get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_GamepadLStickLeft, ImGuiKey_GamepadLStickRight, ImGuiKey_GamepadLStickUp, ImGuiKey_GamepadLStickDown);
+            nav_move_dir = imgui__get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_GamepadLStickLeft, ImGuiKey_GamepadLStickRight, ImGuiKey_GamepadLStickUp, ImGuiKey_GamepadLStickDown);
         }
         if ((nav_move_dir.x != 0.0f) || (nav_move_dir.y != 0.0f)) {
             NAV_MOVE_SPEED = 800.0f;
@@ -22193,7 +22193,7 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
             accum_floored = ImTrunc__735393dfb3(&(g->NavWindowingAccumDeltaPos));
             if ((accum_floored.x != 0.0f) || (accum_floored.y != 0.0f)) {
                 moving_window = g->NavWindowingTarget->RootWindow;
-                imgui_i_set_window_pos(imgui_c89_ctx, moving_window, (imgui_c89_temporary_1 = operator___29d06b7915(&(moving_window->Pos), &(accum_floored)), &imgui_c89_temporary_1), ImGuiCond_Always);
+                imgui__set_window_pos(imgui_c89_ctx, moving_window, (imgui_c89_temporary_1 = operator___29d06b7915(&(moving_window->Pos), &(accum_floored)), &imgui_c89_temporary_1), ImGuiCond_Always);
                 operator____e7ea819024(&(g->NavWindowingAccumDeltaPos), &(accum_floored));
             }
         }
@@ -22202,14 +22202,14 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
         ImGui_NavUpdateWindowingApplyFocus__bec751c44a(imgui_c89_ctx, apply_focus_window);
     }
     if (apply_toggle_layer && g->NavWindow) {
-        imgui_i_clear_active_id(imgui_c89_ctx);
+        imgui__clear_active_id(imgui_c89_ctx);
         new_nav_window = g->NavWindow;
         while (((new_nav_window->ParentWindow && ((new_nav_window->DC.NavLayersActiveMask & (1 << ImGuiNavLayer_Menu)) == 0)) && ((new_nav_window->Flags & ImGuiWindowFlags_ChildWindow) != 0)) && ((new_nav_window->Flags & (ImGuiWindowFlags_Popup | ImGuiWindowFlags_ChildMenu)) == 0)) {
             new_nav_window = new_nav_window->ParentWindow;
         }
         if (new_nav_window != g->NavWindow) {
             old_nav_window = g->NavWindow;
-            imgui_i_focus_window(imgui_c89_ctx, new_nav_window, 0);
+            imgui__focus_window(imgui_c89_ctx, new_nav_window, 0);
             new_nav_window->NavLastChildNavWindow = old_nav_window;
         }
         new_nav_layer = ((g->NavWindow->DC.NavLayersActiveMask & (1 << ImGuiNavLayer_Menu)) ? ((ImGuiNavLayer)((((int)(g->NavLayer)) ^ 1))) : ImGuiNavLayer_Main);
@@ -22218,7 +22218,7 @@ static void ImGui_NavUpdateWindowing__a29bf5fe32(ImGuiContext *imgui_c89_ctx)
                 g->NavWindow->NavLastIds[new_nav_layer] = 0;
             }
             ImGui_NavRestoreLayer__be2983b3fe(imgui_c89_ctx, new_nav_layer);
-            imgui_i_set_nav_cursor_visible_after_move(imgui_c89_ctx);
+            imgui__set_nav_cursor_visible_after_move(imgui_c89_ctx);
         }
     }
 }
@@ -22229,14 +22229,14 @@ static void ImGui_NavUpdateWindowingApplyFocus__bec751c44a(ImGuiContext *imgui_c
 
     g = &((*imgui_c89_ctx));
     if ((g->NavWindow == 0) || (apply_focus_window != g->NavWindow->RootWindow)) {
-        imgui_i_clear_active_id(imgui_c89_ctx);
-        imgui_i_set_nav_cursor_visible_after_move(imgui_c89_ctx);
-        imgui_i_close_popups_over_window(imgui_c89_ctx, apply_focus_window, 0);
-        imgui_i_focus_window(imgui_c89_ctx, apply_focus_window, ImGuiFocusRequestFlags_RestoreFocusedChild);
+        imgui__clear_active_id(imgui_c89_ctx);
+        imgui__set_nav_cursor_visible_after_move(imgui_c89_ctx);
+        imgui__close_popups_over_window(imgui_c89_ctx, apply_focus_window, 0);
+        imgui__focus_window(imgui_c89_ctx, apply_focus_window, ImGuiFocusRequestFlags_RestoreFocusedChild);
         imgui_c89_expect((!(g->NavWindow != 0)), 0) ? imgui_c89_assert_id(255) : ((void)(0));
         apply_focus_window = g->NavWindow;
         if (apply_focus_window->NavLastIds[0] == 0) {
-            imgui_i_nav_init_window(imgui_c89_ctx, apply_focus_window, 0);
+            imgui__nav_init_window(imgui_c89_ctx, apply_focus_window, 0);
         }
         if (apply_focus_window->DC.NavLayersActiveMaskNext == (1 << ImGuiNavLayer_Menu)) {
             g->NavLayer = ImGuiNavLayer_Menu;
@@ -22294,11 +22294,11 @@ static void ImGui_NavUpdateWindowingOverlay__ae4c10b81b(ImGuiContext *imgui_c89_
     for (; n >= 0; n--) {
         window = (*(ImVector_ImGuiWindow____operator____0ad6ce4837(((ImVector_ImGuiWindow_ptr *)(&(g->WindowsFocusOrder))), n)));
         imgui_c89_expect((!(window != 0)), 0) ? imgui_c89_assert_id(258) : ((void)(0));
-        if (!imgui_i_is_window_nav_focusable(window)) {
+        if (!imgui__is_window_nav_focusable(window)) {
             continue;
         }
         label = window->Name;
-        if (label == imgui_i_find_rendered_text_end(label, 0)) {
+        if (label == imgui__find_rendered_text_end(label, 0)) {
             label = GetFallbackWindowNameForWindowingList__c538aa0afb(imgui_c89_ctx, window);
         }
         imgui_c89_nav_overlay_selectable(imgui_c89_ctx, label, (g->NavWindowingTarget == window));
@@ -22354,7 +22354,7 @@ static void ImGui_RenderDimmedBackgrounds__bd35ed39a2(ImGuiContext *imgui_c89_ct
     ImGuiWindow * dim_behind_window;
 
     g = &((*imgui_c89_ctx));
-    modal_window = imgui_i_get_top_most_and_visible_popup_modal(imgui_c89_ctx);
+    modal_window = imgui__get_top_most_and_visible_popup_modal(imgui_c89_ctx);
     if ((g->DimBgRatio <= 0.0f) && (g->NavWindowingHighlightAlpha <= 0.0f)) {
         return;
     }
@@ -22364,7 +22364,7 @@ static void ImGui_RenderDimmedBackgrounds__bd35ed39a2(ImGuiContext *imgui_c89_ct
         return;
     }
     if (dim_bg_for_modal) {
-        dim_behind_window = imgui_i_find_bottom_most_visible_window_within_begin_stack(imgui_c89_ctx, modal_window);
+        dim_behind_window = imgui__find_bottom_most_visible_window_within_begin_stack(imgui_c89_ctx, modal_window);
         ImGui_RenderDimmedBackgroundBehindWindow__8cdf023e66(imgui_c89_ctx, dim_behind_window, imgui_get_color_u32_u32_float(imgui_c89_ctx, modal_window->DC.ModalDimBgColor, g->DimBgRatio));
     } else {
         if (dim_bg_for_window_list) {
@@ -22435,7 +22435,7 @@ static void ImGui_RenderWindowDecorations__0de697f020(ImGuiContext *imgui_c89_ct
         backup_border_size = style->FrameBorderSize;
         g->Style.FrameBorderSize = window->WindowBorderSize;
         title_bar_col__2b699b6f = imgui_get_color_u32_col_float(imgui_c89_ctx, ((title_bar_is_highlight && g->NavCursorVisible) ? ImGuiCol_TitleBgActive : ImGuiCol_TitleBgCollapsed), 1.0f);
-        imgui_i_render_frame(imgui_c89_ctx, title_bar_rect->Min, title_bar_rect->Max, title_bar_col__2b699b6f, 1, window_rounding);
+        imgui__render_frame(imgui_c89_ctx, title_bar_rect->Min, title_bar_rect->Max, title_bar_col__2b699b6f, 1, window_rounding);
         g->Style.FrameBorderSize = backup_border_size;
     } else {
         if (!(flags & ImGuiWindowFlags_NoBackground)) {
@@ -22469,10 +22469,10 @@ static void ImGui_RenderWindowDecorations__0de697f020(ImGuiContext *imgui_c89_ct
             }
         }
         if (window->ScrollbarX) {
-            imgui_i_scrollbar(imgui_c89_ctx, ImGuiAxis_X);
+            imgui__scrollbar(imgui_c89_ctx, ImGuiAxis_X);
         }
         if (window->ScrollbarY) {
-            imgui_i_scrollbar(imgui_c89_ctx, ImGuiAxis_Y);
+            imgui__scrollbar(imgui_c89_ctx, ImGuiAxis_Y);
         }
         if (handle_borders_and_resize_grips && (!(flags & ImGuiWindowFlags_NoResize))) {
             resize_grip_n = 0;
@@ -22585,14 +22585,14 @@ static void ImGui_RenderWindowTitleBarContents__e2ad016077(ImGuiContext *imgui_c
         pad_l += (button_sz + style->ItemInnerSpacing.x);
     }
     if (has_collapse_button) {
-        if (imgui_i_collapse_button(imgui_c89_ctx, imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), "#COLLAPSE", 0), &(collapse_button_pos))) {
+        if (imgui__collapse_button(imgui_c89_ctx, imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), "#COLLAPSE", 0), &(collapse_button_pos))) {
             window->WantCollapseToggle = 1;
         }
     }
     if (has_close_button) {
         backup_item_flags = g->CurrentItemFlags;
         g->CurrentItemFlags |= ImGuiItemFlags_NoFocus;
-        if (imgui_i_close_button(imgui_c89_ctx, imgui_i_window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), "#CLOSE", 0), &(close_button_pos))) {
+        if (imgui__close_button(imgui_c89_ctx, imgui__window_get_id_string_string(imgui_c89_ctx, ((ImGuiWindow *)(window)), "#CLOSE", 0), &(close_button_pos))) {
             (*p_open) = 0;
         }
         g->CurrentItemFlags = backup_item_flags;
@@ -22620,11 +22620,11 @@ static void ImGui_RenderWindowTitleBarContents__e2ad016077(ImGuiContext *imgui_c
         marker_pos.x = ImClamp__36c731a202(((layout_r.Min.x + ((ImRect_GetWidth__7eeda790fc(((ImRect *)(&(layout_r)))) - text_size.x) * style->WindowTitleAlign.x)) + text_size.x), layout_r.Min.x, layout_r.Max.x);
         marker_pos.y = ((layout_r.Min.y + layout_r.Max.y) * 0.5f);
         if (marker_pos.x > layout_r.Min.x) {
-            imgui_i_render_bullet(imgui_c89_ctx, window->DrawList, marker_pos, imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_UnsavedMarker, 1.0f));
+            imgui__render_bullet(imgui_c89_ctx, window->DrawList, marker_pos, imgui_get_color_u32_col_float(imgui_c89_ctx, ImGuiCol_UnsavedMarker, 1.0f));
             clip_r.Max.x = ImMin__f04263da73(clip_r.Max.x, (marker_pos.x - ((int)((marker_size_x * 0.5f)))));
         }
     }
-    imgui_i_render_text_clipped(imgui_c89_ctx, &(layout_r.Min), &(layout_r.Max), name, 0, (&text_size), &(style->WindowTitleAlign), (&clip_r));
+    imgui__render_text_clipped(imgui_c89_ctx, &(layout_r.Min), &(layout_r.Max), name, 0, (&text_size), &(style->WindowTitleAlign), (&clip_r));
 }
 
 static void ImGui_SetLastItemDataForChildWindowItem__4898789402(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImRect * rect)
@@ -22632,7 +22632,7 @@ static void ImGui_SetLastItemDataForChildWindowItem__4898789402(ImGuiContext *im
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    imgui_i_set_last_item_data(imgui_c89_ctx, window->ChildId, g->CurrentItemFlags, window->DC.ChildItemStatusFlags, rect);
+    imgui__set_last_item_data(imgui_c89_ctx, window->ChildId, g->CurrentItemFlags, window->DC.ChildItemStatusFlags, rect);
 }
 
 static void ImGui_SetLastItemDataForWindow__c067771a9f(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, const ImRect * rect)
@@ -22640,7 +22640,7 @@ static void ImGui_SetLastItemDataForWindow__c067771a9f(ImGuiContext *imgui_c89_c
     ImGuiContext * g;
 
     g = &((*imgui_c89_ctx));
-    imgui_i_set_last_item_data(imgui_c89_ctx, window->MoveId, g->CurrentItemFlags, window->DC.WindowItemStatusFlags, rect);
+    imgui__set_last_item_data(imgui_c89_ctx, window->MoveId, g->CurrentItemFlags, window->DC.WindowItemStatusFlags, rect);
 }
 
 static void ImGui_UpdateDebugToolFlashStyleColor__3787c5aa08(ImGuiContext *imgui_c89_ctx)
@@ -22704,16 +22704,16 @@ static void ImGui_UpdateDebugToolItemPicker__ad78b93702(ImGuiContext *imgui_c89_
     if (!imgui_begin_tooltip(imgui_c89_ctx)) {
         return;
     }
-    imgui_i_text(imgui_c89_ctx, "HoveredId: 0x%08X", hovered_id);
-    imgui_i_text(imgui_c89_ctx, "Press ESC to abort picking.");
+    imgui__text(imgui_c89_ctx, "HoveredId: 0x%08X", hovered_id);
+    imgui__text(imgui_c89_ctx, "Press ESC to abort picking.");
     memset(&mouse_button_names, 0, sizeof(mouse_button_names));
     mouse_button_names[0] = "Left";
     mouse_button_names[1] = "Right";
     mouse_button_names[2] = "Middle";
     if (change_mapping) {
-        imgui_i_text(imgui_c89_ctx, "Remap w/ Ctrl+Shift: click anywhere to select new mouse button.");
+        imgui__text(imgui_c89_ctx, "Remap w/ Ctrl+Shift: click anywhere to select new mouse button.");
     } else {
-        imgui_i_text_colored(imgui_c89_ctx, &((*(imgui_get_style_color_vec4(imgui_c89_ctx, (hovered_id ? ImGuiCol_Text : ImGuiCol_TextDisabled))))), "Click %s Button to break in debugger! (remap w/ Ctrl+Shift)", mouse_button_names[g->DebugItemPickerMouseButton]);
+        imgui__text_colored(imgui_c89_ctx, &((*(imgui_get_style_color_vec4(imgui_c89_ctx, (hovered_id ? ImGuiCol_Text : ImGuiCol_TextDisabled))))), "Click %s Button to break in debugger! (remap w/ Ctrl+Shift)", mouse_button_names[g->DebugItemPickerMouseButton]);
     }
     imgui_end_tooltip(imgui_c89_ctx);
 }
@@ -22747,7 +22747,7 @@ static void ImGui_UpdateFontsNewFrame__730f69d9cb(ImGuiContext *imgui_c89_ctx)
         g->Style.FontSizeBase = g->Style._NextFrameFontSizeBase;
         g->Style._NextFrameFontSizeBase = 0.0f;
     }
-    font = imgui_i_get_default_font(imgui_c89_ctx);
+    font = imgui__get_default_font(imgui_c89_ctx);
     if (g->Style.FontSizeBase <= 0.0f) {
         g->Style.FontSizeBase = ((font->LegacySize > 0.0f) ? font->LegacySize : FONT_DEFAULT_SIZE_BASE__f61d6a7048);
     }
@@ -22758,7 +22758,7 @@ static void ImGui_UpdateFontsNewFrame__730f69d9cb(ImGuiContext *imgui_c89_ctx)
     font_stack_data.Font = font;
     font_stack_data.FontSizeBeforeScaling = g->Style.FontSizeBase;
     font_stack_data.FontSizeAfterScaling = g->Style.FontSizeBase;
-    imgui_i_set_current_font(imgui_c89_ctx, font_stack_data.Font, font_stack_data.FontSizeBeforeScaling, 0.0f);
+    imgui__set_current_font(imgui_c89_ctx, font_stack_data.Font, font_stack_data.FontSizeBeforeScaling, 0.0f);
     ImVector_ImFontStackData__push_back__195d54370f(imgui_c89_ctx, ((ImVector_ImFontStackData *)(&(g->FontStack))), &(font_stack_data));
     imgui_c89_expect((!imgui_font_is_loaded(((ImFont *)(g->Font)))), 0) ? imgui_c89_assert_id(105) : ((void)(0));
 }
@@ -22987,11 +22987,11 @@ static void ImGui_UpdateMouseWheel__399236ea82(ImGuiContext *imgui_c89_ctx)
     }
     owner_id = mouse_window->ID;
     ImVec2_ImVec2__22b45734f5(&wheel);
-    wheel.x = (imgui_i_test_key_owner(imgui_c89_ctx, ImGuiKey_MouseWheelX, owner_id) ? g->IO.MouseWheelH : 0.0f);
-    wheel.y = (imgui_i_test_key_owner(imgui_c89_ctx, ImGuiKey_MouseWheelY, owner_id) ? g->IO.MouseWheel : 0.0f);
+    wheel.x = (imgui__test_key_owner(imgui_c89_ctx, ImGuiKey_MouseWheelX, owner_id) ? g->IO.MouseWheelH : 0.0f);
+    wheel.y = (imgui__test_key_owner(imgui_c89_ctx, ImGuiKey_MouseWheelY, owner_id) ? g->IO.MouseWheel : 0.0f);
     if (g->WheelingWindow != 0) {
-        imgui_i_set_key_owner(imgui_c89_ctx, ImGuiKey_MouseWheelX, owner_id, 0);
-        imgui_i_set_key_owner(imgui_c89_ctx, ImGuiKey_MouseWheelY, owner_id, 0);
+        imgui__set_key_owner(imgui_c89_ctx, ImGuiKey_MouseWheelX, owner_id, 0);
+        imgui__set_key_owner(imgui_c89_ctx, ImGuiKey_MouseWheelY, owner_id, 0);
     }
     if (((wheel.y != 0.0f) && g->IO.KeyCtrl) && g->IO.FontAllowUserScaling) {
         LockWheelingWindow__1db6f12b27(imgui_c89_ctx, mouse_window, wheel.y);
@@ -23001,10 +23001,10 @@ static void ImGui_UpdateMouseWheel__399236ea82(ImGuiContext *imgui_c89_ctx)
         window->FontWindowScale = new_font_scale;
         if (window == window->RootWindow) {
             offset = operator___ebc2151fa7((imgui_c89_temporary_1 = operator___c29d694b8f((imgui_c89_temporary_2 = operator___fef625b53c(&(window->Size), (1.0f - scale)), &imgui_c89_temporary_2), (imgui_c89_temporary_3 = operator___cb7271567d(&(g->IO.MousePos), &(window->Pos)), &imgui_c89_temporary_3)), &imgui_c89_temporary_1), &(window->Size));
-            imgui_i_set_window_pos(imgui_c89_ctx, window, (imgui_c89_temporary_4 = operator___29d06b7915(&(window->Pos), &(offset)), &imgui_c89_temporary_4), 0);
+            imgui__set_window_pos(imgui_c89_ctx, window, (imgui_c89_temporary_4 = operator___29d06b7915(&(window->Pos), &(offset)), &imgui_c89_temporary_4), 0);
             window->Size = ImTrunc__735393dfb3((imgui_c89_temporary_5 = operator___fef625b53c(&(window->Size), scale), &imgui_c89_temporary_5));
             window->SizeFull = ImTrunc__735393dfb3((imgui_c89_temporary_6 = operator___fef625b53c(&(window->SizeFull), scale), &imgui_c89_temporary_6));
-            imgui_i_mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
+            imgui__mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
         }
         return;
     }
@@ -23034,14 +23034,14 @@ static void ImGui_UpdateMouseWheel__399236ea82(ImGuiContext *imgui_c89_ctx)
                 LockWheelingWindow__1db6f12b27(imgui_c89_ctx, window__600edc82, wheel.x);
                 max_step = (ImRect_GetWidth__7eeda790fc(((ImRect *)(&(window__600edc82->InnerRect)))) * 0.670000016f);
                 scroll_step = ImTrunc__ae7a4018f8(ImMin__f04263da73((2 * window__600edc82->FontRefSize), max_step));
-                imgui_i_set_scroll_x(window__600edc82, (window__600edc82->Scroll.x - (wheel.x * scroll_step)));
+                imgui__set_scroll_x(window__600edc82, (window__600edc82->Scroll.x - (wheel.x * scroll_step)));
                 g->WheelingWindowScrolledFrame = g->FrameCount;
             }
             if (do_scroll[ImGuiAxis_Y]) {
                 LockWheelingWindow__1db6f12b27(imgui_c89_ctx, window__600edc82, wheel.y);
                 max_step__b9d75c32 = (ImRect_GetHeight__bcfe92168a(((ImRect *)(&(window__600edc82->InnerRect)))) * 0.670000016f);
                 scroll_step__73d2be4a = ImTrunc__ae7a4018f8(ImMin__f04263da73((5 * window__600edc82->FontRefSize), max_step__b9d75c32));
-                imgui_i_set_scroll_y(window__600edc82, (window__600edc82->Scroll.y - (wheel.y * scroll_step__73d2be4a)));
+                imgui__set_scroll_y(window__600edc82, (window__600edc82->Scroll.y - (wheel.y * scroll_step__73d2be4a)));
                 g->WheelingWindowScrolledFrame = g->FrameCount;
             }
         }
@@ -23135,7 +23135,7 @@ static void ImGui_UpdateTexturesNewFrame__161a44da5f(ImGuiContext *imgui_c89_ctx
     for (; __begin1 != __end1; ++__begin1) {
         atlas = (*__begin1);
         if (atlas->OwnerContext == (&(*g))) {
-            imgui_i_im_font_atlas_update_new_frame(imgui_c89_ctx, atlas, g->FrameCount, has_textures);
+            imgui__im_font_atlas_update_new_frame(imgui_c89_ctx, atlas, g->FrameCount, has_textures);
         } else {
             imgui_c89_expect((!((atlas->Builder != 0) && (atlas->Builder->FrameCount != (-1)))), 0) ? imgui_c89_assert_id(103) : ((void)(0));
             imgui_c89_expect((!(atlas->RendererHasTextures == has_textures)), 0) ? imgui_c89_assert_id(104) : ((void)(0));
@@ -23146,7 +23146,7 @@ static void ImGui_UpdateTexturesNewFrame__161a44da5f(ImGuiContext *imgui_c89_ctx
     __end1__ec3445d3 = ImVector_ImTextureData____end__3efe30f1db(((ImVector_ImTextureData_ptr *)(__range1__bbaac798)));
     for (; __begin1__0ec2c45b != __end1__ec3445d3; ++__begin1__0ec2c45b) {
         tex = (*__begin1__0ec2c45b);
-        imgui_i_im_texture_data_update_new_frame(imgui_c89_ctx, tex);
+        imgui__im_texture_data_update_new_frame(imgui_c89_ctx, tex);
     }
 }
 
@@ -23318,9 +23318,9 @@ static int ImGui_UpdateWindowManualResize__44f900090b(ImGuiContext *imgui_c89_ct
         if (resize_rect.Min.y > resize_rect.Max.y) {
             ImSwap__3e5ab29a0d(&(resize_rect.Min.y), &(resize_rect.Max.y));
         }
-        resize_grip_id = imgui_i_window_get_id_int(imgui_c89_ctx, ((ImGuiWindow *)(window)), resize_grip_n);
-        imgui_i_item_add(imgui_c89_ctx, &(resize_rect), resize_grip_id, 0, ImGuiItemFlags_NoNav);
-        imgui_i_button_behavior(imgui_c89_ctx, &(resize_rect), resize_grip_id, (&hovered), (&held), (ImGuiButtonFlags_FlattenChildren | ImGuiButtonFlags_NoNavFocus));
+        resize_grip_id = imgui__window_get_id_int(imgui_c89_ctx, ((ImGuiWindow *)(window)), resize_grip_n);
+        imgui__item_add(imgui_c89_ctx, &(resize_rect), resize_grip_id, 0, ImGuiItemFlags_NoNav);
+        imgui__button_behavior(imgui_c89_ctx, &(resize_rect), resize_grip_id, (&hovered), (&held), (ImGuiButtonFlags_FlattenChildren | ImGuiButtonFlags_NoNavFocus));
         if (hovered || held) {
             imgui_set_mouse_cursor(imgui_c89_ctx, ((resize_grip_n & 1) ? ImGuiMouseCursor_ResizeNESW : ImGuiMouseCursor_ResizeNWSE));
         }
@@ -23328,7 +23328,7 @@ static int ImGui_UpdateWindowManualResize__44f900090b(ImGuiContext *imgui_c89_ct
             size_auto_fit = CalcWindowAutoFitSize__d445e96539(imgui_c89_ctx, window, &(window->ContentSizeIdeal), (~0));
             size_target = CalcWindowSizeAfterConstraint__6c270dd706(imgui_c89_ctx, window, &(size_auto_fit));
             ret_auto_fit_mask = 3;
-            imgui_i_clear_active_id(imgui_c89_ctx);
+            imgui__clear_active_id(imgui_c89_ctx);
         } else {
             if (held) {
                 clamp_min = ImVec2_ImVec2_value__c798775144(((def->CornerPosN.x == 1.0f) ? clamp_rect.Min.x : (-3.40282347E+38f)), (((def->CornerPosN.y == 1.0f) || ((def->CornerPosN.y == 0.0f) && window_move_from_title_bar)) ? clamp_rect.Min.y : (-3.40282347E+38f)));
@@ -23357,9 +23357,9 @@ static int ImGui_UpdateWindowManualResize__44f900090b(ImGuiContext *imgui_c89_ct
         def__f5658e99 = &(resize_border_def__0464de09db[border_n]);
         axis = (((border_n == ImGuiDir_Left) || (border_n == ImGuiDir_Right)) ? ImGuiAxis_X : ImGuiAxis_Y);
         border_rect = GetResizeBorderRect__3fd6bb3fd9(window, border_n, grip_hover_inner_size, g->WindowsBorderHoverPadding);
-        border_id = imgui_i_window_get_id_int(imgui_c89_ctx, ((ImGuiWindow *)(window)), (border_n + 4));
-        imgui_i_item_add(imgui_c89_ctx, &(border_rect), border_id, 0, ImGuiItemFlags_NoNav);
-        imgui_i_button_behavior(imgui_c89_ctx, &(border_rect), border_id, (&hovered__f40dda52), (&held__5baa89c1), (ImGuiButtonFlags_FlattenChildren | ImGuiButtonFlags_NoNavFocus));
+        border_id = imgui__window_get_id_int(imgui_c89_ctx, ((ImGuiWindow *)(window)), (border_n + 4));
+        imgui__item_add(imgui_c89_ctx, &(border_rect), border_id, 0, ImGuiItemFlags_NoNav);
+        imgui__button_behavior(imgui_c89_ctx, &(border_rect), border_id, (&hovered__f40dda52), (&held__5baa89c1), (ImGuiButtonFlags_FlattenChildren | ImGuiButtonFlags_NoNavFocus));
         if (hovered__f40dda52 && (g->HoveredIdTimer <= WINDOWS_RESIZE_FROM_EDGES_FEEDBACK_TIMER__777560c4f2)) {
             hovered__f40dda52 = 0;
         }
@@ -23373,10 +23373,10 @@ static int ImGui_UpdateWindowManualResize__44f900090b(ImGuiContext *imgui_c89_ct
                 ret_auto_fit_mask |= (1 << axis);
                 hovered__f40dda52 = (held__5baa89c1 = 0);
             }
-            imgui_i_clear_active_id(imgui_c89_ctx);
+            imgui__clear_active_id(imgui_c89_ctx);
         } else {
             if (held__5baa89c1) {
-                just_scrolled_manually_while_resizing = (((g->WheelingWindow != 0) && (g->WheelingWindowScrolledFrame == g->FrameCount)) && imgui_i_is_window_child_of(window, g->WheelingWindow, 0));
+                just_scrolled_manually_while_resizing = (((g->WheelingWindow != 0) && (g->WheelingWindowScrolledFrame == g->FrameCount)) && imgui__is_window_child_of(window, g->WheelingWindow, 0));
                 if (g->ActiveIdIsJustActivated || just_scrolled_manually_while_resizing) {
                     g->WindowResizeBorderExpectedRect = border_rect;
                     g->WindowResizeRelativeMode = 0;
@@ -23416,10 +23416,10 @@ static int ImGui_UpdateWindowManualResize__44f900090b(ImGuiContext *imgui_c89_ct
     if (g->NavWindowingTarget && (g->NavWindowingTarget->RootWindow == window)) {
         ImVec2_ImVec2__22b45734f5(&nav_resize_dir);
         if ((g->NavInputSource == ImGuiInputSource_Keyboard) && g->IO.KeyShift) {
-            nav_resize_dir = imgui_i_get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_LeftArrow, ImGuiKey_RightArrow, ImGuiKey_UpArrow, ImGuiKey_DownArrow);
+            nav_resize_dir = imgui__get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_LeftArrow, ImGuiKey_RightArrow, ImGuiKey_UpArrow, ImGuiKey_DownArrow);
         }
         if (g->NavInputSource == ImGuiInputSource_Gamepad) {
-            nav_resize_dir = imgui_i_get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_GamepadDpadLeft, ImGuiKey_GamepadDpadRight, ImGuiKey_GamepadDpadUp, ImGuiKey_GamepadDpadDown);
+            nav_resize_dir = imgui__get_key_magnitude2d(imgui_c89_ctx, ImGuiKey_GamepadDpadLeft, ImGuiKey_GamepadDpadRight, ImGuiKey_GamepadDpadUp, ImGuiKey_GamepadDpadDown);
         }
         if ((nav_resize_dir.x != 0.0f) || (nav_resize_dir.y != 0.0f)) {
             NAV_RESIZE_SPEED = 600.0f;
@@ -23451,7 +23451,7 @@ static int ImGui_UpdateWindowManualResize__44f900090b(ImGuiContext *imgui_c89_ct
         window->Pos.y = ImTrunc__ae7a4018f8(pos_target.y);
     }
     if ((((old_pos.x != window->Pos.x) || (old_pos.y != window->Pos.y)) || (old_size.x != window->SizeFull.x)) || (old_size.y != window->SizeFull.y)) {
-        imgui_i_mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
+        imgui__mark_ini_settings_dirty_window_pointer(imgui_c89_ctx, window);
     }
     if ((*border_held) != (-1)) {
         g->WindowResizeBorderExpectedRect = GetResizeBorderRect__3fd6bb3fd9(window, (*border_held), grip_hover_inner_size, g->WindowsBorderHoverPadding);

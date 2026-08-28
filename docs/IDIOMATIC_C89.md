@@ -66,6 +66,11 @@ C dereference. These rules reduced the four idiomatic generated C sources from
 section byte count. The fixture suite includes a discarded-reference operator
 case and verifies both the C89 lowering and its C++ source facade.
 
+The maintained table translation unit uses K&R braces and braces every control
+body. Private exact-C and handwritten symbols use the `imgui__` namespace;
+public `imgui_` names and translator-runtime `imgui_c89_` helpers remain
+separate.
+
 ## Like-for-like result
 
 Homebrew Clang 22.1.8 on arm64 macOS compiled every object with:
@@ -81,19 +86,19 @@ adapters.
 |---|---:|---:|---:|
 | upstream C++ | 1,023,912 | 961,544 | 589,342 |
 | literal translated C89 | 985,704 | 923,632 | 579,186 |
-| idiomatic C89 | 812,592 | 752,712 | 516,999 |
+| idiomatic C89 | 811,192 | 751,888 | 516,999 |
 
-The overlay removes 173,112 physical archive bytes and 62,187 loaded section
-bytes (10.74%) from literal C89. The idiomatic core is 211,320 archive bytes
-(20.64%) and 72,343 loaded section bytes (12.27%) smaller than upstream C++.
+The overlay removes 174,512 physical archive bytes and 62,187 loaded section
+bytes (10.74%) from literal C89. The idiomatic core is 212,720 archive bytes
+(20.78%) and 72,343 loaded section bytes (12.27%) smaller than upstream C++.
 
 Compatibility surfaces are shown separately because an embedded C client and
 a C++ compatibility client would not ship both:
 
 | Surface | Literal archive | Idiomatic archive | Literal sections | Idiomatic sections |
 |---|---:|---:|---:|---:|
-| exact C API + optional scope helpers | 986,776 | 813,664 | 579,390 | 517,203 |
-| exact C++ facade + core | 1,235,624 | 1,062,520 | 634,181 | 571,994 |
+| exact C API + optional scope helpers | 986,776 | 812,264 | 579,390 | 517,203 |
+| exact C++ facade + core | 1,235,624 | 1,060,552 | 634,181 | 571,994 |
 
 The exact C API is now the core implementation surface itself. The optional
 three-function normalized-scope helper object adds only 204 loaded section

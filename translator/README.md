@@ -14,7 +14,7 @@ identity.
 
 - CMake 3.20 or newer.
 - Ninja.
-- LLVM/Clang 22 development libraries and headers.
+- LLVM/Clang 22 development libraries, headers, and `clang-format`.
 - Python 3.10 or newer.
 - A strict C89 compiler and a C++98-or-newer compiler for facade tests.
 - Bloaty for the optional idiomatic-build size-opportunity report.
@@ -157,7 +157,7 @@ callbacks retain the upstream global-context behavior at that fixed boundary.
 The exact C++ facade remains the bootstrap oracle: it includes `imgui_c89.h`
 in declaration-only mode, obtains the upstream current context, and forwards
 into those same C definitions. Private facade endpoints use readable
-`imgui_i_*` names; no hash-derived symbol is present at the facade boundary.
+`imgui__*` names; no hash-derived symbol is present at the facade boundary.
 Template-specialization methods such as `ImVector<T>` stay internal to the
 translated core.
 

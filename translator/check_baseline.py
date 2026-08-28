@@ -66,6 +66,47 @@ def assert_same_outputs(left: Path, right: Path) -> None:
         raise RuntimeError(f"non-deterministic generated files: {different}")
 
 
+def assert_idiomatic_table_style(
+    root: Path, generated: Path, units: list[dict], ir_data: dict
+) -> None:
+    """Lock the maintained table TU's private namespace and C style."""
+    options = ir_data.get("translator_options", {})
+    internal_namespace = options.get("internal_namespace", "imgui_i_")
+    checked_names = [
+        "imgui_c89.h",
+        "imgui_c89_internal.h",
+        "imgui_c89_api.h",
+        "imgui_c89_api.c",
+        "imgui_translated.c",
+        *(item["source"] for item in units),
+    ]
+    if internal_namespace != "imgui_i_":
+        leaks = [
+            name for name in checked_names
+            if re.search(r"\bimgui_i_", (
+                generated / name
+            ).read_text(encoding="utf-8"))
+        ]
+        if leaks:
+            raise RuntimeError(
+                "legacy imgui_i_ private namespace leaked into: "
+                + ", ".join(leaks)
+            )
+
+    if not options.get("format_table_source"):
+        return
+    sys.path.insert(0, str(root / "translator/py"))
+    from imgui_translator.emit import format_table_c89_source
+
+    table_path = generated / "imgui_tables.c"
+    table_source = table_path.read_text(encoding="utf-8")
+    if format_table_c89_source(table_source) != table_source:
+        raise RuntimeError(
+            "imgui_tables.c is not in the maintained K&R/braced C89 style"
+        )
+    print("idiomatic table style: PASS (imgui__ namespace, K&R, braced controls)")
+
+
 def assert_flattened_table_spans(
     generated: Path,
     units: list[dict],
@@ -410,6 +451,9 @@ def assert_flattened_table_pool(
     """Prove the table pool is direct C storage with the upstream layout."""
     if not ir_data.get("translator_options", {}).get("flatten_table_pool"):
         return
+    internal_namespace = ir_data.get("translator_options", {}).get(
+        "internal_namespace", "imgui_i_"
+    )
 
     checked_names = [
         "imgui_c89.h",
@@ -470,22 +514,14 @@ def assert_flattened_table_pool(
         raise RuntimeError("ImGuiContext Tables is not a direct ImGuiTablePool owner")
 
     all_c = "\n".join(canonical_text)
-    required_surface = (
-        "imgui_table_pool_init(",
-        "imgui_table_pool_fini(",
-        "imgui_table_pool_clear(",
-        "imgui_table_pool_add(",
-        "imgui_table_pool_find(",
-        "imgui_table_pool_at(",
-        "imgui_table_pool_index(",
-        "imgui_table_pool_get_or_add(",
-        "imgui_table_pool_alive_count(",
-        "imgui_table_pool_map_size(",
-        "imgui_table_pool_map_at(",
-        "imgui_table_pool_remove(",
-        "imgui_table_pool_remove_at(",
-        "imgui_table_fini(",
-    )
+    required_surface = tuple(
+        internal_namespace + "table_pool_" + operation + "("
+        for operation in (
+            "init", "fini", "clear", "add", "find", "at", "index",
+            "get_or_add", "alive_count", "map_size", "map_at", "remove",
+            "remove_at",
+        )
+    ) + (internal_namespace + "table_fini(",)
     missing_surface = [name for name in required_surface if name not in all_c]
     if missing_surface:
         raise RuntimeError(
@@ -813,6 +849,7 @@ def main() -> int:
         generated_a, units, ir_data, cc, cxx, facade_standard, upstream,
         define_flags, undefine_flags, dependency_cflags,
     )
+    assert_idiomatic_table_style(root, generated_a, units, ir_data)
 
     objects: list[Path] = []
     for item in units:

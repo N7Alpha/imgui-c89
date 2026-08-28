@@ -3,6 +3,8 @@
   "name": "idiomatic-c89",
   "description": "Fingerprint-guarded idiomatic C89 rewrites and size lowerings; no public API or Dear ImGui feature is removed.",
   "translator_options": {
+    "internal_namespace": "imgui__",
+    "format_table_source": true,
     "compact_crc32": true,
     "compact_style_colors": true,
     "compact_name_switches": [

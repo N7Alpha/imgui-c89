@@ -11,8 +11,11 @@ import copy
 import hashlib
 import functools
 import json
+import os
 import re
+import shutil
 import struct
+import subprocess
 import textwrap
 from dataclasses import dataclass
 from pathlib import Path
@@ -49,6 +52,54 @@ def _c_identifier(spelling: str) -> str:
     if value and value[0].isdigit():
         value = "imgui_c89_" + value
     return value
+
+
+def format_table_c89_source(source: str) -> str:
+    """Apply the maintained table TU's strict K&R/braced control style."""
+    candidates: list[Path] = []
+    configured = os.environ.get("CLANG_FORMAT")
+    if configured:
+        candidates.append(Path(configured))
+    llvm_prefix = os.environ.get("LLVM_PREFIX")
+    if llvm_prefix:
+        candidates.append(Path(llvm_prefix) / "bin/clang-format")
+    candidates.append(Path("/opt/homebrew/opt/llvm/bin/clang-format"))
+    for command in ("clang-format-22", "clang-format"):
+        found = shutil.which(command)
+        if found:
+            candidates.append(Path(found))
+    executable = next((path for path in candidates if path.is_file()), None)
+    if executable is None:
+        raise TranslationError(
+            "formatted table source requires LLVM 22 clang-format; set "
+            "CLANG_FORMAT or LLVM_PREFIX"
+        )
+    version = subprocess.run(
+        [str(executable), "--version"], check=True, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    ).stdout
+    if re.search(r"\bversion 22(?:\.|\b)", version) is None:
+        raise TranslationError(
+            "formatted table source requires clang-format major 22, got: "
+            + version.strip()
+        )
+    style = (
+        "{BasedOnStyle: LLVM, BreakBeforeBraces: Attach, InsertBraces: true, "
+        "AllowShortIfStatementsOnASingleLine: Never, "
+        "AllowShortLoopsOnASingleLine: false, "
+        "AllowShortBlocksOnASingleLine: Never, "
+        "AllowShortFunctionsOnASingleLine: Empty, SortIncludes: Never, "
+        "ColumnLimit: 0, IndentWidth: 4, ContinuationIndentWidth: 4, "
+        "UseTab: Never}"
+    )
+    formatted = subprocess.run(
+        [str(executable), "-assume-filename=imgui_tables.c", "-style=" + style],
+        check=True, text=True, input=source,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    ).stdout
+    if not formatted.endswith("\n"):
+        formatted += "\n"
+    return formatted
 
 
 class Emitter:
@@ -130,7 +181,7 @@ class Emitter:
                 source = Path(location.get("file", "enum")).stem
                 owner = enum.get("qualified_name") or enum.get("name") or "enum"
                 candidate = _c_identifier(
-                    f"imgui_i_{source}_{location.get('line', 0)}_"
+                    f"{self.internal_namespace}{source}_{location.get('line', 0)}_"
                     f"{location.get('column', 0)}_{owner}_{spelling}"
                 )
             previous = claimed.get(candidate)
@@ -455,6 +506,17 @@ class Emitter:
             for item in ir.get(group, [])
         )
         options = ir.get("translator_options", {})
+        self.internal_namespace = options.get(
+            "internal_namespace", "imgui_i_"
+        )
+        if (not isinstance(self.internal_namespace, str)
+                or re.fullmatch(
+                    r"[A-Za-z_][A-Za-z0-9_]*_", self.internal_namespace
+                ) is None):
+            raise TranslationError("internal namespace must be a C prefix")
+        self.format_table_source = bool(
+            options.get("format_table_source", False)
+        )
         self.omitted_call_names = set(options.get("omit_calls", []))
         self.trapped_call_names = set(options.get("trap_calls", []))
         self.noinline_function_names = set(
@@ -1055,7 +1117,7 @@ class Emitter:
         self.compact_internal_c_names = (
             self.stable_table_pool_function_names()
             if self.flatten_table_pool else {
-                identifier: "imgui_i_table_pool_add"
+                identifier: self.internal_namespace + "table_pool_add"
                 for identifier, function in self.functions.items()
                 if self.compact_impool
                 and function.get("qualified_name")
@@ -5255,20 +5317,22 @@ class Emitter:
         if not self.is_flattened_table_pool_function(function):
             return None
         operation = self.function_names[function["id"]]
+        pool = self.internal_namespace + "table_pool_"
+        table_fini = self.internal_namespace + "table_fini"
         names: dict[str, tuple[str, ...]] = {
-            "imgui_table_pool_fini": ("imgui_table_pool_clear",),
-            "imgui_table_pool_clear": (
-                "imgui_table_fini", "imgui_storage_clear",
+            pool + "fini": (pool + "clear",),
+            pool + "clear": (
+                table_fini, "imgui_storage_clear",
             ),
-            "imgui_table_pool_find": ("imgui_storage_get_int",),
-            "imgui_table_pool_get_or_add": (
-                "imgui_storage_get_int_ref", "imgui_table_pool_add",
+            pool + "find": ("imgui_storage_get_int",),
+            pool + "get_or_add": (
+                "imgui_storage_get_int_ref", pool + "add",
             ),
-            "imgui_table_pool_remove": (
-                "imgui_table_pool_index", "imgui_table_pool_remove_at",
+            pool + "remove": (
+                pool + "index", pool + "remove_at",
             ),
-            "imgui_table_pool_remove_at": (
-                "imgui_table_fini", "imgui_storage_set_int",
+            pool + "remove_at": (
+                table_fini, "imgui_storage_set_int",
             ),
         }
         return {
@@ -5283,11 +5347,13 @@ class Emitter:
         if dependencies is None:
             return None
         operation = self.function_names[function["id"]]
-        if operation == "imgui_table_pool_init":
+        pool = self.internal_namespace + "table_pool_"
+        table_fini = self.internal_namespace + "table_fini"
+        if operation == pool + "init":
             return ["    memset(self, 0, sizeof(*self));"]
-        if operation == "imgui_table_pool_fini":
-            return ["    imgui_table_pool_clear(imgui_c89_ctx, self);"]
-        if operation == "imgui_table_pool_clear":
+        if operation == pool + "fini":
+            return [f"    {pool}clear(imgui_c89_ctx, self);"]
+        if operation == pool + "clear":
             value = "self->Map.Data.Data[n]." + self.table_pool_map_int_path
             return [
                 "    int idx;",
@@ -5296,7 +5362,7 @@ class Emitter:
                 "    for (n = 0; n < self->Map.Data.Size; n++) {",
                 f"        idx = {value};",
                 "        if (idx != -1) {",
-                "            imgui_table_fini(imgui_c89_ctx, self->Data + idx);",
+                f"            {table_fini}(imgui_c89_ctx, self->Data + idx);",
                 "        }",
                 "    }",
                 "    imgui_storage_clear(imgui_c89_ctx, &self->Map);",
@@ -5304,7 +5370,7 @@ class Emitter:
                 "        (void **)&self->Data, &self->Size, &self->Capacity);",
                 "    self->FreeIdx = self->AliveCount = 0;",
             ]
-        if operation == "imgui_table_pool_add":
+        if operation == pool + "add":
             self.compact_table_pool_add_constructor(function)
             return [
                 "    ImGuiTable *item;",
@@ -5317,21 +5383,21 @@ class Emitter:
                 "    item->LastFrameActive = -1;",
                 "    return item;",
             ]
-        if operation == "imgui_table_pool_find":
+        if operation == pool + "find":
             return [
                 "    int index;",
                 "",
                 "    index = imgui_storage_get_int(&self->Map, key, -1);",
                 "    return index == -1 ? 0 : self->Data + index;",
             ]
-        if operation == "imgui_table_pool_at":
+        if operation == pool + "at":
             return ["    return self->Data + n;"]
-        if operation == "imgui_table_pool_index":
+        if operation == pool + "index":
             return [
                 "    return (ImPoolIdx)imgui_c89_pool_index(",
                 "        self->Data, self->Size, p, sizeof(*p));",
             ]
-        if operation == "imgui_table_pool_get_or_add":
+        if operation == pool + "get_or_add":
             return [
                 "    int *index;",
                 "",
@@ -5341,26 +5407,26 @@ class Emitter:
                 "        return self->Data + *index;",
                 "    }",
                 "    *index = self->FreeIdx;",
-                "    return imgui_table_pool_add(imgui_c89_ctx, self);",
+                f"    return {pool}add(imgui_c89_ctx, self);",
             ]
-        if operation == "imgui_table_pool_remove":
+        if operation == pool + "remove":
             return [
-                "    imgui_table_pool_remove_at(imgui_c89_ctx, self, key,",
-                "        imgui_table_pool_index(self, p));",
+                f"    {pool}remove_at(imgui_c89_ctx, self, key,",
+                f"        {pool}index(self, p));",
             ]
-        if operation == "imgui_table_pool_remove_at":
+        if operation == pool + "remove_at":
             return [
-                "    imgui_table_fini(imgui_c89_ctx, self->Data + idx);",
+                f"    {table_fini}(imgui_c89_ctx, self->Data + idx);",
                 "    *(int *)(void *)(self->Data + idx) = self->FreeIdx;",
                 "    self->FreeIdx = idx;",
                 "    imgui_storage_set_int(imgui_c89_ctx, &self->Map, key, -1);",
                 "    self->AliveCount--;",
             ]
-        if operation == "imgui_table_pool_alive_count":
+        if operation == pool + "alive_count":
             return ["    return self->AliveCount;"]
-        if operation == "imgui_table_pool_map_size":
+        if operation == pool + "map_size":
             return ["    return self->Map.Data.Size;"]
-        if operation == "imgui_table_pool_map_at":
+        if operation == pool + "map_at":
             value = "self->Map.Data.Data[n]." + self.table_pool_map_int_path
             return [
                 "    int idx;",
@@ -5804,9 +5870,9 @@ class Emitter:
                 elif operation.startswith("im_"):
                     # Dear ImGui's C-style private helpers carry an `Im`
                     # prefix that is useful in the C++ source but redundant
-                    # below our `imgui_i_` internal namespace.
+                    # below our private C namespace.
                     operation = operation[len("im_"):]
-            base = "imgui_i_"
+            base = self.internal_namespace
             if owner_token:
                 base += owner_token + "_"
             base += operation
@@ -5879,7 +5945,9 @@ class Emitter:
                     "flatten table pool gained an unknown operation: "
                     + function.get("qualified_name", "")
                 )
-            result[identifier] = "imgui_table_pool_" + operation
+            result[identifier] = (
+                self.internal_namespace + "table_pool_" + operation
+            )
             seen.add(key)
         missing = set(operations) - seen
         if missing:
@@ -5899,7 +5967,9 @@ class Emitter:
             raise TranslationError(
                 "flatten table pool expected one ImGuiTable destructor"
             )
-        result[table_destructors[0][0]] = "imgui_table_fini"
+        result[table_destructors[0][0]] = (
+            self.internal_namespace + "table_fini"
+        )
         self.validate_table_pool_fingerprints()
         return result
 
@@ -10575,14 +10645,14 @@ class Emitter:
                 owner = self.native_snake_name(owner) or "record"
                 if owner.startswith("im_gui_"):
                     owner = owner[len("im_gui_"):]
-                base = f"imgui_i_{owner}_{operation}"
+                base = f"{self.internal_namespace}{owner}_{operation}"
             else:
                 qualified = function.get("qualified_name", operation)
                 owner, separator, _ = qualified.rpartition("::")
                 owner_token = self.native_snake_name(owner) if separator else ""
                 if owner_token == "im_gui":
                     owner_token = ""
-                base = "imgui_i_"
+                base = self.internal_namespace
                 if owner_token:
                     base += owner_token + "_"
                 base += operation
@@ -10847,6 +10917,8 @@ class Emitter:
             "compact_imvector_capacity": self.compact_imvector_capacity,
             "compact_imchunkstream": self.compact_imchunkstream,
             "compact_impool": self.compact_impool,
+            "internal_namespace": self.internal_namespace,
+            "format_table_source": self.format_table_source,
             "omit_unused_scalar_helpers": self.omit_unused_scalar_helpers,
             "omit_unused_compatibility_shims": (
                 self.omit_unused_compatibility_shims
@@ -10929,6 +11001,8 @@ def translate(ir_path: Path, output_directory: Path) -> None:
         if stem.startswith("backends_"):
             stem = stem.removeprefix("backends_")
         filename = stem + ".c"
+        if filename == "imgui_tables.c" and unit_emitter.format_table_source:
+            source = format_table_c89_source(source)
         (output_directory / filename).write_text(
             source, encoding="utf-8", newline="\n"
         )
