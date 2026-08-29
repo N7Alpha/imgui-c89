@@ -244,7 +244,6 @@ static void ImStb_stb_textedit_prep_selection_at_cursor__545a0d7de0(ImStb_STB_Te
 static void ImStb_stb_textedit_sortselection__1f4c8cc9a6(ImStb_STB_TexteditState * state);
 static void ImStb_stb_textedit_text__8bd42e488d(ImGuiContext *imgui_c89_ctx, ImGuiInputTextState * str, ImStb_STB_TexteditState * state, const char * text, int text_len);
 
-ImDrawCmd ImDrawCmd_ImDrawCmd_value__8a1bdf676d(void);
 ImDrawList *ImDrawList_ImDrawList_at__d042a13f30(ImGuiContext *imgui_c89_ctx, void *memory, ImDrawListSharedData * shared_data);
 ImFontAtlas *ImFontAtlas_ImFontAtlas_at__e0f3099eea(void *memory);
 ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *memory);
@@ -259,7 +258,6 @@ ImRect ImRect_ImRect_value__30f36f8459(void);
 ImRect ImRect_ImRect_value__99b7f05542(const ImVec2 * min, const ImVec2 * max);
 ImRect ImRect_ImRect_value__ca8705754c(float x1, float y1, float x2, float y2);
 ImTextureData *ImTextureData_ImTextureData_at__0bdcc9fa5c(void *memory);
-ImTextureRef ImTextureRef_ImTextureRef_value__480182bb5d(void);
 static ImVec2 ImVec2_ImVec2_value__c798775144(float _x, float _y);
 static ImVec4 ImVec4_ImVec4_value__2df7b774e7(float _x, float _y, float _z, float _w);
 

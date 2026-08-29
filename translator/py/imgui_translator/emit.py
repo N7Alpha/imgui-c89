@@ -525,6 +525,12 @@ class Emitter:
         self.handwritten_functions = options.get("handwritten_functions", {})
         if not isinstance(self.handwritten_functions, dict):
             raise TranslationError("handwritten_functions must be an object")
+        self.handwritten_groups = options.get("handwritten_groups", {})
+        if not isinstance(self.handwritten_groups, dict) or any(
+            not isinstance(name, str) or not isinstance(group, dict)
+            for name, group in self.handwritten_groups.items()
+        ):
+            raise TranslationError("handwritten_groups must be an object of objects")
         self.compact_zero_constructor_names = set(
             options.get("compact_zero_constructors", [])
         )
@@ -5825,6 +5831,29 @@ class Emitter:
             raise TranslationError(
                 f"handwritten replacement for {qualified_name} must be an object"
             )
+        group_name = specification.get("group")
+        if group_name is not None:
+            group = self.handwritten_groups.get(group_name)
+            if not isinstance(group_name, str) or group is None:
+                raise TranslationError(
+                    f"handwritten replacement for {qualified_name} has an "
+                    f"unknown group {group_name!r}"
+                )
+            if "group" in group:
+                raise TranslationError("handwritten groups cannot inherit groups")
+            merged = dict(group)
+            mapping_fields = {
+                "constants", "functions", "snippets", "snippets_by_body_sha256",
+                "types", "value_functions",
+            }
+            for key, value in specification.items():
+                if (key in mapping_fields and key in merged
+                        and isinstance(merged[key], dict)
+                        and isinstance(value, dict)):
+                    merged[key] = {**merged[key], **value}
+                else:
+                    merged[key] = value
+            specification = merged
         parameter_types = specification.get("parameter_types")
         if (parameter_types is not None
                 and actual_parameter_types != parameter_types):

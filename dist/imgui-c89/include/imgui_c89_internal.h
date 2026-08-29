@@ -4875,7 +4875,6 @@ void ImVector_ImDrawList____pop_back__e9b2e5a5e7(ImVector_ImDrawList_ptr *self);
 void ImVector_ImDrawList____push_front__b7d2475248(ImVector_ImDrawList_ptr *self, ImDrawList *const * v);
 void ImVector_ImDrawList____reserve__5c1d9153a3(ImGuiContext *imgui_c89_ctx, ImVector_ImDrawList_ptr *self, int new_capacity);
 void ImVector_ImDrawList____reserve_discard__3c54344d87(ImVector_ImDrawList_ptr *self, int new_capacity);
-void ImVector_ImDrawList____resize__170927dbe5(ImGuiContext *imgui_c89_ctx, ImVector_ImDrawList_ptr *self, int new_size);
 void ImVector_ImDrawList____resize__7ecac77b13(ImVector_ImDrawList_ptr *self, int new_size, ImDrawList *const * v);
 void ImVector_ImDrawList____shrink__b4ac09c2af(ImVector_ImDrawList_ptr *self, int new_size);
 int ImVector_ImDrawList____size__12e037c923(ImVector_ImDrawList_ptr *self);

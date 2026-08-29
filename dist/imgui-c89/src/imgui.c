@@ -639,6 +639,7 @@ static ImVec4 * ImVector_ImVec4__back__4bb95f8b77(ImVector_ImVec4 *self);
 static const ImVec4 * ImVector_ImVec4__back__08b2cba266(ImVector_ImVec4 *self);
 static void ImVector_stbrp_node__ImVector__d8f4cb206a(ImVector_stbrp_node *self);
 static unsigned char ImVector_ImDrawList____empty__3c6fcdcbc7(ImVector_ImDrawList_ptr *self);
+static void ImVector_ImDrawList____resize__170927dbe5(ImGuiContext *imgui_c89_ctx, ImVector_ImDrawList_ptr *self, int new_size);
 static void ImVector_ImFontAtlas____ImVector__b22ffeb0d1(ImVector_ImFontAtlas_ptr *self);
 static ImFontAtlas ** ImVector_ImFontAtlas____begin__9e48a97069(ImVector_ImFontAtlas_ptr *self);
 static ImFontAtlas ** ImVector_ImFontAtlas____end__5b2cfe8a63(ImVector_ImFontAtlas_ptr *self);
@@ -833,7 +834,6 @@ static void ImGui_UpdateWindowInFocusOrderList__afc2cb450c(ImGuiContext *imgui_c
 static int ImGui_UpdateWindowManualResize__44f900090b(ImGuiContext *imgui_c89_ctx, ImGuiWindow * window, int * border_hovered, int * border_held, int resize_grip_count, ImU32 * resize_grip_col, const ImRect * visibility_rect);
 
 static ImColor ImColor_ImColor_value__80c1c36ab0(float r, float g, float b, float a);
-ImDrawCmd ImDrawCmd_ImDrawCmd_value__8a1bdf676d(void);
 ImDrawList *ImDrawList_ImDrawList_at__d042a13f30(ImGuiContext *imgui_c89_ctx, void *memory, ImDrawListSharedData * shared_data);
 ImFontAtlas *ImFontAtlas_ImFontAtlas_at__e0f3099eea(void *memory);
 ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *memory);
@@ -862,7 +862,6 @@ ImRect ImRect_ImRect_value__99b7f05542(const ImVec2 * min, const ImVec2 * max);
 static ImRect ImRect_ImRect_value__001487ee3c(const ImVec4 * v);
 ImRect ImRect_ImRect_value__ca8705754c(float x1, float y1, float x2, float y2);
 ImTextureData *ImTextureData_ImTextureData_at__0bdcc9fa5c(void *memory);
-ImTextureRef ImTextureRef_ImTextureRef_value__480182bb5d(void);
 static ImVec2 ImVec2_ImVec2_value__c798775144(float _x, float _y);
 static ImVec2ih ImVec2ih_ImVec2ih_value__a6ebc94281(const ImVec2 * rhs);
 static ImVec2ih ImVec2ih_ImVec2ih_value__46b3dbdd52(short _x, short _y);
@@ -1005,13 +1004,6 @@ static ImColor ImColor_ImColor_value__80c1c36ab0(float r, float g, float b, floa
 {
     ImColor result;
     ImColor_ImColor__32afc6d5c2(&result, r, g, b, a);
-    return result;
-}
-
-ImDrawCmd ImDrawCmd_ImDrawCmd_value__8a1bdf676d(void)
-{
-    ImDrawCmd result;
-    ImDrawCmd_ImDrawCmd__7f0b9f10b7(&result);
     return result;
 }
 
@@ -1194,13 +1186,6 @@ ImTextureData *ImTextureData_ImTextureData_at__0bdcc9fa5c(void *memory)
 {
     ImTextureData *result = (ImTextureData *)memory;
     ImTextureData_ImTextureData__491ad6a35b(result);
-    return result;
-}
-
-ImTextureRef ImTextureRef_ImTextureRef_value__480182bb5d(void)
-{
-    ImTextureRef result;
-    ImTextureRef_ImTextureRef__b4471d7198(&result);
     return result;
 }
 
@@ -18294,7 +18279,7 @@ void ImVector_ImDrawList____reserve__5c1d9153a3(ImGuiContext *imgui_c89_ctx, ImV
         &self->Capacity, new_capacity, sizeof(*self->Data), 0);
 }
 
-void ImVector_ImDrawList____resize__170927dbe5(ImGuiContext *imgui_c89_ctx, ImVector_ImDrawList_ptr *self, int new_size)
+static void ImVector_ImDrawList____resize__170927dbe5(ImGuiContext *imgui_c89_ctx, ImVector_ImDrawList_ptr *self, int new_size)
 {
     self->Data = imgui_c89_vector_resize(imgui_c89_ctx, self->Data,
         &self->Size, &self->Capacity, new_size, sizeof(*self->Data));

@@ -1,0 +1,1320 @@
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_line */
+ImVec2 points[2];
+
+if ((col & @ALPHA_MASK@) == 0) return;
+points[0].x = p1->x + 0.5f;
+points[0].y = p1->y + 0.5f;
+points[1].x = p2->x + 0.5f;
+points[1].y = p2->y + 0.5f;
+@ADD_POLYLINE@(imgui_c89_ctx, self, points, 2, col, thickness, 0);
+/* IMGUI_C89_FUNCTION_END draw_add_line */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_line_h */
+ImVec2 points[2];
+
+if ((col & @ALPHA_MASK@) == 0) return;
+points[0].x = min_x + 0.5f;
+points[0].y = y + 0.5f;
+points[1].x = max_x + 0.5f;
+points[1].y = y + 0.5f;
+@ADD_POLYLINE@(imgui_c89_ctx, self, points, 2, col, thickness, 0);
+/* IMGUI_C89_FUNCTION_END draw_add_line_h */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_line_v */
+ImVec2 points[2];
+
+if ((col & @ALPHA_MASK@) == 0) return;
+points[0].x = x + 0.5f;
+points[0].y = min_y + 0.5f;
+points[1].x = x + 0.5f;
+points[1].y = max_y + 0.5f;
+@ADD_POLYLINE@(imgui_c89_ctx, self, points, 2, col, thickness, 0);
+/* IMGUI_C89_FUNCTION_END draw_add_line_v */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_rect_filled */
+if ((col & @ALPHA_MASK@) == 0) return;
+if (rounding < 0.5f ||
+    (flags & @ROUND_CORNERS_MASK@) == @ROUND_CORNERS_NONE@) {
+    @PRIM_RESERVE@(imgui_c89_ctx, self, 6, 4);
+    @PRIM_RECT@(self, p_min, p_max, col);
+} else {
+    @PATH_RECT@(imgui_c89_ctx, self, p_min, p_max, rounding, flags);
+    @PATH_FILL@(imgui_c89_ctx, self, col);
+}
+/* IMGUI_C89_FUNCTION_END draw_add_rect_filled */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_quad */
+if ((col & @ALPHA_MASK@) == 0) return;
+@PATH_LINE_TO@(imgui_c89_ctx, self, p1);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p2);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p3);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p4);
+@PATH_STROKE@(imgui_c89_ctx, self, col, thickness, @CLOSED@);
+/* IMGUI_C89_FUNCTION_END draw_add_quad */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_quad_filled */
+if ((col & @ALPHA_MASK@) == 0) return;
+@PATH_LINE_TO@(imgui_c89_ctx, self, p1);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p2);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p3);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p4);
+@PATH_FILL@(imgui_c89_ctx, self, col);
+/* IMGUI_C89_FUNCTION_END draw_add_quad_filled */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_triangle */
+if ((col & @ALPHA_MASK@) == 0) return;
+@PATH_LINE_TO@(imgui_c89_ctx, self, p1);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p2);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p3);
+@PATH_STROKE@(imgui_c89_ctx, self, col, thickness, @CLOSED@);
+/* IMGUI_C89_FUNCTION_END draw_add_triangle */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_triangle_filled */
+if ((col & @ALPHA_MASK@) == 0) return;
+@PATH_LINE_TO@(imgui_c89_ctx, self, p1);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p2);
+@PATH_LINE_TO@(imgui_c89_ctx, self, p3);
+@PATH_FILL@(imgui_c89_ctx, self, col);
+/* IMGUI_C89_FUNCTION_END draw_add_triangle_filled */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_circle */
+float a_max;
+
+if ((col & @ALPHA_MASK@) == 0 || radius < 0.5f) return;
+if (num_segments <= 0) {
+    @PATH_ARC_FAST_EX@(imgui_c89_ctx, self, center, radius - 0.5f,
+                      0, @ARCFAST_SAMPLES@, 0);
+    self->_Path.Size--;
+} else {
+    num_segments = @CLAMP_INT@(num_segments, 3, @MAX_SEGMENTS@);
+    a_max = @TWO_PI@ * ((float)num_segments - 1.0f) / (float)num_segments;
+    @PATH_ARC_TO@(imgui_c89_ctx, self, center, radius - 0.5f,
+                  0.0f, a_max, num_segments - 1);
+}
+@PATH_STROKE@(imgui_c89_ctx, self, col, thickness, @CLOSED@);
+/* IMGUI_C89_FUNCTION_END draw_add_circle */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_circle_filled */
+float a_max;
+
+if ((col & @ALPHA_MASK@) == 0 || radius < 0.5f) return;
+if (num_segments <= 0) {
+    @PATH_ARC_FAST_EX@(imgui_c89_ctx, self, center, radius,
+                      0, @ARCFAST_SAMPLES@, 0);
+    self->_Path.Size--;
+} else {
+    num_segments = @CLAMP_INT@(num_segments, 3, @MAX_SEGMENTS@);
+    a_max = @TWO_PI@ * ((float)num_segments - 1.0f) / (float)num_segments;
+    @PATH_ARC_TO@(imgui_c89_ctx, self, center, radius,
+                  0.0f, a_max, num_segments - 1);
+}
+@PATH_FILL@(imgui_c89_ctx, self, col);
+/* IMGUI_C89_FUNCTION_END draw_add_circle_filled */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_ngon */
+float a_max;
+
+if ((col & @ALPHA_MASK@) == 0 || num_segments <= 2) return;
+a_max = @TWO_PI@ * ((float)num_segments - 1.0f) / (float)num_segments;
+@PATH_ARC_TO@(imgui_c89_ctx, self, center, radius - 0.5f,
+              0.0f, a_max, num_segments - 1);
+@PATH_STROKE@(imgui_c89_ctx, self, col, thickness, @CLOSED@);
+/* IMGUI_C89_FUNCTION_END draw_add_ngon */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_ngon_filled */
+float a_max;
+
+if ((col & @ALPHA_MASK@) == 0 || num_segments <= 2) return;
+a_max = @TWO_PI@ * ((float)num_segments - 1.0f) / (float)num_segments;
+@PATH_ARC_TO@(imgui_c89_ctx, self, center, radius,
+              0.0f, a_max, num_segments - 1);
+@PATH_FILL@(imgui_c89_ctx, self, col);
+/* IMGUI_C89_FUNCTION_END draw_add_ngon_filled */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_ellipse */
+float a_max;
+
+if ((col & @ALPHA_MASK@) == 0) return;
+if (num_segments <= 0) {
+    num_segments = @CALC_SEGMENTS@(self, @MAX_FLOAT@(radius->x, radius->y));
+}
+a_max = @TWO_PI@ * ((float)num_segments - 1.0f) / (float)num_segments;
+@PATH_ELLIPTICAL@(imgui_c89_ctx, self, center, radius, rot,
+                  0.0f, a_max, num_segments - 1);
+@PATH_STROKE@(imgui_c89_ctx, self, col, thickness, @CLOSED@);
+/* IMGUI_C89_FUNCTION_END draw_add_ellipse */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_ellipse_filled */
+float a_max;
+
+if ((col & @ALPHA_MASK@) == 0) return;
+if (num_segments <= 0) {
+    num_segments = @CALC_SEGMENTS@(self, @MAX_FLOAT@(radius->x, radius->y));
+}
+a_max = @TWO_PI@ * ((float)num_segments - 1.0f) / (float)num_segments;
+@PATH_ELLIPTICAL@(imgui_c89_ctx, self, center, radius, rot,
+                  0.0f, a_max, num_segments - 1);
+@PATH_FILL@(imgui_c89_ctx, self, col);
+/* IMGUI_C89_FUNCTION_END draw_add_ellipse_filled */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_bezier_cubic */
+if ((col & @ALPHA_MASK@) == 0) return;
+@PATH_LINE_TO@(imgui_c89_ctx, self, p1);
+@PATH_BEZIER_CUBIC@(imgui_c89_ctx, self, p2, p3, p4, num_segments);
+@PATH_STROKE@(imgui_c89_ctx, self, col, thickness, 0);
+/* IMGUI_C89_FUNCTION_END draw_add_bezier_cubic */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_bezier_quadratic */
+if ((col & @ALPHA_MASK@) == 0) return;
+@PATH_LINE_TO@(imgui_c89_ctx, self, p1);
+@PATH_BEZIER_QUADRATIC@(imgui_c89_ctx, self, p2, p3, num_segments);
+@PATH_STROKE@(imgui_c89_ctx, self, col, thickness, 0);
+/* IMGUI_C89_FUNCTION_END draw_add_bezier_quadratic */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_try_merge_commands */
+ImDrawCmd *current;
+ImDrawCmd *previous;
+size_t header_size;
+
+current = self->CmdBuffer.Data + self->CmdBuffer.Size - 1;
+previous = current - 1;
+header_size = offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int);
+if (memcmp(current, previous, header_size) == 0 &&
+    previous->IdxOffset + previous->ElemCount == current->IdxOffset &&
+    current->UserCallback == NULL && previous->UserCallback == NULL) {
+    previous->ElemCount += current->ElemCount;
+    self->CmdBuffer.Size--;
+}
+/* IMGUI_C89_FUNCTION_END draw_try_merge_commands */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_changed_clip_rect */
+ImDrawCmd *current;
+ImDrawCmd *previous;
+size_t header_size;
+
+current = self->CmdBuffer.Data + self->CmdBuffer.Size - 1;
+if (current->ElemCount != 0 &&
+    memcmp(&current->ClipRect, &self->_CmdHeader.ClipRect,
+           sizeof(ImVec4)) != 0) {
+    @ADD_DRAW_CMD@(imgui_c89_ctx, self);
+    return;
+}
+if (current->UserCallback != NULL) {
+    @ASSERT_602@;
+}
+previous = current - 1;
+header_size = offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int);
+if (current->ElemCount == 0 && self->CmdBuffer.Size > 1 &&
+    memcmp(&self->_CmdHeader, previous, header_size) == 0 &&
+    previous->IdxOffset + previous->ElemCount == current->IdxOffset &&
+    previous->UserCallback == NULL) {
+    self->CmdBuffer.Size--;
+    return;
+}
+current->ClipRect = self->_CmdHeader.ClipRect;
+/* IMGUI_C89_FUNCTION_END draw_changed_clip_rect */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_changed_texture */
+ImDrawCmd *current;
+ImDrawCmd *previous;
+size_t header_size;
+
+current = self->CmdBuffer.Data + self->CmdBuffer.Size - 1;
+if (current->ElemCount != 0 &&
+    (current->TexRef._TexID != self->_CmdHeader.TexRef._TexID ||
+     current->TexRef._TexData != self->_CmdHeader.TexRef._TexData)) {
+    @ADD_DRAW_CMD@(imgui_c89_ctx, self);
+    return;
+}
+if (current->UserCallback != NULL) return;
+previous = current - 1;
+header_size = offsetof(ImDrawCmd, VtxOffset) + sizeof(unsigned int);
+if (current->ElemCount == 0 && self->CmdBuffer.Size > 1 &&
+    memcmp(&self->_CmdHeader, previous, header_size) == 0 &&
+    previous->IdxOffset + previous->ElemCount == current->IdxOffset &&
+    previous->UserCallback == NULL) {
+    self->CmdBuffer.Size--;
+    return;
+}
+current->TexRef = self->_CmdHeader.TexRef;
+/* IMGUI_C89_FUNCTION_END draw_changed_texture */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_changed_vtx_offset */
+ImDrawCmd *current;
+
+self->_VtxCurrentIdx = 0;
+current = self->CmdBuffer.Data + self->CmdBuffer.Size - 1;
+if (current->ElemCount != 0) {
+    @ADD_DRAW_CMD@(imgui_c89_ctx, self);
+    return;
+}
+if (current->UserCallback != NULL) {
+    @ASSERT_651@;
+}
+current->VtxOffset = self->_CmdHeader.VtxOffset;
+/* IMGUI_C89_FUNCTION_END draw_changed_vtx_offset */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_calc_circle_segments */
+int radius_index;
+
+radius_index = (int)(radius + 0.999f);
+if (radius_index >= 0 && radius_index < 64) {
+    return self->_Data->CircleSegmentCounts[radius_index];
+}
+return @CLAMP_INT@(
+    (((int)ceilf(@PI@ / acosf(1.0f -
+      @MIN_FLOAT@(self->_Data->CircleTessellationMaxError, radius) /
+      radius)) + 1) / 2) * 2,
+    4, @MAX_SEGMENTS@);
+/* IMGUI_C89_FUNCTION_END draw_calc_circle_segments */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_push_clip_rect */
+ImVec4 clip;
+
+clip.x = cr_min->x;
+clip.y = cr_min->y;
+clip.z = cr_max->x;
+clip.w = cr_max->y;
+if (intersect_with_current_clip_rect) {
+    if (clip.x < self->_CmdHeader.ClipRect.x) {
+        clip.x = self->_CmdHeader.ClipRect.x;
+    }
+    if (clip.y < self->_CmdHeader.ClipRect.y) {
+        clip.y = self->_CmdHeader.ClipRect.y;
+    }
+    if (clip.z > self->_CmdHeader.ClipRect.z) {
+        clip.z = self->_CmdHeader.ClipRect.z;
+    }
+    if (clip.w > self->_CmdHeader.ClipRect.w) {
+        clip.w = self->_CmdHeader.ClipRect.w;
+    }
+}
+clip.z = @MAX_FLOAT@(clip.x, clip.z);
+clip.w = @MAX_FLOAT@(clip.y, clip.w);
+@CLIP_PUSH@(imgui_c89_ctx, &self->_ClipRectStack, &clip);
+self->_CmdHeader.ClipRect = clip;
+@ON_CLIP_CHANGED@(imgui_c89_ctx, self);
+/* IMGUI_C89_FUNCTION_END draw_push_clip_rect */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_push_clip_rect_fullscreen */
+ImVec2 min;
+ImVec2 max;
+
+min.x = self->_Data->ClipRectFullscreen.x;
+min.y = self->_Data->ClipRectFullscreen.y;
+max.x = self->_Data->ClipRectFullscreen.z;
+max.y = self->_Data->ClipRectFullscreen.w;
+@PUSH_CLIP@(imgui_c89_ctx, self, &min, &max, 0);
+/* IMGUI_C89_FUNCTION_END draw_push_clip_rect_fullscreen */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_pop_clip_rect */
+self->_ClipRectStack.Size--;
+self->_CmdHeader.ClipRect = self->_ClipRectStack.Size == 0
+    ? self->_Data->ClipRectFullscreen
+    : self->_ClipRectStack.Data[self->_ClipRectStack.Size - 1];
+@ON_CLIP_CHANGED@(imgui_c89_ctx, self);
+/* IMGUI_C89_FUNCTION_END draw_pop_clip_rect */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_push_texture */
+@TEXTURE_PUSH@(imgui_c89_ctx, &self->_TextureStack, &tex_ref);
+self->_CmdHeader.TexRef = tex_ref;
+if (tex_ref._TexData != NULL) {
+    if (tex_ref._TexData->WantDestroyNextFrame) {
+        @ASSERT_702@;
+    }
+}
+@ON_TEXTURE_CHANGED@(imgui_c89_ctx, self);
+/* IMGUI_C89_FUNCTION_END draw_push_texture */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_pop_texture */
+self->_TextureStack.Size--;
+if (self->_TextureStack.Size == 0) {
+    self->_CmdHeader.TexRef._TexData = NULL;
+    self->_CmdHeader.TexRef._TexID = (ImTextureID)0;
+} else {
+    self->_CmdHeader.TexRef =
+        self->_TextureStack.Data[self->_TextureStack.Size - 1];
+}
+@ON_TEXTURE_CHANGED@(imgui_c89_ctx, self);
+/* IMGUI_C89_FUNCTION_END draw_pop_texture */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_set_texture */
+if (self->_CmdHeader.TexRef._TexID == tex_ref._TexID &&
+    self->_CmdHeader.TexRef._TexData == tex_ref._TexData) return;
+self->_CmdHeader.TexRef = tex_ref;
+self->_TextureStack.Data[self->_TextureStack.Size - 1] = tex_ref;
+@ON_TEXTURE_CHANGED@(imgui_c89_ctx, self);
+/* IMGUI_C89_FUNCTION_END draw_set_texture */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_prim_reserve */
+ImDrawCmd *command;
+int old_size;
+
+if (sizeof(ImDrawIdx) == 2 &&
+    self->_VtxCurrentIdx + vtx_count >= (1 << 16) &&
+    (self->Flags & @ALLOW_VTX_OFFSET@)) {
+    self->_CmdHeader.VtxOffset = self->VtxBuffer.Size;
+    @ON_VTX_CHANGED@(imgui_c89_ctx, self);
+}
+command = self->CmdBuffer.Data + self->CmdBuffer.Size - 1;
+command->ElemCount += idx_count;
+old_size = self->VtxBuffer.Size;
+@VTX_RESIZE@(imgui_c89_ctx, &self->VtxBuffer, old_size + vtx_count);
+self->_VtxWritePtr = self->VtxBuffer.Data + old_size;
+old_size = self->IdxBuffer.Size;
+@IDX_RESIZE@(imgui_c89_ctx, &self->IdxBuffer, old_size + idx_count);
+self->_IdxWritePtr = self->IdxBuffer.Data + old_size;
+/* IMGUI_C89_FUNCTION_END draw_prim_reserve */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_prim_unreserve */
+ImDrawCmd *command;
+
+command = self->CmdBuffer.Data + self->CmdBuffer.Size - 1;
+command->ElemCount -= idx_count;
+self->VtxBuffer.Size -= vtx_count;
+self->IdxBuffer.Size -= idx_count;
+/* IMGUI_C89_FUNCTION_END draw_prim_unreserve */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_data_scale_clip_rects */
+ImDrawList *list;
+ImDrawCmd *command;
+int i;
+int j;
+
+for (i = 0; i < self->CmdLists.Size; i++) {
+    list = self->CmdLists.Data[i];
+    for (j = 0; j < list->CmdBuffer.Size; j++) {
+        command = &list->CmdBuffer.Data[j];
+        command->ClipRect.x *= fb_scale->x;
+        command->ClipRect.y *= fb_scale->y;
+        command->ClipRect.z *= fb_scale->x;
+        command->ClipRect.w *= fb_scale->y;
+    }
+}
+/* IMGUI_C89_FUNCTION_END draw_data_scale_clip_rects */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_data_clear */
+self->Valid = 0;
+self->FrameCount = 0;
+self->TotalIdxCount = 0;
+self->TotalVtxCount = 0;
+self->CmdLists.Size = 0;
+self->DisplayPos.x = 0.0f;
+self->DisplayPos.y = 0.0f;
+self->DisplaySize = self->DisplayPos;
+self->FramebufferScale = self->DisplayPos;
+self->OwnerViewport = NULL;
+self->Textures = NULL;
+@RESET_OBSOLETE_CMD_LIST_COUNT@
+/* IMGUI_C89_FUNCTION_END draw_data_clear */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_data_add_list */
+@POP_UNUSED@(draw_list);
+@ADD_DRAW_LIST_EX@(imgui_c89_ctx, self, &self->CmdLists, draw_list);
+/* IMGUI_C89_FUNCTION_END draw_data_add_list */
+
+/* IMGUI_C89_FUNCTION_BEGIN bezier_cubic_calc */
+ImVec2 result;
+float u;
+float w1;
+float w2;
+float w3;
+float w4;
+
+u = 1.0f - t;
+w1 = u * u * u;
+w2 = 3.0f * u * u * t;
+w3 = 3.0f * u * t * t;
+w4 = t * t * t;
+result.x = w1 * p1->x + w2 * p2->x + w3 * p3->x + w4 * p4->x;
+result.y = w1 * p1->y + w2 * p2->y + w3 * p3->y + w4 * p4->y;
+return result;
+/* IMGUI_C89_FUNCTION_END bezier_cubic_calc */
+
+/* IMGUI_C89_FUNCTION_BEGIN bezier_quadratic_calc */
+ImVec2 result;
+float u;
+float w1;
+float w2;
+float w3;
+
+u = 1.0f - t;
+w1 = u * u;
+w2 = 2.0f * u * t;
+w3 = t * t;
+result.x = w1 * p1->x + w2 * p2->x + w3 * p3->x;
+result.y = w1 * p1->y + w2 * p2->y + w3 * p3->y;
+return result;
+/* IMGUI_C89_FUNCTION_END bezier_quadratic_calc */
+
+/* IMGUI_C89_FUNCTION_BEGIN bezier_cubic_casteljau */
+ImVec2 point;
+float dx;
+float dy;
+float d2;
+float d3;
+float x12;
+float y12;
+float x23;
+float y23;
+float x34;
+float y34;
+float x123;
+float y123;
+float x234;
+float y234;
+float x1234;
+float y1234;
+
+dx = x4 - x1;
+dy = y4 - y1;
+d2 = (x2 - x4) * dy - (y2 - y4) * dx;
+d3 = (x3 - x4) * dy - (y3 - y4) * dx;
+if (d2 < 0.0f) {
+    d2 = -d2;
+}
+if (d3 < 0.0f) {
+    d3 = -d3;
+}
+if ((d2 + d3) * (d2 + d3) < tess_tol * (dx * dx + dy * dy)) {
+    point.x = x4;
+    point.y = y4;
+    @PATH_PUSH@(imgui_c89_ctx, path, &point);
+} else if (level < 10) {
+    x12 = (x1 + x2) * 0.5f;
+    y12 = (y1 + y2) * 0.5f;
+    x23 = (x2 + x3) * 0.5f;
+    y23 = (y2 + y3) * 0.5f;
+    x34 = (x3 + x4) * 0.5f;
+    y34 = (y3 + y4) * 0.5f;
+    x123 = (x12 + x23) * 0.5f;
+    y123 = (y12 + y23) * 0.5f;
+    x234 = (x23 + x34) * 0.5f;
+    y234 = (y23 + y34) * 0.5f;
+    x1234 = (x123 + x234) * 0.5f;
+    y1234 = (y123 + y234) * 0.5f;
+    @CUBIC_CASTELJAU@(imgui_c89_ctx, path, x1, y1, x12, y12,
+                      x123, y123, x1234, y1234, tess_tol, level + 1);
+    @CUBIC_CASTELJAU@(imgui_c89_ctx, path, x1234, y1234, x234, y234,
+                      x34, y34, x4, y4, tess_tol, level + 1);
+}
+/* IMGUI_C89_FUNCTION_END bezier_cubic_casteljau */
+
+/* IMGUI_C89_FUNCTION_BEGIN bezier_quadratic_casteljau */
+ImVec2 point;
+float dx;
+float dy;
+float det;
+float x12;
+float y12;
+float x23;
+float y23;
+float x123;
+float y123;
+
+dx = x3 - x1;
+dy = y3 - y1;
+det = (x2 - x3) * dy - (y2 - y3) * dx;
+if (det * det * 4.0f < tess_tol * (dx * dx + dy * dy)) {
+    point.x = x3;
+    point.y = y3;
+    @PATH_PUSH@(imgui_c89_ctx, path, &point);
+} else if (level < 10) {
+    x12 = (x1 + x2) * 0.5f;
+    y12 = (y1 + y2) * 0.5f;
+    x23 = (x2 + x3) * 0.5f;
+    y23 = (y2 + y3) * 0.5f;
+    x123 = (x12 + x23) * 0.5f;
+    y123 = (y12 + y23) * 0.5f;
+    @QUADRATIC_CASTELJAU@(imgui_c89_ctx, path, x1, y1, x12, y12,
+                          x123, y123, tess_tol, level + 1);
+    @QUADRATIC_CASTELJAU@(imgui_c89_ctx, path, x123, y123, x23, y23,
+                          x3, y3, tess_tol, level + 1);
+}
+/* IMGUI_C89_FUNCTION_END bezier_quadratic_casteljau */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_path_arc_n */
+ImVec2 point;
+float angle;
+int i;
+
+if (radius < 0.5f) {
+    @PATH_PUSH@(imgui_c89_ctx, &self->_Path, center);
+    return;
+}
+@PATH_RESERVE@(imgui_c89_ctx, &self->_Path,
+               self->_Path.Size + num_segments + 1);
+for (i = 0; i <= num_segments; i++) {
+    angle = a_min + (float)i / (float)num_segments * (a_max - a_min);
+    point.x = center->x + cosf(angle) * radius;
+    point.y = center->y + sinf(angle) * radius;
+    @PATH_PUSH@(imgui_c89_ctx, &self->_Path, &point);
+}
+/* IMGUI_C89_FUNCTION_END draw_path_arc_n */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_path_arc_fast */
+if (radius < 0.5f) {
+    @PATH_PUSH@(imgui_c89_ctx, &self->_Path, center);
+    return;
+}
+@PATH_ARC_FAST_EX@(imgui_c89_ctx, self, center, radius,
+                  a_min_of_12 * @ARCFAST_SAMPLES@ / 12,
+                  a_max_of_12 * @ARCFAST_SAMPLES@ / 12, 0);
+/* IMGUI_C89_FUNCTION_END draw_path_arc_fast */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_path_elliptical */
+ImVec2 point;
+float cos_rotation;
+float sin_rotation;
+float x;
+float y;
+float angle;
+int i;
+
+if (num_segments <= 0) {
+    num_segments = @CALC_SEGMENTS@(self, @MAX_FLOAT@(radius->x, radius->y));
+}
+@PATH_RESERVE@(imgui_c89_ctx, &self->_Path,
+               self->_Path.Size + num_segments + 1);
+cos_rotation = cosf(rot);
+sin_rotation = sinf(rot);
+for (i = 0; i <= num_segments; i++) {
+    angle = a_min + (float)i / (float)num_segments * (a_max - a_min);
+    x = cosf(angle) * radius->x;
+    y = sinf(angle) * radius->y;
+    point.x = x * cos_rotation - y * sin_rotation + center->x;
+    point.y = x * sin_rotation + y * cos_rotation + center->y;
+    @PATH_PUSH@(imgui_c89_ctx, &self->_Path, &point);
+}
+/* IMGUI_C89_FUNCTION_END draw_path_elliptical */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_path_bezier_cubic */
+ImVec2 point;
+ImVec2 p1;
+float step;
+int i;
+
+p1 = self->_Path.Data[self->_Path.Size - 1];
+if (num_segments == 0) {
+    if (self->_Data->CurveTessellationTol <= 0.0f) {
+        @ASSERT_1421@;
+    }
+    @CUBIC_CASTELJAU@(imgui_c89_ctx, &self->_Path,
+                      p1.x, p1.y, p2->x, p2->y, p3->x, p3->y,
+                      p4->x, p4->y, self->_Data->CurveTessellationTol, 0);
+} else {
+    step = 1.0f / (float)num_segments;
+    for (i = 1; i <= num_segments; i++) {
+        point = @BEZIER_CUBIC_CALC@(&p1, p2, p3, p4, step * i);
+        @PATH_PUSH@(imgui_c89_ctx, &self->_Path, &point);
+    }
+}
+/* IMGUI_C89_FUNCTION_END draw_path_bezier_cubic */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_path_bezier_quadratic */
+ImVec2 point;
+ImVec2 p1;
+float step;
+int i;
+
+p1 = self->_Path.Data[self->_Path.Size - 1];
+if (num_segments == 0) {
+    if (self->_Data->CurveTessellationTol <= 0.0f) {
+        @ASSERT_1437@;
+    }
+    @QUADRATIC_CASTELJAU@(imgui_c89_ctx, &self->_Path,
+                          p1.x, p1.y, p2->x, p2->y, p3->x, p3->y,
+                          self->_Data->CurveTessellationTol, 0);
+} else {
+    step = 1.0f / (float)num_segments;
+    for (i = 1; i <= num_segments; i++) {
+        point = @BEZIER_QUADRATIC_CALC@(&p1, p2, p3, step * i);
+        @PATH_PUSH@(imgui_c89_ctx, &self->_Path, &point);
+    }
+}
+/* IMGUI_C89_FUNCTION_END draw_path_bezier_quadratic */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_text_full */
+ImVec4 clip;
+ImDrawTextFlags text_flags;
+
+if ((col & @ALPHA_MASK@) == 0) return;
+if (text_begin == text_end || text_begin[0] == '\0') return;
+if (font == NULL) {
+    font = self->_Data->Font;
+}
+if (font_size == 0.0f) {
+    font_size = self->_Data->FontSize;
+}
+clip = self->_CmdHeader.ClipRect;
+text_flags = @TEXT_FLAGS_NONE@;
+if (cpu_fine_clip_rect != NULL) {
+    clip.x = @MAX_FLOAT@(clip.x, cpu_fine_clip_rect->x);
+    clip.y = @MAX_FLOAT@(clip.y, cpu_fine_clip_rect->y);
+    clip.z = @MIN_FLOAT@(clip.z, cpu_fine_clip_rect->z);
+    clip.w = @MIN_FLOAT@(clip.w, cpu_fine_clip_rect->w);
+    text_flags = @CPU_FINE_CLIP@;
+}
+@RENDER_TEXT@(imgui_c89_ctx, font, self, font_size, pos, col, &clip,
+              text_begin, text_end, wrap_width, text_flags);
+/* IMGUI_C89_FUNCTION_END draw_add_text_full */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_text_simple */
+@ADD_TEXT_FULL@(imgui_c89_ctx, self, self->_Data->Font,
+                self->_Data->FontSize, pos, col, text_begin, text_end,
+                0.0f, NULL);
+/* IMGUI_C89_FUNCTION_END draw_add_text_simple */
+
+/* IMGUI_C89_FUNCTION_BEGIN glyph_ranges_add_text */
+unsigned int codepoint;
+int length;
+
+if (text_end == NULL) {
+    text_end = text + strlen(text);
+}
+while (text < text_end) {
+    codepoint = 0;
+    length = @TEXT_FROM_UTF8@(&codepoint, text, text_end);
+    if (length == 0) break;
+    text += length;
+    @RANGES_ADD_CHAR@(self, (ImWchar)codepoint);
+}
+/* IMGUI_C89_FUNCTION_END glyph_ranges_add_text */
+
+/* IMGUI_C89_FUNCTION_BEGIN glyph_ranges_add_ranges */
+unsigned int codepoint;
+
+while (ranges[0] != 0) {
+    for (codepoint = ranges[0];
+         codepoint <= ranges[1] && codepoint <= @MAX_CODEPOINT@;
+         codepoint++) {
+        @RANGES_ADD_CHAR@(self, (ImWchar)codepoint);
+    }
+    ranges += 2;
+}
+/* IMGUI_C89_FUNCTION_END glyph_ranges_add_ranges */
+
+/* IMGUI_C89_FUNCTION_BEGIN glyph_ranges_build */
+ImWchar value;
+int codepoint;
+
+for (codepoint = 0; codepoint <= @MAX_CODEPOINT@; codepoint++) {
+    if (!@RANGES_GET_BIT@(self, (size_t)codepoint)) continue;
+    value = (ImWchar)codepoint;
+    @WCHAR_PUSH@(imgui_c89_ctx, out_ranges, &value);
+    while (codepoint < @MAX_CODEPOINT@ &&
+           @RANGES_GET_BIT@(self, (size_t)(codepoint + 1))) {
+        codepoint++;
+    }
+    value = (ImWchar)codepoint;
+    @WCHAR_PUSH@(imgui_c89_ctx, out_ranges, &value);
+}
+value = 0;
+@WCHAR_PUSH@(imgui_c89_ctx, out_ranges, &value);
+/* IMGUI_C89_FUNCTION_END glyph_ranges_build */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_baked_clear */
+self->FallbackAdvanceX = 0.0f;
+@GLYPH_CLEAR@(imgui_c89_ctx, &self->Glyphs);
+@FLOAT_CLEAR@(imgui_c89_ctx, &self->IndexAdvanceX);
+@WCHAR_CLEAR@(imgui_c89_ctx, &self->IndexLookup);
+self->FallbackGlyphIndex = -1;
+self->Ascent = 0.0f;
+self->Descent = 0.0f;
+self->MetricsTotalSurface = 0;
+/* IMGUI_C89_FUNCTION_END font_baked_clear */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_clear_output */
+if (self->OwnerAtlas != NULL) {
+    @DISCARD_BAKES@(imgui_c89_ctx, self->OwnerAtlas, self, 0);
+}
+memset(self->Used8kPagesMap, 0, sizeof(self->Used8kPagesMap));
+self->LastBaked = NULL;
+/* IMGUI_C89_FUNCTION_END font_clear_output */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_range_unused */
+unsigned int page;
+unsigned int last;
+
+page = c_begin / 8192;
+last = c_last / 8192;
+for (; page <= last; page++) {
+    if ((page >> 3) < sizeof(self->Used8kPagesMap) &&
+        (self->Used8kPagesMap[page >> 3] & (1u << (page & 7)))) {
+        return 0;
+    }
+}
+return 1;
+/* IMGUI_C89_FUNCTION_END font_range_unused */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_add_remap */
+@STORAGE_SET_INT@(imgui_c89_ctx, &self->RemapPairs, (ImGuiID)from_codepoint,
+                  (int)to_codepoint);
+/* IMGUI_C89_FUNCTION_END font_add_remap */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_baked_find_glyph */
+ImFontGlyph *glyph;
+int index;
+
+if ((size_t)c < (size_t)self->IndexLookup.Size) {
+    index = (int)self->IndexLookup.Data[c];
+    if (index == @GLYPH_NOT_FOUND@) {
+        return &self->Glyphs.Data[self->FallbackGlyphIndex];
+    }
+    if (index != @GLYPH_UNUSED@) return &self->Glyphs.Data[index];
+}
+glyph = @LOAD_GLYPH@(imgui_c89_ctx, self, c, NULL);
+return glyph != NULL ? glyph : &self->Glyphs.Data[self->FallbackGlyphIndex];
+/* IMGUI_C89_FUNCTION_END font_baked_find_glyph */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_baked_find_glyph_no_fallback */
+ImFontGlyph *glyph;
+int index;
+
+if ((size_t)c < (size_t)self->IndexLookup.Size) {
+    index = (int)self->IndexLookup.Data[c];
+    if (index == @GLYPH_NOT_FOUND@) return NULL;
+    if (index != @GLYPH_UNUSED@) return &self->Glyphs.Data[index];
+}
+self->LoadNoFallback = 1;
+glyph = @LOAD_GLYPH@(imgui_c89_ctx, self, c, NULL);
+self->LoadNoFallback = 0;
+return glyph;
+/* IMGUI_C89_FUNCTION_END font_baked_find_glyph_no_fallback */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_baked_is_glyph_loaded */
+int index;
+
+if ((size_t)c >= (size_t)self->IndexLookup.Size) return 0;
+index = (int)self->IndexLookup.Data[c];
+return index != @GLYPH_NOT_FOUND@ && index != @GLYPH_UNUSED@;
+/* IMGUI_C89_FUNCTION_END font_baked_is_glyph_loaded */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_baked_get_advance */
+float advance;
+
+if ((int)c < self->IndexAdvanceX.Size) {
+    advance = self->IndexAdvanceX.Data[c];
+    if (advance >= 0.0f) return advance;
+}
+return @LOAD_ADVANCE@(imgui_c89_ctx, self, c);
+/* IMGUI_C89_FUNCTION_END font_baked_get_advance */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_get_baked */
+ImFontBaked *baked;
+
+size = @ROUND_FONT_SIZE@(size);
+if (density < 0.0f) {
+    density = self->CurrentRasterizerDensity;
+}
+baked = self->LastBaked;
+if (baked != NULL && baked->Size == size &&
+    baked->RasterizerDensity == density) return baked;
+baked = @BAKED_GET_OR_ADD@(imgui_c89_ctx, self->OwnerAtlas,
+                          self, size, density);
+if (baked == NULL) return NULL;
+baked->LastUsedFrame = self->OwnerAtlas->Builder->FrameCount;
+self->LastBaked = baked;
+return baked;
+/* IMGUI_C89_FUNCTION_END font_get_baked */
+
+/* IMGUI_C89_FUNCTION_BEGIN text_next_wrapped_line */
+if (!(flags & @WRAP_KEEP_BLANKS@)) {
+    while (text < text_end && (*text == ' ' || *text == '\t')) text++;
+}
+if (text < text_end && *text == '\n') {
+    text++;
+}
+return text;
+/* IMGUI_C89_FUNCTION_END text_next_wrapped_line */
+
+/* IMGUI_C89_FUNCTION_BEGIN text_classifier_clear */
+unsigned int codepoint;
+
+for (codepoint = codepoint_min; codepoint < codepoint_end; codepoint++) {
+    @CLASS_SET@(bits, codepoint_min, codepoint_end, char_class, codepoint);
+}
+/* IMGUI_C89_FUNCTION_END text_classifier_clear */
+
+/* IMGUI_C89_FUNCTION_BEGIN text_classifier_set */
+ImU32 shift;
+
+if (c < codepoint_min || c >= codepoint_end) {
+    @ASSERT_5503@;
+}
+c -= codepoint_min;
+shift = (c & 15u) << 1;
+bits[c >> 4] = (bits[c >> 4] & ~(3u << shift)) |
+               ((ImU32)char_class << shift);
+/* IMGUI_C89_FUNCTION_END text_classifier_set */
+
+/* IMGUI_C89_FUNCTION_BEGIN text_classifier_set_string */
+const char *end;
+unsigned int codepoint;
+
+end = s + strlen(s);
+while (*s != '\0') {
+    s += @TEXT_FROM_UTF8@(&codepoint, s, end);
+    @CLASS_SET@(bits, codepoint_min, codepoint_end, char_class, codepoint);
+}
+/* IMGUI_C89_FUNCTION_END text_classifier_set_string */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_calc_wrap */
+return @CALC_WRAP_EX@(imgui_c89_ctx, self, size, text, text_end,
+                     wrap_width, @TEXT_FLAGS_NONE@);
+/* IMGUI_C89_FUNCTION_END font_calc_wrap */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_calc_text_size */
+return @CALC_TEXT_EX@(imgui_c89_ctx, self, size, max_width, wrap_width,
+                     text_begin, text_end, text_end, out_remaining,
+                     NULL, @TEXT_FLAGS_NONE@);
+/* IMGUI_C89_FUNCTION_END font_calc_text_size */
+
+/* IMGUI_C89_FUNCTION_BEGIN texture_destroy_pixels */
+if (self->Pixels != NULL) {
+    @MEM_FREE@(imgui_c89_ctx, self->Pixels);
+}
+self->Pixels = NULL;
+self->UseColors = 0;
+/* IMGUI_C89_FUNCTION_END texture_destroy_pixels */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_queue_upload */
+@QUEUE_UPLOAD@(imgui_c89_ctx, tex, x, y, w, h);
+atlas->TexIsBuilt = 0;
+/* IMGUI_C89_FUNCTION_END atlas_queue_upload */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_post_process */
+if (data->FontSrc->RasterizerMultiply != 1.0f) {
+    @POST_MULTIPLY@(data, data->FontSrc->RasterizerMultiply);
+}
+/* IMGUI_C89_FUNCTION_END atlas_post_process */
+
+/* IMGUI_C89_FUNCTION_BEGIN texture_format_bpp */
+switch (format) {
+case @FORMAT_ALPHA8@: return 1;
+case @FORMAT_RGBA32@: return 4;
+default: @ASSERT_2466@; return 0;
+}
+/* IMGUI_C89_FUNCTION_END texture_format_bpp */
+
+/* IMGUI_C89_FUNCTION_BEGIN texture_status_name */
+switch (status) {
+case @STATUS_OK@: return "OK";
+case @STATUS_DESTROYED@: return "Destroyed";
+case @STATUS_WANT_CREATE@: return "WantCreate";
+case @STATUS_WANT_UPDATES@: return "WantUpdates";
+case @STATUS_WANT_DESTROY@: return "WantDestroy";
+default: return "N/A";
+}
+/* IMGUI_C89_FUNCTION_END texture_status_name */
+
+/* IMGUI_C89_FUNCTION_BEGIN texture_format_name */
+switch (format) {
+case @FORMAT_ALPHA8@: return "Alpha8";
+case @FORMAT_RGBA32@: return "RGBA32";
+default: return "N/A";
+}
+/* IMGUI_C89_FUNCTION_END texture_format_name */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_get_alpha */
+@GET_TEX_FORMAT@(imgui_c89_ctx, self, @FORMAT_ALPHA8@, out_pixels,
+                out_width, out_height, out_bytes_per_pixel);
+/* IMGUI_C89_FUNCTION_END atlas_get_alpha */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_get_rgba */
+@GET_TEX_FORMAT@(imgui_c89_ctx, self, @FORMAT_RGBA32@, out_pixels,
+                out_width, out_height, out_bytes_per_pixel);
+/* IMGUI_C89_FUNCTION_END atlas_get_rgba */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_build */
+@ATLAS_BUILD_MAIN@(imgui_c89_ctx, self);
+return 1;
+/* IMGUI_C89_FUNCTION_END atlas_build */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_add_custom_glyph */
+return @ADD_CUSTOM_GLYPH_SIZE@(imgui_c89_ctx, self, font,
+                              font->LegacySize, codepoint, width, height,
+                              advance_x, offset);
+/* IMGUI_C89_FUNCTION_END atlas_add_custom_glyph */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_compact_cache */
+@ATLAS_TEXTURE_COMPACT@(imgui_c89_ctx, self);
+/* IMGUI_C89_FUNCTION_END atlas_compact_cache */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_set_loader */
+@SETUP_FONT_LOADER@(imgui_c89_ctx, self, font_loader);
+/* IMGUI_C89_FUNCTION_END atlas_set_loader */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_font_rebuild_output */
+@FONT_DESTROY_OUTPUT@(imgui_c89_ctx, atlas, font);
+@FONT_INIT_OUTPUT@(atlas, font);
+/* IMGUI_C89_FUNCTION_END atlas_font_rebuild_output */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_font_source_init */
+const ImFontLoader *loader;
+
+loader = src->FontLoader != NULL ? src->FontLoader : atlas->FontLoader;
+if (loader->FontSrcInit != NULL && !loader->FontSrcInit(atlas, src)) return 0;
+return 1;
+/* IMGUI_C89_FUNCTION_END atlas_font_source_init */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_add_shared_data */
+int i;
+
+for (i = 0; i < atlas->DrawListSharedDatas.Size; i++) {
+    if (atlas->DrawListSharedDatas.Data[i] == data) {
+        @ASSERT_4019@;
+        break;
+    }
+}
+@SHARED_DATA_PUSH@(imgui_c89_ctx, &atlas->DrawListSharedDatas, &data);
+/* IMGUI_C89_FUNCTION_END atlas_add_shared_data */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_remove_shared_data */
+ImDrawListSharedData **it;
+int i;
+
+it = NULL;
+for (i = 0; i < atlas->DrawListSharedDatas.Size; i++) {
+    if (atlas->DrawListSharedDatas.Data[i] == data) {
+        it = atlas->DrawListSharedDatas.Data + i;
+        break;
+    }
+}
+if (it == NULL) {
+    @ASSERT_4025@;
+    return;
+}
+memmove(it, it + 1, (size_t)(atlas->DrawListSharedDatas.Data +
+        atlas->DrawListSharedDatas.Size - it - 1) * sizeof(*it));
+atlas->DrawListSharedDatas.Size--;
+/* IMGUI_C89_FUNCTION_END atlas_remove_shared_data */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_update_shared_data */
+ImDrawListSharedData *data;
+int i;
+
+for (i = 0; i < atlas->DrawListSharedDatas.Size; i++) {
+    data = atlas->DrawListSharedDatas.Data[i];
+    if (data->FontAtlas == atlas) {
+        data->TexUvWhitePixel = atlas->TexUvWhitePixel;
+        data->TexUvLines = atlas->TexUvLines;
+    }
+}
+/* IMGUI_C89_FUNCTION_END atlas_update_shared_data */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_font_source_add */
+if (!src->MergeMode) {
+    @FONT_CLEAR_OUTPUT@(imgui_c89_ctx, font);
+    font->OwnerAtlas = atlas;
+    if (font->Sources.Data[0] != src) {
+        @ASSERT_3740@;
+    }
+}
+atlas->TexIsBuilt = 0;
+@SETUP_SPECIAL_GLYPHS@(atlas, font, src);
+/* IMGUI_C89_FUNCTION_END atlas_font_source_add */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_font_destroy_output */
+const ImFontLoader *loader;
+ImFontConfig *src;
+int i;
+
+@FONT_CLEAR_OUTPUT@(imgui_c89_ctx, font);
+for (i = 0; i < font->Sources.Size; i++) {
+    src = font->Sources.Data[i];
+    loader = src->FontLoader != NULL ? src->FontLoader : atlas->FontLoader;
+    if (loader != NULL && loader->FontSrcDestroy != NULL) {
+        loader->FontSrcDestroy(atlas, src);
+    }
+}
+/* IMGUI_C89_FUNCTION_END atlas_font_destroy_output */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_font_destroy_source */
+(void)atlas;
+if (src->FontDataOwnedByAtlas) {
+    @MEM_FREE@(imgui_c89_ctx, src->FontData);
+}
+src->FontData = NULL;
+if (src->GlyphExcludeRanges != NULL) {
+    @MEM_FREE@(imgui_c89_ctx, (void *)src->GlyphExcludeRanges);
+}
+src->GlyphExcludeRanges = NULL;
+/* IMGUI_C89_FUNCTION_END atlas_font_destroy_source */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_font_init_output */
+int ok;
+int i;
+
+ok = 1;
+for (i = 0; i < font->Sources.Size; i++) {
+    if (!@FONT_SOURCE_INIT@(atlas, font->Sources.Data[i])) {
+        ok = 0;
+    }
+}
+if (!ok) {
+    @ASSERT_3701@;
+}
+return ok;
+/* IMGUI_C89_FUNCTION_END atlas_font_init_output */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_font_discard_bakes */
+ImFontAtlasBuilder *builder;
+ImFontBaked *baked;
+int i;
+
+builder = atlas->Builder;
+if (builder == NULL) return;
+for (i = 0; i < builder->BakedPool.Size; i++) {
+    baked = builder->BakedPool.Blocks.Data[i / 32] + i % 32;
+    if (baked->LastUsedFrame + unused_frames > builder->FrameCount) continue;
+    if (baked->OwnerFont != font || baked->WantDestroy) continue;
+    @BAKED_DISCARD@(imgui_c89_ctx, atlas, font, baked);
+}
+/* IMGUI_C89_FUNCTION_END atlas_font_discard_bakes */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_texture_compact */
+ImFontAtlasBuilder *builder;
+ImVec2i size;
+
+builder = atlas->Builder;
+@BUILD_DISCARD_BAKES@(imgui_c89_ctx, atlas, 1);
+size = @TEXTURE_SIZE_ESTIMATE@(atlas);
+if (builder->RectsDiscardedCount == 0 &&
+    size.x == atlas->TexData->Width && size.y == atlas->TexData->Height) return;
+@TEXTURE_REPACK@(imgui_c89_ctx, atlas, size.x, size.y);
+/* IMGUI_C89_FUNCTION_END atlas_texture_compact */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_clear_tex_data */
+int i;
+
+if (self->Locked) {
+    @ASSERT_2740@;
+}
+if (self->RendererHasTextures) {
+    @ASSERT_2740@;
+}
+for (i = 0; i < self->TexList.Size; i++) {
+    @DESTROY_PIXELS@(imgui_c89_ctx, self->TexList.Data[i]);
+}
+/* IMGUI_C89_FUNCTION_END atlas_clear_tex_data */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_destroy */
+@FONT_CLEAR_OUTPUT@(imgui_c89_ctx, self);
+/* IMGUI_C89_FUNCTION_END font_destroy */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_list_destroy */
+@DRAW_CLEAR_FREE@(imgui_c89_ctx, self);
+@DRAW_SET_SHARED@(imgui_c89_ctx, self, NULL);
+/* IMGUI_C89_FUNCTION_END draw_list_destroy */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_shared_destroy */
+if (self->DrawLists.Size != 0) {
+    @ASSERT_409@;
+}
+/* IMGUI_C89_FUNCTION_END draw_shared_destroy */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_set_shared */
+ImDrawList **it;
+int i;
+
+if (self->_Data != NULL) {
+    it = NULL;
+    for (i = 0; i < self->_Data->DrawLists.Size; i++) {
+        if (self->_Data->DrawLists.Data[i] == self) {
+            it = self->_Data->DrawLists.Data + i;
+            break;
+        }
+    }
+    if (it != NULL) {
+        *it = self->_Data->DrawLists.Data[self->_Data->DrawLists.Size - 1];
+        self->_Data->DrawLists.Size--;
+    }
+}
+self->_Data = data;
+if (data != NULL) {
+    @DRAW_LIST_PUSH@(imgui_c89_ctx, &data->DrawLists, &self);
+}
+/* IMGUI_C89_FUNCTION_END draw_set_shared */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_is_glyph_in_font */
+const ImFontLoader *loader;
+ImFontConfig *src;
+int i;
+
+@REMAP_CODEPOINT@(self->OwnerAtlas, self, &c);
+for (i = 0; i < self->Sources.Size; i++) {
+    src = self->Sources.Data[i];
+    loader = src->FontLoader != NULL ? src->FontLoader : self->OwnerAtlas->FontLoader;
+    if (loader->FontSrcContainsGlyph != NULL &&
+        loader->FontSrcContainsGlyph(self->OwnerAtlas, src, c)) return 1;
+}
+return 0;
+/* IMGUI_C89_FUNCTION_END font_is_glyph_in_font */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_baked_id */
+struct {
+    ImGuiID font;
+    float size;
+    float density;
+} value;
+
+value.font = font_id;
+value.size = baked_size;
+value.density = rasterizer_density;
+return @HASH_DATA@(&value, sizeof(value), 0);
+/* IMGUI_C89_FUNCTION_END atlas_baked_id */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_pack_get_rect */
+ImFontAtlasRectEntry *entry;
+int i;
+
+if (id == @INVALID_RECT_ID@) {
+    @ASSERT_4504@;
+}
+i = @RECT_ID_INDEX@(id);
+entry = &atlas->Builder->RectsIndex.Data[i];
+if (entry->Generation != @RECT_ID_GENERATION@(id)) {
+    @ASSERT_4508@;
+}
+if (!entry->IsUsed) {
+    @ASSERT_4509@;
+}
+return &atlas->Builder->Rects.Data[entry->TargetIndex];
+/* IMGUI_C89_FUNCTION_END atlas_pack_get_rect */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_pack_get_rect_safe */
+ImFontAtlasRectEntry *entry;
+int i;
+
+if (id == @INVALID_RECT_ID@) return NULL;
+i = @RECT_ID_INDEX@(id);
+if (atlas->Builder == NULL) {
+    @PACK_INIT@(imgui_c89_ctx, atlas);
+}
+if (i >= atlas->Builder->RectsIndex.Size) return NULL;
+entry = &atlas->Builder->RectsIndex.Data[i];
+if (entry->Generation != @RECT_ID_GENERATION@(id) || !entry->IsUsed) return NULL;
+return &atlas->Builder->Rects.Data[entry->TargetIndex];
+/* IMGUI_C89_FUNCTION_END atlas_pack_get_rect_safe */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_update_pointers */
+ImFont *font;
+ImFontConfig *src;
+int i;
+
+for (i = 0; i < atlas->Fonts.Size; i++) {
+    atlas->Fonts.Data[i]->Sources.Size = 0;
+}
+for (i = 0; i < atlas->Sources.Size; i++) {
+    src = &atlas->Sources.Data[i];
+    font = src->DstFont;
+    @FONT_SOURCE_PUSH@(imgui_c89_ctx, &font->Sources, &src);
+}
+/* IMGUI_C89_FUNCTION_END atlas_update_pointers */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_get_oversample */
+float raster_size;
+
+raster_size = baked->Size * baked->RasterizerDensity * src->RasterizerDensity;
+*out_oversample_h = src->OversampleH != 0 ? src->OversampleH
+    : (raster_size > 36.0f || src->PixelSnapH) ? 1 : 2;
+*out_oversample_v = src->OversampleV != 0 ? src->OversampleV : 1;
+/* IMGUI_C89_FUNCTION_END atlas_get_oversample */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_update_renderer_flag */
+ImDrawListSharedData *data;
+int i;
+
+for (i = 0; i < atlas->DrawListSharedDatas.Size; i++) {
+    data = atlas->DrawListSharedDatas.Data[i];
+    if (data->Context != NULL) {
+        atlas->RendererHasTextures = (data->Context->IO.BackendFlags &
+                                      @RENDERER_HAS_TEXTURES@) != 0;
+        break;
+    }
+}
+/* IMGUI_C89_FUNCTION_END atlas_update_renderer_flag */
+
+/* IMGUI_C89_FUNCTION_BEGIN calc_rounding_flags */
+int left;
+int right;
+int top;
+int bottom;
+
+left = r_in->Min.x <= r_outer->Min.x + threshold;
+right = r_in->Max.x >= r_outer->Max.x - threshold;
+top = r_in->Min.y <= r_outer->Min.y + threshold;
+bottom = r_in->Max.y >= r_outer->Max.y - threshold;
+return @ROUND_CORNERS_NONE@
+    | (top && left ? @ROUND_TOP_LEFT@ : 0)
+    | (top && right ? @ROUND_TOP_RIGHT@ : 0)
+    | (bottom && left ? @ROUND_BOTTOM_LEFT@ : 0)
+    | (bottom && right ? @ROUND_BOTTOM_RIGHT@ : 0);
+/* IMGUI_C89_FUNCTION_END calc_rounding_flags */
+
+/* IMGUI_C89_FUNCTION_BEGIN render_bullet */
+float size;
+
+size = draw_list->_Data->FontSize;
+@ADD_CIRCLE_FILLED@(imgui_c89_ctx, draw_list, &pos, size * 0.20f, col,
+                    size < 22.0f ? 8 : size < 40.0f ? 12 : 0);
+/* IMGUI_C89_FUNCTION_END render_bullet */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_reset_frame */
+ImDrawCmd command = {0};
+
+if (self->_Splitter._Count > 1) {
+    @SPLITTER_MERGE@(imgui_c89_ctx, &self->_Splitter, self);
+}
+self->CmdBuffer.Size = 0;
+self->IdxBuffer.Size = 0;
+self->VtxBuffer.Size = 0;
+self->Flags = self->_Data->InitialFlags;
+memset(&self->_CmdHeader, 0, sizeof(self->_CmdHeader));
+self->_VtxCurrentIdx = 0;
+self->_VtxWritePtr = NULL;
+self->_IdxWritePtr = NULL;
+self->_ClipRectStack.Size = 0;
+self->_TextureStack.Size = 0;
+self->_CallbacksDataBuf.Size = 0;
+self->_Path.Size = 0;
+@SPLITTER_CLEAR@(&self->_Splitter);
+@CMD_PUSH@(imgui_c89_ctx, &self->CmdBuffer, &command);
+self->_FringeScale = self->_Data->InitialFringeScale;
+/* IMGUI_C89_FUNCTION_END draw_reset_frame */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_data_deindex */
+ImVector_ImDrawVert scratch = {0};
+ImDrawList *list;
+ImDrawVert *data;
+int size;
+int capacity;
+int i;
+int j;
+
+self->TotalVtxCount = 0;
+self->TotalIdxCount = 0;
+for (i = 0; i < self->CmdLists.Size; i++) {
+    list = self->CmdLists.Data[i];
+    if (list->IdxBuffer.Size == 0) continue;
+    @VTX_RESIZE@(imgui_c89_ctx, &scratch, list->IdxBuffer.Size);
+    for (j = 0; j < list->IdxBuffer.Size; j++) {
+        scratch.Data[j] = list->VtxBuffer.Data[list->IdxBuffer.Data[j]];
+    }
+    size = list->VtxBuffer.Size;
+    capacity = list->VtxBuffer.Capacity;
+    data = list->VtxBuffer.Data;
+    list->VtxBuffer.Size = scratch.Size;
+    list->VtxBuffer.Capacity = scratch.Capacity;
+    list->VtxBuffer.Data = scratch.Data;
+    scratch.Size = size;
+    scratch.Capacity = capacity;
+    scratch.Data = data;
+    list->IdxBuffer.Size = 0;
+    self->TotalVtxCount += list->VtxBuffer.Size;
+}
+if (scratch.Data != NULL) {
+    @MEM_FREE@(imgui_c89_ctx, scratch.Data);
+}
+/* IMGUI_C89_FUNCTION_END draw_data_deindex */

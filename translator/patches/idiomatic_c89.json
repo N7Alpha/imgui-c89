@@ -70,7 +70,795 @@
     "compress_string_pointer_globals": [
       "GKeyNames"
     ],
+    "handwritten_groups": {
+      "draw_shapes": {
+        "template": "handwritten/draw_shapes_batch.c.in",
+        "functions": {
+          "@ADD_POLYLINE@": {
+            "qualified_name": "ImDrawList::AddPolyline",
+            "parameter_types": ["const ImVec2 *", "const int", "ImU32", "float", "ImDrawFlags"]
+          },
+          "@PRIM_RESERVE@": {
+            "qualified_name": "ImDrawList::PrimReserve",
+            "parameter_types": ["int", "int"]
+          },
+          "@PRIM_RECT@": {
+            "qualified_name": "ImDrawList::PrimRect",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32"]
+          },
+          "@PATH_RECT@": {
+            "qualified_name": "ImDrawList::PathRect",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "float", "ImDrawFlags"]
+          },
+          "@PATH_LINE_TO@": {
+            "qualified_name": "ImDrawList::PathLineTo",
+            "parameter_types": ["const ImVec2 &"]
+          },
+          "@PATH_STROKE@": {
+            "qualified_name": "ImDrawList::PathStroke",
+            "parameter_types": ["ImU32", "float", "ImDrawFlags"]
+          },
+          "@PATH_FILL@": {
+            "qualified_name": "ImDrawList::PathFillConvex",
+            "parameter_types": ["ImU32"]
+          },
+          "@PATH_ARC_FAST_EX@": {
+            "qualified_name": "ImDrawList::_PathArcToFastEx",
+            "parameter_types": ["const ImVec2 &", "float", "int", "int", "int"]
+          },
+          "@PATH_ARC_TO@": {
+            "qualified_name": "ImDrawList::PathArcTo",
+            "parameter_types": ["const ImVec2 &", "float", "float", "float", "int"]
+          },
+          "@CLAMP_INT@": {
+            "qualified_name": "ImClamp",
+            "parameter_types": ["int", "int", "int"]
+          },
+          "@CALC_SEGMENTS@": {
+            "qualified_name": "ImDrawList::_CalcCircleAutoSegmentCount",
+            "parameter_types": ["float"]
+          },
+          "@MAX_FLOAT@": {
+            "qualified_name": "ImMax",
+            "parameter_types": ["float", "float"]
+          },
+          "@PATH_ELLIPTICAL@": {
+            "qualified_name": "ImDrawList::PathEllipticalArcTo",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "float", "float", "float", "int"]
+          },
+          "@PATH_BEZIER_CUBIC@": {
+            "qualified_name": "ImDrawList::PathBezierCubicCurveTo",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "int"]
+          },
+          "@PATH_BEZIER_QUADRATIC@": {
+            "qualified_name": "ImDrawList::PathBezierQuadraticCurveTo",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "int"]
+          },
+          "@PUSH_TEXTURE@": {
+            "qualified_name": "ImDrawList::PushTexture",
+            "parameter_types": ["ImTextureRef"]
+          },
+          "@POP_TEXTURE@": {
+            "qualified_name": "ImDrawList::PopTexture",
+            "parameter_types": []
+          },
+          "@PRIM_RECT_UV@": {
+            "qualified_name": "ImDrawList::PrimRectUV",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"]
+          },
+          "@PRIM_QUAD_UV@": {
+            "qualified_name": "ImDrawList::PrimQuadUV",
+            "parameter_types": [
+              "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &",
+              "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"
+            ]
+          },
+          "@ADD_DRAW_CMD@": {
+            "qualified_name": "ImDrawList::AddDrawCmd",
+            "parameter_types": []
+          },
+          "@MIN_FLOAT@": {
+            "qualified_name": "ImMin",
+            "parameter_types": ["float", "float"]
+          },
+          "@CLIP_PUSH@": {
+            "qualified_name": "ImVector<ImVec4>::push_back",
+            "parameter_types": ["const ImVec4 &"]
+          },
+          "@ON_CLIP_CHANGED@": {
+            "qualified_name": "ImDrawList::_OnChangedClipRect",
+            "parameter_types": []
+          },
+          "@PUSH_CLIP@": {
+            "qualified_name": "ImDrawList::PushClipRect",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "bool"]
+          },
+          "@TEXTURE_PUSH@": {
+            "qualified_name": "ImVector<ImTextureRef>::push_back",
+            "parameter_types": ["const ImTextureRef &"]
+          },
+          "@ON_TEXTURE_CHANGED@": {
+            "qualified_name": "ImDrawList::_OnChangedTexture",
+            "parameter_types": []
+          },
+          "@ON_VTX_CHANGED@": {
+            "qualified_name": "ImDrawList::_OnChangedVtxOffset",
+            "parameter_types": []
+          },
+          "@VTX_RESIZE@": {
+            "qualified_name": "ImVector<ImDrawVert>::resize",
+            "parameter_types": ["int"]
+          },
+          "@IDX_RESIZE@": {
+            "qualified_name": "ImVector<unsigned short>::resize",
+            "parameter_types": ["int"]
+          },
+          "@POP_UNUSED@": {
+            "qualified_name": "ImDrawList::_PopUnusedDrawCmd",
+            "parameter_types": []
+          },
+          "@ADD_DRAW_LIST_EX@": {
+            "qualified_name": "ImGui::AddDrawListToDrawDataEx",
+            "parameter_types": ["ImDrawData *", "ImVector<ImDrawList *> *", "ImDrawList *"]
+          },
+          "@PATH_PUSH@": {
+            "qualified_name": "ImVector<ImVec2>::push_back",
+            "parameter_types": ["const ImVec2 &"]
+          },
+          "@PATH_RESERVE@": {
+            "qualified_name": "ImVector<ImVec2>::reserve",
+            "parameter_types": ["int"]
+          },
+          "@CUBIC_CASTELJAU@": {
+            "qualified_name": "PathBezierCubicCurveToCasteljau",
+            "parameter_types": [
+              "ImVector<ImVec2> *", "float", "float", "float", "float", "float",
+              "float", "float", "float", "float", "int"
+            ]
+          },
+          "@QUADRATIC_CASTELJAU@": {
+            "qualified_name": "PathBezierQuadraticCurveToCasteljau",
+            "parameter_types": [
+              "ImVector<ImVec2> *", "float", "float", "float", "float",
+              "float", "float", "float", "int"
+            ]
+          },
+          "@BEZIER_CUBIC_CALC@": {
+            "qualified_name": "ImBezierCubicCalc",
+            "parameter_types": [
+              "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "float"
+            ]
+          },
+          "@BEZIER_QUADRATIC_CALC@": {
+            "qualified_name": "ImBezierQuadraticCalc",
+            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "float"]
+          },
+          "@RENDER_TEXT@": {
+            "qualified_name": "ImFont::RenderText",
+            "parameter_types": [
+              "ImDrawList *", "float", "const ImVec2 &", "ImU32", "const ImVec4 &",
+              "const char *", "const char *", "float", "ImDrawTextFlags"
+            ]
+          },
+          "@ADD_TEXT_FULL@": {
+            "qualified_name": "ImDrawList::AddText",
+            "parameter_types": [
+              "ImFont *", "float", "const ImVec2 &", "ImU32", "const char *",
+              "const char *", "float", "const ImVec4 *"
+            ]
+          },
+          "@RANGES_ADD_CHAR@": {
+            "qualified_name": "ImFontGlyphRangesBuilder::AddChar",
+            "parameter_types": ["ImWchar"]
+          },
+          "@RANGES_GET_BIT@": {
+            "qualified_name": "ImFontGlyphRangesBuilder::GetBit",
+            "parameter_types": ["size_t"]
+          },
+          "@WCHAR_PUSH@": {
+            "qualified_name": "ImVector<unsigned short>::push_back",
+            "parameter_types": ["const unsigned short &"]
+          },
+          "@GLYPH_CLEAR@": {
+            "qualified_name": "ImVector<ImFontGlyph>::clear",
+            "parameter_types": []
+          },
+          "@FLOAT_CLEAR@": {
+            "qualified_name": "ImVector<float>::clear",
+            "parameter_types": []
+          },
+          "@WCHAR_CLEAR@": {
+            "qualified_name": "ImVector<unsigned short>::clear",
+            "parameter_types": []
+          },
+          "@DISCARD_BAKES@": {
+            "qualified_name": "ImFontAtlasFontDiscardBakes",
+            "parameter_types": ["ImFontAtlas *", "ImFont *", "int"]
+          },
+          "@STORAGE_SET_INT@": {
+            "qualified_name": "ImGuiStorage::SetInt",
+            "parameter_types": ["ImGuiID", "int"]
+          },
+          "@LOAD_GLYPH@": {
+            "qualified_name": "ImFontBaked_BuildLoadGlyph",
+            "parameter_types": ["ImFontBaked *", "ImWchar", "float *"]
+          },
+          "@LOAD_ADVANCE@": {
+            "qualified_name": "ImFontBaked_BuildLoadGlyphAdvanceX",
+            "parameter_types": ["ImFontBaked *", "ImWchar"]
+          },
+          "@ROUND_FONT_SIZE@": {
+            "qualified_name": "ImGui::GetRoundedFontSize",
+            "parameter_types": ["float"]
+          },
+          "@BAKED_GET_OR_ADD@": {
+            "qualified_name": "ImFontAtlasBakedGetOrAdd",
+            "parameter_types": ["ImFontAtlas *", "ImFont *", "float", "float"]
+          },
+          "@CLASS_SET@": {
+            "qualified_name": "ImTextClassifierSetCharClass",
+            "parameter_types": ["ImU32 *", "unsigned int", "unsigned int", "ImWcharClass", "unsigned int"]
+          },
+          "@TEXT_FROM_UTF8@": {
+            "qualified_name": "ImTextCharFromUtf8",
+            "parameter_types": ["unsigned int *", "const char *", "const char *"]
+          },
+          "@CALC_WRAP_EX@": {
+            "qualified_name": "ImFontCalcWordWrapPositionEx",
+            "parameter_types": ["ImFont *", "float", "const char *", "const char *", "float", "ImDrawTextFlags"]
+          },
+          "@CALC_TEXT_EX@": {
+            "qualified_name": "ImFontCalcTextSizeEx",
+            "parameter_types": ["ImFont *", "float", "float", "float", "const char *", "const char *", "const char *", "const char **", "ImVec2 *", "ImDrawTextFlags"]
+          },
+          "@MEM_FREE@": {
+            "qualified_name": "ImGui::MemFree",
+            "parameter_types": ["void *"]
+          },
+          "@QUEUE_UPLOAD@": {
+            "qualified_name": "ImTextureDataQueueUpload",
+            "parameter_types": ["ImTextureData *", "int", "int", "int", "int"]
+          },
+          "@POST_MULTIPLY@": {
+            "qualified_name": "ImFontAtlasTextureBlockPostProcessMultiply",
+            "parameter_types": ["ImFontAtlasPostProcessData *", "float"]
+          },
+          "@GET_TEX_FORMAT@": {
+            "qualified_name": "GetTexDataAsFormat",
+            "parameter_types": ["ImFontAtlas *", "ImTextureFormat", "unsigned char **", "int *", "int *", "int *"]
+          },
+          "@ATLAS_BUILD_MAIN@": {"qualified_name": "ImFontAtlasBuildMain", "parameter_types": ["ImFontAtlas *"]},
+          "@ADD_CUSTOM_GLYPH_SIZE@": {
+            "qualified_name": "ImFontAtlas::AddCustomRectFontGlyphForSize",
+            "parameter_types": ["ImFont *", "float", "ImWchar", "int", "int", "float", "const ImVec2 &"]
+          },
+          "@ATLAS_TEXTURE_COMPACT@": {"qualified_name": "ImFontAtlasTextureCompact", "parameter_types": ["ImFontAtlas *"]},
+          "@SETUP_FONT_LOADER@": {"qualified_name": "ImFontAtlasBuildSetupFontLoader", "parameter_types": ["ImFontAtlas *", "const ImFontLoader *"]},
+          "@FONT_DESTROY_OUTPUT@": {"qualified_name": "ImFontAtlasFontDestroyOutput", "parameter_types": ["ImFontAtlas *", "ImFont *"]},
+          "@FONT_INIT_OUTPUT@": {"qualified_name": "ImFontAtlasFontInitOutput", "parameter_types": ["ImFontAtlas *", "ImFont *"]},
+          "@SHARED_DATA_PUSH@": {"qualified_name": "ImVector<ImDrawListSharedData *>::push_back", "parameter_types": ["ImDrawListSharedData *const &"]},
+          "@FONT_CLEAR_OUTPUT@": {"qualified_name": "ImFont::ClearOutputData", "parameter_types": []},
+          "@SETUP_SPECIAL_GLYPHS@": {"qualified_name": "ImFontAtlasBuildSetupFontSpecialGlyphs", "parameter_types": ["ImFontAtlas *", "ImFont *", "ImFontConfig *"]},
+          "@FONT_SOURCE_INIT@": {"qualified_name": "ImFontAtlasFontSourceInit", "parameter_types": ["ImFontAtlas *", "ImFontConfig *"]},
+          "@BAKED_DISCARD@": {"qualified_name": "ImFontAtlasBakedDiscard", "parameter_types": ["ImFontAtlas *", "ImFont *", "ImFontBaked *"]},
+          "@BUILD_DISCARD_BAKES@": {"qualified_name": "ImFontAtlasBuildDiscardBakes", "parameter_types": ["ImFontAtlas *", "int"]},
+          "@TEXTURE_SIZE_ESTIMATE@": {"qualified_name": "ImFontAtlasTextureGetSizeEstimate", "parameter_types": ["ImFontAtlas *"]},
+          "@TEXTURE_REPACK@": {"qualified_name": "ImFontAtlasTextureRepack", "parameter_types": ["ImFontAtlas *", "int", "int"]},
+          "@DESTROY_PIXELS@": {"qualified_name": "ImTextureData::DestroyPixels", "parameter_types": []},
+          "@DRAW_CLEAR_FREE@": {"qualified_name": "ImDrawList::_ClearFreeMemory", "parameter_types": []},
+          "@DRAW_SET_SHARED@": {"qualified_name": "ImDrawList::_SetDrawListSharedData", "parameter_types": ["ImDrawListSharedData *"]},
+          "@DRAW_LIST_PUSH@": {"qualified_name": "ImVector<ImDrawList *>::push_back", "parameter_types": ["ImDrawList *const &"]},
+          "@REMAP_CODEPOINT@": {"qualified_name": "ImFontAtlas_FontHookRemapCodepoint", "parameter_types": ["ImFontAtlas *", "ImFont *", "ImWchar *"]},
+          "@HASH_DATA@": {"qualified_name": "ImHashData", "parameter_types": ["const void *", "size_t", "ImGuiID"]},
+          "@RECT_ID_INDEX@": {"qualified_name": "ImFontAtlasRectId_GetIndex", "parameter_types": ["ImFontAtlasRectId"]},
+          "@RECT_ID_GENERATION@": {"qualified_name": "ImFontAtlasRectId_GetGeneration", "parameter_types": ["ImFontAtlasRectId"]},
+          "@PACK_INIT@": {"qualified_name": "ImFontAtlasBuildInit", "parameter_types": ["ImFontAtlas *"]},
+          "@FONT_SOURCE_PUSH@": {"qualified_name": "ImVector<ImFontConfig *>::push_back", "parameter_types": ["ImFontConfig *const &"]},
+          "@ADD_CIRCLE_FILLED@": {"qualified_name": "ImDrawList::AddCircleFilled", "parameter_types": ["const ImVec2 &", "float", "ImU32", "int"]},
+          "@SPLITTER_MERGE@": {"qualified_name": "ImDrawListSplitter::Merge", "parameter_types": ["ImDrawList *"]},
+          "@SPLITTER_CLEAR@": {"qualified_name": "ImDrawListSplitter::Clear", "parameter_types": []},
+          "@CMD_PUSH@": {"qualified_name": "ImVector<ImDrawCmd>::push_back", "parameter_types": ["const ImDrawCmd &"]}
+        },
+        "constants": {
+          "@CLOSED@": "ImDrawFlags_Closed",
+          "@ROUND_CORNERS_MASK@": "ImDrawFlags_RoundCornersMask_",
+          "@ROUND_CORNERS_NONE@": "ImDrawFlags_RoundCornersNone",
+          "@ALLOW_VTX_OFFSET@": "ImDrawListFlags_AllowVtxOffset",
+          "@TEXT_FLAGS_NONE@": "ImDrawTextFlags_None",
+          "@CPU_FINE_CLIP@": "ImDrawTextFlags_CpuFineClip",
+          "@WRAP_KEEP_BLANKS@": "ImDrawTextFlags_WrapKeepBlanks",
+          "@FORMAT_ALPHA8@": "ImTextureFormat_Alpha8",
+          "@FORMAT_RGBA32@": "ImTextureFormat_RGBA32",
+          "@STATUS_OK@": "ImTextureStatus_OK",
+          "@STATUS_DESTROYED@": "ImTextureStatus_Destroyed",
+          "@STATUS_WANT_CREATE@": "ImTextureStatus_WantCreate",
+          "@STATUS_WANT_UPDATES@": "ImTextureStatus_WantUpdates",
+          "@STATUS_WANT_DESTROY@": "ImTextureStatus_WantDestroy",
+          "@ROUND_TOP_LEFT@": "ImDrawFlags_RoundCornersTopLeft",
+          "@ROUND_TOP_RIGHT@": "ImDrawFlags_RoundCornersTopRight",
+          "@ROUND_BOTTOM_LEFT@": "ImDrawFlags_RoundCornersBottomLeft",
+          "@ROUND_BOTTOM_RIGHT@": "ImDrawFlags_RoundCornersBottomRight",
+          "@RENDERER_HAS_TEXTURES@": "ImGuiBackendFlags_RendererHasTextures"
+        },
+        "snippets": {
+          "@ALPHA_MASK@": "0xff000000u",
+          "@TWO_PI@": "6.28318548f",
+          "@PI@": "3.14159274f",
+          "@ARCFAST_SAMPLES@": "48",
+          "@MAX_SEGMENTS@": "512",
+          "@MAX_CODEPOINT@": "0xffff",
+          "@GLYPH_NOT_FOUND@": "0xfffe",
+          "@GLYPH_UNUSED@": "0xffff",
+          "@INVALID_RECT_ID@": "-1"
+        }
+      }
+    },
     "handwritten_functions": {
+      "ImDrawList::AddLine": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32", "float"],
+        "body_sha256": "9885c834d71785101094fb7489eda7f75d894a625b59df93dcbccd5e93d7cd29",
+        "fragment": "draw_add_line"
+      },
+      "ImDrawList::AddLineH": {
+        "group": "draw_shapes",
+        "parameter_types": ["float", "float", "float", "ImU32", "float"],
+        "body_sha256": "d840be01a5867378f34fbf0c2f285910740904e3a8772d618f2db9a9b38586b0",
+        "fragment": "draw_add_line_h"
+      },
+      "ImDrawList::AddLineV": {
+        "group": "draw_shapes",
+        "parameter_types": ["float", "float", "float", "ImU32", "float"],
+        "body_sha256": "2dd7a035c8fee498d7d447464862f65f1b08cf9b1bedecceac7f7429295191c2",
+        "fragment": "draw_add_line_v"
+      },
+      "ImDrawList::AddRectFilled": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32", "float", "ImDrawFlags"],
+        "body_sha256": "4492e45b1c83162bb620d870db527f3a9b0a913ac7466886213fbeeeeabb26e2",
+        "fragment": "draw_add_rect_filled"
+      },
+      "ImDrawList::AddQuad": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32", "float"],
+        "body_sha256": "d7d3b0a9662f30a18541621f83d0f168e33c0e2ede246431218d7740e9d7ab98",
+        "fragment": "draw_add_quad"
+      },
+      "ImDrawList::AddQuadFilled": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"],
+        "body_sha256": "25ed44754110cb5250716cb1982b757cf9f0d24eba25b70fb108e4fad14a5ed0",
+        "fragment": "draw_add_quad_filled"
+      },
+      "ImDrawList::AddTriangle": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32", "float"],
+        "body_sha256": "63e9482dd6af98fb503dd23f1a8c9c724c70fc1e72de849cc7b6fd3102a6fce9",
+        "fragment": "draw_add_triangle"
+      },
+      "ImDrawList::AddTriangleFilled": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32"],
+        "body_sha256": "e95efcdb4b95ee879efb481f5ee360fc575fa02536989c55a10985f8bcf9f149",
+        "fragment": "draw_add_triangle_filled"
+      },
+      "ImDrawList::AddCircle": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "float", "ImU32", "int", "float"],
+        "body_sha256": "2090e626474f348255c28b1b7779d40cd7e307b7dbd8b34db6d50b8133eb548a",
+        "fragment": "draw_add_circle"
+      },
+      "ImDrawList::AddCircleFilled": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "float", "ImU32", "int"],
+        "body_sha256": "6d2b225563632a126fd7befcf21489916dd1ecfb4f2aacc05c7f416764be3fc0",
+        "fragment": "draw_add_circle_filled"
+      },
+      "ImDrawList::AddNgon": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "float", "ImU32", "int", "float"],
+        "body_sha256": "a7e800b33ca50cc8d697055893cdafc726da50408754f5864ab34b56b2ce636e",
+        "fragment": "draw_add_ngon"
+      },
+      "ImDrawList::AddNgonFilled": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "float", "ImU32", "int"],
+        "body_sha256": "0291d2cc157de70975a38b25b0a5ba5958ed9cdd7edd9c14a993127d853ec388",
+        "fragment": "draw_add_ngon_filled"
+      },
+      "ImDrawList::AddEllipse": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32", "float", "int", "float"],
+        "body_sha256": "6cbfda14a6cda7ca6405f059b071586e9e7554e4f3c7f33a6c727016fe283a8a",
+        "fragment": "draw_add_ellipse"
+      },
+      "ImDrawList::AddEllipseFilled": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32", "float", "int"],
+        "body_sha256": "25401de97e158790590e6ab18efbd581e49636a16ec93954b9260d0ccbf46956",
+        "fragment": "draw_add_ellipse_filled"
+      },
+      "ImDrawList::AddBezierCubic": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32", "float", "int"],
+        "body_sha256": "c5b58c315f7c4624ba3e0a16bfd8a7af1f1fbfdf40753187c29578e10d0f04fd",
+        "fragment": "draw_add_bezier_cubic"
+      },
+      "ImDrawList::AddBezierQuadratic": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "ImU32", "float", "int"],
+        "body_sha256": "3c42a91726bd5bad81665dc8f240c313aa97b52b48e54f8f802db182406a11e1",
+        "fragment": "draw_add_bezier_quadratic"
+      },
+      "ImDrawList::_TryMergeDrawCmds": {
+        "group": "draw_shapes",
+        "parameter_types": [],
+        "body_sha256": "3bfd1fb30cdbc1d68fc4413beefe473bbb3b42b2a5ac7aa52db3170c219d682a",
+        "fragment": "draw_try_merge_commands"
+      },
+      "ImDrawList::_OnChangedClipRect": {
+        "group": "draw_shapes",
+        "parameter_types": [],
+        "body_sha256": ["c83075a628d39eee523015f2db19b09f829a7ed6792841e3b09e7295d6a9a16f", "ba716f64d051dd509cb3e7153881eea4aa72c37c509309460a9b7d719667ec07"],
+        "fragment": "draw_changed_clip_rect"
+      },
+      "ImDrawList::_OnChangedTexture": {
+        "group": "draw_shapes",
+        "parameter_types": [],
+        "body_sha256": "718c264fa6337ff5a71d1cf1cb6297e8b551bac8bd236b1be9be03a06d908a18",
+        "fragment": "draw_changed_texture"
+      },
+      "ImDrawList::_OnChangedVtxOffset": {
+        "group": "draw_shapes",
+        "parameter_types": [],
+        "body_sha256": ["cd601ff6491bcab904b430334baa4b2e74b6b4bb679f3137dde66fc7d02fe4f5", "afc3a06445b711f85d4932c7ac05560a98a54152537fc09e1e1603a8fac46ba1"],
+        "fragment": "draw_changed_vtx_offset"
+      },
+      "ImDrawList::_CalcCircleAutoSegmentCount": {
+        "group": "draw_shapes",
+        "parameter_types": ["float"],
+        "body_sha256": "ad92195bf4f41c772841a6779f61ef3e3268efa43be14b5e8a3c2e6d342865e0",
+        "fragment": "draw_calc_circle_segments"
+      },
+      "ImDrawList::PushClipRect": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "bool"],
+        "body_sha256": "b1acb0c31c19688ada75572262a91a29eebd01fdff190bb263e75e75b5ea14e8",
+        "fragment": "draw_push_clip_rect"
+      },
+      "ImDrawList::PushClipRectFullScreen": {
+        "group": "draw_shapes",
+        "parameter_types": [],
+        "body_sha256": "8e2c00f41ed7452ed640e7fb3aaf14fda6604a0a9da46dca5f7714098420a9c2",
+        "fragment": "draw_push_clip_rect_fullscreen"
+      },
+      "ImDrawList::PopClipRect": {
+        "group": "draw_shapes",
+        "parameter_types": [],
+        "body_sha256": "4c1eb88b79510edc3bf4304ef966803f38cf23162c9ab0d426206b9eb1ee34cd",
+        "fragment": "draw_pop_clip_rect"
+      },
+      "ImDrawList::PushTexture": {
+        "group": "draw_shapes",
+        "parameter_types": ["ImTextureRef"],
+        "body_sha256": ["d5fa1bd18d8b1d8a7c1d469656d2b2c286e74620d15d8d47af3d443ae6128ac6", "a6b7de28afb4e48cf954940dbdada1a1366d2ce05811038d6084a548ffacbb92"],
+        "fragment": "draw_push_texture"
+      },
+      "ImDrawList::PopTexture": {
+        "group": "draw_shapes",
+        "parameter_types": [],
+        "body_sha256": "d956cfcc83245ae309feb1c16091815e83c50e316f33c6aebc8bc5a6fa4e89f6",
+        "fragment": "draw_pop_texture"
+      },
+      "ImDrawList::_SetTexture": {
+        "group": "draw_shapes",
+        "parameter_types": ["ImTextureRef"],
+        "body_sha256": "de387a708f6d1d2eba7195f684cb6fbc06bffb13ff7f6f52d088855bcb5bb0e0",
+        "fragment": "draw_set_texture"
+      },
+      "ImDrawList::PrimReserve": {
+        "group": "draw_shapes",
+        "parameter_types": ["int", "int"],
+        "body_sha256": "b4652f324a5257f0c5e965d775ddfc1d22276d7e29452ece309859714971f2f6",
+        "fragment": "draw_prim_reserve"
+      },
+      "ImDrawList::PrimUnreserve": {
+        "group": "draw_shapes",
+        "parameter_types": ["int", "int"],
+        "body_sha256": "d6083dafae3ffc4f249069ac1e563647af972df1ec4ed89024d9d9ff30c6d281",
+        "fragment": "draw_prim_unreserve"
+      },
+      "ImDrawData::ScaleClipRects": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &"],
+        "body_sha256": "f13c8ceecdb992a706506090ab50c02622760e66cdd48ad47cdcddcca3194030",
+        "fragment": "draw_data_scale_clip_rects"
+      },
+      "ImDrawData::Clear": {
+        "group": "draw_shapes",
+        "parameter_types": [],
+        "body_sha256": ["1f1750e488294a6acdbc5041bb115b59ce1cfa3ba10c2f776a931cdf41adca97", "fd4cbdad66cb15e156401800ffe97ccfe2004b39ef5098c836de4409ae7ee66f"],
+        "snippets_by_body_sha256": {
+          "1f1750e488294a6acdbc5041bb115b59ce1cfa3ba10c2f776a931cdf41adca97": {"@RESET_OBSOLETE_CMD_LIST_COUNT@": "self->CmdListsCount = 0;"},
+          "fd4cbdad66cb15e156401800ffe97ccfe2004b39ef5098c836de4409ae7ee66f": {"@RESET_OBSOLETE_CMD_LIST_COUNT@": ""}
+        },
+        "fragment": "draw_data_clear"
+      },
+      "ImDrawData::AddDrawList": {
+        "group": "draw_shapes",
+        "parameter_types": ["ImDrawList *"],
+        "body_sha256": "f51957142f924c8b12a0745cd212f2290043061a4aa123cb16c960f3e464ce59",
+        "fragment": "draw_data_add_list"
+      },
+      "ImBezierCubicCalc": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "float"],
+        "body_sha256": "843b71a57cac78f8a051ee2b2ea3c1be8394dc1b73047b2e7340d55df0570cbc",
+        "fragment": "bezier_cubic_calc"
+      },
+      "ImBezierQuadraticCalc": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "float"],
+        "body_sha256": "221d67c43714f59f401bab4b6a2fe189e5a7fcd776fb8b27fa30e0d0c13af5e5",
+        "fragment": "bezier_quadratic_calc"
+      },
+      "PathBezierCubicCurveToCasteljau": {
+        "group": "draw_shapes",
+        "parameter_types": [
+          "ImVector<ImVec2> *", "float", "float", "float", "float", "float",
+          "float", "float", "float", "float", "int"
+        ],
+        "body_sha256": "9c95a21ea14af9890b0a6a7d3cd1f1c620c6db1da464fb93ab4eb0e69e3390bd",
+        "fragment": "bezier_cubic_casteljau"
+      },
+      "PathBezierQuadraticCurveToCasteljau": {
+        "group": "draw_shapes",
+        "parameter_types": [
+          "ImVector<ImVec2> *", "float", "float", "float", "float",
+          "float", "float", "float", "int"
+        ],
+        "body_sha256": "52a635c50593af600514874657151f2e061187106dbdfc25baedbb5051f1c34c",
+        "fragment": "bezier_quadratic_casteljau"
+      },
+      "ImDrawList::_PathArcToN": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "float", "float", "float", "int"],
+        "body_sha256": "aa713828da65c6855d786e4a0b7f7453880e026d79c47b55d3717e35fddab894",
+        "fragment": "draw_path_arc_n"
+      },
+      "ImDrawList::PathArcToFast": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "float", "int", "int"],
+        "body_sha256": "0b111cc859cc04ba7fc8899de57c8d90dedc4fe5840e2c69d7927ea623651f2f",
+        "fragment": "draw_path_arc_fast"
+      },
+      "ImDrawList::PathEllipticalArcTo": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "float", "float", "float", "int"],
+        "body_sha256": "46ff9444583852d9f24ba514475cc74e08f2000ff2f0877bd2df36790adf2ebc",
+        "fragment": "draw_path_elliptical"
+      },
+      "ImDrawList::PathBezierCubicCurveTo": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "const ImVec2 &", "int"],
+        "body_sha256": ["f7e80def1e420abeb70224ea13b7b56b3ac48ceec71f482a42cfbc416c0847c4", "bd4c72daeb18a8c21b5e052f91c9748fbfce16e42ea6ac73088472ef15b544cd"],
+        "fragment": "draw_path_bezier_cubic"
+      },
+      "ImDrawList::PathBezierQuadraticCurveTo": {
+        "group": "draw_shapes",
+        "parameter_types": ["const ImVec2 &", "const ImVec2 &", "int"],
+        "body_sha256": ["5a4958ce76f7d8e47b41f14bcebc2a66fae28d5ae4b54752a1189b1d20aff6fc", "dab53a2debc6715a75b350e13483ec4e26d13f99da5c1533836798a75e095164"],
+        "fragment": "draw_path_bezier_quadratic"
+      },
+      "ImDrawList::AddText": [
+        {
+          "group": "draw_shapes",
+          "parameter_types": [
+            "ImFont *", "float", "const ImVec2 &", "ImU32", "const char *",
+            "const char *", "float", "const ImVec4 *"
+          ],
+          "body_sha256": "8611fccce4c5eed406baa4de71619f6fde77880951ba71cf5b577d89aaeb288a",
+          "fragment": "draw_add_text_full"
+        },
+        {
+          "group": "draw_shapes",
+          "parameter_types": ["const ImVec2 &", "ImU32", "const char *", "const char *"],
+          "body_sha256": "16ebc80ed11ec2bd73798bb3c03fc3200bc90ff4f492b1dd137307c2572bf4c9",
+          "fragment": "draw_add_text_simple"
+        }
+      ],
+      "ImFontGlyphRangesBuilder::AddText": {
+        "group": "draw_shapes", "parameter_types": ["const char *", "const char *"],
+        "body_sha256": "e9f54517c4b89fe22e955998d6b8383faaaab77c3e9404dc67e1fc24f0ea1098", "fragment": "glyph_ranges_add_text"
+      },
+      "ImFontGlyphRangesBuilder::AddRanges": {
+        "group": "draw_shapes", "parameter_types": ["const ImWchar *"],
+        "body_sha256": "d0e03fb9b923d86ea4710d31be7203e3cf65d99de9b3dcb545174c7bdbf69e5d", "fragment": "glyph_ranges_add_ranges"
+      },
+      "ImFontGlyphRangesBuilder::BuildRanges": {
+        "group": "draw_shapes", "parameter_types": ["ImVector<ImWchar> *"],
+        "body_sha256": "9a507413124c439066eceecb1564575d14ab4c3526c2c3ffee708cc962042f2b", "fragment": "glyph_ranges_build"
+      },
+      "ImFontBaked::ClearOutputData": {
+        "group": "draw_shapes", "parameter_types": [],
+        "body_sha256": "74a42614d6fa7595c4c1ede80e3924cdb910dd5a78ffa09cd46e68f49524a6b8", "fragment": "font_baked_clear"
+      },
+      "ImFont::ClearOutputData": {
+        "group": "draw_shapes", "parameter_types": [],
+        "body_sha256": "aa3ac96dfbc0f405b8ef4812c9657c576fd9e3b9f9506e8659ad4c08a39f9023", "fragment": "font_clear_output"
+      },
+      "ImFont::IsGlyphRangeUnused": {
+        "group": "draw_shapes", "parameter_types": ["unsigned int", "unsigned int"],
+        "body_sha256": "d47031f1c9712a122009ef6114d66e38a70858a8f6d25ce651888583a36ae9df", "fragment": "font_range_unused"
+      },
+      "ImFont::AddRemapChar": {
+        "group": "draw_shapes", "parameter_types": ["ImWchar", "ImWchar"],
+        "body_sha256": "973c8f00f229b1535ec827e5ee161c744c9ce3f5510b25508ec8c1a7cc2c6c66", "fragment": "font_add_remap"
+      },
+      "ImFontBaked::FindGlyph": {
+        "group": "draw_shapes", "parameter_types": ["ImWchar"],
+        "body_sha256": "249ec79175676e2d6d550c1877735e9baab564a59ec519ee3309800047b67c55", "fragment": "font_baked_find_glyph"
+      },
+      "ImFontBaked::FindGlyphNoFallback": {
+        "group": "draw_shapes", "parameter_types": ["ImWchar"],
+        "body_sha256": "200946130d3fc7a1d07ab8ab6df1430efcb5fda4f872547fcd360c4ba836d69e", "fragment": "font_baked_find_glyph_no_fallback"
+      },
+      "ImFontBaked::IsGlyphLoaded": {
+        "group": "draw_shapes", "parameter_types": ["ImWchar"],
+        "body_sha256": "cf1788d795899a6cb790448de1598d80a099842063f9375cd7797ffa6f748ad5", "fragment": "font_baked_is_glyph_loaded"
+      },
+      "ImFontBaked::GetCharAdvance": {
+        "group": "draw_shapes", "parameter_types": ["ImWchar"],
+        "body_sha256": "1ef2c277b4416eef0ad7f7b56c223c62455a107ade080574ab5a3226077b7d32", "fragment": "font_baked_get_advance"
+      },
+      "ImFont::GetFontBaked": {
+        "group": "draw_shapes", "parameter_types": ["float", "float"],
+        "body_sha256": "685ca6432fd25a5e376fd917d70177b11b946cb1d195236c6145939dbbfc144d", "fragment": "font_get_baked"
+      },
+      "ImTextCalcWordWrapNextLineStart": {
+        "group": "draw_shapes", "parameter_types": ["const char *", "const char *", "ImDrawTextFlags"],
+        "body_sha256": "2ba339bd2820166531684d2c538ee548132e3d96bf71549e6eb7a26b46c0cdf2", "fragment": "text_next_wrapped_line"
+      },
+      "ImTextClassifierClear": {
+        "group": "draw_shapes", "parameter_types": ["ImU32 *", "unsigned int", "unsigned int", "ImWcharClass"],
+        "body_sha256": "655032f27e7a0c89bda31c5265f96a71ffc44cdf5dbbdaadfc3186de0e9b64c6", "fragment": "text_classifier_clear"
+      },
+      "ImTextClassifierSetCharClass": {
+        "group": "draw_shapes", "parameter_types": ["ImU32 *", "unsigned int", "unsigned int", "ImWcharClass", "unsigned int"],
+        "body_sha256": ["c2baaecd6af8f4f50d3ed96c48655e6526a479e9ee581dfe89b7de76029a7142", "ccdb728f0635f3aaf8989a8ed6b34044a505d75c7a1571efd9c0a9bb7e5fe325"], "fragment": "text_classifier_set"
+      },
+      "ImTextClassifierSetCharClassFromStr": {
+        "group": "draw_shapes", "parameter_types": ["ImU32 *", "unsigned int", "unsigned int", "ImWcharClass", "const char *"],
+        "body_sha256": "466e1da73236011e757e682be58be1aa7eaf8fde7cb5b4c259efd305ac5494d8", "fragment": "text_classifier_set_string"
+      },
+      "ImFont::CalcWordWrapPosition": {
+        "group": "draw_shapes", "parameter_types": ["float", "const char *", "const char *", "float"],
+        "body_sha256": "7c7ae36d0bed1f9c93633f70be799194be745288c43d7b9825e449ad015ca417", "fragment": "font_calc_wrap"
+      },
+      "ImFont::CalcTextSizeA": {
+        "group": "draw_shapes", "parameter_types": ["float", "float", "float", "const char *", "const char *", "const char **"],
+        "body_sha256": "c0eda4d1591b88ea031a9cbf378c86eecd2cf71336be21f94676c6dde4188bd0", "fragment": "font_calc_text_size"
+      },
+      "ImTextureData::DestroyPixels": {
+        "group": "draw_shapes", "parameter_types": [],
+        "body_sha256": "d7baffab6fe4636d2096536b284d61b3278af34fdf0caca340d223c82fcfc43c", "fragment": "texture_destroy_pixels"
+      },
+      "ImFontAtlasTextureBlockQueueUpload": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImTextureData *", "int", "int", "int", "int"],
+        "body_sha256": "6a6c1f70de46b3ce64da70ab2e327e81d6c16801590523542a60dd732118a151", "fragment": "atlas_queue_upload"
+      },
+      "ImFontAtlasTextureBlockPostProcess": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlasPostProcessData *"],
+        "body_sha256": "0d96fe1207de45b5b75ce7b7c21f2c4dfcedf6749eae7b91670e842e7f39811f", "fragment": "atlas_post_process"
+      },
+      "ImTextureDataGetFormatBytesPerPixel": {
+        "group": "draw_shapes", "parameter_types": ["ImTextureFormat"], "body_sha256": ["8fae4dda22ddb87a60f31aeb5931e31b84d4cfd29e8f5e06a43a4c95aa3278df", "dccb9008d22d03483d569e79cd0e8a3aee5c36b69ea479e5b49bb2b50de26285"], "fragment": "texture_format_bpp"
+      },
+      "ImTextureDataGetStatusName": {
+        "group": "draw_shapes", "parameter_types": ["ImTextureStatus"], "body_sha256": "69ac5c2b5ae6dc1273138d05b2fb3f19cc54e663b97cad62c4b256417f6293ca", "fragment": "texture_status_name"
+      },
+      "ImTextureDataGetFormatName": {
+        "group": "draw_shapes", "parameter_types": ["ImTextureFormat"], "body_sha256": "b85b4945d613d3172983fecc3c1ce9bfc4af81b1243acd40a9608eb8f7be2216", "fragment": "texture_format_name"
+      },
+      "ImFontAtlas::GetTexDataAsAlpha8": {
+        "group": "draw_shapes", "parameter_types": ["unsigned char **", "int *", "int *", "int *"], "body_sha256": "13791661989035267d204f6df6c2aed6bdcd08225920e2e33c0ad0affc13a94c", "fragment": "atlas_get_alpha"
+      },
+      "ImFontAtlas::GetTexDataAsRGBA32": {
+        "group": "draw_shapes", "parameter_types": ["unsigned char **", "int *", "int *", "int *"], "body_sha256": "96ad9dc396ff56dc59a5572b9e7710d663b17f0872b681f467cd2ec8c8826de8", "fragment": "atlas_get_rgba"
+      },
+      "ImFontAtlas::Build": {
+        "group": "draw_shapes", "parameter_types": [], "body_sha256": "869945352a03faab39dd9947d9edd9ee968ec82b4bd558639aed98925dddf0c9", "fragment": "atlas_build"
+      },
+      "ImFontAtlas::AddCustomRectFontGlyph": {
+        "group": "draw_shapes", "parameter_types": ["ImFont *", "ImWchar", "int", "int", "float", "const ImVec2 &"], "body_sha256": "4821c2aef1935a65e7c24946ca95198923112820271ba310f5419f368b2da00d", "fragment": "atlas_add_custom_glyph"
+      },
+      "ImFontAtlas::CompactCache": {
+        "group": "draw_shapes", "parameter_types": [], "body_sha256": "d68784b2b53257a8d8b33d9bf36fa693bd0673b7a611f18e5c5e38405effc4a7", "fragment": "atlas_compact_cache"
+      },
+      "ImFontAtlas::SetFontLoader": {
+        "group": "draw_shapes", "parameter_types": ["const ImFontLoader *"], "body_sha256": "41b49ba31d7c58ea63dd9ef7e6e68d9b8414385ce37c2c4a3b706f67f6fe19c2", "fragment": "atlas_set_loader"
+      },
+      "ImFontAtlasFontRebuildOutput": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFont *"], "body_sha256": "dbbe44d531197625b2ae9bb9c8920976617125103c4b9cb99463f282ce475857", "fragment": "atlas_font_rebuild_output"
+      },
+      "ImFontAtlasFontSourceInit": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFontConfig *"], "body_sha256": "3a032e5fe8492feed9228a79ed5e0dd8d8d42b2a906775eece67f433219fac2c", "fragment": "atlas_font_source_init"
+      },
+      "ImFontAtlasAddDrawListSharedData": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImDrawListSharedData *"], "body_sha256": ["ace14b80467ae05753965ddbbae66fa609fda795065d581aac7a2ca8ace09ae7", "3b2bfbe9bbb7cec079d238f6faeeaa5ebd50db82f2c7e0a76d9da8731d8a9752"], "fragment": "atlas_add_shared_data"
+      },
+      "ImFontAtlasRemoveDrawListSharedData": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImDrawListSharedData *"], "body_sha256": ["1197513ab146f9bb75c2f79d009d1bad4986862d84b219b950b61584caaa8988", "bdeb8ef913263d3fd15fbef2d2a66ff4ef23e7c2d69dc3a90079b96cd7e8cd16"], "fragment": "atlas_remove_shared_data"
+      },
+      "ImFontAtlasUpdateDrawListsSharedData": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *"], "body_sha256": "3f96763f67300b5c268f54605ef6d70673da3ebcccaf490cbbba992cf8b9e693", "fragment": "atlas_update_shared_data"
+      },
+      "ImFontAtlasFontSourceAddToFont": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFont *", "ImFontConfig *"], "body_sha256": ["7b8ea81165da5c5fe36e5ef4184e62bf4121b86ef9367bf3c189e65d069a7c68", "255b641826e7bc133bdeec9a4099cf0fc0d0f8f238056823e826766f3f8b6f9f"], "fragment": "atlas_font_source_add"
+      },
+      "ImFontAtlasFontDestroyOutput": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFont *"], "body_sha256": "9c6b7ad0d6d7f9eb65ef3bf1050c4c430f519d907b698048781c29d9a29ac67b", "fragment": "atlas_font_destroy_output"
+      },
+      "ImFontAtlasFontDestroySourceData": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFontConfig *"], "body_sha256": "cfccd8d7783eb97d86bbc07ae5391f80d7ecaa5b44df9466f670489797668168", "fragment": "atlas_font_destroy_source"
+      },
+      "ImFontAtlasFontInitOutput": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFont *"], "body_sha256": ["6833232c7b6e000dfafca5fd6246ca3b4c1fdfa755a070e62742ede2d4d3ef84", "63c37e449f7cb31613b02cb259dc3d1d93ff4d63dd012fcfffb72bde642f7f33"], "fragment": "atlas_font_init_output"
+      },
+      "ImFontAtlasFontDiscardBakes": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFont *", "int"], "body_sha256": "d323f44c84225f790cfab26b9652f946ca928eae4e3e64a6f8c1e9979a4a501e", "fragment": "atlas_font_discard_bakes"
+      },
+      "ImFontAtlasTextureCompact": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *"], "body_sha256": "35c3d9e8d3cf39ac53ce2f081b26627ae2c1a96135037dc6762648186c23da7f", "fragment": "atlas_texture_compact"
+      },
+      "ImFontAtlas::ClearTexData": {
+        "group": "draw_shapes", "parameter_types": [], "body_sha256": ["3505afc49dde42e553feff963bc60777f9798aa0dc8f4b5d6a98ebaa28429287", "815c529a48814dac8e236efb0568f608cb8e3f0eb247fa68e0c68897ceb2d2be"], "fragment": "atlas_clear_tex_data"
+      },
+      "ImFont::~ImFont": {
+        "group": "draw_shapes", "parameter_types": [], "body_sha256": "5c7f1149c424db2e618fa94298dbc9a86dee11684759e73cb386d10b175a37da", "fragment": "font_destroy"
+      },
+      "ImDrawList::~ImDrawList": {
+        "group": "draw_shapes", "parameter_types": [], "body_sha256": "1993be0af6628c64fc2fd8d4d3242b64ec687430175c91cbc41df00139f307e3", "fragment": "draw_list_destroy"
+      },
+      "ImDrawListSharedData::~ImDrawListSharedData": {
+        "group": "draw_shapes", "parameter_types": [], "body_sha256": ["1dbb59380d295af84967f912e922f8cbf4fe0bee1b39d938314ff8cd14b86036", "71f41445535496f154000fe6ca60089f90d034e897e39f0ecdcb3ed464a5f513"], "fragment": "draw_shared_destroy"
+      },
+      "ImDrawList::_SetDrawListSharedData": {
+        "group": "draw_shapes", "parameter_types": ["ImDrawListSharedData *"], "body_sha256": "58da00a343a075021d9b46a96167108c6885d6c17c5a0b65f1e9261e01f4c0b4", "fragment": "draw_set_shared"
+      },
+      "ImFont::IsGlyphInFont": {
+        "group": "draw_shapes", "parameter_types": ["ImWchar"], "body_sha256": "ff3b14df26ea7ae0571c8bd4ea011f7bd678c19b371a9feebfe6db78637f687d", "fragment": "font_is_glyph_in_font"
+      },
+      "ImFontAtlasBakedGetId": {
+        "group": "draw_shapes", "parameter_types": ["ImGuiID", "float", "float"], "body_sha256": "2e07b816f2e8288fd810ce3b29783ec5fb8a6ecd2d5e027f2ad8f2d83570d55a", "fragment": "atlas_baked_id"
+      },
+      "ImFontAtlasPackGetRect": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFontAtlasRectId"], "body_sha256": ["c741761dd370b4a14acdd2446734795f5ea76b19a2e2932e6d6141173358ff0a", "bcb8d5ac0551dd1aed885959be5be76540177ab3edf1eff55dd22a0230543845"], "fragment": "atlas_pack_get_rect"
+      },
+      "ImFontAtlasPackGetRectSafe": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *", "ImFontAtlasRectId"], "body_sha256": "cc9e7d20469304e2d65be81cf38616a6752ac2d61072ff1f2153609a5962c6ee", "fragment": "atlas_pack_get_rect_safe"
+      },
+      "ImFontAtlasBuildUpdatePointers": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *"], "body_sha256": "86daddb39d2797dcc9fbba011e778648489ac4d5224debe67bc5a1f54f470b23", "fragment": "atlas_update_pointers"
+      },
+      "ImFontAtlasBuildGetOversampleFactors": {
+        "group": "draw_shapes", "parameter_types": ["ImFontConfig *", "ImFontBaked *", "int *", "int *"], "body_sha256": "54c206259c4d2e4541bd27824f6d4721b17f7e032d32464003330355733f0359", "fragment": "atlas_get_oversample"
+      },
+      "ImFontAtlasBuildUpdateRendererHasTexturesFromContext": {
+        "group": "draw_shapes", "parameter_types": ["ImFontAtlas *"], "body_sha256": "20415119f034b5baa0b3717c89e94bfd54e74fe77c2a9e91b640be3c1865b50b", "fragment": "atlas_update_renderer_flag"
+      },
+      "ImGui::CalcRoundingFlagsForRectInRect": {
+        "group": "draw_shapes", "parameter_types": ["const ImRect &", "const ImRect &", "float"], "body_sha256": "c7ebf61951e2ef64215f1e34a81fcb2501ae182b06ab6f156cea0054f843e307", "fragment": "calc_rounding_flags"
+      },
+      "ImGui::RenderBullet": {
+        "group": "draw_shapes", "parameter_types": ["ImDrawList *", "ImVec2", "ImU32"], "body_sha256": "efa536d9e95caa60154f4f218ac871617197936f4704b9695031f221193625ae", "fragment": "render_bullet"
+      },
+      "ImDrawList::_ResetForNewFrame": {
+        "group": "draw_shapes", "parameter_types": [], "body_sha256": "64be625dc6cd7d55375e9704641bf8f03e14d7af740cf196cdeb3946efa4e2d7", "fragment": "draw_reset_frame"
+      },
+      "ImDrawData::DeIndexAllBuffers": {
+        "group": "draw_shapes", "parameter_types": [], "body_sha256": "d890d3aba978ea14b8d3f3ed091172d97601f44ac6e5ef3fd1faeb2af98b2dc7", "fragment": "draw_data_deindex"
+      },
       "ImGui::TableGetColumnCount": {
         "parameter_types": [], "body_sha256": "e0fe678e46e6dca20d5176c2254eba41bc7133ccd366ea5c8bcf65e4bbcc91ee",
         "template": "handwritten/tables_leaf_batch.c.in", "fragment": "table_get_column_count"

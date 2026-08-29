@@ -92,6 +92,52 @@ def check_handwritten_effective_callgraph(root: Path, extracted: dict) -> None:
     emitter.analyze_function_linkage()
 
 
+def check_handwritten_groups(root: Path, extracted: dict) -> None:
+    """Shared handwritten mappings merge without weakening body guards."""
+    sys.path.insert(0, str(root / "translator/py"))
+    from imgui_translator.emit import Emitter, TranslationError
+
+    probe = copy.deepcopy(extracted)
+    function = next(
+        item for item in probe["functions"]
+        if item.get("qualified_name") == "ImGui::DiscardedReference"
+        and item.get("body")
+    )
+    body_hash = Emitter.function_body_sha256(function)
+    emitter = Emitter(probe)
+    emitter.handwritten_groups = {
+        "fixture": {
+            "template": "shared.c.in",
+            "constants": {"@SHARED@": "SharedValue"},
+            "snippets": {"@GROUP@": "group"},
+        }
+    }
+    emitter.handwritten_functions = {
+        "ImGui::DiscardedReference": {
+            "group": "fixture",
+            "parameter_types": [],
+            "body_sha256": body_hash,
+            "fragment": "discarded",
+            "snippets": {"@LOCAL@": "local"},
+        }
+    }
+    specification = emitter.handwritten_specification(function)
+    if specification is None:
+        raise RuntimeError("handwritten group did not match guarded function")
+    if specification["template"] != "shared.c.in":
+        raise RuntimeError("handwritten group template was not inherited")
+    if specification["snippets"] != {"@GROUP@": "group", "@LOCAL@": "local"}:
+        raise RuntimeError("handwritten group mappings did not merge")
+
+    emitter.handwritten_functions["ImGui::DiscardedReference"]["group"] = "missing"
+    try:
+        emitter.handwritten_specification(function)
+    except TranslationError:
+        pass
+    else:
+        raise RuntimeError("unknown handwritten group was accepted")
+
+
 def check_table_pool_direct_initialization(root: Path) -> None:
     """The table-pool lowering is direct, readable, and fails closed."""
     sys.path.insert(0, str(root / "translator/py"))
@@ -280,6 +326,7 @@ def main() -> int:
     if "IMGUI_FIXTURE_DEFAULT_SCALE" not in macro_names:
         raise RuntimeError("project macro definitions were not captured in IR")
     check_handwritten_effective_callgraph(root, extracted)
+    check_handwritten_groups(root, extracted)
     check_table_pool_direct_initialization(root)
     check_table_pool_test_engine_fingerprint(root)
     for directory in (first, second):

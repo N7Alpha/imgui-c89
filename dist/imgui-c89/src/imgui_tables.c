@@ -65,7 +65,6 @@ static void imgui__table_settings_init(ImGuiTableSettings *settings, ImGuiID id,
 static void imgui__table_setup_column_apply(ImGuiContext *imgui_c89_ctx, ImGuiTable *table, int idx, ImGuiID id, ImS16 name_offset, ImGuiTableColumnFlags flags, float init_width_or_weight, ImGuiID user_data);
 static void imgui__table_setup_column_flags(ImGuiTable *table, ImGuiTableColumn *column, ImGuiTableColumnFlags flags_in);
 
-ImDrawCmd ImDrawCmd_ImDrawCmd_value__8a1bdf676d(void);
 ImDrawList *ImDrawList_ImDrawList_at__d042a13f30(ImGuiContext *imgui_c89_ctx, void *memory, ImDrawListSharedData *shared_data);
 ImFontAtlas *ImFontAtlas_ImFontAtlas_at__e0f3099eea(void *memory);
 ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *memory);
@@ -79,7 +78,6 @@ ImRect ImRect_ImRect_value__30f36f8459(void);
 ImRect ImRect_ImRect_value__99b7f05542(const ImVec2 *min, const ImVec2 *max);
 ImRect ImRect_ImRect_value__ca8705754c(float x1, float y1, float x2, float y2);
 ImTextureData *ImTextureData_ImTextureData_at__0bdcc9fa5c(void *memory);
-ImTextureRef ImTextureRef_ImTextureRef_value__480182bb5d(void);
 
 static const float COLUMNS_HIT_RECT_HALF_THICKNESS__96133deb43 = 4.0f;
 static const float TABLE_BORDER_SIZE__081b6d8fee = 1.0f;
