@@ -391,6 +391,114 @@
           "@GLYPH_UNUSED@": "0xffff",
           "@INVALID_RECT_ID@": "-1"
         }
+      },
+      "semiblind_geometry": {
+        "template": "handwritten/draw_semiblind_geometry.c.in",
+        "functions": {
+          "@ADD_RECT_FILLED@": {"qualified_name": "ImDrawList::AddRectFilled", "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32", "float", "ImDrawFlags"]},
+          "@PATH_LINE_TO@": {"qualified_name": "ImDrawList::PathLineTo", "parameter_types": ["const ImVec2 &"]},
+          "@PATH_ARC_FAST@": {"qualified_name": "ImDrawList::PathArcToFast", "parameter_types": ["const ImVec2 &", "float", "int", "int"]},
+          "@PATH_ARC_TO@": {"qualified_name": "ImDrawList::PathArcTo", "parameter_types": ["const ImVec2 &", "float", "float", "float", "int"]},
+          "@PATH_FILL@": {"qualified_name": "ImDrawList::PathFillConvex", "parameter_types": ["ImU32"]},
+          "@MIN_FLOAT@": {"qualified_name": "ImMin", "parameter_types": ["float", "float"]},
+          "@MAX_FLOAT@": {"qualified_name": "ImMax", "parameter_types": ["float", "float"]},
+          "@CLAMP_FLOAT@": {"qualified_name": "ImClamp", "parameter_types": ["float", "float", "float"]},
+          "@GET_CUSTOM_RECT@": {"qualified_name": "ImFontAtlas::GetCustomRect", "parameter_types": ["ImFontAtlasRectId", "ImFontAtlasRect *"]},
+          "@ADD_CUSTOM_RECT@": {"qualified_name": "ImFontAtlas::AddCustomRect", "parameter_types": ["int", "int", "ImFontAtlasRect *"]},
+          "@GET_PIXELS@": {"qualified_name": "ImTextureData::GetPixelsAt", "parameter_types": ["int", "int"]}
+        },
+        "constants": {
+          "@ROUND_NONE@": "ImDrawFlags_RoundCornersNone",
+          "@ROUND_TL@": "ImDrawFlags_RoundCornersTopLeft",
+          "@ROUND_TR@": "ImDrawFlags_RoundCornersTopRight",
+          "@ROUND_BL@": "ImDrawFlags_RoundCornersBottomLeft",
+          "@ROUND_BR@": "ImDrawFlags_RoundCornersBottomRight",
+          "@NO_BAKED_LINES@": "ImFontAtlasFlags_NoBakedLines",
+          "@FORMAT_ALPHA8@": "ImTextureFormat_Alpha8",
+          "@FORMAT_RGBA32@": "ImTextureFormat_RGBA32"
+        },
+        "snippets": {
+          "@ACOS@": "acosf",
+          "@PI@": "3.14159274f",
+          "@LINES_WIDTH_MAX@": "32",
+          "@INVALID_RECT_ID@": "-1",
+          "@TRANSPARENT_WHITE@": "0x00ffffffu",
+          "@OPAQUE_WHITE@": "0xffffffffu"
+        }
+      },
+      "semiblind_atlas_lifecycle": {
+        "template": "handwritten/draw_semiblind_atlas_lifecycle.c.in",
+        "functions": {
+          "@TEXTURE_UPDATE_NEW_FRAME@": {"qualified_name": "ImTextureDataUpdateNewFrame", "parameter_types": ["ImTextureData *"]},
+          "@DESTROY_PIXELS@": {"qualified_name": "ImTextureData::DestroyPixels", "parameter_types": []},
+          "@TEXTURE_DESTROY@": {"qualified_name": "ImTextureData::~ImTextureData", "parameter_types": []},
+          "@BUILD_MAIN@": {"qualified_name": "ImFontAtlasBuildMain", "parameter_types": ["ImFontAtlas *"]},
+          "@BAKED_MAP_SET@": {"qualified_name": "ImGuiStorage::SetVoidPtr", "parameter_types": ["ImGuiID", "void *"]},
+          "@BUILD_INIT@": {"qualified_name": "ImFontAtlasBuildInit", "parameter_types": ["ImFontAtlas *"]},
+          "@FONT_INIT@": {"qualified_name": "ImFont::ImFont", "parameter_types": []},
+          "@FONT_DESTROY@": {"qualified_name": "ImFont::~ImFont", "parameter_types": []},
+          "@FONT_PTR_PUSH@": {"qualified_name": "ImVector<ImFont *>::push_back", "parameter_types": ["ImFont *const &"]},
+          "@DISCARD_BAKES@": {"qualified_name": "ImFontAtlasFontDiscardBakes", "parameter_types": ["ImFontAtlas *", "ImFont *", "int"]},
+          "@CONFIG_PUSH@": {"qualified_name": "ImVector<ImFontConfig>::push_back", "parameter_types": ["const ImFontConfig &"]},
+          "@CONFIG_PTR_PUSH@": {"qualified_name": "ImVector<ImFontConfig *>::push_back", "parameter_types": ["ImFontConfig *const &"]},
+          "@UPDATE_POINTERS@": {"qualified_name": "ImFontAtlasBuildUpdatePointers", "parameter_types": ["ImFontAtlas *"]},
+          "@MEMDUP@": {"qualified_name": "ImMemdup", "parameter_types": ["const void *", "size_t"]},
+          "@SOURCE_INIT@": {"qualified_name": "ImFontAtlasFontSourceInit", "parameter_types": ["ImFontAtlas *", "ImFontConfig *"]},
+          "@DESTROY_SOURCE@": {"qualified_name": "ImFontAtlasFontDestroySourceData", "parameter_types": ["ImFontAtlas *", "ImFontConfig *"]},
+          "@SOURCE_ADD_TO_FONT@": {"qualified_name": "ImFontAtlasFontSourceAddToFont", "parameter_types": ["ImFontAtlas *", "ImFont *", "ImFontConfig *"]},
+          "@NOTIFY_SET_FONT@": {"qualified_name": "ImFontAtlasBuildNotifySetFont", "parameter_types": ["ImFontAtlas *", "ImFont *", "ImFont *"]},
+          "@DECOMPRESS_LENGTH@": {"qualified_name": "stb_decompress_length", "parameter_types": ["const unsigned char *"]},
+          "@DECOMPRESS@": {"qualified_name": "stb_decompress", "parameter_types": ["unsigned char *", "const unsigned char *", "unsigned int"]},
+          "@CONFIG_INIT@": {"qualified_name": "ImFontConfig::ImFontConfig", "parameter_types": []},
+          "@ADD_MEMORY_TTF@": {"qualified_name": "ImFontAtlas::AddFontFromMemoryTTF", "parameter_types": ["void *", "int", "float", "const ImFontConfig *", "const ImWchar *"]},
+          "@BAKED_RESERVE@": {"qualified_name": "ImStableVector<ImFontBaked, 32>::reserve", "parameter_types": ["int"]},
+          "@SETUP_BAKED_BLANKS@": {"qualified_name": "ImFontAtlasBuildSetupFontBakedBlanks", "parameter_types": ["ImFontAtlas *", "ImFontBaked *"]}
+        },
+        "constants": {
+          "@STATUS_WANT_CREATE@": "ImTextureStatus_WantCreate",
+          "@IMPLICIT_REF_SIZE@": "ImFontFlags_ImplicitRefSize"
+        },
+        "snippets": {
+          "@INVALID_TEXTURE_ID@": "0",
+          "@FLOAT_MAX@": "3.40282347E+38f",
+          "@DEBUG_CREATED_BAKED@": "((void)0)"
+        }
+      },
+      "semiblind_font_loader": {
+        "template": "handwritten/draw_semiblind_font_loader.c.in",
+        "types": {"@STB_SRC_DATA@": "ImGui_ImplStbTrueType_FontSrcData"},
+        "functions": {
+          "@STB_FONT_OFFSET@": {"qualified_name": "stbtt_GetFontOffsetForIndex", "parameter_types": ["const unsigned char *", "int"]},
+          "@STB_INIT_FONT@": {"qualified_name": "stbtt_InitFont", "parameter_types": ["stbtt_fontinfo *", "const unsigned char *", "int"]},
+          "@STB_SCALE_PIXEL_HEIGHT@": {"qualified_name": "stbtt_ScaleForPixelHeight", "parameter_types": ["const stbtt_fontinfo *", "float"]},
+          "@SETUP_FALLBACK@": {"qualified_name": "ImFontAtlasBuildSetupFontBakedFallback", "parameter_types": ["ImFontBaked *"]},
+          "@REMAP_CODEPOINT@": {"qualified_name": "ImFontAtlas_FontHookRemapCodepoint", "parameter_types": ["ImFontAtlas *", "ImFont *", "ImWchar *"]},
+          "@SETUP_ELLIPSIS@": {"qualified_name": "ImFontAtlasBuildSetupFontBakedEllipsis", "parameter_types": ["ImFontAtlas *", "ImFontBaked *"]},
+          "@ACCEPT_CODEPOINT@": {"qualified_name": "ImFontAtlasBuildAcceptCodepointForSource", "parameter_types": ["ImFontConfig *", "ImWchar"]},
+          "@ADD_FONT_GLYPH@": {"qualified_name": "ImFontAtlasBakedAddFontGlyph", "parameter_types": ["ImFontAtlas *", "ImFontBaked *", "ImFontConfig *", "const ImFontGlyph *"]},
+          "@ADD_ADVANCE@": {"qualified_name": "ImFontAtlasBakedAddFontGlyphAdvancedX", "parameter_types": ["ImFontAtlas *", "ImFontBaked *", "ImFontConfig *", "ImWchar", "float"]},
+          "@GROW_INDEX@": {"qualified_name": "ImFontBaked_BuildGrowIndex", "parameter_types": ["ImFontBaked *", "int"]},
+          "@STB_FIND_GLYPH@": {"qualified_name": "stbtt_FindGlyphIndex", "parameter_types": ["const stbtt_fontinfo *", "int"]},
+          "@GET_OVERSAMPLE@": {"qualified_name": "ImFontAtlasBuildGetOversampleFactors", "parameter_types": ["ImFontConfig *", "ImFontBaked *", "int *", "int *"]},
+          "@STB_BITMAP_BOX_SUBPIXEL@": {"qualified_name": "stbtt_GetGlyphBitmapBoxSubpixel", "parameter_types": ["const stbtt_fontinfo *", "int", "float", "float", "float", "float", "int *", "int *", "int *", "int *"]},
+          "@STB_HMETRICS@": {"qualified_name": "stbtt_GetGlyphHMetrics", "parameter_types": ["const stbtt_fontinfo *", "int", "int *", "int *"]},
+          "@PACK_ADD_RECT@": {"qualified_name": "ImFontAtlasPackAddRect", "parameter_types": ["ImFontAtlas *", "int", "int", "ImFontAtlasRectEntry *"]},
+          "@PACK_GET_RECT@": {"qualified_name": "ImFontAtlasPackGetRect", "parameter_types": ["ImFontAtlas *", "ImFontAtlasRectId"]},
+          "@STB_BITMAP_BOX@": {"qualified_name": "stbtt_GetGlyphBitmapBox", "parameter_types": ["const stbtt_fontinfo *", "int", "float", "float", "int *", "int *", "int *", "int *"]},
+          "@BYTE_RESIZE@": {"qualified_name": "ImVector<unsigned char>::resize", "parameter_types": ["int"]},
+          "@STB_MAKE_BITMAP_PREFILTER@": {"qualified_name": "stbtt_MakeGlyphBitmapSubpixelPrefilter", "parameter_types": ["const stbtt_fontinfo *", "unsigned char *", "int", "int", "int", "float", "float", "float", "float", "int", "int", "float *", "float *", "int"]},
+          "@FLOOR@": {"qualified_name": "ImFloor", "parameter_types": ["float"]},
+          "@SET_GLYPH_BITMAP@": {"qualified_name": "ImFontAtlasBakedSetFontGlyphBitmap", "parameter_types": ["ImFontAtlas *", "ImFontBaked *", "ImFontConfig *", "ImFontGlyph *", "ImTextureRect *", "const unsigned char *", "ImTextureFormat", "int"]},
+          "@ERROR_LOG@": {"qualified_name": "ImGui::ErrorLog", "parameter_types": ["const char *"]}
+        },
+        "constants": {
+          "@NO_LOAD_GLYPHS@": "ImFontFlags_NoLoadGlyphs",
+          "@FORMAT_ALPHA8@": "ImTextureFormat_Alpha8"
+        },
+        "snippets": {
+          "@GLYPH_NOT_FOUND@": "0xfffe",
+          "@INVALID_RECT_ID@": "-1"
+        }
       }
     },
     "handwritten_functions": {
@@ -1970,41 +2078,12 @@
         }
       },
       "ImGui::RenderRectFilledInRangeH": {
+        "group": "semiblind_geometry",
         "parameter_types": [
           "ImDrawList *", "const ImRect &", "ImU32", "float", "float", "float"
         ],
         "body_sha256": "c7b9c84a3e066ab3ff7b67184215a8e9461de9df5566080242a5637b12065087",
-        "template": "handwritten/render_rect_filled_range_h_body.c.in",
-        "functions": {
-          "@ADD_RECT_FILLED@": {
-            "qualified_name": "ImDrawList::AddRectFilled",
-            "parameter_types": [
-              "const ImVec2 &", "const ImVec2 &", "ImU32", "float", "ImDrawFlags"
-            ]
-          },
-          "@PATH_LINE_TO@": {
-            "qualified_name": "ImDrawList::PathLineTo",
-            "parameter_types": ["const ImVec2 &"]
-          },
-          "@PATH_ARC_TO_FAST@": {
-            "qualified_name": "ImDrawList::PathArcToFast",
-            "parameter_types": ["const ImVec2 &", "float", "int", "int"]
-          },
-          "@PATH_ARC_TO@": {
-            "qualified_name": "ImDrawList::PathArcTo",
-            "parameter_types": [
-              "const ImVec2 &", "float", "float", "float", "int"
-            ]
-          },
-          "@PATH_FILL_CONVEX@": {
-            "qualified_name": "ImDrawList::PathFillConvex",
-            "parameter_types": ["ImU32"]
-          },
-          "@ACOS01@": {
-            "qualified_name": "ImAcos01",
-            "parameter_types": ["float"]
-          }
-        }
+        "fragment": "render_rect_range_h"
       },
       "ImGui::TableReconcileColumns": {
         "parameter_types": ["ImGuiTable *"],
@@ -2198,22 +2277,10 @@
         }
       },
       "ImGui::RenderRectFilledWithHole": {
+        "group": "semiblind_geometry",
         "parameter_types": ["ImDrawList *", "const ImRect &", "const ImRect &", "ImU32", "float"],
         "body_sha256": "b81b44c096b4afed0b123f5aa0d622e1cec344ddc6d14677ce1cdbd285e0cc2d",
-        "template": "handwritten/draw_rect_hole.c.in",
-        "functions": {
-          "@ADD_RECT_FILLED@": {
-            "qualified_name": "ImDrawList::AddRectFilled",
-            "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32", "float", "ImDrawFlags"]
-          }
-        },
-        "constants": {
-          "@ROUND_NONE@": "ImDrawFlags_RoundCornersNone",
-          "@ROUND_TOP_LEFT@": "ImDrawFlags_RoundCornersTopLeft",
-          "@ROUND_TOP_RIGHT@": "ImDrawFlags_RoundCornersTopRight",
-          "@ROUND_BOTTOM_LEFT@": "ImDrawFlags_RoundCornersBottomLeft",
-          "@ROUND_BOTTOM_RIGHT@": "ImDrawFlags_RoundCornersBottomRight"
-        }
+        "fragment": "render_rect_hole"
       },
       "ImDrawList::PrimRect": {
         "parameter_types": ["const ImVec2 &", "const ImVec2 &", "ImU32"],
@@ -2541,6 +2608,72 @@
         },
         "constants": {"@EVENT_FONT@": "ImGuiDebugLogFlags_EventFont"},
         "snippets": {"@INVALID_ID@": "-1"}
+      },
+      "ImFontAtlasUpdateNewFrame": {
+        "group": "semiblind_atlas_lifecycle",
+        "parameter_types": ["ImFontAtlas *", "int", "bool"],
+        "body_sha256": [
+          "a7c09f00c4238377eddf5585681e80d05c65e2a53ddd5b16aad0ea5a508eb3e1",
+          "947ec63e4a402437de80dec6ccb5c2155ce2ad9b931f53df1803735791f672e6"
+        ],
+        "fragment": "atlas_update_new_frame"
+      },
+      "ImFontAtlas::AddFont": {
+        "group": "semiblind_atlas_lifecycle",
+        "parameter_types": ["const ImFontConfig *"],
+        "body_sha256": [
+          "d283e4c3304cd0f2971da83ee7eb8bd28be101798dbc0315ed6d69c572722b7c",
+          "950765ef691d0dea6adbe2dd0ec6aa9fed08d6d31d35cefd5e9341008f28a0df"
+        ],
+        "fragment": "atlas_add_font"
+      },
+      "ImFontAtlas::AddFontFromMemoryCompressedTTF": {
+        "group": "semiblind_atlas_lifecycle",
+        "parameter_types": ["const void *", "int", "float", "const ImFontConfig *", "const ImWchar *"],
+        "body_sha256": [
+          "97cae4d9c87964bdbfb4ea91a7d33233990151dc29f03f5f3267a6519ba34fde",
+          "d804132764fba6617560d5d30de19f220ad04ae4ece1c2b3dbf169372c51dcab"
+        ],
+        "fragment": "atlas_add_compressed_ttf"
+      },
+      "ImFontAtlasBakedAdd": {
+        "group": "semiblind_atlas_lifecycle",
+        "parameter_types": ["ImFontAtlas *", "ImFont *", "float", "float", "ImGuiID"],
+        "body_sha256": "2b4fd265ae33794d49de7391ae4b43a58a961f3d72a500ad6a00a6970abd1d53",
+        "fragment": "atlas_baked_add"
+      },
+      "ImFontAtlasBuildUpdateTexDataLines": {
+        "group": "semiblind_geometry",
+        "parameter_types": ["ImFontAtlas *"],
+        "body_sha256": [
+          "a87eafc168700195df1445db9d30665642bd62ec5f5961ea4a61917e1706e681",
+          "5de272476477eeba5e73d71d527fef9ea6f0d86374185b32fc1e7a08c983018b"
+        ],
+        "fragment": "atlas_update_lines"
+      },
+      "ImFontBaked_BuildLoadGlyph": {
+        "group": "semiblind_font_loader",
+        "parameter_types": ["ImFontBaked *", "ImWchar", "float *"],
+        "body_sha256": "8bf0f75a5cd4950ee557a061292af96473020f39cd7741b44351e97d772c6a3e",
+        "fragment": "build_load_glyph"
+      },
+      "ImGui_ImplStbTrueType_FontBakedLoadGlyph": {
+        "group": "semiblind_font_loader",
+        "parameter_types": ["ImFontAtlas *", "ImFontConfig *", "ImFontBaked *", "void *", "ImWchar", "ImFontGlyph *", "float *"],
+        "body_sha256": [
+          "8ca0d37b0b4eb2c9740cbb9dbf386d2ff30ed8cc9d7708a0e5c9fe2e9922ccdb",
+          "9eeeda3a7775de329570e708b9e340e1336fe5d01207ac3bc5cc3470091e7f83"
+        ],
+        "fragment": "stb_baked_load_glyph"
+      },
+      "ImGui_ImplStbTrueType_FontSrcInit": {
+        "group": "semiblind_font_loader",
+        "parameter_types": ["ImFontAtlas *", "ImFontConfig *"],
+        "body_sha256": [
+          "4f70a85a43c38198f3fccf15501c10e911d031898e838a4197c1ed8957606cb8",
+          "1d1ac3b7ff7746a0487c1968a95bdddbfdb6d3550e35b37e374c674988d714a2"
+        ],
+        "fragment": "font_src_init"
       },
       "ImFontAtlasTextureGetSizeEstimate": {
         "parameter_types": ["ImFontAtlas *"],

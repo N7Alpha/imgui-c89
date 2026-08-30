@@ -675,8 +675,10 @@ static void ImVector_ImGuiWindow____reserve__604ace7022(ImGuiContext *imgui_c89_
 static void ImVector_ImGuiWindow____resize__9ae44f8796(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiWindow_ptr *self, int new_size);
 static void ImVector_ImGuiWindow____swap__0acefa6e3d(ImVector_ImGuiWindow_ptr *self, ImVector_ImGuiWindow_ptr * rhs);
 static void ImVector_ImGuiWindow____dtor_ImVector__e780d35da8(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiWindow_ptr *self);
+static ImTextureData ** ImVector_ImTextureData____erase__6e199e4060(ImVector_ImTextureData_ptr *self, ImTextureData *const * it);
 static ImTextureData ** ImVector_ImTextureData____find__b4bf908e7b(ImVector_ImTextureData_ptr *self, ImTextureData *const * v);
 static unsigned char ImVector_ImTextureData____find_erase__1716c03711(ImVector_ImTextureData_ptr *self, ImTextureData *const * v);
+static ImTextureData * * ImVector_ImTextureData____operator____841043161f(ImVector_ImTextureData_ptr *self, int i);
 static void ImVector_ImTextureData____resize__acfd3f9aba(ImGuiContext *imgui_c89_ctx, ImVector_ImTextureData_ptr *self, int new_size);
 static const char * ImVector_char__back__9a41c3fa4a(ImVector_char *self);
 static char * ImVector_char__begin__06dd81e4f6(ImVector_char *self);
@@ -18599,7 +18601,7 @@ ImTextureData ** ImVector_ImTextureData____end__3efe30f1db(ImVector_ImTextureDat
     return self->Data == 0 ? 0 : self->Data + self->Size;
 }
 
-ImTextureData ** ImVector_ImTextureData____erase__6e199e4060(ImVector_ImTextureData_ptr *self, ImTextureData *const * it)
+static ImTextureData ** ImVector_ImTextureData____erase__6e199e4060(ImVector_ImTextureData_ptr *self, ImTextureData *const * it)
 {
     return imgui_c89_vector_erase(self->Data, &self->Size,
         sizeof(*self->Data), it, it + 1);
@@ -18634,7 +18636,7 @@ static unsigned char ImVector_ImTextureData____find_erase__1716c03711(ImVector_I
     return 0;
 }
 
-ImTextureData * * ImVector_ImTextureData____operator____841043161f(ImVector_ImTextureData_ptr *self, int i)
+static ImTextureData * * ImVector_ImTextureData____operator____841043161f(ImVector_ImTextureData_ptr *self, int i)
 {
     return (ImTextureData * *)imgui_c89_vector_at(
         self->Data, self->Size, i, sizeof(*self->Data), 2262);

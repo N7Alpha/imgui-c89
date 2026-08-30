@@ -1,0 +1,274 @@
+/* IMGUI_C89_FUNCTION_BEGIN render_rect_range_h */
+    ImVec2 p0;
+    ImVec2 p1;
+    ImVec2 point;
+    ImVec2 center;
+    float half_pi;
+    float inv_rounding;
+    float left_arc_begin;
+    float left_arc_end;
+    float right_arc_begin;
+    float right_arc_end;
+    float x0;
+    float x1;
+
+    if (fill_x0 > fill_x1) return;
+
+    p0.x = fill_x0;
+    p0.y = rect->Min.y;
+    p1.x = fill_x1;
+    p1.y = rect->Max.y;
+    if (rounding == 0.0f) {
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p0, &p1, col, 0.0f, 0);
+        return;
+    }
+
+    rounding = @CLAMP_FLOAT@(@MIN_FLOAT@((rect->Max.x - rect->Min.x) * 0.5f, (rect->Max.y - rect->Min.y) * 0.5f) - 1.0f, 0.0f, rounding);
+    half_pi = @PI@ * 0.5f;
+    inv_rounding = 1.0f / rounding;
+
+    left_arc_begin = 1.0f - (p0.x - rect->Min.x) * inv_rounding;
+    if (left_arc_begin <= 0.0f) {
+        left_arc_begin = half_pi;
+    } else if (left_arc_begin >= 1.0f) {
+        left_arc_begin = 0.0f;
+    } else {
+        left_arc_begin = @ACOS@(left_arc_begin);
+    }
+    left_arc_end = 1.0f - (p1.x - rect->Min.x) * inv_rounding;
+    if (left_arc_end <= 0.0f) {
+        left_arc_end = half_pi;
+    } else if (left_arc_end >= 1.0f) {
+        left_arc_end = 0.0f;
+    } else {
+        left_arc_end = @ACOS@(left_arc_end);
+    }
+    x0 = @MAX_FLOAT@(p0.x, rect->Min.x + rounding);
+
+    if (left_arc_begin == left_arc_end) {
+        point.x = x0;
+        point.y = p1.y;
+        @PATH_LINE_TO@(imgui_c89_ctx, draw_list, &point);
+        point.y = p0.y;
+        @PATH_LINE_TO@(imgui_c89_ctx, draw_list, &point);
+    } else if (left_arc_begin == 0.0f && left_arc_end == half_pi) {
+        center.x = x0;
+        center.y = p1.y - rounding;
+        @PATH_ARC_FAST@(imgui_c89_ctx, draw_list, &center, rounding, 3, 6);
+        center.y = p0.y + rounding;
+        @PATH_ARC_FAST@(imgui_c89_ctx, draw_list, &center, rounding, 6, 9);
+    } else {
+        center.x = x0;
+        center.y = p1.y - rounding;
+        @PATH_ARC_TO@(imgui_c89_ctx, draw_list, &center, rounding, @PI@ - left_arc_end, @PI@ - left_arc_begin, 0);
+        center.y = p0.y + rounding;
+        @PATH_ARC_TO@(imgui_c89_ctx, draw_list, &center, rounding, @PI@ + left_arc_begin, @PI@ + left_arc_end, 0);
+    }
+
+    if (p1.x > rect->Min.x + rounding) {
+        right_arc_begin = 1.0f - (rect->Max.x - p1.x) * inv_rounding;
+        if (right_arc_begin <= 0.0f) {
+            right_arc_begin = half_pi;
+        } else if (right_arc_begin >= 1.0f) {
+            right_arc_begin = 0.0f;
+        } else {
+            right_arc_begin = @ACOS@(right_arc_begin);
+        }
+        right_arc_end = 1.0f - (rect->Max.x - p0.x) * inv_rounding;
+        if (right_arc_end <= 0.0f) {
+            right_arc_end = half_pi;
+        } else if (right_arc_end >= 1.0f) {
+            right_arc_end = 0.0f;
+        } else {
+            right_arc_end = @ACOS@(right_arc_end);
+        }
+        x1 = @MIN_FLOAT@(p1.x, rect->Max.x - rounding);
+
+        if (right_arc_begin == right_arc_end) {
+            point.x = x1;
+            point.y = p0.y;
+            @PATH_LINE_TO@(imgui_c89_ctx, draw_list, &point);
+            point.y = p1.y;
+            @PATH_LINE_TO@(imgui_c89_ctx, draw_list, &point);
+        } else if (right_arc_begin == 0.0f && right_arc_end == half_pi) {
+            center.x = x1;
+            center.y = p0.y + rounding;
+            @PATH_ARC_FAST@(imgui_c89_ctx, draw_list, &center, rounding, 9, 12);
+            center.y = p1.y - rounding;
+            @PATH_ARC_FAST@(imgui_c89_ctx, draw_list, &center, rounding, 0, 3);
+        } else {
+            center.x = x1;
+            center.y = p0.y + rounding;
+            @PATH_ARC_TO@(imgui_c89_ctx, draw_list, &center, rounding, -right_arc_end, -right_arc_begin, 0);
+            center.y = p1.y - rounding;
+            @PATH_ARC_TO@(imgui_c89_ctx, draw_list, &center, rounding, right_arc_begin, right_arc_end, 0);
+        }
+    }
+
+    @PATH_FILL@(imgui_c89_ctx, draw_list, col);
+/* IMGUI_C89_FUNCTION_END render_rect_range_h */
+
+/* IMGUI_C89_FUNCTION_BEGIN render_rect_hole */
+    int fill_l;
+    int fill_r;
+    int fill_u;
+    int fill_d;
+    ImDrawFlags flags;
+    ImVec2 p_min;
+    ImVec2 p_max;
+
+    fill_l = inner->Min.x > outer->Min.x;
+    fill_r = inner->Max.x < outer->Max.x;
+    fill_u = inner->Min.y > outer->Min.y;
+    fill_d = inner->Max.y < outer->Max.y;
+
+    if (fill_l) {
+        flags = @ROUND_NONE@;
+        if (!fill_u) {
+            flags |= @ROUND_TL@;
+        }
+        if (!fill_d) {
+            flags |= @ROUND_BL@;
+        }
+        p_min.x = outer->Min.x;
+        p_min.y = inner->Min.y;
+        p_max.x = inner->Min.x;
+        p_max.y = inner->Max.y;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max, col, rounding, flags);
+    }
+    if (fill_r) {
+        flags = @ROUND_NONE@;
+        if (!fill_u) {
+            flags |= @ROUND_TR@;
+        }
+        if (!fill_d) {
+            flags |= @ROUND_BR@;
+        }
+        p_min.x = inner->Max.x;
+        p_min.y = inner->Min.y;
+        p_max.x = outer->Max.x;
+        p_max.y = inner->Max.y;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max, col, rounding, flags);
+    }
+    if (fill_u) {
+        flags = @ROUND_NONE@;
+        if (!fill_l) {
+            flags |= @ROUND_TL@;
+        }
+        if (!fill_r) {
+            flags |= @ROUND_TR@;
+        }
+        p_min.x = inner->Min.x;
+        p_min.y = outer->Min.y;
+        p_max.x = inner->Max.x;
+        p_max.y = inner->Min.y;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max, col, rounding, flags);
+    }
+    if (fill_d) {
+        flags = @ROUND_NONE@;
+        if (!fill_l) {
+            flags |= @ROUND_BL@;
+        }
+        if (!fill_r) {
+            flags |= @ROUND_BR@;
+        }
+        p_min.x = inner->Min.x;
+        p_min.y = inner->Max.y;
+        p_max.x = inner->Max.x;
+        p_max.y = outer->Max.y;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max, col, rounding, flags);
+    }
+    if (fill_l && fill_u) {
+        p_min.x = outer->Min.x;
+        p_min.y = outer->Min.y;
+        p_max.x = inner->Min.x;
+        p_max.y = inner->Min.y;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max, col, rounding, @ROUND_TL@);
+    }
+    if (fill_r && fill_u) {
+        p_min.x = inner->Max.x;
+        p_min.y = outer->Min.y;
+        p_max.x = outer->Max.x;
+        p_max.y = inner->Min.y;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max, col, rounding, @ROUND_TR@);
+    }
+    if (fill_l && fill_d) {
+        p_min.x = outer->Min.x;
+        p_min.y = inner->Max.y;
+        p_max.x = inner->Min.x;
+        p_max.y = outer->Max.y;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max, col, rounding, @ROUND_BL@);
+    }
+    if (fill_r && fill_d) {
+        p_min.x = inner->Max.x;
+        p_min.y = inner->Max.y;
+        p_max.x = outer->Max.x;
+        p_max.y = outer->Max.y;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max, col, rounding, @ROUND_BR@);
+    }
+/* IMGUI_C89_FUNCTION_END render_rect_hole */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_update_lines */
+    ImTextureData *tex;
+    ImFontAtlasBuilder *builder;
+    ImFontAtlasRect rect;
+    int add_and_draw;
+    int n;
+    int y;
+    int line_width;
+    int pad_left;
+    int pad_right;
+    int i;
+    unsigned char *pixels;
+    ImU32 *pixels32;
+    ImVec2 uv0;
+    ImVec2 uv1;
+    float half_v;
+
+    if ((atlas->Flags & @NO_BAKED_LINES@) != 0) return;
+
+    tex = atlas->TexData;
+    builder = atlas->Builder;
+    add_and_draw = !@GET_CUSTOM_RECT@(imgui_c89_ctx, atlas, builder->PackIdLinesTexData, &rect);
+    if (add_and_draw) {
+        builder->PackIdLinesTexData = @ADD_CUSTOM_RECT@(imgui_c89_ctx, atlas, @LINES_WIDTH_MAX@ + 2, @LINES_WIDTH_MAX@ + 1, &rect);
+        if (builder->PackIdLinesTexData == @INVALID_RECT_ID@) {
+            @ASSERT_3643@;
+        }
+    }
+
+    for (n = 0; n <= @LINES_WIDTH_MAX@; n++) {
+        y = n;
+        line_width = n;
+        pad_left = (rect.w - line_width) / 2;
+        pad_right = rect.w - (pad_left + line_width);
+        if (pad_left + line_width + pad_right != rect.w || y >= rect.h) {
+            @ASSERT_3656@;
+        }
+
+        if (add_and_draw) {
+            if (tex->Format == @FORMAT_ALPHA8@) {
+                pixels = (unsigned char *)@GET_PIXELS@(tex, rect.x, rect.y + y);
+                memset(pixels, 0, (size_t)rect.w);
+                memset(pixels + pad_left, 255, (size_t)line_width);
+            } else if (tex->Format == @FORMAT_RGBA32@) {
+                pixels32 = (ImU32 *)@GET_PIXELS@(tex, rect.x, rect.y + y);
+                for (i = 0; i < rect.w; i++) {
+                    pixels32[i] = @TRANSPARENT_WHITE@;
+                }
+                memset(pixels32 + pad_left, 255,
+                       (size_t)line_width * sizeof(*pixels32));
+            }
+        }
+
+        uv0.x = (float)(rect.x + pad_left - 1) * atlas->TexUvScale.x;
+        uv0.y = (float)(rect.y + y) * atlas->TexUvScale.y;
+        uv1.x = (float)(rect.x + pad_left + line_width + 1) * atlas->TexUvScale.x;
+        uv1.y = (float)(rect.y + y + 1) * atlas->TexUvScale.y;
+        half_v = (uv0.y + uv1.y) * 0.5f;
+        atlas->TexUvLines[n].x = uv0.x;
+        atlas->TexUvLines[n].y = half_v;
+        atlas->TexUvLines[n].z = uv1.x;
+        atlas->TexUvLines[n].w = half_v;
+    }
+/* IMGUI_C89_FUNCTION_END atlas_update_lines */

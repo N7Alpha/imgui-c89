@@ -1,0 +1,268 @@
+/* IMGUI_C89_FUNCTION_BEGIN atlas_update_new_frame */
+{
+    ImFontAtlasBuilder *builder;
+    ImTextureData *tex;
+    ImFontBaked *baked_src;
+    ImFontBaked *baked_dst;
+    int texture_index;
+    int font_index;
+    int baked_source_count;
+    int baked_source_index;
+    int baked_destination_index;
+
+    if (atlas->Builder != NULL && atlas->Builder->FrameCount >= frame_count) {
+        @ASSERT_2778@;
+    }
+    atlas->RendererHasTextures = renderer_has_textures;
+    for (texture_index = 0; texture_index < atlas->TexList.Size; texture_index++) {
+        tex = atlas->TexList.Data[texture_index];
+        if (tex->Status == @STATUS_WANT_CREATE@ && renderer_has_textures) {
+            if (tex->TexID != @INVALID_TEXTURE_ID@ || tex->BackendUserData != NULL) {
+                @ASSERT_2790@;
+            }
+        }
+        if (@TEXTURE_UPDATE_NEW_FRAME@(imgui_c89_ctx, tex)) {
+            if (atlas->TexData == tex) {
+                @ASSERT_2795@;
+            }
+            @DESTROY_PIXELS@(imgui_c89_ctx, tex);
+            @TEXTURE_DESTROY@(imgui_c89_ctx, tex);
+            imgui_mem_free(imgui_c89_ctx, tex);
+            memmove(atlas->TexList.Data + texture_index,
+                    atlas->TexList.Data + texture_index + 1,
+                    (size_t)(atlas->TexList.Size - texture_index - 1) *
+                        sizeof(atlas->TexList.Data[0]));
+            atlas->TexList.Size--;
+            texture_index--;
+        }
+    }
+
+    if (renderer_has_textures) {
+        atlas->TexIsBuilt = 1;
+        if (atlas->Builder == NULL) {
+            @BUILD_MAIN@(imgui_c89_ctx, atlas);
+        }
+    } else if (!atlas->TexIsBuilt) {
+        @ASSERT_2812@;
+    }
+    if (atlas->TexIsBuilt && atlas->Builder->PreloadedAllGlyphsRanges &&
+        renderer_has_textures) {
+        @ASSERT_2814@;
+    }
+
+    builder = atlas->Builder;
+    builder->FrameCount = frame_count;
+    for (font_index = 0; font_index < atlas->Fonts.Size; font_index++) {
+        atlas->Fonts.Data[font_index]->LastBaked = NULL;
+    }
+
+    if (builder->BakedDiscardedCount > 0) {
+        baked_source_count = builder->BakedPool.Size;
+        baked_destination_index = 0;
+        for (baked_source_index = 0; baked_source_index < baked_source_count; baked_source_index++) {
+            baked_src = builder->BakedPool.Blocks.Data[baked_source_index / 32] + baked_source_index % 32;
+            if (baked_src->WantDestroy) {
+                continue;
+            }
+            baked_dst = builder->BakedPool.Blocks.Data[baked_destination_index / 32] + baked_destination_index % 32;
+            if (baked_src != baked_dst) {
+                *baked_dst = *baked_src;
+                @BAKED_MAP_SET@(imgui_c89_ctx, &builder->BakedMap,
+                               baked_dst->BakedId, baked_dst);
+            }
+            baked_destination_index++;
+        }
+        if (baked_destination_index + builder->BakedDiscardedCount != baked_source_count) {
+            @ASSERT_2838@;
+        }
+        builder->BakedPool.Size -= builder->BakedDiscardedCount;
+        builder->BakedDiscardedCount = 0;
+    }
+}
+/* IMGUI_C89_FUNCTION_END atlas_update_new_frame */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_add_font */
+{
+    ImFont *font;
+    ImFontConfig *font_cfg;
+    int is_first_font;
+    int glyph_exclude_ranges_count;
+    unsigned char is_merge_mode;
+
+    if (self->Locked) {
+        @ASSERT_3067@;
+    }
+    if ((font_cfg_in->FontData == NULL || font_cfg_in->FontDataSize <= 0) &&
+        font_cfg_in->FontLoader == NULL) {
+        @ASSERT_3068@;
+    }
+    if (font_cfg_in->RasterizerDensity <= 0.0f) {
+        @ASSERT_3070@;
+    }
+    if (font_cfg_in->GlyphOffset.x != 0.0f || font_cfg_in->GlyphOffset.y != 0.0f ||
+        font_cfg_in->GlyphMinAdvanceX != 0.0f || font_cfg_in->GlyphMaxAdvanceX != @FLOAT_MAX@) {
+        if (font_cfg_in->SizePixels == 0.0f) {
+            @ASSERT_3072@;
+        }
+    }
+
+    if (self->Builder == NULL) {
+        @BUILD_INIT@(imgui_c89_ctx, self);
+    }
+    is_first_font = self->Fonts.Size == 0;
+    if (!font_cfg_in->MergeMode) {
+        font = (ImFont *)imgui_mem_alloc(imgui_c89_ctx, sizeof(*font));
+        @FONT_INIT@(font);
+        font->FontId = self->FontNextUniqueID++;
+        font->Flags = font_cfg_in->Flags;
+        font->LegacySize = font_cfg_in->SizePixels;
+        font->CurrentRasterizerDensity = font_cfg_in->RasterizerDensity;
+        @FONT_PTR_PUSH@(imgui_c89_ctx, &self->Fonts, &font);
+    } else {
+        if (self->Fonts.Size <= 0) {
+            @ASSERT_3092@;
+        }
+        font = font_cfg_in->DstFont != NULL ? font_cfg_in->DstFont : self->Fonts.Data[self->Fonts.Size - 1];
+        @DISCARD_BAKES@(imgui_c89_ctx, self, font, 0);
+    }
+
+    @CONFIG_PUSH@(imgui_c89_ctx, &self->Sources, font_cfg_in);
+    font_cfg = &self->Sources.Data[self->Sources.Size - 1];
+    if (font_cfg->DstFont == NULL) {
+        font_cfg->DstFont = font;
+    }
+    @CONFIG_PTR_PUSH@(imgui_c89_ctx, &font->Sources, &font_cfg);
+    @UPDATE_POINTERS@(imgui_c89_ctx, self);
+    font_cfg = &self->Sources.Data[self->Sources.Size - 1];
+
+    if (font_cfg->GlyphExcludeRanges != NULL) {
+        glyph_exclude_ranges_count = 0;
+        while (font_cfg->GlyphExcludeRanges[glyph_exclude_ranges_count] != 0) {
+            glyph_exclude_ranges_count++;
+        }
+        if ((glyph_exclude_ranges_count & 1) != 0) {
+            @ASSERT_3111@;
+        }
+        if (glyph_exclude_ranges_count > 64) {
+            @ASSERT_3112@;
+        }
+        font_cfg->GlyphExcludeRanges = (const ImWchar *)@MEMDUP@(imgui_c89_ctx,
+            font_cfg->GlyphExcludeRanges,
+            (size_t)(glyph_exclude_ranges_count + 1) * sizeof(ImWchar));
+    }
+    if (font_cfg->FontLoader != NULL) {
+        if (font_cfg->FontLoader->FontBakedLoadGlyph == NULL) {
+            @ASSERT_3117@;
+        }
+        if (font_cfg->FontLoader->LoaderInit != NULL ||
+            font_cfg->FontLoader->LoaderShutdown != NULL) {
+            @ASSERT_3118@;
+        }
+    }
+    if (font_cfg->MergeMode && font_cfg->SizePixels != 0.0f) {
+        if ((font->Flags & @IMPLICIT_REF_SIZE@) != 0) {
+            @ASSERT_3124@;
+        }
+    }
+    if (font_cfg->FontLoaderData != NULL) {
+        @ASSERT_3125@;
+    }
+
+    is_merge_mode = font_cfg->MergeMode;
+    if (!@SOURCE_INIT@(self, font_cfg)) {
+        @DESTROY_SOURCE@(imgui_c89_ctx, self, font_cfg);
+        self->Sources.Size--;
+        font->Sources.Size--;
+        if (!is_merge_mode) {
+            @FONT_DESTROY@(imgui_c89_ctx, font);
+            imgui_mem_free(imgui_c89_ctx, font);
+            self->Fonts.Size--;
+        }
+        return NULL;
+    }
+
+    @SOURCE_ADD_TO_FONT@(imgui_c89_ctx, self, font, font_cfg);
+    if (is_first_font) {
+        @NOTIFY_SET_FONT@(imgui_c89_ctx, self, NULL, font);
+    }
+    return font;
+}
+/* IMGUI_C89_FUNCTION_END atlas_add_font */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_add_compressed_ttf */
+{
+    unsigned int decompressed_size;
+    unsigned char *decompressed_data;
+    ImFontConfig config;
+
+    decompressed_size = @DECOMPRESS_LENGTH@((const unsigned char *)compressed_ttf_data);
+    decompressed_data = (unsigned char *)imgui_mem_alloc(imgui_c89_ctx, decompressed_size);
+    @DECOMPRESS@(decompressed_data, (const unsigned char *)compressed_ttf_data, (unsigned)compressed_ttf_size);
+    if (font_cfg_template != NULL) {
+        config = *font_cfg_template;
+    } else {
+        memset(&config, 0, sizeof(config));
+        @CONFIG_INIT@(&config);
+    }
+    if (config.FontData != NULL) {
+        @ASSERT_3288@;
+    }
+    config.FontDataOwnedByAtlas = 1;
+    return @ADD_MEMORY_TTF@(imgui_c89_ctx, self, decompressed_data, (int)decompressed_size, size_pixels, &config, glyph_ranges);
+}
+/* IMGUI_C89_FUNCTION_END atlas_add_compressed_ttf */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_baked_add */
+{
+    int baked_index;
+    ImFontBaked *baked;
+    ImFontConfig *src;
+    const ImFontLoader *loader;
+    unsigned char *loader_data_cursor;
+    size_t loader_data_size;
+    int source_index;
+
+    @DEBUG_CREATED_BAKED@;
+    baked_index = atlas->Builder->BakedPool.Size;
+    if (baked_index == atlas->Builder->BakedPool.Capacity) {
+        @BAKED_RESERVE@(imgui_c89_ctx, &atlas->Builder->BakedPool,
+                       atlas->Builder->BakedPool.Capacity + 32);
+    }
+    baked = atlas->Builder->BakedPool.Blocks.Data[baked_index / 32] +
+            baked_index % 32;
+    memset(baked, 0, sizeof(*baked));
+    baked->FallbackGlyphIndex = -1;
+    atlas->Builder->BakedPool.Size++;
+    baked->Size = font_size;
+    baked->RasterizerDensity = font_rasterizer_density;
+    baked->BakedId = baked_id;
+    baked->OwnerFont = font;
+    baked->LastUsedFrame = atlas->Builder->FrameCount;
+
+    loader_data_size = 0;
+    for (source_index = 0; source_index < font->Sources.Size; source_index++) {
+        src = font->Sources.Data[source_index];
+        loader = src->FontLoader != NULL ? src->FontLoader : atlas->FontLoader;
+        loader_data_size += loader->FontBakedSrcLoaderDataSize;
+    }
+    if (loader_data_size > 0) {
+        baked->FontLoaderDatas = imgui_mem_alloc(imgui_c89_ctx, loader_data_size);
+    } else {
+        baked->FontLoaderDatas = NULL;
+    }
+    loader_data_cursor = (unsigned char *)baked->FontLoaderDatas;
+
+    for (source_index = 0; source_index < font->Sources.Size; source_index++) {
+        src = font->Sources.Data[source_index];
+        loader = src->FontLoader != NULL ? src->FontLoader : atlas->FontLoader;
+        if (loader->FontBakedInit != NULL) {
+            loader->FontBakedInit(atlas, src, baked, loader_data_cursor);
+        }
+        if (loader->FontBakedSrcLoaderDataSize > 0) {
+            loader_data_cursor += loader->FontBakedSrcLoaderDataSize;
+        }
+    }
+    @SETUP_BAKED_BLANKS@(imgui_c89_ctx, atlas, baked);
+    return baked;
+}
+/* IMGUI_C89_FUNCTION_END atlas_baked_add */
