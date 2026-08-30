@@ -1,0 +1,565 @@
+/* IMGUI_C89_FUNCTION_BEGIN atlas_baked_add_font_glyph */
+    int glyph_index;
+    ImFontGlyph *glyph;
+    ImTextureRect *r;
+    float reference_size;
+    float offsets_scale;
+    float old_advance;
+    float new_advance;
+    float char_off_x;
+
+    glyph_index = baked->Glyphs.Size;
+    @GLYPH_VECTOR_PUSH@(imgui_c89_ctx, &baked->Glyphs, in_glyph);
+    glyph = &baked->Glyphs.Data[glyph_index];
+    if (baked->Glyphs.Size >= 0xFFFE) {
+        @ASSERT_5255@;
+    }
+
+    if (glyph->PackId != @INVALID_RECT_ID@) {
+        r = @ATLAS_PACK_GET_RECT@(atlas, glyph->PackId);
+        if (glyph->U0 != 0.0f || glyph->V0 != 0.0f ||
+            glyph->U1 != 0.0f || glyph->V1 != 0.0f) {
+            @ASSERT_5261@;
+        }
+        glyph->U0 = r->x * atlas->TexUvScale.x;
+        glyph->V0 = r->y * atlas->TexUvScale.y;
+        glyph->U1 = (r->x + r->w) * atlas->TexUvScale.x;
+        glyph->V1 = (r->y + r->h) * atlas->TexUvScale.y;
+        baked->MetricsTotalSurface += r->w * r->h;
+    }
+
+    if (src != NULL) {
+        reference_size = baked->OwnerFont->Sources.Data[0]->SizePixels;
+        offsets_scale = reference_size != 0.0f ? baked->Size / reference_size : 1.0f;
+        old_advance = glyph->AdvanceX;
+        new_advance = @CLAMP_FLOAT@(old_advance,
+            src->GlyphMinAdvanceX * offsets_scale,
+            src->GlyphMaxAdvanceX * offsets_scale);
+        if (new_advance != old_advance) {
+            char_off_x = (new_advance - old_advance) * 0.5f;
+            if (src->PixelSnapH) {
+                char_off_x = @TRUNC_FLOAT@(char_off_x);
+            }
+            glyph->X0 += char_off_x;
+            glyph->X1 += char_off_x;
+        }
+        if (src->PixelSnapH) {
+            new_advance = @ROUND_FLOAT@(new_advance);
+        }
+        glyph->AdvanceX = new_advance + src->GlyphExtraAdvanceX;
+    }
+
+    if (glyph->Colored) {
+        atlas->TexPixelsUseColors = 1;
+        atlas->TexData->UseColors = 1;
+    }
+
+    @BAKED_GROW_INDEX@(imgui_c89_ctx, baked, glyph->Codepoint + 1);
+    baked->IndexAdvanceX.Data[glyph->Codepoint] = glyph->AdvanceX;
+    baked->IndexLookup.Data[glyph->Codepoint] = (ImU16)glyph_index;
+    glyph_index = glyph->Codepoint / 8192;
+    baked->OwnerFont->Used8kPagesMap[glyph_index >> 3] |=
+        (unsigned char)(1 << (glyph_index & 7));
+    return glyph;
+/* IMGUI_C89_FUNCTION_END atlas_baked_add_font_glyph */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_add_custom_rect_glyph */
+    ImFontBaked *baked;
+    ImFontAtlasRectId pack_id;
+    ImTextureRect *r;
+    ImFontGlyph *old_glyph;
+    ImFontGlyph glyph;
+
+    if (font == NULL) {
+        @ASSERT_3411@;
+    }
+    if (width <= 0 || width > 0xFFFF) {
+        @ASSERT_3412@;
+    }
+    if (height <= 0 || height > 0xFFFF) {
+        @ASSERT_3413@;
+    }
+
+    baked = @FONT_GET_BAKED_FOR_SIZE@(imgui_c89_ctx, font, font_size, -1.0f);
+    pack_id = @ATLAS_PACK_ADD_RECT@(imgui_c89_ctx, self, width, height, NULL);
+    if (pack_id == @INVALID_RECT_ID@) return @INVALID_RECT_ID@;
+
+    r = @ATLAS_PACK_GET_RECT@(self, pack_id);
+    if (self->RendererHasTextures) {
+        @ATLAS_QUEUE_RECT_UPLOAD@(imgui_c89_ctx, self, self->TexData,
+            r->x, r->y, r->w, r->h);
+    }
+
+    if (@BAKED_IS_GLYPH_LOADED@(baked, codepoint)) {
+        old_glyph = @BAKED_FIND_GLYPH@(imgui_c89_ctx, baked, codepoint);
+        @BAKED_DISCARD_GLYPH@(self, font, baked, old_glyph);
+    }
+
+    memset(&glyph, 0, sizeof(glyph));
+    glyph.Codepoint = codepoint;
+    glyph.AdvanceX = advance_x;
+    glyph.X0 = offset->x;
+    glyph.Y0 = offset->y;
+    glyph.X1 = offset->x + r->w;
+    glyph.Y1 = offset->y + r->h;
+    glyph.Visible = 1;
+    glyph.Colored = 1;
+    glyph.PackId = pack_id;
+    @ATLAS_BAKED_ADD_FONT_GLYPH@(imgui_c89_ctx, self, baked,
+        font->Sources.Data[0], &glyph);
+    return pack_id;
+/* IMGUI_C89_FUNCTION_END atlas_add_custom_rect_glyph */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_remove_font */
+    ImFont *old_font;
+    ImFont *new_font;
+    ImFontConfig *src;
+    int i;
+    unsigned char found;
+
+    if (self->Locked) {
+        @ASSERT_3339@;
+    }
+    @FONT_DESTROY_OUTPUT@(imgui_c89_ctx, self, font);
+    for (i = 0; i < font->Sources.Size; i++) {
+        @FONT_SOURCE_DESTROY@(imgui_c89_ctx, self, font->Sources.Data[i]);
+    }
+
+    for (i = 0; i < self->Sources.Size; i++) {
+        src = &self->Sources.Data[i];
+        if (src->DstFont == font) {
+            @ATLAS_SOURCES_ERASE@(&self->Sources,
+                &self->Sources.Data[i]);
+            i--;
+        }
+    }
+
+    found = @ATLAS_FONTS_FIND_ERASE@(&self->Fonts, &font);
+    if (!found) {
+        @ASSERT_3349@;
+    }
+    @ATLAS_UPDATE_FONT_SOURCE_POINTERS@(imgui_c89_ctx, self);
+
+    old_font = font;
+    font->OwnerAtlas = NULL;
+    @FONT_DELETE@(imgui_c89_ctx, font);
+    new_font = self->Fonts.Size != 0 ? self->Fonts.Data[0] : NULL;
+    @ATLAS_NOTIFY_SET_FONT@(imgui_c89_ctx, self, old_font, new_font);
+/* IMGUI_C89_FUNCTION_END atlas_remove_font */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_setup_font_loader */
+    ImFont *font;
+    ImFontConfig *src;
+    int font_n;
+    int src_n;
+
+    if (atlas->FontLoader == font_loader) return;
+    if (atlas->Locked) {
+        @ASSERT_3515@;
+    }
+
+    for (font_n = 0; font_n < atlas->Fonts.Size; font_n++) {
+        @FONT_DESTROY_OUTPUT@(imgui_c89_ctx, atlas,
+            atlas->Fonts.Data[font_n]);
+    }
+    if (atlas->Builder != NULL && atlas->FontLoader != NULL &&
+        atlas->FontLoader->LoaderShutdown != NULL) {
+        atlas->FontLoader->LoaderShutdown(atlas);
+    }
+
+    atlas->FontLoader = font_loader;
+    atlas->FontLoaderName = font_loader != NULL ? font_loader->Name : "NULL";
+    if (atlas->FontLoaderData != NULL) {
+        @ASSERT_3524@;
+    }
+    if (atlas->Builder != NULL && font_loader != NULL &&
+        font_loader->LoaderInit != NULL) {
+        font_loader->LoaderInit(atlas);
+    }
+
+    for (font_n = 0; font_n < atlas->Fonts.Size; font_n++) {
+        @FONT_INIT_OUTPUT@(atlas, atlas->Fonts.Data[font_n]);
+    }
+    for (font_n = 0; font_n < atlas->Fonts.Size; font_n++) {
+        font = atlas->Fonts.Data[font_n];
+        for (src_n = 0; src_n < font->Sources.Size; src_n++) {
+            src = font->Sources.Data[src_n];
+            @FONT_SOURCE_ADD_TO_FONT@(imgui_c89_ctx, atlas, font, src);
+        }
+    }
+/* IMGUI_C89_FUNCTION_END atlas_setup_font_loader */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_baked_discard */
+    ImFontAtlasBuilder *builder;
+    ImFontConfig *src;
+    const ImFontLoader *loader;
+    unsigned char *loader_data;
+    ImFontGlyph *glyph;
+    int glyph_n;
+    int src_n;
+
+    builder = atlas->Builder;
+    if (imgui_c89_ctx != NULL &&
+        (imgui_c89_ctx->DebugLogFlags & @DEBUG_LOG_EVENT_FONT@) != 0) {
+        @DEBUG_LOG@(imgui_c89_ctx, "[font] Discard baked %.2f for \"%s\"\n",
+            baked->Size, @FONT_DEBUG_NAME@(font));
+    }
+
+    for (glyph_n = 0; glyph_n < baked->Glyphs.Size; glyph_n++) {
+        glyph = &baked->Glyphs.Data[glyph_n];
+        if (glyph->PackId != @INVALID_RECT_ID@) {
+            @ATLAS_PACK_DISCARD_RECT@(atlas, glyph->PackId);
+        }
+    }
+
+    loader_data = (unsigned char *)baked->FontLoaderDatas;
+    for (src_n = 0; src_n < font->Sources.Size; src_n++) {
+        src = font->Sources.Data[src_n];
+        loader = src->FontLoader != NULL ? src->FontLoader : atlas->FontLoader;
+        if (loader->FontBakedDestroy != NULL) {
+            loader->FontBakedDestroy(atlas, src, baked, loader_data);
+        }
+        loader_data += loader->FontBakedSrcLoaderDataSize;
+    }
+    if (baked->FontLoaderDatas != NULL) {
+        @NAMESPACED_FREE@(imgui_c89_ctx, baked->FontLoaderDatas);
+        baked->FontLoaderDatas = NULL;
+    }
+
+    @STORAGE_SET_VOID_PTR@(imgui_c89_ctx, &builder->BakedMap,
+        baked->BakedId, NULL);
+    builder->BakedDiscardedCount++;
+    @BAKED_CLEAR_OUTPUT@(imgui_c89_ctx, baked);
+    baked->WantDestroy = 1;
+    font->LastBaked = NULL;
+/* IMGUI_C89_FUNCTION_END atlas_baked_discard */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_texture_grow */
+    ImFontAtlasBuilder *builder;
+    int new_width;
+    int new_height;
+    int padding;
+    int required;
+
+    builder = atlas->Builder;
+    if (old_tex_w == -1) {
+        old_tex_w = atlas->TexData->Width;
+    }
+    if (old_tex_h == -1) {
+        old_tex_h = atlas->TexData->Height;
+    }
+    if (!@IS_POWER_OF_TWO@(old_tex_w) ||
+        !@IS_POWER_OF_TWO@(old_tex_h)) {
+        @ASSERT_4215@;
+    }
+    if (!@IS_POWER_OF_TWO@(atlas->TexMinWidth) ||
+        !@IS_POWER_OF_TWO@(atlas->TexMaxWidth) ||
+        !@IS_POWER_OF_TWO@(atlas->TexMinHeight) ||
+        !@IS_POWER_OF_TWO@(atlas->TexMaxHeight)) {
+        @ASSERT_4216@;
+    }
+
+    if (old_tex_h <= old_tex_w) {
+        new_width = old_tex_w;
+        new_height = old_tex_h * 2;
+    } else {
+        new_width = old_tex_w * 2;
+        new_height = old_tex_h;
+    }
+
+    padding = atlas->TexGlyphPadding;
+    required = @UPPER_POWER_OF_TWO@(builder->MaxRectSize.x + padding);
+    new_width = @MAX_INT@(new_width, required);
+    required = @UPPER_POWER_OF_TWO@(builder->MaxRectSize.y + padding);
+    new_height = @MAX_INT@(new_height, required);
+    new_width = @CLAMP_INT@(new_width, atlas->TexMinWidth, atlas->TexMaxWidth);
+    new_height = @CLAMP_INT@(new_height, atlas->TexMinHeight, atlas->TexMaxHeight);
+
+    if (new_width == old_tex_w && new_height == old_tex_h) return;
+    @ATLAS_TEXTURE_REPACK@(imgui_c89_ctx, atlas, new_width, new_height);
+/* IMGUI_C89_FUNCTION_END atlas_texture_grow */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_baked_set_glyph_bitmap */
+    ImTextureData *tex;
+    void *dst_pixels;
+    int dst_pitch;
+    ImFontAtlasPostProcessData data;
+
+    tex = atlas->TexData;
+    if (r->x + r->w > tex->Width || r->y + r->h > tex->Height) {
+        @ASSERT_5330@;
+    }
+    dst_pixels = @TEXTURE_GET_PIXELS_AT@(tex, r->x, r->y);
+    dst_pitch = @TEXTURE_GET_PITCH@(tex);
+    @PIXEL_BLOCK_CONVERT@(src_pixels, src_fmt, src_pitch,
+        (unsigned char *)dst_pixels, tex->Format, dst_pitch, r->w, r->h);
+
+    data.FontAtlas = atlas;
+    data.Font = baked->OwnerFont;
+    data.FontSrc = src;
+    data.FontBaked = baked;
+    data.Glyph = glyph;
+    data.Pixels = dst_pixels;
+    data.Format = tex->Format;
+    data.Pitch = dst_pitch;
+    data.Width = r->w;
+    data.Height = r->h;
+    @ATLAS_POST_PROCESS_GLYPH@(&data);
+    @ATLAS_QUEUE_RECT_UPLOAD@(imgui_c89_ctx, atlas, tex,
+        r->x, r->y, r->w, r->h);
+/* IMGUI_C89_FUNCTION_END atlas_baked_set_glyph_bitmap */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_build_init */
+    ImFontAtlasBuilder *builder;
+    int width;
+    int height;
+
+    if (atlas->FontLoader == NULL) {
+        @ATLAS_SET_FONT_LOADER@(imgui_c89_ctx, atlas,
+            @GET_STB_TRUETYPE_LOADER@());
+    }
+
+    if (atlas->TexData == NULL || atlas->TexData->Pixels == NULL) {
+        width = @UPPER_POWER_OF_TWO@(atlas->TexMinWidth);
+        height = @UPPER_POWER_OF_TWO@(atlas->TexMinHeight);
+        @ATLAS_TEXTURE_ADD@(imgui_c89_ctx, atlas, width, height);
+    }
+
+    builder = @MEM_ALLOC@(imgui_c89_ctx, sizeof(*builder));
+    memset(builder, 0, sizeof(*builder));
+    builder->FrameCount = -1;
+    builder->RectsIndexFreeListStart = -1;
+    builder->PackIdMouseCursors = -1;
+    builder->PackIdLinesTexData = -1;
+    atlas->Builder = builder;
+    if (atlas->FontLoader->LoaderInit != NULL) {
+        atlas->FontLoader->LoaderInit(atlas);
+    }
+    @ATLAS_UPDATE_RENDERER_HAS_TEXTURES@(atlas);
+    @ATLAS_PACK_INIT@(imgui_c89_ctx, atlas);
+    @ATLAS_UPDATE_REQUIRED_TEXTURE_DATA@(imgui_c89_ctx, atlas);
+    @ATLAS_UPDATE_FONT_SOURCE_POINTERS@(imgui_c89_ctx, atlas);
+    @ATLAS_UPDATE_ALL_DRAW_LIST_SHARED_DATA@(atlas);
+    @ATLAS_INIT_TEXT_CLASSIFIERS@();
+/* IMGUI_C89_FUNCTION_END atlas_build_init */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_setup_special_glyphs */
+    ImWchar fallback_candidates[4];
+    ImWchar ellipsis_candidates[3];
+    int n;
+
+    (void)atlas;
+    if (!@FONT_SOURCES_CONTAINS@(&font->Sources, &src)) {
+        @ASSERT_3852@;
+    }
+    fallback_candidates[0] = font->FallbackChar;
+    fallback_candidates[1] = @INVALID_UNICODE_CODEPOINT@;
+    fallback_candidates[2] = (ImWchar)'?';
+    fallback_candidates[3] = (ImWchar)' ';
+    if (font->FallbackChar == 0) {
+        for (n = 0; n < 4; n++) {
+            if (fallback_candidates[n] != 0 &&
+                @FONT_IS_GLYPH_IN_FONT@(font,
+                    fallback_candidates[n])) {
+                font->FallbackChar = fallback_candidates[n];
+                break;
+            }
+        }
+    }
+
+    ellipsis_candidates[0] = src->EllipsisChar;
+    ellipsis_candidates[1] = (ImWchar)0x2026;
+    ellipsis_candidates[2] = (ImWchar)0x0085;
+    if (font->EllipsisChar == 0) {
+        for (n = 0; n < 3; n++) {
+            if (ellipsis_candidates[n] != 0 &&
+                @FONT_IS_GLYPH_IN_FONT@(font,
+                    ellipsis_candidates[n])) {
+                font->EllipsisChar = ellipsis_candidates[n];
+                break;
+            }
+        }
+    }
+    if (font->EllipsisChar == 0) {
+        font->EllipsisChar = (ImWchar)0x0085;
+        font->EllipsisAutoBake = 1;
+    }
+/* IMGUI_C89_FUNCTION_END atlas_setup_special_glyphs */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_baked_get_or_add */
+    ImGuiID baked_id;
+    ImFontAtlasBuilder *builder;
+    ImFontBaked **baked_ref;
+    ImFontBaked *baked;
+
+    if (!(font_size > 0.0f && font_rasterizer_density > 0.0f)) {
+        @ASSERT_5453@;
+    }
+    baked_id = @FONT_BAKED_GET_ID@(
+        font->FontId, font_size, font_rasterizer_density);
+    builder = atlas->Builder;
+    baked_ref = (ImFontBaked **)@STORAGE_GET_VOID_PTR_REF@(imgui_c89_ctx,
+        &builder->BakedMap, baked_id, NULL);
+    baked = *baked_ref;
+    if (baked != NULL) {
+        if (baked->Size != font_size || baked->OwnerFont != font ||
+            baked->BakedId != baked_id) {
+            @ASSERT_5460@;
+        }
+        return baked;
+    }
+
+    if ((font->Flags & @ATLAS_FLAG_LOCK_BAKED_SIZES@) != 0 || atlas->Locked) {
+        baked = @ATLAS_BAKED_CLOSEST_MATCH@(
+            atlas, font, font_size, font_rasterizer_density);
+        if (baked != NULL) return baked;
+        if (atlas->Locked) {
+            @ASSERT_5473@;
+            return NULL;
+        }
+    }
+
+    baked = @ATLAS_BAKED_ADD@(imgui_c89_ctx,
+        atlas, font, font_size, font_rasterizer_density, baked_id);
+    *baked_ref = baked;
+    return baked;
+/* IMGUI_C89_FUNCTION_END atlas_baked_get_or_add */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_legacy_preload_ranges */
+    ImFontAtlasBuilder *builder;
+    ImFont *font;
+    ImFontBaked *baked;
+    ImFontConfig *src;
+    const ImWchar *ranges;
+    unsigned int c;
+    unsigned int range_last;
+    int font_n;
+    int src_n;
+
+    builder = atlas->Builder;
+    builder->PreloadedAllGlyphsRanges = 1;
+    for (font_n = 0; font_n < atlas->Fonts.Size; font_n++) {
+        font = atlas->Fonts.Data[font_n];
+        baked = @FONT_GET_BAKED_FOR_SIZE@(imgui_c89_ctx,
+            font, font->LegacySize, -1.0f);
+        if (font->FallbackChar != 0) {
+            @BAKED_FIND_GLYPH@(imgui_c89_ctx, baked, font->FallbackChar);
+        }
+        if (font->EllipsisChar != 0) {
+            @BAKED_FIND_GLYPH@(imgui_c89_ctx, baked, font->EllipsisChar);
+        }
+
+        for (src_n = 0; src_n < font->Sources.Size; src_n++) {
+            src = font->Sources.Data[src_n];
+            ranges = src->GlyphRanges != NULL ? src->GlyphRanges :
+                @ATLAS_GET_DEFAULT_GLYPH_RANGES@(atlas);
+            while (ranges[0] != 0) {
+                c = (unsigned int)ranges[0];
+                range_last = (unsigned int)ranges[1];
+                while (c <= range_last && c <= @UNICODE_CODEPOINT_MAX@) {
+                    @BAKED_FIND_GLYPH@(imgui_c89_ctx, baked, (ImWchar)c);
+                    if (c == range_last || c == @UNICODE_CODEPOINT_MAX@) break;
+                    c++;
+                }
+                ranges += 2;
+            }
+        }
+    }
+/* IMGUI_C89_FUNCTION_END atlas_legacy_preload_ranges */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_notify_set_font */
+    ImDrawListSharedData *shared_data;
+    ImGuiContext *ctx;
+    ImGuiContext *backup_ctx;
+    int shared_n;
+    int stack_n;
+    unsigned char rebound;
+
+    (void)imgui_c89_ctx;
+    for (shared_n = 0; shared_n < atlas->DrawListSharedDatas.Size; shared_n++) {
+        shared_data = atlas->DrawListSharedDatas.Data[shared_n];
+        if (shared_data->Font == old_font) {
+            shared_data->Font = new_font;
+        }
+        ctx = shared_data->Context;
+        if (ctx == NULL) continue;
+        if (old_font == NULL && ctx->Font == NULL && ctx->FontSizeBase == 0.0f) continue;
+
+        if (ctx->IO.FontDefault == old_font) {
+            ctx->IO.FontDefault = new_font;
+        }
+        if (ctx->Font == old_font) {
+            backup_ctx = @GET_CURRENT_CONTEXT@();
+            rebound = backup_ctx != ctx;
+            if (rebound) {
+                @SET_CURRENT_CONTEXT@(ctx);
+            }
+            @SET_CURRENT_FONT@(ctx, new_font, ctx->FontSizeBase, ctx->FontSize);
+            if (rebound) {
+                @SET_CURRENT_CONTEXT@(backup_ctx);
+            }
+        }
+        for (stack_n = 0; stack_n < ctx->FontStack.Size; stack_n++) {
+            if (ctx->FontStack.Data[stack_n].Font == old_font) {
+                ctx->FontStack.Data[stack_n].Font = new_font;
+            }
+        }
+    }
+/* IMGUI_C89_FUNCTION_END atlas_notify_set_font */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_pack_init */
+    ImTextureData *tex;
+    ImFontAtlasBuilder *builder;
+    int pack_node_count;
+
+    tex = atlas->TexData;
+    builder = atlas->Builder;
+    pack_node_count = tex->Width / 2;
+    @PACK_NODES_RESIZE@(imgui_c89_ctx, &builder->PackNodes, pack_node_count);
+    @STBRP_INIT_TARGET@((@STBRP_CONTEXT_TYPE@ *)(void *)&builder->PackContext,
+        tex->Width, tex->Height, builder->PackNodes.Data,
+        builder->PackNodes.Size);
+    builder->RectsPackedSurface = 0;
+    builder->RectsPackedCount = 0;
+    builder->MaxRectSize.x = 0;
+    builder->MaxRectSize.y = 0;
+    builder->MaxRectBounds.x = 0;
+    builder->MaxRectBounds.y = 0;
+/* IMGUI_C89_FUNCTION_END atlas_pack_init */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_baked_closest_match */
+    ImFontAtlasBuilder *builder;
+    ImFontBaked *baked;
+    ImFontBaked *closest_larger;
+    ImFontBaked *closest_smaller;
+    int step;
+    int baked_n;
+
+    builder = atlas->Builder;
+    for (step = 0; step < 2; step++) {
+        closest_larger = NULL;
+        closest_smaller = NULL;
+        for (baked_n = 0; baked_n < builder->BakedPool.Size; baked_n++) {
+            baked = @BAKED_POOL_AT@(&builder->BakedPool, baked_n);
+            if (baked->OwnerFont != font || baked->WantDestroy) continue;
+            if (step == 0 &&
+                baked->RasterizerDensity != font_rasterizer_density) continue;
+            if (baked->Size > font_size &&
+                (closest_larger == NULL || baked->Size < closest_larger->Size)) {
+                closest_larger = baked;
+            } else if (baked->Size < font_size &&
+                (closest_smaller == NULL || baked->Size > closest_smaller->Size)) {
+                closest_smaller = baked;
+            }
+        }
+
+        if (closest_larger != NULL &&
+            (closest_smaller == NULL ||
+             (closest_larger->Size >= font_size * 2.0f &&
+              closest_smaller->Size > font_size * 0.5f))) {
+            return closest_larger;
+        }
+        if (closest_smaller != NULL) return closest_smaller;
+    }
+    return NULL;
+/* IMGUI_C89_FUNCTION_END atlas_baked_closest_match */

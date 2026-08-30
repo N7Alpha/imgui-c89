@@ -1,0 +1,466 @@
+/* IMGUI_C89_FUNCTION_BEGIN render_alpha_checkerboard */
+ImU32 col_bg1;
+ImU32 col_bg2;
+ImVec2 cell_min;
+ImVec2 cell_max;
+ImDrawFlags cell_flags;
+int yi;
+float x;
+float x1;
+float x2;
+float y;
+float y1;
+float y2;
+
+if ((flags & @ROUND_MASK@) == 0) {
+    flags = @ROUND_DEFAULT@;
+}
+if (((col & @ALPHA_MASK@) >> @ALPHA_SHIFT@) == 0xff) {
+    @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max,
+                     col, rounding, flags);
+    return;
+}
+
+col_bg1 = @GET_COLOR_U32@(imgui_c89_ctx,
+    @ALPHA_BLEND@(@GRAY_128@, col), 1.0f);
+col_bg2 = @GET_COLOR_U32@(imgui_c89_ctx,
+    @ALPHA_BLEND@(@GRAY_204@, col), 1.0f);
+@ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &p_min, &p_max,
+                 col_bg1, rounding, flags);
+
+yi = 0;
+for (y = p_min.y + grid_off.y; y < p_max.y; y += grid_step, yi++) {
+    y1 = @CLAMP_FLOAT@(y, p_min.y, p_max.y);
+    y2 = @MIN_FLOAT@(y + grid_step, p_max.y);
+    if (y2 <= y1) continue;
+    x = p_min.x + grid_off.x + (float)((yi ^ 1) & 1) * grid_step;
+    for (; x < p_max.x; x += grid_step * 2.0f) {
+        x1 = @CLAMP_FLOAT@(x, p_min.x, p_max.x);
+        x2 = @MIN_FLOAT@(x + grid_step, p_max.x);
+        if (x2 <= x1) continue;
+
+        cell_flags = @ROUND_NONE@;
+        if (y1 <= p_min.y) {
+            if (x1 <= p_min.x) {
+                cell_flags |= @ROUND_TOP_LEFT@;
+            }
+            if (x2 >= p_max.x) {
+                cell_flags |= @ROUND_TOP_RIGHT@;
+            }
+        }
+        if (y2 >= p_max.y) {
+            if (x1 <= p_min.x) {
+                cell_flags |= @ROUND_BOTTOM_LEFT@;
+            }
+            if (x2 >= p_max.x) {
+                cell_flags |= @ROUND_BOTTOM_RIGHT@;
+            }
+        }
+        cell_flags = (flags == @ROUND_NONE@ || cell_flags == @ROUND_NONE@)
+            ? @ROUND_NONE@ : (cell_flags & flags);
+        cell_min.x = x1;
+        cell_min.y = y1;
+        cell_max.x = x2;
+        cell_max.y = y2;
+        @ADD_RECT_FILLED@(imgui_c89_ctx, draw_list, &cell_min, &cell_max,
+                         col_bg2, rounding, cell_flags);
+    }
+}
+/* IMGUI_C89_FUNCTION_END render_alpha_checkerboard */
+
+/* IMGUI_C89_FUNCTION_BEGIN font_word_wrap */
+ImFontBaked *baked;
+const char *s;
+const char *next_s;
+const char *span_end;
+float scale;
+float line_width;
+float blank_width;
+float span_width;
+float char_width;
+unsigned int c;
+int prev_type;
+int curr_type;
+unsigned char keep_blanks;
+
+baked = @GET_BAKED@(imgui_c89_ctx, font, size, -1.0f);
+scale = size / baked->Size;
+line_width = 0.0f;
+blank_width = 0.0f;
+wrap_width /= scale;
+s = text;
+if (text_end == NULL) {
+    @ASSERT_5567@;
+}
+prev_type = @CLASS_OTHER@;
+keep_blanks = (unsigned char)((flags & @WRAP_KEEP_BLANKS@) != 0);
+span_end = s;
+span_width = 0.0f;
+
+while (s < text_end) {
+    c = (unsigned int)*s;
+    if (c < 0x80) {
+        next_s = s + 1;
+    }
+    else {
+        next_s = s + @TEXT_FROM_UTF8@(&c, s, text_end);
+    }
+    if (c < 32) {
+        if (c == '\n') return s;
+        if (c == '\r') {
+            s = next_s;
+            continue;
+        }
+    }
+
+    char_width = c < (unsigned int)baked->IndexAdvanceX.Size
+        ? baked->IndexAdvanceX.Data[c] : -1.0f;
+    if (char_width < 0.0f) {
+        char_width = @LOAD_ADVANCE@(imgui_c89_ctx, baked, c);
+    }
+
+    if (c == ' ' || c == '\t' || c == 0x3000) {
+        curr_type = @CLASS_BLANK@;
+    }
+    else if (c == '.' || c == ',' || c == ';' || c == '!' || c == '?'
+             || c == '"' || c == 0x3001 || c == 0x3002) {
+        curr_type = @CLASS_PUNCT@;
+    }
+    else {
+        curr_type = @CLASS_OTHER@;
+    }
+
+    if (curr_type == @CLASS_BLANK@) {
+        if (prev_type != @CLASS_BLANK@ && !keep_blanks) {
+            span_end = s;
+            line_width += span_width;
+            span_width = 0.0f;
+        }
+        blank_width += char_width;
+    }
+    else {
+        if (prev_type == @CLASS_PUNCT@ && curr_type != @CLASS_PUNCT@
+            && !(c >= '0' && c <= '9')) {
+            span_end = s;
+            line_width += span_width + blank_width;
+            span_width = blank_width = 0.0f;
+        }
+        else if (prev_type == @CLASS_BLANK@ && keep_blanks) {
+            span_end = s;
+            line_width += span_width + blank_width;
+            span_width = blank_width = 0.0f;
+        }
+        span_width += char_width;
+    }
+
+    if (span_width + blank_width + line_width > wrap_width) {
+        if (span_width + blank_width > wrap_width) break;
+        return span_end;
+    }
+    prev_type = curr_type;
+    s = next_s;
+}
+if (s == text && text < text_end) {
+    return s + @COUNT_UTF8_CHAR@(s, text_end);
+}
+return s;
+/* IMGUI_C89_FUNCTION_END font_word_wrap */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_image_rounded */
+unsigned char push_texture;
+int vert_start_idx;
+int vert_end_idx;
+
+if ((col & @ALPHA_MASK@) == 0) return;
+if ((flags & 0x0f) != 0) {
+    @ASSERT_1796@;
+}
+if ((flags & @ROUND_MASK@) == 0) {
+    flags |= @ROUND_ALL@;
+}
+if (rounding < 0.5f ||
+    (flags & @ROUND_MASK@) == @ROUND_NONE@) {
+    @ADD_IMAGE@(imgui_c89_ctx, self, tex_ref, p_min, p_max,
+                uv_min, uv_max, col);
+    return;
+}
+
+push_texture = (unsigned char)(
+    tex_ref._TexID != self->_CmdHeader.TexRef._TexID ||
+    tex_ref._TexData != self->_CmdHeader.TexRef._TexData);
+if (push_texture) {
+    @PUSH_TEXTURE@(imgui_c89_ctx, self, tex_ref);
+}
+vert_start_idx = self->VtxBuffer.Size;
+@PATH_RECT@(imgui_c89_ctx, self, p_min, p_max, rounding, flags);
+@PATH_FILL@(imgui_c89_ctx, self, col);
+vert_end_idx = self->VtxBuffer.Size;
+@SHADE_UV@(self, vert_start_idx, vert_end_idx, p_min, p_max,
+           uv_min, uv_max, 1);
+if (push_texture) {
+    @POP_TEXTURE@(imgui_c89_ctx, self);
+}
+/* IMGUI_C89_FUNCTION_END draw_add_image_rounded */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_shared_data_init */
+{
+    float angle;
+    int i;
+
+    self->InitialFringeScale = 1.0f;
+    for (i = 0; i < @ARCFAST_COUNT@; i++) {
+        angle = (float)i * 2.0f * @PI@ / (float)@ARCFAST_COUNT@;
+        self->ArcFastVtx[i].x = @COS@(angle);
+        self->ArcFastVtx[i].y = @SIN@(angle);
+    }
+}
+/* IMGUI_C89_FUNCTION_END draw_shared_data_init */
+
+/* IMGUI_C89_FUNCTION_BEGIN triangulator_reclassify */
+const ImTriangulatorNode *n0;
+const ImTriangulatorNode *n2;
+ImTriangulatorNodeType type;
+
+n0 = n1->Prev;
+n2 = n1->Next;
+if (!@TRIANGLE_CLOCKWISE@(&n0->Pos, &n1->Pos, &n2->Pos)) {
+    type = @NODE_REFLEX@;
+}
+else if (@TRIANGULATOR_IS_EAR@(self, n0->Index, n1->Index, n2->Index,
+                               &n0->Pos, &n1->Pos, &n2->Pos)) {
+    type = @NODE_EAR@;
+}
+else {
+    type = @NODE_CONVEX@;
+}
+
+if (type == n1->Type) return;
+if (n1->Type == @NODE_REFLEX@) {
+    @SPAN_ERASE@(&self->_Reflexes, n1->Index);
+}
+else if (n1->Type == @NODE_EAR@) {
+    @SPAN_ERASE@(&self->_Ears, n1->Index);
+}
+if (type == @NODE_REFLEX@) {
+    @SPAN_PUSH@(&self->_Reflexes, n1);
+}
+else if (type == @NODE_EAR@) {
+    @SPAN_PUSH@(&self->_Ears, n1);
+}
+n1->Type = type;
+/* IMGUI_C89_FUNCTION_END triangulator_reclassify */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_add_image_quad */
+unsigned char push_texture;
+
+if ((col & @ALPHA_MASK@) == 0) return;
+push_texture = (unsigned char)(
+    tex_ref._TexID != self->_CmdHeader.TexRef._TexID ||
+    tex_ref._TexData != self->_CmdHeader.TexRef._TexData);
+if (push_texture) {
+    @PUSH_TEXTURE@(imgui_c89_ctx, self, tex_ref);
+}
+@PRIM_RESERVE@(imgui_c89_ctx, self, 6, 4);
+@PRIM_QUAD_UV@(self, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col);
+if (push_texture) {
+    @POP_TEXTURE@(imgui_c89_ctx, self);
+}
+/* IMGUI_C89_FUNCTION_END draw_add_image_quad */
+
+/* IMGUI_C89_FUNCTION_BEGIN draw_clone_output */
+ImDrawList *dst;
+
+dst = (ImDrawList *)imgui_mem_alloc(imgui_c89_ctx, sizeof(*dst));
+@DRAW_LIST_INIT@(imgui_c89_ctx, dst, NULL);
+@DRAW_CMD_ASSIGN@(imgui_c89_ctx, &dst->CmdBuffer, &self->CmdBuffer);
+@DRAW_IDX_ASSIGN@(imgui_c89_ctx, &dst->IdxBuffer, &self->IdxBuffer);
+@DRAW_VERT_ASSIGN@(imgui_c89_ctx, &dst->VtxBuffer, &self->VtxBuffer);
+dst->Flags = self->Flags;
+return dst;
+/* IMGUI_C89_FUNCTION_END draw_clone_output */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_add_font_file */
+size_t data_size;
+void *data;
+ImFontConfig font_cfg;
+const char *p;
+
+if (self->Locked) {
+    @ASSERT_3243@;
+}
+data_size = 0;
+data = @FILE_LOAD@(imgui_c89_ctx, filename, "rb", &data_size, 0);
+if (data == NULL) {
+    if (font_cfg_template == NULL ||
+        (font_cfg_template->Flags & @NO_LOAD_ERROR@) == 0) {
+        @DEBUG_LOG@(imgui_c89_ctx, "While loading '%s'\n", filename);
+        if (@ERROR_LOG@(imgui_c89_ctx, "Could not load font file!")) {
+            @ASSERT_3251@;
+        }
+    }
+    return NULL;
+}
+if (font_cfg_template != NULL) {
+    font_cfg = *font_cfg_template;
+}
+else {
+    memset(&font_cfg, 0, sizeof(font_cfg));
+    @FONT_CONFIG_INIT@(&font_cfg);
+}
+if (font_cfg.Name[0] == '\0') {
+    p = filename + strlen(filename);
+    while (p > filename && p[-1] != '/' && p[-1] != '\\') {
+        p--;
+    }
+    @FORMAT_STRING@(font_cfg.Name, sizeof(font_cfg.Name), "%s", p);
+}
+return @ADD_MEMORY_TTF@(imgui_c89_ctx, self, data, (int)data_size,
+                        size_pixels, &font_cfg, glyph_ranges);
+/* IMGUI_C89_FUNCTION_END atlas_add_font_file */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_debug_texture_requests */
+ImTextureData *tex;
+const ImTextureRect *rect;
+unsigned char log_font;
+int texture_index;
+int update_index;
+
+log_font = (unsigned char)(imgui_c89_ctx != NULL &&
+    (imgui_c89_ctx->DebugLogFlags & @EVENT_FONT@) != 0);
+for (texture_index = 0; texture_index < atlas->TexList.Size; texture_index++) {
+    tex = atlas->TexList.Data[texture_index];
+    if ((imgui_c89_ctx->IO.BackendFlags & @RENDERER_HAS_TEXTURES@) == 0 &&
+        tex->Updates.Size != 0) {
+        @ASSERT_4663@;
+    }
+    if (tex->Status == @STATUS_WANT_CREATE@) {
+        if (log_font) {
+            @DEBUG_LOG@(imgui_c89_ctx,
+                "[font] Texture #%03d: create %dx%d\n",
+                tex->UniqueID, tex->Width, tex->Height);
+        }
+    }
+    else if (tex->Status == @STATUS_WANT_DESTROY@) {
+        if (log_font) {
+            @DEBUG_LOG@(imgui_c89_ctx,
+                "[font] Texture #%03d: destroy %dx%d, texid=0x%llX, backend_data=%p\n",
+                tex->UniqueID, tex->Width, tex->Height,
+                @DEBUG_TEXTURE_ID@(tex->TexID), tex->BackendUserData);
+        }
+    }
+    else if (tex->Status == @STATUS_WANT_UPDATES@) {
+        if (log_font) {
+            @DEBUG_LOG@(imgui_c89_ctx,
+                "[font] Texture #%03d: update %d regions, texid=0x%llX, backend_data=0x%llX\n",
+                tex->UniqueID, tex->Updates.Size,
+                @DEBUG_TEXTURE_ID@(tex->TexID),
+                (ImU64)(intptr_t)tex->BackendUserData);
+        }
+        for (update_index = 0; update_index < tex->Updates.Size; update_index++) {
+            rect = &tex->Updates.Data[update_index];
+            if (!(rect->x >= 0 && rect->y >= 0)) {
+                @ASSERT_4674@;
+            }
+            if (!(rect->x + rect->w <= tex->Width &&
+                  rect->y + rect->h <= tex->Height)) {
+                @ASSERT_4675@;
+            }
+        }
+    }
+}
+/* IMGUI_C89_FUNCTION_END atlas_debug_texture_requests */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_render_bitmap_string */
+ImTextureData *tex;
+unsigned char *out8;
+ImU32 *out32;
+int off_x;
+int off_y;
+
+tex = atlas->TexData;
+if (!(x >= 0 && x + w <= tex->Width)) {
+    @ASSERT_3570@;
+}
+if (!(y >= 0 && y + h <= tex->Height)) {
+    @ASSERT_3571@;
+}
+switch (tex->Format) {
+case @FORMAT_ALPHA8@:
+    out8 = (unsigned char *)@GET_PIXELS_AT@(tex, x, y);
+    for (off_y = 0; off_y < h; off_y++, out8 += tex->Width, in_str += w) {
+        for (off_x = 0; off_x < w; off_x++) {
+            out8[off_x] = in_str[off_x] == in_marker_char ? 0xff : 0x00;
+        }
+    }
+    break;
+case @FORMAT_RGBA32@:
+    out32 = (ImU32 *)@GET_PIXELS_AT@(tex, x, y);
+    for (off_y = 0; off_y < h; off_y++, out32 += tex->Width, in_str += w) {
+        for (off_x = 0; off_x < w; off_x++) {
+            out32[off_x] = in_str[off_x] == in_marker_char
+                ? @OPAQUE_WHITE@ : @TRANSPARENT_BLACK@;
+        }
+    }
+    break;
+}
+/* IMGUI_C89_FUNCTION_END atlas_render_bitmap_string */
+
+/* IMGUI_C89_FUNCTION_BEGIN atlas_add_compressed_base85 */
+int compressed_size;
+void *compressed_data;
+ImFont *font;
+
+compressed_size = (((int)strlen(compressed_ttf_data_base85) + 4) / 5) * 4;
+compressed_data = imgui_mem_alloc(imgui_c89_ctx, (size_t)compressed_size);
+@DECODE85@((const unsigned char *)compressed_ttf_data_base85,
+           (unsigned char *)compressed_data);
+font = @ADD_COMPRESSED_TTF@(imgui_c89_ctx, self, compressed_data,
+    compressed_size, size_pixels, font_cfg, glyph_ranges);
+imgui_mem_free(imgui_c89_ctx, compressed_data);
+return font;
+/* IMGUI_C89_FUNCTION_END atlas_add_compressed_base85 */
+
+/* IMGUI_C89_FUNCTION_BEGIN texture_update_new_frame */
+unsigned char remove_from_list;
+
+remove_from_list = 0;
+if (tex->Status == @STATUS_OK@) {
+    tex->Updates.Size = 0;
+    tex->UpdateRect.x = tex->UpdateRect.y = (unsigned short)~0;
+    tex->UpdateRect.w = tex->UpdateRect.h = 0;
+}
+if (tex->WantDestroyNextFrame &&
+    tex->Status != @STATUS_DESTROYED@ &&
+    tex->Status != @STATUS_WANT_DESTROY@) {
+    if (!(tex->Status == @STATUS_OK@ ||
+          tex->Status == @STATUS_WANT_CREATE@ ||
+          tex->Status == @STATUS_WANT_UPDATES@)) {
+        @ASSERT_2859@;
+    }
+    tex->Status = @STATUS_WANT_DESTROY@;
+}
+if (tex->Status == @STATUS_WANT_DESTROY@ &&
+    tex->TexID == @INVALID_TEXTURE_ID@ &&
+    tex->BackendUserData == NULL && tex->QueueUserData == NULL) {
+    tex->Status = @STATUS_DESTROYED@;
+}
+if (tex->Status == @STATUS_DESTROYED@) {
+    if (!(tex->TexID == @INVALID_TEXTURE_ID@ &&
+          tex->BackendUserData == NULL)) {
+        @ASSERT_2872@;
+    }
+    if (tex->QueueUserData != NULL) {
+        @ASSERT_2873@;
+    }
+    if (tex->WantDestroyNextFrame) {
+        remove_from_list = 1;
+    }
+    else {
+        tex->Status = @STATUS_WANT_CREATE@;
+    }
+}
+if (tex->Status == @STATUS_WANT_DESTROY@) {
+    tex->UnusedFrames++;
+}
+return remove_from_list;
+/* IMGUI_C89_FUNCTION_END texture_update_new_frame */

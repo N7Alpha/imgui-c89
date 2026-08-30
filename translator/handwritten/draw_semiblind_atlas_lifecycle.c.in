@@ -222,7 +222,10 @@
     size_t loader_data_size;
     int source_index;
 
-    @DEBUG_CREATED_BAKED@;
+    if (imgui_c89_ctx != NULL &&
+        (imgui_c89_ctx->DebugLogFlags & @EVENT_FONT@) != 0) {
+        @DEBUG_LOG@(imgui_c89_ctx, "[font] Created baked %.2fpx\n", font_size);
+    }
     baked_index = atlas->Builder->BakedPool.Size;
     if (baked_index == atlas->Builder->BakedPool.Capacity) {
         @BAKED_RESERVE@(imgui_c89_ctx, &atlas->Builder->BakedPool,

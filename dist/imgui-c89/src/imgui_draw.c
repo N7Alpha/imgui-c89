@@ -65,7 +65,7 @@ static void ImTriangulator_FlipNodeList__6fab57aff9(ImTriangulator *self);
 static void ImTriangulator_GetNextTriangle__b17722615e(ImTriangulator *self, unsigned int * out_triangle);
 static void ImTriangulator_Init__24193dd2b6(ImTriangulator *self, const ImVec2 * points, int points_count, void * scratch_buffer);
 static unsigned char ImTriangulator_IsEar__1d64609e76(ImTriangulator *self, int i0, int i1, int i2, const ImVec2 * v0, const ImVec2 * v1, const ImVec2 * v2);
-static void ImTriangulator_ReclassifyNode__4295120418(ImTriangulator *self, ImTriangulatorNode * n1);
+static void imgui__im_triangulator_reclassify_node(ImTriangulator *self, ImTriangulatorNode * n1);
 static void ImTriangulatorNode_Unlink__430bbce381(ImTriangulatorNode *self);
 static void ImTriangulatorNodeSpan_find_erase_unsorted__c152ab14e4(ImTriangulatorNodeSpan *self, int idx);
 static void ImTriangulatorNodeSpan_push_back__c59b54dee0(ImTriangulatorNodeSpan *self, ImTriangulatorNode * node);
@@ -87,21 +87,12 @@ static ImFontConfig * ImVector_ImFontConfig__begin__ced2f2b7e4(ImVector_ImFontCo
 static void ImVector_ImFontConfig__clear__5f351b6116(ImGuiContext *imgui_c89_ctx, ImVector_ImFontConfig *self);
 static ImFontConfig * ImVector_ImFontConfig__end__6c1370bc07(ImVector_ImFontConfig *self);
 static ImFontConfig * ImVector_ImFontConfig__erase__e286cff502(ImVector_ImFontConfig *self, const ImFontConfig * it);
-static ImFontConfig * ImVector_ImFontConfig__operator____8da7e90df8(ImVector_ImFontConfig *self, int i);
 static void ImVector_ImFontConfig__push_back__9bb9c4b084(ImGuiContext *imgui_c89_ctx, ImVector_ImFontConfig *self, const ImFontConfig * v);
 static void ImVector_ImFontConfig__dtor_ImVector__b491236418(ImGuiContext *imgui_c89_ctx, ImVector_ImFontConfig *self);
 static void ImVector_ImFontGlyph__ImVector__3eab1fda42(ImVector_ImFontGlyph *self);
-static ImFontGlyph * ImVector_ImFontGlyph__begin__1f259325b6(ImVector_ImFontGlyph *self);
 static void ImVector_ImFontGlyph__clear__c66791e224(ImGuiContext *imgui_c89_ctx, ImVector_ImFontGlyph *self);
-static ImFontGlyph * ImVector_ImFontGlyph__end__7450013537(ImVector_ImFontGlyph *self);
-static ImFontGlyph * ImVector_ImFontGlyph__operator____1aedae1232(ImVector_ImFontGlyph *self, int i);
 static void ImVector_ImFontGlyph__push_back__9bfb512c47(ImGuiContext *imgui_c89_ctx, ImVector_ImFontGlyph *self, const ImFontGlyph * v);
-static ImFontStackData * ImVector_ImFontStackData__begin__8e6fdbb421(ImVector_ImFontStackData *self);
-static ImFontStackData * ImVector_ImFontStackData__end__cfc5f331c7(ImVector_ImFontStackData *self);
-static ImTextureRect * ImVector_ImTextureRect__begin__911152f282(ImVector_ImTextureRect *self);
-static ImTextureRect * ImVector_ImTextureRect__end__991a10d9ba(ImVector_ImTextureRect *self);
 static void ImVector_ImTextureRect__push_back__8e183f1abf(ImGuiContext *imgui_c89_ctx, ImVector_ImTextureRect *self, const ImTextureRect * v);
-static void ImVector_ImTextureRect__resize__cc47928fa8(ImGuiContext *imgui_c89_ctx, ImVector_ImTextureRect *self, int new_size);
 static void ImVector_ImTextureRef__ImVector__2ab083c278(ImVector_ImTextureRef *self);
 static ImTextureRef * ImVector_ImTextureRef__begin__6a0f84aa66(ImVector_ImTextureRef *self);
 static void ImVector_ImTextureRef__clear__8b6e133b1c(ImGuiContext *imgui_c89_ctx, ImVector_ImTextureRef *self);
@@ -126,7 +117,6 @@ static void ImVector_ImDrawListSharedData____dtor_ImVector__8559912bed(ImGuiCont
 static void ImVector_ImFont____ImVector__2426b851e8(ImVector_ImFont_ptr *self);
 static void ImVector_ImFont____clear__89c7a01291(ImGuiContext *imgui_c89_ctx, ImVector_ImFont_ptr *self);
 static void ImVector_ImFont____clear_delete__7d3e1b8d68(ImGuiContext *imgui_c89_ctx, ImVector_ImFont_ptr *self);
-static unsigned char ImVector_ImFont____empty__fb6e15d48b(ImVector_ImFont_ptr *self);
 static ImFont ** ImVector_ImFont____erase__af2cf197a6(ImVector_ImFont_ptr *self, ImFont *const * it);
 static ImFont ** ImVector_ImFont____find__47c67b30b7(ImVector_ImFont_ptr *self, ImFont *const * v);
 static unsigned char ImVector_ImFont____find_erase__915c868416(ImVector_ImFont_ptr *self, ImFont *const * v);
@@ -176,7 +166,7 @@ static void imgui__path_bezier_quadratic_curve_to_casteljau(ImGuiContext *imgui_
 static void UnpackAccumulativeOffsetsIntoRanges__b4341a32e0(int base_codepoint, const unsigned char * accumulative_offsets, int accumulative_offsets_count, ImWchar * out_ranges);
 static void stb__lit__0f9bfbaada(const unsigned char * data, unsigned int length);
 static void stb__match__16edbeeef1(const unsigned char * data, unsigned int length);
-static unsigned int stb_adler32__c6d8186c04(unsigned int adler32, unsigned char * buffer, unsigned int buflen);
+static unsigned int imgui__stb_adler32(unsigned int adler32, unsigned char * buffer, unsigned int buflen);
 static unsigned int stb_decompress__ade5b71362(unsigned char * output, const unsigned char * i, unsigned int arg_2);
 static unsigned int stb_decompress_length__18fba2a40d(const unsigned char * input);
 static const unsigned char * stb_decompress_token__5d2ff2286d(const unsigned char * i);
@@ -188,16 +178,16 @@ static imgui_c89_anon_imstb_rectpack_341_9 stbrp__skyline_pack_rectangle__0ddf56
 static void stbrp_init_target__2a192f014e(stbrp_context * context, int width, int height, stbrp_node * nodes, int num_nodes);
 static int stbrp_pack_rects__c22d33fe62(stbrp_context * context, stbrp_rect * rects, int num_rects);
 static void stbrp_setup_allow_out_of_mem__0a3b74b89d(stbrp_context * context, int allow_out_of_mem);
-static int stbtt_FindGlyphIndex__4559fdb4e7(const stbtt_fontinfo * info, int unicode_codepoint);
+static int imgui__stbtt_find_glyph_index(const stbtt_fontinfo * info, int unicode_codepoint);
 static imgui_c89_anon_imstb_truetype_3493_9 * stbtt_FlattenCurves__87b2217cf1(ImGuiContext *imgui_c89_ctx, imgui_c89_anon_imstb_truetype_840_12 * vertices, int num_verts, float objspace_flatness, int ** contour_lengths, int * num_contours, void * userdata);
 static int stbtt_GetFontOffsetForIndex__73a2c53ae5(const unsigned char * data, int index);
 static int stbtt_GetFontOffsetForIndex_internal__4f15694cb1(unsigned char * font_collection, int index);
 static void stbtt_GetFontVMetrics__8c3aa77cea(const stbtt_fontinfo * info, int * ascent, int * descent, int * lineGap);
 static void stbtt_GetGlyphBitmapBox__4b83e04481(const stbtt_fontinfo * font, int glyph, float scale_x, float scale_y, int * ix0, int * iy0, int * ix1, int * iy1);
-static void stbtt_GetGlyphBitmapBoxSubpixel__0b267e35c6(const stbtt_fontinfo * font, int glyph, float scale_x, float scale_y, float shift_x, float shift_y, int * ix0, int * iy0, int * ix1, int * iy1);
+static void imgui__stbtt_get_glyph_bitmap_box_subpixel(const stbtt_fontinfo * font, int glyph, float scale_x, float scale_y, float shift_x, float shift_y, int * ix0, int * iy0, int * ix1, int * iy1);
 static int stbtt_GetGlyphBox__e86c1169a1(const stbtt_fontinfo * info, int glyph_index, int * x0, int * y0, int * x1, int * y1);
 static void stbtt_GetGlyphHMetrics__899edd9be4(const stbtt_fontinfo * info, int glyph_index, int * advanceWidth, int * leftSideBearing);
-static int stbtt_GetGlyphShape__54121b5f12(ImGuiContext *imgui_c89_ctx, const stbtt_fontinfo * info, int glyph_index, imgui_c89_anon_imstb_truetype_840_12 ** pvertices);
+static int imgui__stbtt_get_glyph_shape(ImGuiContext *imgui_c89_ctx, const stbtt_fontinfo * info, int glyph_index, imgui_c89_anon_imstb_truetype_840_12 ** pvertices);
 static int stbtt_InitFont__c5e65747d1(stbtt_fontinfo * info, const unsigned char * data, int offset);
 static int stbtt_InitFont_internal__39ddee08e3(stbtt_fontinfo * info, unsigned char * data, int fontstart);
 static void stbtt_MakeGlyphBitmapSubpixel__d54b9c6daf(ImGuiContext *imgui_c89_ctx, const stbtt_fontinfo * info, unsigned char * output, int out_w, int out_h, int out_stride, float scale_x, float scale_y, float shift_x, float shift_y, int glyph);
@@ -217,8 +207,8 @@ static void stbtt__buf_seek__3f9659771f(imgui_c89_anon_imstb_truetype_518_9 * b,
 static void stbtt__buf_skip__eb21cea223(imgui_c89_anon_imstb_truetype_518_9 * b, int o);
 static imgui_c89_anon_imstb_truetype_518_9 stbtt__cff_get_index__1fdcf073a8(imgui_c89_anon_imstb_truetype_518_9 * b);
 static int stbtt__cff_index_count__1dd31fad46(imgui_c89_anon_imstb_truetype_518_9 * b);
-static imgui_c89_anon_imstb_truetype_518_9 stbtt__cff_index_get__357781c314(imgui_c89_anon_imstb_truetype_518_9 b, int i);
-static stbtt_uint32 stbtt__cff_int__65bc49b5b3(imgui_c89_anon_imstb_truetype_518_9 * b);
+static imgui_c89_anon_imstb_truetype_518_9 imgui__stbtt_cff_index_get(imgui_c89_anon_imstb_truetype_518_9 b, int i);
+static stbtt_uint32 imgui__stbtt_cff_int(imgui_c89_anon_imstb_truetype_518_9 * b);
 static void stbtt__cff_skip_operand__9a986f5656(imgui_c89_anon_imstb_truetype_518_9 * b);
 static imgui_c89_anon_imstb_truetype_518_9 stbtt__cid_get_glyph_subrs__7a9cad5a8f(const stbtt_fontinfo * info, int glyph_index);
 static int stbtt__close_shape__969ef366f4(imgui_c89_anon_imstb_truetype_840_12 * vertices, int num_vertices, int was_off, int start_off, stbtt_int32 sx, stbtt_int32 sy, stbtt_int32 scx, stbtt_int32 scy, stbtt_int32 cx, stbtt_int32 cy);
@@ -228,13 +218,13 @@ static void stbtt__csctx_rline_to__b52cb79f52(imgui_c89_anon_imstb_truetype_1902
 static void stbtt__csctx_rmove_to__f84a99555e(imgui_c89_anon_imstb_truetype_1902_9 * ctx, float dx, float dy);
 static void stbtt__csctx_v__c8493d9be5(imgui_c89_anon_imstb_truetype_1902_9 * c, stbtt_uint8 type, stbtt_int32 x, stbtt_int32 y, stbtt_int32 cx, stbtt_int32 cy, stbtt_int32 cx1, stbtt_int32 cy1);
 static imgui_c89_anon_imstb_truetype_518_9 stbtt__dict_get__71fc60a453(imgui_c89_anon_imstb_truetype_518_9 * b, int key);
-static void stbtt__dict_get_ints__29e4460ec3(imgui_c89_anon_imstb_truetype_518_9 * b, int key, int outcount, stbtt_uint32 * out);
+static void imgui__stbtt_dict_get_ints(imgui_c89_anon_imstb_truetype_518_9 * b, int key, int outcount, stbtt_uint32 * out);
 static void stbtt__fill_active_edges_new__437f38557d(float * scanline, float * scanline_fill, int len, stbtt_active_edge * e, float y_top);
 static stbtt_uint32 stbtt__find_table__5c21023e34(stbtt_uint8 * data, stbtt_uint32 fontstart, const char * tag);
 static imgui_c89_anon_imstb_truetype_518_9 stbtt__get_subr__4a52de8ae5(imgui_c89_anon_imstb_truetype_518_9 idx, int n);
-static imgui_c89_anon_imstb_truetype_518_9 stbtt__get_subrs__32a2e58618(imgui_c89_anon_imstb_truetype_518_9 cff, imgui_c89_anon_imstb_truetype_518_9 fontdict);
+static imgui_c89_anon_imstb_truetype_518_9 imgui__stbtt_get_subrs(imgui_c89_anon_imstb_truetype_518_9 cff, imgui_c89_anon_imstb_truetype_518_9 fontdict);
 static void stbtt__h_prefilter__cd8f8b18bb(unsigned char * pixels, int w, int h, int stride_in_bytes, unsigned int kernel_width);
-static void stbtt__handle_clipped_edge__7a807fed17(float * scanline, int x, stbtt_active_edge * e, float x0, float y0, float x1, float y1);
+static void imgui__stbtt_handle_clipped_edge(float * scanline, int x, stbtt_active_edge * e, float x0, float y0, float x1, float y1);
 static void * stbtt__hheap_alloc__40242d633f(ImGuiContext *imgui_c89_ctx, stbtt_hheap * hh, size_t size, void * userdata);
 static void stbtt__hheap_cleanup__01bf5fe23f(ImGuiContext *imgui_c89_ctx, stbtt_hheap * hh, void * userdata);
 static void stbtt__hheap_free__e0b100306d(stbtt_hheap * hh, void * p);
@@ -245,14 +235,14 @@ static float stbtt__oversample_shift__9360750a33(int oversample);
 static float stbtt__position_trapezoid_area__c9ac31dbc1(float height, float tx0, float tx1, float bx0, float bx1);
 static void stbtt__rasterize__06b8a6fb0f(ImGuiContext *imgui_c89_ctx, imgui_c89_anon_imstb_truetype_929_9 * result, imgui_c89_anon_imstb_truetype_3493_9 * pts, int * wcount, int windings, float scale_x, float scale_y, float shift_x, float shift_y, int off_x, int off_y, int invert, void * userdata);
 static void stbtt__rasterize_sorted_edges__613ed5e79d(ImGuiContext *imgui_c89_ctx, imgui_c89_anon_imstb_truetype_929_9 * result, stbtt_edge * e, int n, int vsubsample, int off_x, int off_y, void * userdata);
-static int stbtt__run_charstring__38ed33710a(const stbtt_fontinfo * info, int glyph_index, imgui_c89_anon_imstb_truetype_1902_9 * c);
+static int imgui__stbtt_run_charstring(const stbtt_fontinfo * info, int glyph_index, imgui_c89_anon_imstb_truetype_1902_9 * c);
 static float stbtt__sized_trapezoid_area__42ff594ba7(float height, float top_width, float bottom_width);
 static float stbtt__sized_triangle_area__b8e2ccc88b(float height, float width);
 static void stbtt__sort_edges__5f2009b7a0(stbtt_edge * p, int n);
 static void stbtt__sort_edges_ins_sort__dfd4771cef(stbtt_edge * p, int n);
-static void stbtt__sort_edges_quicksort__d7e26a5b22(stbtt_edge * p, int n);
-static void stbtt__tesselate_cubic__29babd912e(imgui_c89_anon_imstb_truetype_3493_9 * points, int * num_points, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float objspace_flatness_squared, int n);
-static int stbtt__tesselate_curve__50ed7f4c53(imgui_c89_anon_imstb_truetype_3493_9 * points, int * num_points, float x0, float y0, float x1, float y1, float x2, float y2, float objspace_flatness_squared, int n);
+static void imgui__stbtt_sort_edges_quicksort(stbtt_edge * p, int n);
+static void imgui__stbtt_tesselate_cubic(imgui_c89_anon_imstb_truetype_3493_9 * points, int * num_points, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float objspace_flatness_squared, int n);
+static int imgui__stbtt_tesselate_curve(imgui_c89_anon_imstb_truetype_3493_9 * points, int * num_points, float x0, float y0, float x1, float y1, float x2, float y2, float objspace_flatness_squared, int n);
 static void stbtt__track_vertex__839588c827(imgui_c89_anon_imstb_truetype_1902_9 * c, stbtt_int32 x, stbtt_int32 y);
 static void stbtt__v_prefilter__32651c5c89(unsigned char * pixels, int w, int h, int stride_in_bytes, unsigned int kernel_width);
 static void stbtt_setvertex__3db5318219(imgui_c89_anon_imstb_truetype_840_12 * v, stbtt_uint8 type, stbtt_int32 x, stbtt_int32 y, stbtt_int32 cx, stbtt_int32 cy);
@@ -261,10 +251,8 @@ static stbtt_int16 ttSHORT__a2f3949bdb(stbtt_uint8 * p);
 static stbtt_uint32 ttULONG__59ff3d05a4(stbtt_uint8 * p);
 static stbtt_uint16 ttUSHORT__6c3047e8f7(stbtt_uint8 * p);
 
-static ImDrawList ImDrawList_ImDrawList_value__81e4dcc2d3(ImGuiContext *imgui_c89_ctx, ImDrawListSharedData * shared_data);
 ImDrawList *ImDrawList_ImDrawList_at__d042a13f30(ImGuiContext *imgui_c89_ctx, void *memory, ImDrawListSharedData * shared_data);
 ImFontAtlas *ImFontAtlas_ImFontAtlas_at__e0f3099eea(void *memory);
-ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *memory);
 static ImFontConfig ImFontConfig_ImFontConfig_value__9b05647600(void);
 ImGuiMultiSelectState *ImGuiMultiSelectState_ImGuiMultiSelectState_at__07be8ac108(void *memory);
 ImGuiMultiSelectTempData ImGuiMultiSelectTempData_ImGuiMultiSelectTempData_value__24d89ca7b9(ImGuiContext *imgui_c89_ctx);
@@ -349,13 +337,6 @@ static ImWchar full_ranges__4b9fc441fe[6009] = { 0 };
 static const ImWchar ranges__d496b10f8b[9] = { 32, 255, 1024, 1327, 11744, 11775, 42560, 42655, 0 };
 static const ImWchar ranges__5636687bf6[7] = { 32, 255, 8208, 8286, 3584, 3711, 0 };
 static const ImWchar ranges__ff0f25da0f[17] = { 32, 255, 258, 259, 272, 273, 296, 297, 360, 361, 416, 417, 431, 432, 7840, 7929, 0 };
-
-static ImDrawList ImDrawList_ImDrawList_value__81e4dcc2d3(ImGuiContext *imgui_c89_ctx, ImDrawListSharedData * shared_data)
-{
-    ImDrawList result;
-    imgui__im_draw_list_init(imgui_c89_ctx, &result, shared_data);
-    return result;
-}
 
 ImDrawList *ImDrawList_ImDrawList_at__d042a13f30(ImGuiContext *imgui_c89_ctx, void *memory, ImDrawListSharedData * shared_data)
 {
@@ -494,7 +475,10 @@ ImFontBaked * imgui__im_font_atlas_baked_add(ImGuiContext *imgui_c89_ctx, ImFont
         size_t loader_data_size;
         int source_index;
 
-        ((void)0);
+        if (imgui_c89_ctx != NULL &&
+            (imgui_c89_ctx->DebugLogFlags & ImGuiDebugLogFlags_EventFont) != 0) {
+            imgui__debug_log(imgui_c89_ctx, "[font] Created baked %.2fpx\n", font_size);
+        }
         baked_index = atlas->Builder->BakedPool.Size;
         if (baked_index == atlas->Builder->BakedPool.Capacity) {
             ImStableVector_ImFontBaked__32__reserve__132cc1ecae(imgui_c89_ctx, &atlas->Builder->BakedPool,
@@ -541,52 +525,67 @@ ImFontBaked * imgui__im_font_atlas_baked_add(ImGuiContext *imgui_c89_ctx, ImFont
 
 ImFontGlyph * imgui__im_font_atlas_baked_add_font_glyph(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas, ImFontBaked * baked, ImFontConfig * src, const ImFontGlyph * in_glyph)
 {
-    int glyph_idx;
-    ImFontGlyph * glyph;
-    ImTextureRect * r;
-    float ref_size;
+    int glyph_index;
+    ImFontGlyph *glyph;
+    ImTextureRect *r;
+    float reference_size;
     float offsets_scale;
-    float advance_x;
+    float old_advance;
+    float new_advance;
     float char_off_x;
-    int codepoint;
-    int page_n;
 
-    glyph_idx = baked->Glyphs.Size;
-    ImVector_ImFontGlyph__push_back__9bfb512c47(imgui_c89_ctx, ((ImVector_ImFontGlyph *)(&(baked->Glyphs))), &((*in_glyph)));
-    glyph = (&(*(ImVector_ImFontGlyph__operator____1aedae1232(((ImVector_ImFontGlyph *)(&(baked->Glyphs))), glyph_idx))));
-    imgui_c89_expect((!(baked->Glyphs.Size < 65534)), 0) ? imgui_c89_assert_id(124) : ((void)(0));
-    if (glyph->PackId != (-1)) {
-        r = imgui__im_font_atlas_pack_get_rect(atlas, glyph->PackId);
-        imgui_c89_expect((!((((glyph->U0 == 0.0f) && (glyph->V0 == 0.0f)) && (glyph->U1 == 0.0f)) && (glyph->V1 == 0.0f))), 0) ? imgui_c89_assert_id(125) : ((void)(0));
-        glyph->U0 = (r->x * atlas->TexUvScale.x);
-        glyph->V0 = (r->y * atlas->TexUvScale.y);
-        glyph->U1 = ((r->x + r->w) * atlas->TexUvScale.x);
-        glyph->V1 = ((r->y + r->h) * atlas->TexUvScale.y);
-        baked->MetricsTotalSurface += (r->w * r->h);
+    glyph_index = baked->Glyphs.Size;
+    ImVector_ImFontGlyph__push_back__9bfb512c47(imgui_c89_ctx, &baked->Glyphs, in_glyph);
+    glyph = &baked->Glyphs.Data[glyph_index];
+    if (baked->Glyphs.Size >= 0xFFFE) {
+        imgui_c89_assert_id(124);
     }
-    if (src != 0) {
-        ref_size = (*(ImVector_ImFontConfig____operator____f864e92bd4(((ImVector_ImFontConfig_ptr *)(&(baked->OwnerFont->Sources))), 0)))->SizePixels;
-        offsets_scale = ((ref_size != 0.0f) ? (baked->Size / ref_size) : 1.0f);
-        advance_x = ImClamp__36c731a202(glyph->AdvanceX, (src->GlyphMinAdvanceX * offsets_scale), (src->GlyphMaxAdvanceX * offsets_scale));
-        if (advance_x != glyph->AdvanceX) {
-            char_off_x = (src->PixelSnapH ? ImTrunc__ae7a4018f8(((advance_x - glyph->AdvanceX) * 0.5f)) : ((advance_x - glyph->AdvanceX) * 0.5f));
+
+    if (glyph->PackId != -1) {
+        r = imgui__im_font_atlas_pack_get_rect(atlas, glyph->PackId);
+        if (glyph->U0 != 0.0f || glyph->V0 != 0.0f ||
+            glyph->U1 != 0.0f || glyph->V1 != 0.0f) {
+            imgui_c89_assert_id(125);
+        }
+        glyph->U0 = r->x * atlas->TexUvScale.x;
+        glyph->V0 = r->y * atlas->TexUvScale.y;
+        glyph->U1 = (r->x + r->w) * atlas->TexUvScale.x;
+        glyph->V1 = (r->y + r->h) * atlas->TexUvScale.y;
+        baked->MetricsTotalSurface += r->w * r->h;
+    }
+
+    if (src != NULL) {
+        reference_size = baked->OwnerFont->Sources.Data[0]->SizePixels;
+        offsets_scale = reference_size != 0.0f ? baked->Size / reference_size : 1.0f;
+        old_advance = glyph->AdvanceX;
+        new_advance = ImClamp__36c731a202(old_advance,
+            src->GlyphMinAdvanceX * offsets_scale,
+            src->GlyphMaxAdvanceX * offsets_scale);
+        if (new_advance != old_advance) {
+            char_off_x = (new_advance - old_advance) * 0.5f;
+            if (src->PixelSnapH) {
+                char_off_x = ImTrunc__ae7a4018f8(char_off_x);
+            }
             glyph->X0 += char_off_x;
             glyph->X1 += char_off_x;
         }
         if (src->PixelSnapH) {
-            advance_x = ((float)(((int)((advance_x + 0.5f)))));
+            new_advance = ImGui_GetRoundedFontSize__822dc3c5f9(new_advance);
         }
-        glyph->AdvanceX = (advance_x + src->GlyphExtraAdvanceX);
+        glyph->AdvanceX = new_advance + src->GlyphExtraAdvanceX;
     }
+
     if (glyph->Colored) {
-        atlas->TexPixelsUseColors = (atlas->TexData->UseColors = 1);
+        atlas->TexPixelsUseColors = 1;
+        atlas->TexData->UseColors = 1;
     }
-    codepoint = glyph->Codepoint;
-    ImFontBaked_BuildGrowIndex__cbf6198a3b(imgui_c89_ctx, baked, (codepoint + 1));
-    (*(ImVector_float__operator____739fa74fbe(((ImVector_float *)(&(baked->IndexAdvanceX))), codepoint))) = glyph->AdvanceX;
-    (*(ImVector_unsigned_short__operator____6927bb710f(((ImVector_unsigned_short *)(&(baked->IndexLookup))), codepoint))) = ((ImU16)(glyph_idx));
-    page_n = (codepoint / 8192);
-    baked->OwnerFont->Used8kPagesMap[(page_n >> 3)] |= (1 << (page_n & 7));
+
+    ImFontBaked_BuildGrowIndex__cbf6198a3b(imgui_c89_ctx, baked, glyph->Codepoint + 1);
+    baked->IndexAdvanceX.Data[glyph->Codepoint] = glyph->AdvanceX;
+    baked->IndexLookup.Data[glyph->Codepoint] = (ImU16)glyph_index;
+    glyph_index = glyph->Codepoint / 8192;
+    baked->OwnerFont->Used8kPagesMap[glyph_index >> 3] |=
+        (unsigned char)(1 << (glyph_index & 7));
     return glyph;
 }
 
@@ -611,56 +610,48 @@ void imgui__im_font_atlas_baked_add_font_glyph_advanced_x(ImGuiContext *imgui_c8
 
 void imgui__im_font_atlas_baked_discard(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas, ImFont * font, ImFontBaked * baked)
 {
-    ImFontAtlasBuilder * builder;
-    ImGuiContext * g2;
-    ImFontGlyph * __begin1;
-    ImFontGlyph * __end1;
-    ImFontGlyph * glyph;
-    ImVector_ImFontGlyph * __range1;
-    char * loader_data_p;
-    ImFontConfig ** __begin1__b90d6d5b;
-    const ImFontLoader * loader;
-    ImFontConfig ** __end1__22320d0e;
-    ImFontConfig * src;
-    ImVector_ImFontConfig_ptr * __range1__7a7ee38c;
+    ImFontAtlasBuilder *builder;
+    ImFontConfig *src;
+    const ImFontLoader *loader;
+    unsigned char *loader_data;
+    ImFontGlyph *glyph;
+    int glyph_n;
+    int src_n;
 
     builder = atlas->Builder;
-    do {
-        g2 = imgui_c89_ctx;
-        if (g2 && (g2->DebugLogFlags & ImGuiDebugLogFlags_EventFont)) {
-            imgui__debug_log(imgui_c89_ctx, "[font] Discard baked %.2f for \"%s\"\n", baked->Size, imgui_font_get_debug_name(((ImFont *)(font))));
-        }
-    } while (0);
-    __range1 = &(baked->Glyphs);
-    __begin1 = ImVector_ImFontGlyph__begin__1f259325b6(((ImVector_ImFontGlyph *)(__range1)));
-    __end1 = ImVector_ImFontGlyph__end__7450013537(((ImVector_ImFontGlyph *)(__range1)));
-    for (; __begin1 != __end1; ++__begin1) {
-        glyph = &((*__begin1));
-        if (glyph->PackId != (-1)) {
+    if (imgui_c89_ctx != NULL &&
+        (imgui_c89_ctx->DebugLogFlags & ImGuiDebugLogFlags_EventFont) != 0) {
+        imgui__debug_log(imgui_c89_ctx, "[font] Discard baked %.2f for \"%s\"\n",
+            baked->Size, imgui_font_get_debug_name(font));
+    }
+
+    for (glyph_n = 0; glyph_n < baked->Glyphs.Size; glyph_n++) {
+        glyph = &baked->Glyphs.Data[glyph_n];
+        if (glyph->PackId != -1) {
             imgui__im_font_atlas_pack_discard_rect(atlas, glyph->PackId);
         }
     }
-    loader_data_p = ((char *)(baked->FontLoaderDatas));
-    __range1__7a7ee38c = &(font->Sources);
-    __begin1__b90d6d5b = ImVector_ImFontConfig____begin__72e017f239(((ImVector_ImFontConfig_ptr *)(__range1__7a7ee38c)));
-    __end1__22320d0e = ImVector_ImFontConfig____end__7367df220c(((ImVector_ImFontConfig_ptr *)(__range1__7a7ee38c)));
-    for (; __begin1__b90d6d5b != __end1__22320d0e; ++__begin1__b90d6d5b) {
-        src = (*__begin1__b90d6d5b);
-        loader = (src->FontLoader ? src->FontLoader : atlas->FontLoader);
-        if (loader->FontBakedDestroy) {
-            loader->FontBakedDestroy(atlas, src, baked, loader_data_p);
+
+    loader_data = (unsigned char *)baked->FontLoaderDatas;
+    for (src_n = 0; src_n < font->Sources.Size; src_n++) {
+        src = font->Sources.Data[src_n];
+        loader = src->FontLoader != NULL ? src->FontLoader : atlas->FontLoader;
+        if (loader->FontBakedDestroy != NULL) {
+            loader->FontBakedDestroy(atlas, src, baked, loader_data);
         }
-        loader_data_p += loader->FontBakedSrcLoaderDataSize;
+        loader_data += loader->FontBakedSrcLoaderDataSize;
     }
-    if (baked->FontLoaderDatas) {
+    if (baked->FontLoaderDatas != NULL) {
         imgui_mem_free(imgui_c89_ctx, baked->FontLoaderDatas);
-        baked->FontLoaderDatas = 0;
+        baked->FontLoaderDatas = NULL;
     }
-    imgui_storage_set_void_ptr(imgui_c89_ctx, ((ImGuiStorage *)(&(builder->BakedMap))), baked->BakedId, 0);
+
+    imgui_storage_set_void_ptr(imgui_c89_ctx, &builder->BakedMap,
+        baked->BakedId, NULL);
     builder->BakedDiscardedCount++;
-    imgui_font_baked_clear_output_data(imgui_c89_ctx, ((ImFontBaked *)(baked)));
+    imgui_font_baked_clear_output_data(imgui_c89_ctx, baked);
     baked->WantDestroy = 1;
-    font->LastBaked = 0;
+    font->LastBaked = NULL;
 }
 
 void imgui__im_font_atlas_baked_discard_font_glyph(ImFontAtlas * atlas, ImFont * font, ImFontBaked * baked, ImFontGlyph * glyph)
@@ -681,44 +672,40 @@ void imgui__im_font_atlas_baked_discard_font_glyph(ImFontAtlas * atlas, ImFont *
 
 ImFontBaked * imgui__im_font_atlas_baked_get_closest_match(ImFontAtlas * atlas, ImFont * font, float font_size, float font_rasterizer_density)
 {
-    ImFontAtlasBuilder * builder;
-    ImFontBaked * closest_larger_match;
-    ImFontBaked * closest_smaller_match;
-    ImFontBaked * baked;
+    ImFontAtlasBuilder *builder;
+    ImFontBaked *baked;
+    ImFontBaked *closest_larger;
+    ImFontBaked *closest_smaller;
+    int step;
     int baked_n;
-    int step_n;
 
     builder = atlas->Builder;
-    step_n = 0;
-    for (; step_n < 2; step_n++) {
-        closest_larger_match = 0;
-        closest_smaller_match = 0;
-        baked_n = 0;
-        for (; baked_n < builder->BakedPool.Size; baked_n++) {
-            baked = (&(*(ImStableVector_ImFontBaked__32__operator____abbc4372e3(((ImStableVector_ImFontBaked_32 *)(&(builder->BakedPool))), baked_n))));
-            if ((baked->OwnerFont != font) || baked->WantDestroy) {
-                continue;
-            }
-            if ((step_n == 0) && (baked->RasterizerDensity != font_rasterizer_density)) {
-                continue;
-            }
-            if ((baked->Size > font_size) && ((closest_larger_match == 0) || (baked->Size < closest_larger_match->Size))) {
-                closest_larger_match = baked;
-            }
-            if ((baked->Size < font_size) && ((closest_smaller_match == 0) || (baked->Size > closest_smaller_match->Size))) {
-                closest_smaller_match = baked;
+    for (step = 0; step < 2; step++) {
+        closest_larger = NULL;
+        closest_smaller = NULL;
+        for (baked_n = 0; baked_n < builder->BakedPool.Size; baked_n++) {
+            baked = ImStableVector_ImFontBaked__32__operator____abbc4372e3(&builder->BakedPool, baked_n);
+            if (baked->OwnerFont != font || baked->WantDestroy) continue;
+            if (step == 0 &&
+                baked->RasterizerDensity != font_rasterizer_density) continue;
+            if (baked->Size > font_size &&
+                (closest_larger == NULL || baked->Size < closest_larger->Size)) {
+                closest_larger = baked;
+            } else if (baked->Size < font_size &&
+                (closest_smaller == NULL || baked->Size > closest_smaller->Size)) {
+                closest_smaller = baked;
             }
         }
-        if (closest_larger_match) {
-            if ((closest_smaller_match == 0) || ((closest_larger_match->Size >= (font_size * 2.0f)) && (closest_smaller_match->Size > (font_size * 0.5f)))) {
-                return closest_larger_match;
-            }
+
+        if (closest_larger != NULL &&
+            (closest_smaller == NULL ||
+             (closest_larger->Size >= font_size * 2.0f &&
+              closest_smaller->Size > font_size * 0.5f))) {
+            return closest_larger;
         }
-        if (closest_smaller_match) {
-            return closest_smaller_match;
-        }
+        if (closest_smaller != NULL) return closest_smaller;
     }
-    return 0;
+    return NULL;
 }
 
 ImGuiID imgui__im_font_atlas_baked_get_id(ImGuiID font_id, float baked_size, float rasterizer_density)
@@ -738,55 +725,72 @@ ImGuiID imgui__im_font_atlas_baked_get_id(ImGuiID font_id, float baked_size, flo
 ImFontBaked * imgui__im_font_atlas_baked_get_or_add(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas, ImFont * font, float font_size, float font_rasterizer_density)
 {
     ImGuiID baked_id;
-    ImFontAtlasBuilder * builder;
-    ImFontBaked ** p_baked_in_map;
-    ImFontBaked * baked;
+    ImFontAtlasBuilder *builder;
+    ImFontBaked **baked_ref;
+    ImFontBaked *baked;
 
-    imgui_c89_expect((!((font_size > 0.0f) && (font_rasterizer_density > 0.0f))), 0) ? imgui_c89_assert_id(127) : ((void)(0));
-    baked_id = imgui__im_font_atlas_baked_get_id(font->FontId, font_size, font_rasterizer_density);
+    if (!(font_size > 0.0f && font_rasterizer_density > 0.0f)) {
+        imgui_c89_assert_id(127);
+    }
+    baked_id = imgui__im_font_atlas_baked_get_id(
+        font->FontId, font_size, font_rasterizer_density);
     builder = atlas->Builder;
-    p_baked_in_map = ((ImFontBaked **)(imgui_storage_get_void_ptr_ref(imgui_c89_ctx, ((ImGuiStorage *)(&(builder->BakedMap))), baked_id, 0)));
-    baked = (*p_baked_in_map);
-    if (baked != 0) {
-        imgui_c89_expect((!(((baked->Size == font_size) && (baked->OwnerFont == font)) && (baked->BakedId == baked_id))), 0) ? imgui_c89_assert_id(128) : ((void)(0));
+    baked_ref = (ImFontBaked **)imgui_storage_get_void_ptr_ref(imgui_c89_ctx,
+        &builder->BakedMap, baked_id, NULL);
+    baked = *baked_ref;
+    if (baked != NULL) {
+        if (baked->Size != font_size || baked->OwnerFont != font ||
+            baked->BakedId != baked_id) {
+            imgui_c89_assert_id(128);
+        }
         return baked;
     }
-    if ((font->Flags & ImFontFlags_LockBakedSizes) || atlas->Locked) {
-        baked = imgui__im_font_atlas_baked_get_closest_match(atlas, font, font_size, font_rasterizer_density);
-        if (baked != 0) {
-            return baked;
-        }
+
+    if ((font->Flags & ImFontFlags_LockBakedSizes) != 0 || atlas->Locked) {
+        baked = imgui__im_font_atlas_baked_get_closest_match(
+            atlas, font, font_size, font_rasterizer_density);
+        if (baked != NULL) return baked;
         if (atlas->Locked) {
-            imgui_c89_expect((!((!atlas->Locked) && "Cannot use dynamic font size with a locked ImFontAtlas!")), 0) ? imgui_c89_assert_id(129) : ((void)(0));
-            return 0;
+            imgui_c89_assert_id(129);
+            return NULL;
         }
     }
-    baked = imgui__im_font_atlas_baked_add(imgui_c89_ctx, atlas, font, font_size, font_rasterizer_density, baked_id);
-    (*p_baked_in_map) = baked;
+
+    baked = imgui__im_font_atlas_baked_add(imgui_c89_ctx,
+        atlas, font, font_size, font_rasterizer_density, baked_id);
+    *baked_ref = baked;
     return baked;
 }
 
 void imgui__im_font_atlas_baked_set_font_glyph_bitmap(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas, ImFontBaked * baked, ImFontConfig * src, ImFontGlyph * glyph, ImTextureRect * r, const unsigned char * src_pixels, ImTextureFormat src_fmt, int src_pitch)
 {
-    ImTextureData * tex;
-    ImFontAtlasPostProcessData pp_data;
+    ImTextureData *tex;
+    void *dst_pixels;
+    int dst_pitch;
+    ImFontAtlasPostProcessData data;
 
     tex = atlas->TexData;
-    imgui_c89_expect((!(((r->x + r->w) <= tex->Width) && ((r->y + r->h) <= tex->Height))), 0) ? imgui_c89_assert_id(126) : ((void)(0));
-    imgui__im_font_atlas_texture_block_convert(src_pixels, src_fmt, src_pitch, ((unsigned char *)(imgui_texture_data_get_pixels_at(((ImTextureData *)(tex)), r->x, r->y))), tex->Format, imgui_texture_data_get_pitch(((ImTextureData *)(tex))), r->w, r->h);
-    memset(&pp_data, 0, sizeof(pp_data));
-    pp_data.FontAtlas = atlas;
-    pp_data.Font = baked->OwnerFont;
-    pp_data.FontSrc = src;
-    pp_data.FontBaked = baked;
-    pp_data.Glyph = glyph;
-    pp_data.Pixels = imgui_texture_data_get_pixels_at(((ImTextureData *)(tex)), r->x, r->y);
-    pp_data.Format = tex->Format;
-    pp_data.Pitch = imgui_texture_data_get_pitch(((ImTextureData *)(tex)));
-    pp_data.Width = r->w;
-    pp_data.Height = r->h;
-    imgui__im_font_atlas_texture_block_post_process((&pp_data));
-    imgui__im_font_atlas_texture_block_queue_upload(imgui_c89_ctx, atlas, tex, r->x, r->y, r->w, r->h);
+    if (r->x + r->w > tex->Width || r->y + r->h > tex->Height) {
+        imgui_c89_assert_id(126);
+    }
+    dst_pixels = imgui_texture_data_get_pixels_at(tex, r->x, r->y);
+    dst_pitch = imgui_texture_data_get_pitch(tex);
+    imgui__im_font_atlas_texture_block_convert(src_pixels, src_fmt, src_pitch,
+        (unsigned char *)dst_pixels, tex->Format, dst_pitch, r->w, r->h);
+
+    data.FontAtlas = atlas;
+    data.Font = baked->OwnerFont;
+    data.FontSrc = src;
+    data.FontBaked = baked;
+    data.Glyph = glyph;
+    data.Pixels = dst_pixels;
+    data.Format = tex->Format;
+    data.Pitch = dst_pitch;
+    data.Width = r->w;
+    data.Height = r->h;
+    imgui__im_font_atlas_texture_block_post_process(&data);
+    imgui__im_font_atlas_texture_block_queue_upload(imgui_c89_ctx, atlas, tex,
+        r->x, r->y, r->w, r->h);
 }
 
 void imgui__im_font_atlas_build_clear(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
@@ -885,14 +889,29 @@ void imgui__im_font_atlas_build_get_oversample_factors(ImFontConfig * src, ImFon
 
 void imgui__im_font_atlas_build_init(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
 {
-    if (atlas->FontLoader == 0) {
-        imgui_font_atlas_set_font_loader(imgui_c89_ctx, ((ImFontAtlas *)(atlas)), imgui__im_font_atlas_get_font_loader_for_stb_truetype());
+    ImFontAtlasBuilder *builder;
+    int width;
+    int height;
+
+    if (atlas->FontLoader == NULL) {
+        imgui_font_atlas_set_font_loader(imgui_c89_ctx, atlas,
+            imgui__im_font_atlas_get_font_loader_for_stb_truetype());
     }
-    if ((atlas->TexData == 0) || (atlas->TexData->Pixels == 0)) {
-        imgui__im_font_atlas_texture_add(imgui_c89_ctx, atlas, ImUpperPowerOfTwo__034825575f(atlas->TexMinWidth), ImUpperPowerOfTwo__034825575f(atlas->TexMinHeight));
+
+    if (atlas->TexData == NULL || atlas->TexData->Pixels == NULL) {
+        width = ImUpperPowerOfTwo__034825575f(atlas->TexMinWidth);
+        height = ImUpperPowerOfTwo__034825575f(atlas->TexMinHeight);
+        imgui__im_font_atlas_texture_add(imgui_c89_ctx, atlas, width, height);
     }
-    atlas->Builder = ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(imgui_mem_alloc(imgui_c89_ctx, sizeof(ImFontAtlasBuilder)));
-    if (atlas->FontLoader->LoaderInit) {
+
+    builder = imgui_mem_alloc(imgui_c89_ctx, sizeof(*builder));
+    memset(builder, 0, sizeof(*builder));
+    builder->FrameCount = -1;
+    builder->RectsIndexFreeListStart = -1;
+    builder->PackIdMouseCursors = -1;
+    builder->PackIdLinesTexData = -1;
+    atlas->Builder = builder;
+    if (atlas->FontLoader->LoaderInit != NULL) {
         atlas->FontLoader->LoaderInit(atlas);
     }
     imgui__font_atlas_build_update_renderer_has_textures_from_context(atlas);
@@ -905,42 +924,42 @@ void imgui__im_font_atlas_build_init(ImGuiContext *imgui_c89_ctx, ImFontAtlas * 
 
 void imgui__im_font_atlas_build_legacy_preload_all_glyph_ranges(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
 {
-    ImFont ** __begin1;
-    ImFontBaked * baked;
-    ImFontConfig ** __begin2;
-    const ImWchar * ranges;
+    ImFontAtlasBuilder *builder;
+    ImFont *font;
+    ImFontBaked *baked;
+    ImFontConfig *src;
+    const ImWchar *ranges;
     unsigned int c;
-    ImFontConfig ** __end2;
-    ImFontConfig * src;
-    ImVector_ImFontConfig_ptr * __range2;
-    ImFont ** __end1;
-    ImFont * font;
-    ImVector_ImFont_ptr * __range1;
+    unsigned int range_last;
+    int font_n;
+    int src_n;
 
-    atlas->Builder->PreloadedAllGlyphsRanges = 1;
-    __range1 = &(atlas->Fonts);
-    __begin1 = ImVector_ImFont____begin__24205a3db7(((ImVector_ImFont_ptr *)(__range1)));
-    __end1 = ImVector_ImFont____end__43d2d7f52c(((ImVector_ImFont_ptr *)(__range1)));
-    for (; __begin1 != __end1; ++__begin1) {
-        font = (*__begin1);
-        baked = imgui_font_get_font_baked(imgui_c89_ctx, ((ImFont *)(font)), font->LegacySize, (-1.0f));
+    builder = atlas->Builder;
+    builder->PreloadedAllGlyphsRanges = 1;
+    for (font_n = 0; font_n < atlas->Fonts.Size; font_n++) {
+        font = atlas->Fonts.Data[font_n];
+        baked = imgui_font_get_font_baked(imgui_c89_ctx,
+            font, font->LegacySize, -1.0f);
         if (font->FallbackChar != 0) {
-            imgui_font_baked_find_glyph(imgui_c89_ctx, ((ImFontBaked *)(baked)), font->FallbackChar);
+            imgui_font_baked_find_glyph(imgui_c89_ctx, baked, font->FallbackChar);
         }
         if (font->EllipsisChar != 0) {
-            imgui_font_baked_find_glyph(imgui_c89_ctx, ((ImFontBaked *)(baked)), font->EllipsisChar);
+            imgui_font_baked_find_glyph(imgui_c89_ctx, baked, font->EllipsisChar);
         }
-        __range2 = &(font->Sources);
-        __begin2 = ImVector_ImFontConfig____begin__72e017f239(((ImVector_ImFontConfig_ptr *)(__range2)));
-        __end2 = ImVector_ImFontConfig____end__7367df220c(((ImVector_ImFontConfig_ptr *)(__range2)));
-        for (; __begin2 != __end2; ++__begin2) {
-            src = (*__begin2);
-            ranges = (src->GlyphRanges ? src->GlyphRanges : imgui_font_atlas_get_glyph_ranges_default(((ImFontAtlas *)(atlas))));
-            for (; ranges[0]; ranges += 2) {
-                c = ranges[0];
-                for (; (c <= ranges[1]) && (c <= 65535); c++) {
-                    imgui_font_baked_find_glyph(imgui_c89_ctx, ((ImFontBaked *)(baked)), ((ImWchar)(c)));
+
+        for (src_n = 0; src_n < font->Sources.Size; src_n++) {
+            src = font->Sources.Data[src_n];
+            ranges = src->GlyphRanges != NULL ? src->GlyphRanges :
+                imgui_font_atlas_get_glyph_ranges_default(atlas);
+            while (ranges[0] != 0) {
+                c = (unsigned int)ranges[0];
+                range_last = (unsigned int)ranges[1];
+                while (c <= range_last && c <= 0xffff) {
+                    imgui_font_baked_find_glyph(imgui_c89_ctx, baked, (ImWchar)c);
+                    if (c == range_last || c == 0xffff) break;
+                    c++;
                 }
+                ranges += 2;
             }
         }
     }
@@ -967,53 +986,40 @@ void imgui__im_font_atlas_build_main(ImGuiContext *imgui_c89_ctx, ImFontAtlas * 
 
 void imgui__im_font_atlas_build_notify_set_font(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas, ImFont * old_font, ImFont * new_font)
 {
-    ImDrawListSharedData ** __begin1;
-    ImGuiContext * ctx;
-    ImGuiContext * curr_ctx;
-    unsigned char need_bind_ctx;
-    ImFontStackData * __begin3;
-    ImFontStackData * __end3;
-    ImFontStackData * font_stack_data;
-    ImVector_ImFontStackData * __range3;
-    ImDrawListSharedData ** __end1;
-    ImDrawListSharedData * shared_data;
-    ImVector_ImDrawListSharedData_ptr * __range1;
+    ImDrawListSharedData *shared_data;
+    ImGuiContext *ctx;
+    ImGuiContext *backup_ctx;
+    int shared_n;
+    int stack_n;
+    unsigned char rebound;
 
-    __range1 = &(atlas->DrawListSharedDatas);
-    __begin1 = ImVector_ImDrawListSharedData____begin__e2419817e9(((ImVector_ImDrawListSharedData_ptr *)(__range1)));
-    __end1 = ImVector_ImDrawListSharedData____end__dee61e36fa(((ImVector_ImDrawListSharedData_ptr *)(__range1)));
-    for (; __begin1 != __end1; ++__begin1) {
-        shared_data = (*__begin1);
+    (void)imgui_c89_ctx;
+    for (shared_n = 0; shared_n < atlas->DrawListSharedDatas.Size; shared_n++) {
+        shared_data = atlas->DrawListSharedDatas.Data[shared_n];
         if (shared_data->Font == old_font) {
             shared_data->Font = new_font;
         }
         ctx = shared_data->Context;
-        if (ctx) {
-            if (((old_font == 0) && (ctx->Font == 0)) && (ctx->FontSizeBase == 0.0f)) {
-                continue;
+        if (ctx == NULL) continue;
+        if (old_font == NULL && ctx->Font == NULL && ctx->FontSizeBase == 0.0f) continue;
+
+        if (ctx->IO.FontDefault == old_font) {
+            ctx->IO.FontDefault = new_font;
+        }
+        if (ctx->Font == old_font) {
+            backup_ctx = imgui_get_current_context();
+            rebound = backup_ctx != ctx;
+            if (rebound) {
+                imgui_set_current_context(ctx);
             }
-            if (ctx->IO.FontDefault == old_font) {
-                ctx->IO.FontDefault = new_font;
+            imgui__set_current_font(ctx, new_font, ctx->FontSizeBase, ctx->FontSize);
+            if (rebound) {
+                imgui_set_current_context(backup_ctx);
             }
-            if (ctx->Font == old_font) {
-                curr_ctx = imgui_get_current_context();
-                need_bind_ctx = (ctx != curr_ctx);
-                if (need_bind_ctx) {
-                    imgui_set_current_context(ctx);
-                }
-                imgui__set_current_font(imgui_c89_ctx, new_font, ctx->FontSizeBase, ctx->FontSize);
-                if (need_bind_ctx) {
-                    imgui_set_current_context(curr_ctx);
-                }
-            }
-            __range3 = &(ctx->FontStack);
-            __begin3 = ImVector_ImFontStackData__begin__8e6fdbb421(((ImVector_ImFontStackData *)(__range3)));
-            __end3 = ImVector_ImFontStackData__end__cfc5f331c7(((ImVector_ImFontStackData *)(__range3)));
-            for (; __begin3 != __end3; ++__begin3) {
-                font_stack_data = &((*__begin3));
-                if (font_stack_data->Font == old_font) {
-                    font_stack_data->Font = new_font;
-                }
+        }
+        for (stack_n = 0; stack_n < ctx->FontStack.Size; stack_n++) {
+            if (ctx->FontStack.Data[stack_n].Font == old_font) {
+                ctx->FontStack.Data[stack_n].Font = new_font;
             }
         }
     }
@@ -1021,152 +1027,123 @@ void imgui__im_font_atlas_build_notify_set_font(ImGuiContext *imgui_c89_ctx, ImF
 
 void imgui__im_font_atlas_build_render_bitmap_from_string(ImFontAtlas * atlas, int x, int y, int w, int h, const char * in_str, char in_marker_char)
 {
-    ImTextureData * tex;
-    ImU8 * out_p;
+    ImTextureData *tex;
+    unsigned char *out8;
+    ImU32 *out32;
     int off_x;
     int off_y;
-    ImU32 * out_p__ae5eb6f4;
-    int off_x__525f4949;
-    int off_y__3cacdd09;
 
     tex = atlas->TexData;
-    imgui_c89_expect((!((x >= 0) && ((x + w) <= tex->Width))), 0) ? imgui_c89_assert_id(82) : ((void)(0));
-    imgui_c89_expect((!((y >= 0) && ((y + h) <= tex->Height))), 0) ? imgui_c89_assert_id(83) : ((void)(0));
+    if (!(x >= 0 && x + w <= tex->Width)) {
+        imgui_c89_assert_id(82);
+    }
+    if (!(y >= 0 && y + h <= tex->Height)) {
+        imgui_c89_assert_id(83);
+    }
     switch (tex->Format) {
-        case ImTextureFormat_Alpha8:
-            out_p = ((ImU8 *)(imgui_texture_data_get_pixels_at(((ImTextureData *)(tex)), x, y)));
-            off_y = 0;
-            for (; off_y < h; ((off_y++) , (out_p += tex->Width)) , (in_str += w)) {
-                off_x = 0;
-                for (; off_x < w; off_x++) {
-                    out_p[off_x] = ((in_str[off_x] == in_marker_char) ? 255 : 0);
-                }
+    case ImTextureFormat_Alpha8:
+        out8 = (unsigned char *)imgui_texture_data_get_pixels_at(tex, x, y);
+        for (off_y = 0; off_y < h; off_y++, out8 += tex->Width, in_str += w) {
+            for (off_x = 0; off_x < w; off_x++) {
+                out8[off_x] = in_str[off_x] == in_marker_char ? 0xff : 0x00;
             }
-            break;
-        case ImTextureFormat_RGBA32:
-            out_p__ae5eb6f4 = ((ImU32 *)(imgui_texture_data_get_pixels_at(((ImTextureData *)(tex)), x, y)));
-            off_y__3cacdd09 = 0;
-            for (; off_y__3cacdd09 < h; ((off_y__3cacdd09++) , (out_p__ae5eb6f4 += tex->Width)) , (in_str += w)) {
-                off_x__525f4949 = 0;
-                for (; off_x__525f4949 < w; off_x__525f4949++) {
-                    out_p__ae5eb6f4[off_x__525f4949] = ((in_str[off_x__525f4949] == in_marker_char) ? ((((((ImU32)(255)) << 24) | (((ImU32)(255)) << 16)) | (((ImU32)(255)) << 8)) | (((ImU32)(255)) << 0)) : ((((((ImU32)(0)) << 24) | (((ImU32)(0)) << 16)) | (((ImU32)(0)) << 8)) | (((ImU32)(0)) << 0)));
-                }
+        }
+        break;
+    case ImTextureFormat_RGBA32:
+        out32 = (ImU32 *)imgui_texture_data_get_pixels_at(tex, x, y);
+        for (off_y = 0; off_y < h; off_y++, out32 += tex->Width, in_str += w) {
+            for (off_x = 0; off_x < w; off_x++) {
+                out32[off_x] = in_str[off_x] == in_marker_char
+                    ? 0xffffffffu : 0x00000000u;
             }
-            break;
+        }
+        break;
     }
 }
 
 void imgui__im_font_atlas_build_setup_font_loader(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas, const ImFontLoader * font_loader)
 {
-    ImFont ** __begin1;
-    ImFont ** __end1;
-    ImFont * font;
-    ImVector_ImFont_ptr * __range1;
-    ImFont ** __begin1__ba925afa;
-    ImFont ** __end1__e3d21a08;
-    ImFont * font__e06051f1;
-    ImVector_ImFont_ptr * __range1__7a715231;
-    ImFont ** __begin1__586ca7d1;
-    ImFontConfig ** __begin2;
-    ImFontConfig ** __end2;
-    ImFontConfig * src;
-    ImVector_ImFontConfig_ptr * __range2;
-    ImFont ** __end1__22d1fdd7;
-    ImFont * font__f44fa74a;
-    ImVector_ImFont_ptr * __range1__fd28ac8c;
+    ImFont *font;
+    ImFontConfig *src;
+    int font_n;
+    int src_n;
 
-    if (atlas->FontLoader == font_loader) {
-        return;
+    if (atlas->FontLoader == font_loader) return;
+    if (atlas->Locked) {
+        imgui_c89_assert_id(80);
     }
-    imgui_c89_expect((!((!atlas->Locked) && "Cannot modify a locked ImFontAtlas!")), 0) ? imgui_c89_assert_id(80) : ((void)(0));
-    __range1 = &(atlas->Fonts);
-    __begin1 = ImVector_ImFont____begin__24205a3db7(((ImVector_ImFont_ptr *)(__range1)));
-    __end1 = ImVector_ImFont____end__43d2d7f52c(((ImVector_ImFont_ptr *)(__range1)));
-    for (; __begin1 != __end1; ++__begin1) {
-        font = (*__begin1);
-        imgui__im_font_atlas_font_destroy_output(imgui_c89_ctx, atlas, font);
+
+    for (font_n = 0; font_n < atlas->Fonts.Size; font_n++) {
+        imgui__im_font_atlas_font_destroy_output(imgui_c89_ctx, atlas,
+            atlas->Fonts.Data[font_n]);
     }
-    if ((atlas->Builder && atlas->FontLoader) && atlas->FontLoader->LoaderShutdown) {
+    if (atlas->Builder != NULL && atlas->FontLoader != NULL &&
+        atlas->FontLoader->LoaderShutdown != NULL) {
         atlas->FontLoader->LoaderShutdown(atlas);
     }
+
     atlas->FontLoader = font_loader;
-    atlas->FontLoaderName = (font_loader ? font_loader->Name : "NULL");
-    imgui_c89_expect((!(atlas->FontLoaderData == 0)), 0) ? imgui_c89_assert_id(81) : ((void)(0));
-    if ((atlas->Builder && atlas->FontLoader) && atlas->FontLoader->LoaderInit) {
-        atlas->FontLoader->LoaderInit(atlas);
+    atlas->FontLoaderName = font_loader != NULL ? font_loader->Name : "NULL";
+    if (atlas->FontLoaderData != NULL) {
+        imgui_c89_assert_id(81);
     }
-    __range1__7a715231 = &(atlas->Fonts);
-    __begin1__ba925afa = ImVector_ImFont____begin__24205a3db7(((ImVector_ImFont_ptr *)(__range1__7a715231)));
-    __end1__e3d21a08 = ImVector_ImFont____end__43d2d7f52c(((ImVector_ImFont_ptr *)(__range1__7a715231)));
-    for (; __begin1__ba925afa != __end1__e3d21a08; ++__begin1__ba925afa) {
-        font__e06051f1 = (*__begin1__ba925afa);
-        imgui__im_font_atlas_font_init_output(atlas, font__e06051f1);
+    if (atlas->Builder != NULL && font_loader != NULL &&
+        font_loader->LoaderInit != NULL) {
+        font_loader->LoaderInit(atlas);
     }
-    __range1__fd28ac8c = &(atlas->Fonts);
-    __begin1__586ca7d1 = ImVector_ImFont____begin__24205a3db7(((ImVector_ImFont_ptr *)(__range1__fd28ac8c)));
-    __end1__22d1fdd7 = ImVector_ImFont____end__43d2d7f52c(((ImVector_ImFont_ptr *)(__range1__fd28ac8c)));
-    for (; __begin1__586ca7d1 != __end1__22d1fdd7; ++__begin1__586ca7d1) {
-        font__f44fa74a = (*__begin1__586ca7d1);
-        __range2 = &(font__f44fa74a->Sources);
-        __begin2 = ImVector_ImFontConfig____begin__72e017f239(((ImVector_ImFontConfig_ptr *)(__range2)));
-        __end2 = ImVector_ImFontConfig____end__7367df220c(((ImVector_ImFontConfig_ptr *)(__range2)));
-        for (; __begin2 != __end2; ++__begin2) {
-            src = (*__begin2);
-            imgui__im_font_atlas_font_source_add_to_font(imgui_c89_ctx, atlas, font__f44fa74a, src);
+
+    for (font_n = 0; font_n < atlas->Fonts.Size; font_n++) {
+        imgui__im_font_atlas_font_init_output(atlas, atlas->Fonts.Data[font_n]);
+    }
+    for (font_n = 0; font_n < atlas->Fonts.Size; font_n++) {
+        font = atlas->Fonts.Data[font_n];
+        for (src_n = 0; src_n < font->Sources.Size; src_n++) {
+            src = font->Sources.Data[src_n];
+            imgui__im_font_atlas_font_source_add_to_font(imgui_c89_ctx, atlas, font, src);
         }
     }
 }
 
 void imgui__im_font_atlas_build_setup_font_special_glyphs(ImFontAtlas * atlas, ImFont * font, ImFontConfig * src)
 {
-    ImWchar fallback_chars[4];
-    const ImWchar * __begin2;
-    const ImWchar * __end2;
-    ImWchar candidate_char;
-    const ImWchar *__range2;
-    ImWchar ellipsis_chars[3];
-    const ImWchar * __begin2__dc75d67d;
-    const ImWchar * __end2__a0feeca0;
-    ImWchar candidate_char__56850190;
-    const ImWchar *__range2__371159bf;
+    ImWchar fallback_candidates[4];
+    ImWchar ellipsis_candidates[3];
+    int n;
 
-    (void)(atlas);
-    imgui_c89_expect((!ImVector_ImFontConfig____contains__e7b05c397e(((ImVector_ImFontConfig_ptr *)(&(font->Sources))), &(src))), 0) ? imgui_c89_assert_id(92) : ((void)(0));
-    memset(&fallback_chars, 0, sizeof(fallback_chars));
-    fallback_chars[0] = font->FallbackChar;
-    fallback_chars[1] = ((ImWchar)(65533));
-    fallback_chars[2] = ((ImWchar)(63));
-    fallback_chars[3] = ((ImWchar)(32));
+    (void)atlas;
+    if (!ImVector_ImFontConfig____contains__e7b05c397e(&font->Sources, &src)) {
+        imgui_c89_assert_id(92);
+    }
+    fallback_candidates[0] = font->FallbackChar;
+    fallback_candidates[1] = 0xfffd;
+    fallback_candidates[2] = (ImWchar)'?';
+    fallback_candidates[3] = (ImWchar)' ';
     if (font->FallbackChar == 0) {
-        __range2 = fallback_chars;
-        __begin2 = __range2;
-        __end2 = (__range2 + 4);
-        for (; __begin2 != __end2; ++__begin2) {
-            candidate_char = (*__begin2);
-            if ((candidate_char != 0) && imgui_font_is_glyph_in_font(((ImFont *)(font)), candidate_char)) {
-                font->FallbackChar = ((ImWchar)(candidate_char));
+        for (n = 0; n < 4; n++) {
+            if (fallback_candidates[n] != 0 &&
+                imgui_font_is_glyph_in_font(font,
+                    fallback_candidates[n])) {
+                font->FallbackChar = fallback_candidates[n];
                 break;
             }
         }
     }
-    memset(&ellipsis_chars, 0, sizeof(ellipsis_chars));
-    ellipsis_chars[0] = src->EllipsisChar;
-    ellipsis_chars[1] = ((ImWchar)(8230));
-    ellipsis_chars[2] = ((ImWchar)(133));
+
+    ellipsis_candidates[0] = src->EllipsisChar;
+    ellipsis_candidates[1] = (ImWchar)0x2026;
+    ellipsis_candidates[2] = (ImWchar)0x0085;
     if (font->EllipsisChar == 0) {
-        __range2__371159bf = ellipsis_chars;
-        __begin2__dc75d67d = __range2__371159bf;
-        __end2__a0feeca0 = (__range2__371159bf + 3);
-        for (; __begin2__dc75d67d != __end2__a0feeca0; ++__begin2__dc75d67d) {
-            candidate_char__56850190 = (*__begin2__dc75d67d);
-            if ((candidate_char__56850190 != 0) && imgui_font_is_glyph_in_font(((ImFont *)(font)), candidate_char__56850190)) {
-                font->EllipsisChar = candidate_char__56850190;
+        for (n = 0; n < 3; n++) {
+            if (ellipsis_candidates[n] != 0 &&
+                imgui_font_is_glyph_in_font(font,
+                    ellipsis_candidates[n])) {
+                font->EllipsisChar = ellipsis_candidates[n];
                 break;
             }
         }
     }
     if (font->EllipsisChar == 0) {
-        font->EllipsisChar = 133;
+        font->EllipsisChar = (ImWchar)0x0085;
         font->EllipsisAutoBake = 1;
     }
 }
@@ -1189,61 +1166,51 @@ void imgui__im_font_atlas_build_update_pointers(ImGuiContext *imgui_c89_ctx, ImF
 
 void imgui__im_font_atlas_debug_log_texture_requests(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
 {
-    ImGuiContext * g;
-    ImTextureData ** __begin1;
-    ImGuiContext * g2;
-    ImTextureRect * __begin5;
-    ImTextureRect * __end5;
-    const ImTextureRect * r;
-    ImVector_ImTextureRect * __range5;
-    ImGuiContext * g2__4ab0950f;
-    ImGuiContext * g2__d1beb20c;
-    ImTextureData ** __end1;
-    ImTextureData * tex;
-    ImVector_ImTextureData_ptr * __range1;
+    ImTextureData *tex;
+    const ImTextureRect *rect;
+    unsigned char log_font;
+    int texture_index;
+    int update_index;
 
-    g = &((*imgui_c89_ctx));
-    (void)((*g));
-    __range1 = &(atlas->TexList);
-    __begin1 = ImVector_ImTextureData____begin__5f590fe7fe(((ImVector_ImTextureData_ptr *)(__range1)));
-    __end1 = ImVector_ImTextureData____end__3efe30f1db(((ImVector_ImTextureData_ptr *)(__range1)));
-    for (; __begin1 != __end1; ++__begin1) {
-        tex = (*__begin1);
-        if ((g->IO.BackendFlags & ImGuiBackendFlags_RendererHasTextures) == 0) {
-            imgui_c89_expect((!(tex->Updates.Size == 0)), 0) ? imgui_c89_assert_id(114) : ((void)(0));
+    log_font = (unsigned char)(imgui_c89_ctx != NULL &&
+        (imgui_c89_ctx->DebugLogFlags & ImGuiDebugLogFlags_EventFont) != 0);
+    for (texture_index = 0; texture_index < atlas->TexList.Size; texture_index++) {
+        tex = atlas->TexList.Data[texture_index];
+        if ((imgui_c89_ctx->IO.BackendFlags & ImGuiBackendFlags_RendererHasTextures) == 0 &&
+            tex->Updates.Size != 0) {
+            imgui_c89_assert_id(114);
         }
         if (tex->Status == ImTextureStatus_WantCreate) {
-            do {
-                g2__d1beb20c = imgui_c89_ctx;
-                if (g2__d1beb20c && (g2__d1beb20c->DebugLogFlags & ImGuiDebugLogFlags_EventFont)) {
-                    imgui__debug_log(imgui_c89_ctx, "[font] Texture #%03d: create %dx%d\n", tex->UniqueID, tex->Width, tex->Height);
+            if (log_font) {
+                imgui__debug_log(imgui_c89_ctx,
+                    "[font] Texture #%03d: create %dx%d\n",
+                    tex->UniqueID, tex->Width, tex->Height);
+            }
+        }
+        else if (tex->Status == ImTextureStatus_WantDestroy) {
+            if (log_font) {
+                imgui__debug_log(imgui_c89_ctx,
+                    "[font] Texture #%03d: destroy %dx%d, texid=0x%llX, backend_data=%p\n",
+                    tex->UniqueID, tex->Width, tex->Height,
+                    imgui__debug_texture_id_to_u64(tex->TexID), tex->BackendUserData);
+            }
+        }
+        else if (tex->Status == ImTextureStatus_WantUpdates) {
+            if (log_font) {
+                imgui__debug_log(imgui_c89_ctx,
+                    "[font] Texture #%03d: update %d regions, texid=0x%llX, backend_data=0x%llX\n",
+                    tex->UniqueID, tex->Updates.Size,
+                    imgui__debug_texture_id_to_u64(tex->TexID),
+                    (ImU64)(intptr_t)tex->BackendUserData);
+            }
+            for (update_index = 0; update_index < tex->Updates.Size; update_index++) {
+                rect = &tex->Updates.Data[update_index];
+                if (!(rect->x >= 0 && rect->y >= 0)) {
+                    imgui_c89_assert_id(115);
                 }
-            } while (0);
-        } else {
-            if (tex->Status == ImTextureStatus_WantDestroy) {
-                do {
-                    g2__4ab0950f = imgui_c89_ctx;
-                    if (g2__4ab0950f && (g2__4ab0950f->DebugLogFlags & ImGuiDebugLogFlags_EventFont)) {
-                        imgui__debug_log(imgui_c89_ctx, "[font] Texture #%03d: destroy %dx%d, texid=0x%llX, backend_data=%p\n", tex->UniqueID, tex->Width, tex->Height, imgui__debug_texture_id_to_u64(tex->TexID), tex->BackendUserData);
-                    }
-                } while (0);
-            } else {
-                if (tex->Status == ImTextureStatus_WantUpdates) {
-                    do {
-                        g2 = imgui_c89_ctx;
-                        if (g2 && (g2->DebugLogFlags & ImGuiDebugLogFlags_EventFont)) {
-                            imgui__debug_log(imgui_c89_ctx, "[font] Texture #%03d: update %d regions, texid=0x%llX, backend_data=0x%llX\n", tex->UniqueID, tex->Updates.Size, imgui__debug_texture_id_to_u64(tex->TexID), ((ImU64)(((intptr_t)(tex->BackendUserData)))));
-                        }
-                    } while (0);
-                    __range5 = &(tex->Updates);
-                    __begin5 = ImVector_ImTextureRect__begin__911152f282(((ImVector_ImTextureRect *)(__range5)));
-                    __end5 = ImVector_ImTextureRect__end__991a10d9ba(((ImVector_ImTextureRect *)(__range5)));
-                    for (; __begin5 != __end5; ++__begin5) {
-                        r = &((*__begin5));
-                        (void)((*r));
-                        imgui_c89_expect((!((r->x >= 0) && (r->y >= 0))), 0) ? imgui_c89_assert_id(115) : ((void)(0));
-                        imgui_c89_expect((!(((r->x + r->w) <= tex->Width) && ((r->y + r->h) <= tex->Height))), 0) ? imgui_c89_assert_id(116) : ((void)(0));
-                    }
+                if (!(rect->x + rect->w <= tex->Width &&
+                      rect->y + rect->h <= tex->Height)) {
+                    imgui_c89_assert_id(116);
                 }
             }
         }
@@ -1517,18 +1484,23 @@ ImTextureRect * imgui__im_font_atlas_pack_get_rect_safe(ImGuiContext *imgui_c89_
 
 void imgui__im_font_atlas_pack_init(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
 {
-    ImTextureData * tex;
-    ImFontAtlasBuilder * builder;
+    ImTextureData *tex;
+    ImFontAtlasBuilder *builder;
     int pack_node_count;
 
     tex = atlas->TexData;
     builder = atlas->Builder;
-    pack_node_count = (tex->Width / 2);
-    ImVector_stbrp_node__resize__14149274a7(imgui_c89_ctx, ((ImVector_stbrp_node *)(&(builder->PackNodes))), pack_node_count);
-    stbrp_init_target__2a192f014e(((stbrp_context *)(((void *)((&builder->PackContext))))), tex->Width, tex->Height, builder->PackNodes.Data, builder->PackNodes.Size);
-    builder->RectsPackedSurface = (builder->RectsPackedCount = 0);
-    builder->MaxRectSize = ImVec2i_ImVec2i_value__e6aede5f7f(0, 0);
-    builder->MaxRectBounds = ImVec2i_ImVec2i_value__e6aede5f7f(0, 0);
+    pack_node_count = tex->Width / 2;
+    ImVector_stbrp_node__resize__14149274a7(imgui_c89_ctx, &builder->PackNodes, pack_node_count);
+    stbrp_init_target__2a192f014e((stbrp_context *)(void *)&builder->PackContext,
+        tex->Width, tex->Height, builder->PackNodes.Data,
+        builder->PackNodes.Size);
+    builder->RectsPackedSurface = 0;
+    builder->RectsPackedCount = 0;
+    builder->MaxRectSize.x = 0;
+    builder->MaxRectSize.y = 0;
+    builder->MaxRectBounds.x = 0;
+    builder->MaxRectBounds.y = 0;
 }
 
 void imgui__im_font_atlas_remove_draw_list_shared_data(ImFontAtlas * atlas, ImDrawListSharedData * data)
@@ -1795,31 +1767,48 @@ ImVec2i imgui__im_font_atlas_texture_get_size_estimate(ImFontAtlas * atlas)
 
 void imgui__im_font_atlas_texture_grow(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas, int old_tex_w, int old_tex_h)
 {
-    ImFontAtlasBuilder * builder;
-    int new_tex_w;
-    int new_tex_h;
-    int pack_padding;
+    ImFontAtlasBuilder *builder;
+    int new_width;
+    int new_height;
+    int padding;
+    int required;
 
     builder = atlas->Builder;
-    if (old_tex_w == (-1)) {
+    if (old_tex_w == -1) {
         old_tex_w = atlas->TexData->Width;
     }
-    if (old_tex_h == (-1)) {
+    if (old_tex_h == -1) {
         old_tex_h = atlas->TexData->Height;
     }
-    imgui_c89_expect((!(ImIsPowerOfTwo__988b9b7202(old_tex_w) && ImIsPowerOfTwo__988b9b7202(old_tex_h))), 0) ? imgui_c89_assert_id(100) : ((void)(0));
-    imgui_c89_expect((!(((ImIsPowerOfTwo__988b9b7202(atlas->TexMinWidth) && ImIsPowerOfTwo__988b9b7202(atlas->TexMaxWidth)) && ImIsPowerOfTwo__988b9b7202(atlas->TexMinHeight)) && ImIsPowerOfTwo__988b9b7202(atlas->TexMaxHeight))), 0) ? imgui_c89_assert_id(101) : ((void)(0));
-    new_tex_w = ((old_tex_h <= old_tex_w) ? old_tex_w : (old_tex_w * 2));
-    new_tex_h = ((old_tex_h <= old_tex_w) ? (old_tex_h * 2) : old_tex_h);
-    pack_padding = atlas->TexGlyphPadding;
-    new_tex_w = ImMax__55d6006f6c(new_tex_w, ImUpperPowerOfTwo__034825575f((builder->MaxRectSize.x + pack_padding)));
-    new_tex_h = ImMax__55d6006f6c(new_tex_h, ImUpperPowerOfTwo__034825575f((builder->MaxRectSize.y + pack_padding)));
-    new_tex_w = ImClamp__2e3747f496(new_tex_w, atlas->TexMinWidth, atlas->TexMaxWidth);
-    new_tex_h = ImClamp__2e3747f496(new_tex_h, atlas->TexMinHeight, atlas->TexMaxHeight);
-    if ((new_tex_w == old_tex_w) && (new_tex_h == old_tex_h)) {
-        return;
+    if (!ImIsPowerOfTwo__988b9b7202(old_tex_w) ||
+        !ImIsPowerOfTwo__988b9b7202(old_tex_h)) {
+        imgui_c89_assert_id(100);
     }
-    imgui__im_font_atlas_texture_repack(imgui_c89_ctx, atlas, new_tex_w, new_tex_h);
+    if (!ImIsPowerOfTwo__988b9b7202(atlas->TexMinWidth) ||
+        !ImIsPowerOfTwo__988b9b7202(atlas->TexMaxWidth) ||
+        !ImIsPowerOfTwo__988b9b7202(atlas->TexMinHeight) ||
+        !ImIsPowerOfTwo__988b9b7202(atlas->TexMaxHeight)) {
+        imgui_c89_assert_id(101);
+    }
+
+    if (old_tex_h <= old_tex_w) {
+        new_width = old_tex_w;
+        new_height = old_tex_h * 2;
+    } else {
+        new_width = old_tex_w * 2;
+        new_height = old_tex_h;
+    }
+
+    padding = atlas->TexGlyphPadding;
+    required = ImUpperPowerOfTwo__034825575f(builder->MaxRectSize.x + padding);
+    new_width = ImMax__55d6006f6c(new_width, required);
+    required = ImUpperPowerOfTwo__034825575f(builder->MaxRectSize.y + padding);
+    new_height = ImMax__55d6006f6c(new_height, required);
+    new_width = ImClamp__2e3747f496(new_width, atlas->TexMinWidth, atlas->TexMaxWidth);
+    new_height = ImClamp__2e3747f496(new_height, atlas->TexMinHeight, atlas->TexMaxHeight);
+
+    if (new_width == old_tex_w && new_height == old_tex_h) return;
+    imgui__im_font_atlas_texture_repack(imgui_c89_ctx, atlas, new_width, new_height);
 }
 
 void imgui__im_font_atlas_texture_make_space(ImGuiContext *imgui_c89_ctx, ImFontAtlas * atlas)
@@ -2176,91 +2165,98 @@ ImVec2 imgui__im_font_calc_text_size_ex(ImGuiContext *imgui_c89_ctx, ImFont * fo
 
 const char * imgui__im_font_calc_word_wrap_position_ex(ImGuiContext *imgui_c89_ctx, ImFont * font, float size, const char * text, const char * text_end, float wrap_width, ImDrawTextFlags flags)
 {
-    ImFontBaked * baked;
+    ImFontBaked *baked;
+    const char *s;
+    const char *next_s;
+    const char *span_end;
     float scale;
     float line_width;
     float blank_width;
-    const char * s;
-    int prev_type;
-    unsigned char keep_blanks;
-    const char * span_end;
     float span_width;
-    unsigned int c;
-    const char * next_s;
     float char_width;
+    unsigned int c;
+    int prev_type;
     int curr_type;
+    unsigned char keep_blanks;
 
-    baked = imgui_font_get_font_baked(imgui_c89_ctx, ((ImFont *)(font)), size, (-1.0f));
-    scale = (size / baked->Size);
+    baked = imgui_font_get_font_baked(imgui_c89_ctx, font, size, -1.0f);
+    scale = size / baked->Size;
     line_width = 0.0f;
     blank_width = 0.0f;
     wrap_width /= scale;
     s = text;
-    imgui_c89_expect((!(text_end != 0)), 0) ? imgui_c89_assert_id(131) : ((void)(0));
+    if (text_end == NULL) {
+        imgui_c89_assert_id(131);
+    }
     prev_type = ImWcharClass_Other;
-    keep_blanks = ((flags & ImDrawTextFlags_WrapKeepBlanks) != 0);
+    keep_blanks = (unsigned char)((flags & ImDrawTextFlags_WrapKeepBlanks) != 0);
     span_end = s;
     span_width = 0.0f;
+
     while (s < text_end) {
-        c = ((unsigned int)((*s)));
-        if (c < 128) {
-            next_s = (s + 1);
-        } else {
-            next_s = (s + imgui__im_text_char_from_utf8((&c), s, text_end));
+        c = (unsigned int)*s;
+        if (c < 0x80) {
+            next_s = s + 1;
+        }
+        else {
+            next_s = s + imgui__im_text_char_from_utf8(&c, s, text_end);
         }
         if (c < 32) {
-            if (c == 10) {
-                return s;
-            }
-            if (c == 13) {
+            if (c == '\n') return s;
+            if (c == '\r') {
                 s = next_s;
                 continue;
             }
         }
-        char_width = ((c < ((unsigned int)(baked->IndexAdvanceX.Size))) ? baked->IndexAdvanceX.Data[c] : (-1.0f));
+
+        char_width = c < (unsigned int)baked->IndexAdvanceX.Size
+            ? baked->IndexAdvanceX.Data[c] : -1.0f;
         if (char_width < 0.0f) {
             char_width = BuildLoadGlyphGetAdvanceOrFallback__d4efb69467(imgui_c89_ctx, baked, c);
         }
-        if (c < 128) {
-            curr_type = ((g_CharClassifierIsSeparator_0000_007f__4fac5034b8[(c >> 4)] >> ((c & 15) << 1)) & 3);
-        } else {
-            if ((c >= 12288) && (c < 12304)) {
-                curr_type = ((g_CharClassifierIsSeparator_3000_300f__65d5a128ec[((c & 15) >> 4)] >> (((c & 15) & 15) << 1)) & 3);
-            } else {
-                curr_type = ImWcharClass_Other;
-            }
+
+        if (c == ' ' || c == '\t' || c == 0x3000) {
+            curr_type = ImWcharClass_Blank;
         }
+        else if (c == '.' || c == ',' || c == ';' || c == '!' || c == '?'
+                 || c == '"' || c == 0x3001 || c == 0x3002) {
+            curr_type = ImWcharClass_Punct;
+        }
+        else {
+            curr_type = ImWcharClass_Other;
+        }
+
         if (curr_type == ImWcharClass_Blank) {
-            if ((prev_type != ImWcharClass_Blank) && (!keep_blanks)) {
+            if (prev_type != ImWcharClass_Blank && !keep_blanks) {
                 span_end = s;
                 line_width += span_width;
                 span_width = 0.0f;
             }
             blank_width += char_width;
-        } else {
-            if (((prev_type == ImWcharClass_Punct) && (curr_type != ImWcharClass_Punct)) && (!((c >= 48) && (c <= 57)))) {
+        }
+        else {
+            if (prev_type == ImWcharClass_Punct && curr_type != ImWcharClass_Punct
+                && !(c >= '0' && c <= '9')) {
                 span_end = s;
-                line_width += (span_width + blank_width);
-                span_width = (blank_width = 0.0f);
-            } else {
-                if ((prev_type == ImWcharClass_Blank) && keep_blanks) {
-                    span_end = s;
-                    line_width += (span_width + blank_width);
-                    span_width = (blank_width = 0.0f);
-                }
+                line_width += span_width + blank_width;
+                span_width = blank_width = 0.0f;
+            }
+            else if (prev_type == ImWcharClass_Blank && keep_blanks) {
+                span_end = s;
+                line_width += span_width + blank_width;
+                span_width = blank_width = 0.0f;
             }
             span_width += char_width;
         }
-        if (((span_width + blank_width) + line_width) > wrap_width) {
-            if ((span_width + blank_width) > wrap_width) {
-                break;
-            }
+
+        if (span_width + blank_width + line_width > wrap_width) {
+            if (span_width + blank_width > wrap_width) break;
             return span_end;
         }
         prev_type = curr_type;
         s = next_s;
     }
-    if ((s == text) && (text < text_end)) {
+    if (s == text && text < text_end) {
         return s + imgui__im_text_count_utf8_bytes_from_char(s, text_end);
     }
     return s;
@@ -2435,23 +2431,37 @@ unsigned char imgui__im_texture_data_update_new_frame(ImGuiContext *imgui_c89_ct
 
     remove_from_list = 0;
     if (tex->Status == ImTextureStatus_OK) {
-        ImVector_ImTextureRect__resize__cc47928fa8(imgui_c89_ctx, ((ImVector_ImTextureRect *)(&(tex->Updates))), 0);
-        tex->UpdateRect.x = (tex->UpdateRect.y = ((unsigned short)((~0))));
-        tex->UpdateRect.w = (tex->UpdateRect.h = 0);
+        tex->Updates.Size = 0;
+        tex->UpdateRect.x = tex->UpdateRect.y = (unsigned short)~0;
+        tex->UpdateRect.w = tex->UpdateRect.h = 0;
     }
-    if ((tex->WantDestroyNextFrame && (tex->Status != ImTextureStatus_Destroyed)) && (tex->Status != ImTextureStatus_WantDestroy)) {
-        imgui_c89_expect((!(((tex->Status == ImTextureStatus_OK) || (tex->Status == ImTextureStatus_WantCreate)) || (tex->Status == ImTextureStatus_WantUpdates))), 0) ? imgui_c89_assert_id(40) : ((void)(0));
+    if (tex->WantDestroyNextFrame &&
+        tex->Status != ImTextureStatus_Destroyed &&
+        tex->Status != ImTextureStatus_WantDestroy) {
+        if (!(tex->Status == ImTextureStatus_OK ||
+              tex->Status == ImTextureStatus_WantCreate ||
+              tex->Status == ImTextureStatus_WantUpdates)) {
+            imgui_c89_assert_id(40);
+        }
         tex->Status = ImTextureStatus_WantDestroy;
     }
-    if ((((tex->Status == ImTextureStatus_WantDestroy) && (tex->TexID == ((ImTextureID)(0)))) && (tex->BackendUserData == 0)) && (tex->QueueUserData == 0)) {
+    if (tex->Status == ImTextureStatus_WantDestroy &&
+        tex->TexID == 0 &&
+        tex->BackendUserData == NULL && tex->QueueUserData == NULL) {
         tex->Status = ImTextureStatus_Destroyed;
     }
     if (tex->Status == ImTextureStatus_Destroyed) {
-        imgui_c89_expect((!(((tex->TexID == ((ImTextureID)(0))) && (tex->BackendUserData == 0)) && "Backend set texture Status to Destroyed but did not clear TexID/BackendUserData!")), 0) ? imgui_c89_assert_id(41) : ((void)(0));
-        imgui_c89_expect((!((tex->QueueUserData == 0) && "Texture queue set Status to Destroyed but did not clear QueueUserData!")), 0) ? imgui_c89_assert_id(42) : ((void)(0));
+        if (!(tex->TexID == 0 &&
+              tex->BackendUserData == NULL)) {
+            imgui_c89_assert_id(41);
+        }
+        if (tex->QueueUserData != NULL) {
+            imgui_c89_assert_id(42);
+        }
         if (tex->WantDestroyNextFrame) {
             remove_from_list = 1;
-        } else {
+        }
+        else {
             tex->Status = ImTextureStatus_WantCreate;
         }
     }
@@ -2624,65 +2634,72 @@ void imgui__render_check_mark(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_lis
 
 void imgui__render_color_rect_with_alpha_checkerboard(ImGuiContext *imgui_c89_ctx, ImDrawList * draw_list, ImVec2 p_min, ImVec2 p_max, ImU32 col, float grid_step, ImVec2 grid_off, float rounding, ImDrawFlags flags)
 {
-    ImVec2 imgui_c89_temporary_0;
-    ImVec2 imgui_c89_temporary_1;
-
     ImU32 col_bg1;
     ImU32 col_bg2;
+    ImVec2 cell_min;
+    ImVec2 cell_max;
+    ImDrawFlags cell_flags;
     int yi;
-    float y1;
-    float y2;
+    float x;
     float x1;
     float x2;
-    ImDrawFlags cell_flags;
-    float x;
     float y;
+    float y1;
+    float y2;
 
     if ((flags & ImDrawFlags_RoundCornersMask_) == 0) {
         flags = ImDrawFlags_RoundCornersDefault_;
     }
-    if (((col & ((unsigned int)(((((((((imgui_c89_u64)(0)) << 16) | 0) << 16) | 65280) << 16) | 0)))) >> 24) < 255) {
-        col_bg1 = imgui_get_color_u32_u32_float(imgui_c89_ctx, imgui__im_alpha_blend_colors(((((((ImU32)(255)) << 24) | (((ImU32)(128)) << 16)) | (((ImU32)(128)) << 8)) | (((ImU32)(128)) << 0)), col), 1.0f);
-        col_bg2 = imgui_get_color_u32_u32_float(imgui_c89_ctx, imgui__im_alpha_blend_colors(((((((ImU32)(255)) << 24) | (((ImU32)(204)) << 16)) | (((ImU32)(204)) << 8)) | (((ImU32)(204)) << 0)), col), 1.0f);
-        imgui_draw_list_add_rect_filled(imgui_c89_ctx, ((ImDrawList *)(draw_list)), &(p_min), &(p_max), col_bg1, rounding, flags);
-        yi = 0;
-        y = (p_min.y + grid_off.y);
-        for (; y < p_max.y; (y += grid_step) , (yi++)) {
-            y1 = ImClamp__36c731a202(y, p_min.y, p_max.y);
-            y2 = ImMin__f04263da73((y + grid_step), p_max.y);
-            if (y2 <= y1) {
-                continue;
+    if (((col & 0xff000000u) >> 24) == 0xff) {
+        imgui_draw_list_add_rect_filled(imgui_c89_ctx, draw_list, &p_min, &p_max,
+                         col, rounding, flags);
+        return;
+    }
+
+    col_bg1 = imgui_get_color_u32_u32_float(imgui_c89_ctx,
+        imgui__im_alpha_blend_colors(0xff808080u, col), 1.0f);
+    col_bg2 = imgui_get_color_u32_u32_float(imgui_c89_ctx,
+        imgui__im_alpha_blend_colors(0xffccccccu, col), 1.0f);
+    imgui_draw_list_add_rect_filled(imgui_c89_ctx, draw_list, &p_min, &p_max,
+                     col_bg1, rounding, flags);
+
+    yi = 0;
+    for (y = p_min.y + grid_off.y; y < p_max.y; y += grid_step, yi++) {
+        y1 = ImClamp__36c731a202(y, p_min.y, p_max.y);
+        y2 = ImMin__f04263da73(y + grid_step, p_max.y);
+        if (y2 <= y1) continue;
+        x = p_min.x + grid_off.x + (float)((yi ^ 1) & 1) * grid_step;
+        for (; x < p_max.x; x += grid_step * 2.0f) {
+            x1 = ImClamp__36c731a202(x, p_min.x, p_max.x);
+            x2 = ImMin__f04263da73(x + grid_step, p_max.x);
+            if (x2 <= x1) continue;
+
+            cell_flags = ImDrawFlags_RoundCornersNone;
+            if (y1 <= p_min.y) {
+                if (x1 <= p_min.x) {
+                    cell_flags |= ImDrawFlags_RoundCornersTopLeft;
+                }
+                if (x2 >= p_max.x) {
+                    cell_flags |= ImDrawFlags_RoundCornersTopRight;
+                }
             }
-            x = ((p_min.x + grid_off.x) + (((yi ^ 1) & 1) * grid_step));
-            for (; x < p_max.x; x += (grid_step * 2.0f)) {
-                x1 = ImClamp__36c731a202(x, p_min.x, p_max.x);
-                x2 = ImMin__f04263da73((x + grid_step), p_max.x);
-                if (x2 <= x1) {
-                    continue;
+            if (y2 >= p_max.y) {
+                if (x1 <= p_min.x) {
+                    cell_flags |= ImDrawFlags_RoundCornersBottomLeft;
                 }
-                cell_flags = ImDrawFlags_RoundCornersNone;
-                if (y1 <= p_min.y) {
-                    if (x1 <= p_min.x) {
-                        cell_flags |= ImDrawFlags_RoundCornersTopLeft;
-                    }
-                    if (x2 >= p_max.x) {
-                        cell_flags |= ImDrawFlags_RoundCornersTopRight;
-                    }
+                if (x2 >= p_max.x) {
+                    cell_flags |= ImDrawFlags_RoundCornersBottomRight;
                 }
-                if (y2 >= p_max.y) {
-                    if (x1 <= p_min.x) {
-                        cell_flags |= ImDrawFlags_RoundCornersBottomLeft;
-                    }
-                    if (x2 >= p_max.x) {
-                        cell_flags |= ImDrawFlags_RoundCornersBottomRight;
-                    }
-                }
-                cell_flags = (((flags == ImDrawFlags_RoundCornersNone) || (cell_flags == ImDrawFlags_RoundCornersNone)) ? ImDrawFlags_RoundCornersNone : (cell_flags & flags));
-                imgui_draw_list_add_rect_filled(imgui_c89_ctx, ((ImDrawList *)(draw_list)), (imgui_c89_temporary_0 = ImVec2_ImVec2_value__c798775144(x1, y1), &imgui_c89_temporary_0), (imgui_c89_temporary_1 = ImVec2_ImVec2_value__c798775144(x2, y2), &imgui_c89_temporary_1), col_bg2, rounding, cell_flags);
             }
+            cell_flags = (flags == ImDrawFlags_RoundCornersNone || cell_flags == ImDrawFlags_RoundCornersNone)
+                ? ImDrawFlags_RoundCornersNone : (cell_flags & flags);
+            cell_min.x = x1;
+            cell_min.y = y1;
+            cell_max.x = x2;
+            cell_max.y = y2;
+            imgui_draw_list_add_rect_filled(imgui_c89_ctx, draw_list, &cell_min, &cell_max,
+                             col_bg2, rounding, cell_flags);
         }
-    } else {
-        imgui_draw_list_add_rect_filled(imgui_c89_ctx, ((ImDrawList *)(draw_list)), &(p_min), &(p_max), col, rounding, flags);
     }
 }
 
@@ -3721,50 +3738,56 @@ void imgui_draw_list_add_image(ImGuiContext *imgui_c89_ctx, ImDrawList *self, Im
 
 void imgui_draw_list_add_image_quad(ImGuiContext *imgui_c89_ctx, ImDrawList *self, ImTextureRef tex_ref, const ImVec2 * p1, const ImVec2 * p2, const ImVec2 * p3, const ImVec2 * p4, const ImVec2 * uv1, const ImVec2 * uv2, const ImVec2 * uv3, const ImVec2 * uv4, ImU32 col)
 {
-    unsigned char push_texture_id;
+    unsigned char push_texture;
 
-    if ((col & ((unsigned int)(((((((((imgui_c89_u64)(0)) << 16) | 0) << 16) | 65280) << 16) | 0)))) == 0) {
-        return;
+    if ((col & 0xff000000u) == 0) return;
+    push_texture = (unsigned char)(
+        tex_ref._TexID != self->_CmdHeader.TexRef._TexID ||
+        tex_ref._TexData != self->_CmdHeader.TexRef._TexData);
+    if (push_texture) {
+        imgui_draw_list_push_texture(imgui_c89_ctx, self, tex_ref);
     }
-    push_texture_id = operator____65519c27cd(&(tex_ref), &(self->_CmdHeader.TexRef));
-    if (push_texture_id) {
-        imgui_draw_list_push_texture(imgui_c89_ctx, ((ImDrawList *)(self)), tex_ref);
-    }
-    imgui_draw_list_prim_reserve(imgui_c89_ctx, ((ImDrawList *)(self)), 6, 4);
-    imgui_draw_list_prim_quad_uv(((ImDrawList *)(self)), p1, p2, p3, p4, uv1, uv2, uv3, uv4, col);
-    if (push_texture_id) {
-        imgui_draw_list_pop_texture(imgui_c89_ctx, ((ImDrawList *)(self)));
+    imgui_draw_list_prim_reserve(imgui_c89_ctx, self, 6, 4);
+    imgui_draw_list_prim_quad_uv(self, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col);
+    if (push_texture) {
+        imgui_draw_list_pop_texture(imgui_c89_ctx, self);
     }
 }
 
 void imgui_draw_list_add_image_rounded(ImGuiContext *imgui_c89_ctx, ImDrawList *self, ImTextureRef tex_ref, const ImVec2 * p_min, const ImVec2 * p_max, const ImVec2 * uv_min, const ImVec2 * uv_max, ImU32 col, float rounding, ImDrawFlags flags)
 {
-    unsigned char push_texture_id;
+    unsigned char push_texture;
     int vert_start_idx;
     int vert_end_idx;
 
-    if ((col & ((unsigned int)(((((((((imgui_c89_u64)(0)) << 16) | 0) << 16) | 65280) << 16) | 0)))) == 0) {
-        return;
+    if ((col & 0xff000000u) == 0) return;
+    if ((flags & 0x0f) != 0) {
+        imgui_c89_assert_id(17);
     }
-    imgui_c89_expect((!(((flags & 15) == 0) && "Misuse of legacy hardcoded ImDrawCornerFlags values!")), 0) ? imgui_c89_assert_id(17) : ((void)(0));
     if ((flags & ImDrawFlags_RoundCornersMask_) == 0) {
         flags |= ImDrawFlags_RoundCornersAll;
     }
-    if ((rounding < 0.5f) || ((flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone)) {
-        imgui_draw_list_add_image(imgui_c89_ctx, ((ImDrawList *)(self)), tex_ref, p_min, p_max, uv_min, uv_max, col);
+    if (rounding < 0.5f ||
+        (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone) {
+        imgui_draw_list_add_image(imgui_c89_ctx, self, tex_ref, p_min, p_max,
+                    uv_min, uv_max, col);
         return;
     }
-    push_texture_id = operator____65519c27cd(&(tex_ref), &(self->_CmdHeader.TexRef));
-    if (push_texture_id) {
-        imgui_draw_list_push_texture(imgui_c89_ctx, ((ImDrawList *)(self)), tex_ref);
+
+    push_texture = (unsigned char)(
+        tex_ref._TexID != self->_CmdHeader.TexRef._TexID ||
+        tex_ref._TexData != self->_CmdHeader.TexRef._TexData);
+    if (push_texture) {
+        imgui_draw_list_push_texture(imgui_c89_ctx, self, tex_ref);
     }
     vert_start_idx = self->VtxBuffer.Size;
-    imgui_draw_list_path_rect(imgui_c89_ctx, ((ImDrawList *)(self)), p_min, p_max, rounding, flags);
-    imgui_draw_list_path_fill_convex(imgui_c89_ctx, ((ImDrawList *)(self)), col);
+    imgui_draw_list_path_rect(imgui_c89_ctx, self, p_min, p_max, rounding, flags);
+    imgui_draw_list_path_fill_convex(imgui_c89_ctx, self, col);
     vert_end_idx = self->VtxBuffer.Size;
-    imgui__shade_verts_linear_uv(self, vert_start_idx, vert_end_idx, p_min, p_max, uv_min, uv_max, 1);
-    if (push_texture_id) {
-        imgui_draw_list_pop_texture(imgui_c89_ctx, ((ImDrawList *)(self)));
+    imgui__shade_verts_linear_uv(self, vert_start_idx, vert_end_idx, p_min, p_max,
+               uv_min, uv_max, 1);
+    if (push_texture) {
+        imgui_draw_list_pop_texture(imgui_c89_ctx, self);
     }
 }
 
@@ -4329,12 +4352,13 @@ void imgui_draw_list_add_triangle_filled(ImGuiContext *imgui_c89_ctx, ImDrawList
 
 ImDrawList * imgui_draw_list_clone_output(ImGuiContext *imgui_c89_ctx, ImDrawList *self)
 {
-    ImDrawList * dst;
+    ImDrawList *dst;
 
-    dst = ImDrawList_ImDrawList_at__d042a13f30(imgui_c89_ctx, imgui_mem_alloc(imgui_c89_ctx, sizeof(ImDrawList_ImDrawList_value__81e4dcc2d3(imgui_c89_ctx, 0))), 0);
-    ImVector_ImDrawCmd__operator___e05a71bbd6(imgui_c89_ctx, ((ImVector_ImDrawCmd *)(&(dst->CmdBuffer))), &(self->CmdBuffer));
-    ImVector_unsigned_short__operator___9bbb6f879a(imgui_c89_ctx, ((ImVector_unsigned_short *)(&(dst->IdxBuffer))), &(self->IdxBuffer));
-    ImVector_ImDrawVert__operator___d05feba433(imgui_c89_ctx, ((ImVector_ImDrawVert *)(&(dst->VtxBuffer))), &(self->VtxBuffer));
+    dst = (ImDrawList *)imgui_mem_alloc(imgui_c89_ctx, sizeof(*dst));
+    imgui__im_draw_list_init(imgui_c89_ctx, dst, NULL);
+    ImVector_ImDrawCmd__operator___e05a71bbd6(imgui_c89_ctx, &dst->CmdBuffer, &self->CmdBuffer);
+    ImVector_unsigned_short__operator___9bbb6f879a(imgui_c89_ctx, &dst->IdxBuffer, &self->IdxBuffer);
+    ImVector_ImDrawVert__operator___d05feba433(imgui_c89_ctx, &dst->VtxBuffer, &self->VtxBuffer);
     dst->Flags = self->Flags;
     return dst;
 }
@@ -5098,26 +5122,17 @@ void imgui__im_draw_list_destroy(ImGuiContext *imgui_c89_ctx, ImDrawList *self)
 
 void imgui__im_draw_list_shared_data_init(ImDrawListSharedData *self)
 {
-    int imgui_c89_array_index_0;
-
-    float a;
-    int i;
-
     memset(self, 0, sizeof(*self));
-    ImVec2_ImVec2__22b45734f5(&self->TexUvWhitePixel);
-    ImVec4_ImVec4__711f95b97f(&self->ClipRectFullscreen);
-    ImVector_ImVec2__ImVector__e997b3f8af(&self->TempBuffer);
-    ImVector_ImDrawList____ImVector__40035d1030(&self->DrawLists);
-    memset(&self->ArcFastVtx, 0, sizeof(self->ArcFastVtx));
-    for (imgui_c89_array_index_0 = 0; imgui_c89_array_index_0 < 48; ++imgui_c89_array_index_0) {
-        ImVec2_ImVec2__22b45734f5(&self->ArcFastVtx[imgui_c89_array_index_0]);
-    }
-    memset(((void *)(self)), 0, sizeof((*self)));
-    self->InitialFringeScale = 1.0f;
-    i = 0;
-    for (; i < ((int)((sizeof(self->ArcFastVtx) / sizeof((*self->ArcFastVtx))))); i++) {
-        a = (((((float)(i)) * 2) * 3.14159274f) / ((float)(((int)((sizeof(self->ArcFastVtx) / sizeof((*self->ArcFastVtx))))))));
-        self->ArcFastVtx[i] = ImVec2_ImVec2_value__c798775144(cosf(a), sinf(a));
+    {
+        float angle;
+        int i;
+
+        self->InitialFringeScale = 1.0f;
+        for (i = 0; i < 48; i++) {
+            angle = (float)i * 2.0f * 3.14159274f / (float)48;
+            self->ArcFastVtx[i].x = cosf(angle);
+            self->ArcFastVtx[i].y = sinf(angle);
+        }
     }
 }
 
@@ -5782,38 +5797,50 @@ ImFontAtlasRectId imgui_font_atlas_add_custom_rect_font_glyph(ImGuiContext *imgu
 
 ImFontAtlasRectId imgui_font_atlas_add_custom_rect_font_glyph_for_size(ImGuiContext *imgui_c89_ctx, ImFontAtlas *self, ImFont * font, float font_size, ImWchar codepoint, int width, int height, float advance_x, const ImVec2 * offset)
 {
-    ImFontBaked * baked;
-    ImFontAtlasRectId r_id;
-    ImTextureRect * r;
+    ImFontBaked *baked;
+    ImFontAtlasRectId pack_id;
+    ImTextureRect *r;
+    ImFontGlyph *old_glyph;
     ImFontGlyph glyph;
 
-    imgui_c89_expect((!(font != 0)), 0) ? imgui_c89_assert_id(75) : ((void)(0));
-    imgui_c89_expect((!((width > 0) && (width <= 65535))), 0) ? imgui_c89_assert_id(76) : ((void)(0));
-    imgui_c89_expect((!((height > 0) && (height <= 65535))), 0) ? imgui_c89_assert_id(77) : ((void)(0));
-    baked = imgui_font_get_font_baked(imgui_c89_ctx, ((ImFont *)(font)), font_size, (-1.0f));
-    r_id = imgui__im_font_atlas_pack_add_rect(imgui_c89_ctx, self, width, height, 0);
-    if (r_id == (-1)) {
-        return -1;
+    if (font == NULL) {
+        imgui_c89_assert_id(75);
     }
-    r = imgui__im_font_atlas_pack_get_rect(self, r_id);
+    if (width <= 0 || width > 0xFFFF) {
+        imgui_c89_assert_id(76);
+    }
+    if (height <= 0 || height > 0xFFFF) {
+        imgui_c89_assert_id(77);
+    }
+
+    baked = imgui_font_get_font_baked(imgui_c89_ctx, font, font_size, -1.0f);
+    pack_id = imgui__im_font_atlas_pack_add_rect(imgui_c89_ctx, self, width, height, NULL);
+    if (pack_id == -1) return -1;
+
+    r = imgui__im_font_atlas_pack_get_rect(self, pack_id);
     if (self->RendererHasTextures) {
-        imgui__im_font_atlas_texture_block_queue_upload(imgui_c89_ctx, self, self->TexData, r->x, r->y, r->w, r->h);
+        imgui__im_font_atlas_texture_block_queue_upload(imgui_c89_ctx, self, self->TexData,
+            r->x, r->y, r->w, r->h);
     }
-    if (imgui_font_baked_is_glyph_loaded(((ImFontBaked *)(baked)), codepoint)) {
-        imgui__im_font_atlas_baked_discard_font_glyph(self, font, baked, imgui_font_baked_find_glyph(imgui_c89_ctx, ((ImFontBaked *)(baked)), codepoint));
+
+    if (imgui_font_baked_is_glyph_loaded(baked, codepoint)) {
+        old_glyph = imgui_font_baked_find_glyph(imgui_c89_ctx, baked, codepoint);
+        imgui__im_font_atlas_baked_discard_font_glyph(self, font, baked, old_glyph);
     }
-    ImFontGlyph_ImFontGlyph__28375ed6b5(&glyph);
+
+    memset(&glyph, 0, sizeof(glyph));
     glyph.Codepoint = codepoint;
     glyph.AdvanceX = advance_x;
     glyph.X0 = offset->x;
     glyph.Y0 = offset->y;
-    glyph.X1 = (offset->x + r->w);
-    glyph.Y1 = (offset->y + r->h);
+    glyph.X1 = offset->x + r->w;
+    glyph.Y1 = offset->y + r->h;
     glyph.Visible = 1;
     glyph.Colored = 1;
-    glyph.PackId = r_id;
-    imgui__im_font_atlas_baked_add_font_glyph(imgui_c89_ctx, self, baked, (*(ImVector_ImFontConfig____operator____f864e92bd4(((ImVector_ImFontConfig_ptr *)(&(font->Sources))), 0))), (&glyph));
-    return r_id;
+    glyph.PackId = pack_id;
+    imgui__im_font_atlas_baked_add_font_glyph(imgui_c89_ctx, self, baked,
+        font->Sources.Data[0], &glyph);
+    return pack_id;
 }
 
 ImFont * imgui_font_atlas_add_font(ImGuiContext *imgui_c89_ctx, ImFontAtlas *self, const ImFontConfig * font_cfg_in)
@@ -5985,46 +6012,56 @@ ImFont * imgui_font_atlas_add_font_default_vector(ImGuiContext *imgui_c89_ctx, I
 ImFont * imgui_font_atlas_add_font_from_file_ttf(ImGuiContext *imgui_c89_ctx, ImFontAtlas *self, const char * filename, float size_pixels, const ImFontConfig * font_cfg_template, const ImWchar * glyph_ranges)
 {
     size_t data_size;
-    void * data;
+    void *data;
     ImFontConfig font_cfg;
-    const char * p;
+    const char *p;
 
-    imgui_c89_expect((!((!self->Locked) && "Cannot modify a locked ImFontAtlas!")), 0) ? imgui_c89_assert_id(65) : ((void)(0));
+    if (self->Locked) {
+        imgui_c89_assert_id(65);
+    }
     data_size = 0;
-    data = imgui__im_file_load_to_memory(imgui_c89_ctx, filename, "rb", (&data_size), 0);
-    if (!data) {
-        if ((font_cfg_template == 0) || ((font_cfg_template->Flags & ImFontFlags_NoLoadError) == 0)) {
+    data = imgui__im_file_load_to_memory(imgui_c89_ctx, filename, "rb", &data_size, 0);
+    if (data == NULL) {
+        if (font_cfg_template == NULL ||
+            (font_cfg_template->Flags & ImFontFlags_NoLoadError) == 0) {
             imgui__debug_log(imgui_c89_ctx, "While loading '%s'\n", filename);
-            do {
-                if (!0) {
-                    if (imgui__error_log(imgui_c89_ctx, "Could not load font file!")) {
-                        imgui_c89_expect((!(0 && "Could not load font file!")), 0) ? imgui_c89_assert_id(66) : ((void)(0));
-                    }
-                }
-            } while (0);
+            if (imgui__error_log(imgui_c89_ctx, "Could not load font file!")) {
+                imgui_c89_assert_id(66);
+            }
         }
-        return 0;
+        return NULL;
     }
-    font_cfg = (font_cfg_template ? (*font_cfg_template) : ImFontConfig_ImFontConfig_value__9b05647600());
-    if (font_cfg.Name[0] == 0) {
-        for (p = (filename + strlen(filename)); ((p > filename) && (p[(-1)] != 47)) && (p[(-1)] != 92); p--) {
+    if (font_cfg_template != NULL) {
+        font_cfg = *font_cfg_template;
+    }
+    else {
+        memset(&font_cfg, 0, sizeof(font_cfg));
+        imgui__im_font_config_init(&font_cfg);
+    }
+    if (font_cfg.Name[0] == '\0') {
+        p = filename + strlen(filename);
+        while (p > filename && p[-1] != '/' && p[-1] != '\\') {
+            p--;
         }
-        imgui__im_format_string(font_cfg.Name, ((int)((sizeof(font_cfg.Name) / sizeof((*font_cfg.Name))))), "%s", p);
+        imgui__im_format_string(font_cfg.Name, sizeof(font_cfg.Name), "%s", p);
     }
-    return imgui_font_atlas_add_font_from_memory_ttf(imgui_c89_ctx, ((ImFontAtlas *)(self)), data, ((int)(data_size)), size_pixels, (&font_cfg), glyph_ranges);
+    return imgui_font_atlas_add_font_from_memory_ttf(imgui_c89_ctx, self, data, (int)data_size,
+                            size_pixels, &font_cfg, glyph_ranges);
 }
 
 ImFont * imgui_font_atlas_add_font_from_memory_compressed_base85_ttf(ImGuiContext *imgui_c89_ctx, ImFontAtlas *self, const char * compressed_ttf_data_base85, float size_pixels, const ImFontConfig * font_cfg, const ImWchar * glyph_ranges)
 {
-    int compressed_ttf_size;
-    void * compressed_ttf;
-    ImFont * font;
+    int compressed_size;
+    void *compressed_data;
+    ImFont *font;
 
-    compressed_ttf_size = (((((int)(strlen(compressed_ttf_data_base85))) + 4) / 5) * 4);
-    compressed_ttf = imgui_mem_alloc(imgui_c89_ctx, ((size_t)(compressed_ttf_size)));
-    Decode85__3c7e2d9659(((const unsigned char *)(compressed_ttf_data_base85)), ((unsigned char *)(compressed_ttf)));
-    font = imgui_font_atlas_add_font_from_memory_compressed_ttf(imgui_c89_ctx, ((ImFontAtlas *)(self)), compressed_ttf, compressed_ttf_size, size_pixels, font_cfg, glyph_ranges);
-    imgui_mem_free(imgui_c89_ctx, compressed_ttf);
+    compressed_size = (((int)strlen(compressed_ttf_data_base85) + 4) / 5) * 4;
+    compressed_data = imgui_mem_alloc(imgui_c89_ctx, (size_t)compressed_size);
+    Decode85__3c7e2d9659((const unsigned char *)compressed_ttf_data_base85,
+               (unsigned char *)compressed_data);
+    font = imgui_font_atlas_add_font_from_memory_compressed_ttf(imgui_c89_ctx, self, compressed_data,
+        compressed_size, size_pixels, font_cfg, glyph_ranges);
+    imgui_mem_free(imgui_c89_ctx, compressed_data);
     return font;
 }
 
@@ -6321,37 +6358,40 @@ void imgui_font_atlas_remove_custom_rect(ImGuiContext *imgui_c89_ctx, ImFontAtla
 
 void imgui_font_atlas_remove_font(ImGuiContext *imgui_c89_ctx, ImFontAtlas *self, ImFont * font)
 {
-    ImFontConfig ** __begin1;
-    ImFontConfig ** __end1;
-    ImFontConfig * src;
-    ImVector_ImFontConfig_ptr * __range1;
-    int src_n;
-    unsigned char removed;
-    ImFont * new_current_font;
+    ImFont *old_font;
+    ImFont *new_font;
+    ImFontConfig *src;
+    int i;
+    unsigned char found;
 
-    imgui_c89_expect((!((!self->Locked) && "Cannot modify a locked ImFontAtlas!")), 0) ? imgui_c89_assert_id(71) : ((void)(0));
-    imgui__im_font_atlas_font_destroy_output(imgui_c89_ctx, self, font);
-    __range1 = &(font->Sources);
-    __begin1 = ImVector_ImFontConfig____begin__72e017f239(((ImVector_ImFontConfig_ptr *)(__range1)));
-    __end1 = ImVector_ImFontConfig____end__7367df220c(((ImVector_ImFontConfig_ptr *)(__range1)));
-    for (; __begin1 != __end1; ++__begin1) {
-        src = (*__begin1);
-        imgui__im_font_atlas_font_destroy_source_data(imgui_c89_ctx, self, src);
+    if (self->Locked) {
+        imgui_c89_assert_id(71);
     }
-    src_n = 0;
-    for (; src_n < self->Sources.Size; src_n++) {
-        if ((*(ImVector_ImFontConfig__operator____8da7e90df8(((ImVector_ImFontConfig *)(&(self->Sources))), src_n))).DstFont == font) {
-            ImVector_ImFontConfig__erase__e286cff502(((ImVector_ImFontConfig *)(&(self->Sources))), (&(*(ImVector_ImFontConfig__operator____8da7e90df8(((ImVector_ImFontConfig *)(&(self->Sources))), (src_n--))))));
+    imgui__im_font_atlas_font_destroy_output(imgui_c89_ctx, self, font);
+    for (i = 0; i < font->Sources.Size; i++) {
+        imgui__im_font_atlas_font_destroy_source_data(imgui_c89_ctx, self, font->Sources.Data[i]);
+    }
+
+    for (i = 0; i < self->Sources.Size; i++) {
+        src = &self->Sources.Data[i];
+        if (src->DstFont == font) {
+            ImVector_ImFontConfig__erase__e286cff502(&self->Sources,
+                &self->Sources.Data[i]);
+            i--;
         }
     }
-    removed = ImVector_ImFont____find_erase__915c868416(((ImVector_ImFont_ptr *)(&(self->Fonts))), &(font));
-    imgui_c89_expect((!removed), 0) ? imgui_c89_assert_id(72) : ((void)(0));
-    (void)(removed);
+
+    found = ImVector_ImFont____find_erase__915c868416(&self->Fonts, &font);
+    if (!found) {
+        imgui_c89_assert_id(72);
+    }
     imgui__im_font_atlas_build_update_pointers(imgui_c89_ctx, self);
-    font->OwnerAtlas = 0;
+
+    old_font = font;
+    font->OwnerAtlas = NULL;
     IM_DELETE__ed1607e90f(imgui_c89_ctx, font);
-    new_current_font = (ImVector_ImFont____empty__fb6e15d48b(((ImVector_ImFont_ptr *)(&(self->Fonts)))) ? 0 : (*(ImVector_ImFont____operator____0cce6192b3(((ImVector_ImFont_ptr *)(&(self->Fonts))), 0))));
-    imgui__im_font_atlas_build_notify_set_font(imgui_c89_ctx, self, font, new_current_font);
+    new_font = self->Fonts.Size != 0 ? self->Fonts.Data[0] : NULL;
+    imgui__im_font_atlas_build_notify_set_font(imgui_c89_ctx, self, old_font, new_font);
 }
 
 void imgui_font_atlas_set_font_loader(ImGuiContext *imgui_c89_ctx, ImFontAtlas *self, const ImFontLoader * font_loader)
@@ -6675,8 +6715,8 @@ static void ImTriangulator_GetNextTriangle__b17722615e(ImTriangulator *self, uns
     if (ear == self->_Nodes) {
         self->_Nodes = ear->Next;
     }
-    ImTriangulator_ReclassifyNode__4295120418(((ImTriangulator *)(self)), ear->Prev);
-    ImTriangulator_ReclassifyNode__4295120418(((ImTriangulator *)(self)), ear->Next);
+    imgui__im_triangulator_reclassify_node(((ImTriangulator *)(self)), ear->Prev);
+    imgui__im_triangulator_reclassify_node(((ImTriangulator *)(self)), ear->Next);
     self->_TrianglesLeft--;
 }
 
@@ -6711,39 +6751,37 @@ static unsigned char ImTriangulator_IsEar__1d64609e76(ImTriangulator *self, int 
     return 1;
 }
 
-static void ImTriangulator_ReclassifyNode__4295120418(ImTriangulator *self, ImTriangulatorNode * n1)
+static void imgui__im_triangulator_reclassify_node(ImTriangulator *self, ImTriangulatorNode * n1)
 {
+    const ImTriangulatorNode *n0;
+    const ImTriangulatorNode *n2;
     ImTriangulatorNodeType type;
-    const ImTriangulatorNode * n0;
-    const ImTriangulatorNode * n2;
 
     n0 = n1->Prev;
     n2 = n1->Next;
-    if (!ImTriangleIsClockwise__b1071f1010(&(n0->Pos), &(n1->Pos), &(n2->Pos))) {
+    if (!ImTriangleIsClockwise__b1071f1010(&n0->Pos, &n1->Pos, &n2->Pos)) {
         type = ImTriangulatorNodeType_Reflex;
-    } else {
-        if (ImTriangulator_IsEar__1d64609e76(((ImTriangulator *)(self)), n0->Index, n1->Index, n2->Index, &(n0->Pos), &(n1->Pos), &(n2->Pos))) {
-            type = ImTriangulatorNodeType_Ear;
-        } else {
-            type = ImTriangulatorNodeType_Convex;
-        }
     }
-    if (type == n1->Type) {
-        return;
+    else if (ImTriangulator_IsEar__1d64609e76(self, n0->Index, n1->Index, n2->Index,
+                                   &n0->Pos, &n1->Pos, &n2->Pos)) {
+        type = ImTriangulatorNodeType_Ear;
     }
+    else {
+        type = ImTriangulatorNodeType_Convex;
+    }
+
+    if (type == n1->Type) return;
     if (n1->Type == ImTriangulatorNodeType_Reflex) {
-        ImTriangulatorNodeSpan_find_erase_unsorted__c152ab14e4(((ImTriangulatorNodeSpan *)(&(self->_Reflexes))), n1->Index);
-    } else {
-        if (n1->Type == ImTriangulatorNodeType_Ear) {
-            ImTriangulatorNodeSpan_find_erase_unsorted__c152ab14e4(((ImTriangulatorNodeSpan *)(&(self->_Ears))), n1->Index);
-        }
+        ImTriangulatorNodeSpan_find_erase_unsorted__c152ab14e4(&self->_Reflexes, n1->Index);
+    }
+    else if (n1->Type == ImTriangulatorNodeType_Ear) {
+        ImTriangulatorNodeSpan_find_erase_unsorted__c152ab14e4(&self->_Ears, n1->Index);
     }
     if (type == ImTriangulatorNodeType_Reflex) {
-        ImTriangulatorNodeSpan_push_back__c59b54dee0(((ImTriangulatorNodeSpan *)(&(self->_Reflexes))), n1);
-    } else {
-        if (type == ImTriangulatorNodeType_Ear) {
-            ImTriangulatorNodeSpan_push_back__c59b54dee0(((ImTriangulatorNodeSpan *)(&(self->_Ears))), n1);
-        }
+        ImTriangulatorNodeSpan_push_back__c59b54dee0(&self->_Reflexes, n1);
+    }
+    else if (type == ImTriangulatorNodeType_Ear) {
+        ImTriangulatorNodeSpan_push_back__c59b54dee0(&self->_Ears, n1);
     }
     n1->Type = type;
 }
@@ -6896,12 +6934,6 @@ static ImFontConfig * ImVector_ImFontConfig__erase__e286cff502(ImVector_ImFontCo
         sizeof(*self->Data), it, it + 1);
 }
 
-static ImFontConfig * ImVector_ImFontConfig__operator____8da7e90df8(ImVector_ImFontConfig *self, int i)
-{
-    return (ImFontConfig *)imgui_c89_vector_at(
-        self->Data, self->Size, i, sizeof(*self->Data), 2262);
-}
-
 static void ImVector_ImFontConfig__push_back__9bb9c4b084(ImGuiContext *imgui_c89_ctx, ImVector_ImFontConfig *self, const ImFontConfig * v)
 {
     self->Data = imgui_c89_vector_push_back(imgui_c89_ctx, self->Data,
@@ -6920,21 +6952,11 @@ static void ImVector_ImFontGlyph__ImVector__3eab1fda42(ImVector_ImFontGlyph *sel
     self->Data = 0;
 }
 
-static ImFontGlyph * ImVector_ImFontGlyph__begin__1f259325b6(ImVector_ImFontGlyph *self)
-{
-    return self->Data;
-}
-
 static void ImVector_ImFontGlyph__clear__c66791e224(ImGuiContext *imgui_c89_ctx, ImVector_ImFontGlyph *self)
 {
     imgui_c89_vector_clear(
         imgui_c89_ctx, (void **)&self->Data,
         &self->Size, &self->Capacity);
-}
-
-static ImFontGlyph * ImVector_ImFontGlyph__end__7450013537(ImVector_ImFontGlyph *self)
-{
-    return self->Data == 0 ? 0 : self->Data + self->Size;
 }
 
 int ImVector_ImFontGlyph__index_from_ptr__c833655680(ImVector_ImFontGlyph *self, const ImFontGlyph * it)
@@ -6943,48 +6965,16 @@ int ImVector_ImFontGlyph__index_from_ptr__c833655680(ImVector_ImFontGlyph *self,
         sizeof(*self->Data));
 }
 
-static ImFontGlyph * ImVector_ImFontGlyph__operator____1aedae1232(ImVector_ImFontGlyph *self, int i)
-{
-    return (ImFontGlyph *)imgui_c89_vector_at(
-        self->Data, self->Size, i, sizeof(*self->Data), 2262);
-}
-
 static void ImVector_ImFontGlyph__push_back__9bfb512c47(ImGuiContext *imgui_c89_ctx, ImVector_ImFontGlyph *self, const ImFontGlyph * v)
 {
     self->Data = imgui_c89_vector_push_back(imgui_c89_ctx, self->Data,
         &self->Size, &self->Capacity, sizeof(*self->Data), v);
 }
 
-static ImFontStackData * ImVector_ImFontStackData__begin__8e6fdbb421(ImVector_ImFontStackData *self)
-{
-    return self->Data;
-}
-
-static ImFontStackData * ImVector_ImFontStackData__end__cfc5f331c7(ImVector_ImFontStackData *self)
-{
-    return self->Data == 0 ? 0 : self->Data + self->Size;
-}
-
-static ImTextureRect * ImVector_ImTextureRect__begin__911152f282(ImVector_ImTextureRect *self)
-{
-    return self->Data;
-}
-
-static ImTextureRect * ImVector_ImTextureRect__end__991a10d9ba(ImVector_ImTextureRect *self)
-{
-    return self->Data == 0 ? 0 : self->Data + self->Size;
-}
-
 static void ImVector_ImTextureRect__push_back__8e183f1abf(ImGuiContext *imgui_c89_ctx, ImVector_ImTextureRect *self, const ImTextureRect * v)
 {
     self->Data = imgui_c89_vector_push_back(imgui_c89_ctx, self->Data,
         &self->Size, &self->Capacity, sizeof(*self->Data), v);
-}
-
-static void ImVector_ImTextureRect__resize__cc47928fa8(ImGuiContext *imgui_c89_ctx, ImVector_ImTextureRect *self, int new_size)
-{
-    self->Data = imgui_c89_vector_resize(imgui_c89_ctx, self->Data,
-        &self->Size, &self->Capacity, new_size, sizeof(*self->Data));
 }
 
 static void ImVector_ImTextureRef__ImVector__2ab083c278(ImVector_ImTextureRef *self)
@@ -7133,11 +7123,6 @@ static void ImVector_ImFont____clear_delete__7d3e1b8d68(ImGuiContext *imgui_c89_
         IM_DELETE__ed1607e90f(imgui_c89_ctx, self->Data[n]);
     }
     ImVector_ImFont____clear__89c7a01291(imgui_c89_ctx, ((ImVector_ImFont_ptr *)(self)));
-}
-
-static unsigned char ImVector_ImFont____empty__fb6e15d48b(ImVector_ImFont_ptr *self)
-{
-    return self->Size == 0;
 }
 
 static ImFont ** ImVector_ImFont____erase__af2cf197a6(ImVector_ImFont_ptr *self, ImFont *const * it)
@@ -7779,7 +7764,7 @@ static unsigned char imgui__gui_impl_stb_true_type_font_baked_load_glyph(ImFontA
         if (data == NULL) {
             imgui_c89_assert_id(121);
         }
-        glyph_index = stbtt_FindGlyphIndex__4559fdb4e7(&data->FontInfo, codepoint);
+        glyph_index = imgui__stbtt_find_glyph_index(&data->FontInfo, codepoint);
         if (glyph_index == 0) return 0;
 
         imgui__im_font_atlas_build_get_oversample_factors(src, baked, &oversample_h, &oversample_v);
@@ -7787,7 +7772,7 @@ static unsigned char imgui__gui_impl_stb_true_type_font_baked_load_glyph(ImFontA
         density = src->RasterizerDensity * baked->RasterizerDensity;
         scale_raster_x = data->ScaleFactor * baked->Size * density * (float)oversample_h;
         scale_raster_y = data->ScaleFactor * baked->Size * density * (float)oversample_v;
-        stbtt_GetGlyphBitmapBoxSubpixel__0b267e35c6(&data->FontInfo, glyph_index, scale_raster_x, scale_raster_y,
+        imgui__stbtt_get_glyph_bitmap_box_subpixel(&data->FontInfo, glyph_index, scale_raster_x, scale_raster_y,
                                  0.0f, 0.0f, &x0, &y0, &x1, &y1);
         stbtt_GetGlyphHMetrics__899edd9be4(&data->FontInfo, glyph_index, &advance, &lsb);
 
@@ -7848,7 +7833,7 @@ static unsigned char ImGui_ImplStbTrueType_FontSrcContainsGlyph__efabe3aa9f(ImFo
     (void)(atlas);
     bd_font_data = ((ImGui_ImplStbTrueType_FontSrcData *)(src->FontLoaderData));
     imgui_c89_expect((!(bd_font_data != 0)), 0) ? imgui_c89_assert_id(120) : ((void)(0));
-    glyph_index = stbtt_FindGlyphIndex__4559fdb4e7((&bd_font_data->FontInfo), ((int)(codepoint)));
+    glyph_index = imgui__stbtt_find_glyph_index((&bd_font_data->FontInfo), ((int)(codepoint)));
     return glyph_index != 0;
 }
 
@@ -8078,38 +8063,39 @@ static void stb__match__16edbeeef1(const unsigned char * data, unsigned int leng
     }
 }
 
-static unsigned int stb_adler32__c6d8186c04(unsigned int adler32, unsigned char * buffer, unsigned int buflen)
+static unsigned int imgui__stb_adler32(unsigned int adler32, unsigned char * buffer, unsigned int buflen)
 {
-    unsigned long ADLER_MOD;
+    const unsigned long adler_mod = 65521;
     unsigned long s1;
     unsigned long s2;
     unsigned long blocklen;
     unsigned long i;
 
-    ADLER_MOD = 65521;
-    s1 = (adler32 & 65535);
-    s2 = (adler32 >> 16);
-    blocklen = (buflen % 5552);
+    s1 = adler32 & 0xffff;
+    s2 = adler32 >> 16;
+    blocklen = buflen % 5552;
     while (buflen) {
-        for (i = 0; (i + 7) < blocklen; i += 8) {
-            (s1 += buffer[0]) , (s2 += s1);
-            (s1 += buffer[1]) , (s2 += s1);
-            (s1 += buffer[2]) , (s2 += s1);
-            (s1 += buffer[3]) , (s2 += s1);
-            (s1 += buffer[4]) , (s2 += s1);
-            (s1 += buffer[5]) , (s2 += s1);
-            (s1 += buffer[6]) , (s2 += s1);
-            (s1 += buffer[7]) , (s2 += s1);
+        for (i = 0; i + 7 < blocklen; i += 8) {
+            s1 += buffer[0]; s2 += s1;
+            s1 += buffer[1]; s2 += s1;
+            s1 += buffer[2]; s2 += s1;
+            s1 += buffer[3]; s2 += s1;
+            s1 += buffer[4]; s2 += s1;
+            s1 += buffer[5]; s2 += s1;
+            s1 += buffer[6]; s2 += s1;
+            s1 += buffer[7]; s2 += s1;
             buffer += 8;
         }
         for (; i < blocklen; ++i) {
-            (s1 += (*(buffer++))) , (s2 += s1);
+            s1 += *buffer++;
+            s2 += s1;
         }
-        (s1 %= ADLER_MOD) , (s2 %= ADLER_MOD);
+        s1 %= adler_mod;
+        s2 %= adler_mod;
         buflen -= blocklen;
         blocklen = 5552;
     }
-    return ((unsigned int)((s2 << 16))) + ((unsigned int)(s1));
+    return (unsigned int)(s2 << 16) + (unsigned int)s1;
 }
 
 static unsigned int stb_decompress__ade5b71362(unsigned char * output, const unsigned char * i, unsigned int arg_2)
@@ -8138,7 +8124,7 @@ static unsigned int stb_decompress__ade5b71362(unsigned char * output, const uns
                 if (stb__dout__11c0b65336 != (output + olen)) {
                     return 0;
                 }
-                if (stb_adler32__c6d8186c04(1, output, olen) != ((unsigned int)(((i[2] << 24) + ((i[(2 + 1)] << 16) + ((i[((2 + 1) + 1)] << 8) + i[(((2 + 1) + 1) + 1)])))))) {
+                if (imgui__stb_adler32(1, output, olen) != ((unsigned int)(((i[2] << 24) + ((i[(2 + 1)] << 16) + ((i[((2 + 1) + 1)] << 8) + i[(((2 + 1) + 1) + 1)])))))) {
                     return 0;
                 }
                 return olen;
@@ -8467,11 +8453,25 @@ static void stbrp_setup_allow_out_of_mem__0a3b74b89d(stbrp_context * context, in
     }
 }
 
-static int stbtt_FindGlyphIndex__4559fdb4e7(const stbtt_fontinfo * info, int unicode_codepoint)
+static int imgui__stbtt_find_glyph_index(const stbtt_fontinfo * info, int unicode_codepoint)
 {
-    stbtt_uint8 * data;
+    stbtt_uint8 *data;
     stbtt_uint32 index_map;
     stbtt_uint16 format;
+    stbtt_int32 bytes;
+    stbtt_uint32 first;
+    stbtt_uint32 count;
+    stbtt_uint16 segcount;
+    stbtt_uint16 search_range;
+    stbtt_uint16 entry_selector;
+    stbtt_uint16 range_shift;
+    stbtt_uint32 end_count;
+    stbtt_uint32 search;
+    stbtt_uint16 end;
+    stbtt_uint16 offset;
+    stbtt_uint16 start;
+    stbtt_uint16 last;
+    stbtt_uint16 item;
     stbtt_uint32 ngroups;
     stbtt_int32 low;
     stbtt_int32 high;
@@ -8479,112 +8479,87 @@ static int stbtt_FindGlyphIndex__4559fdb4e7(const stbtt_fontinfo * info, int uni
     stbtt_uint32 start_char;
     stbtt_uint32 end_char;
     stbtt_uint32 start_glyph;
-    stbtt_uint16 segcount;
-    stbtt_uint16 searchRange;
-    stbtt_uint16 entrySelector;
-    stbtt_uint16 rangeShift;
-    stbtt_uint32 endCount;
-    stbtt_uint32 search;
-    stbtt_uint16 end;
-    stbtt_uint16 offset;
-    stbtt_uint16 start;
-    stbtt_uint16 last;
-    stbtt_uint16 item;
-    stbtt_uint32 first;
-    stbtt_uint32 count;
-    stbtt_int32 bytes;
 
     data = info->data;
     index_map = info->index_map;
-    format = ttUSHORT__6c3047e8f7(((data + index_map) + 0));
+    format = ttUSHORT__6c3047e8f7(data + index_map);
     if (format == 0) {
-        bytes = ttUSHORT__6c3047e8f7(((data + index_map) + 2));
-        if (unicode_codepoint < (bytes - 6)) {
-            return *((stbtt_uint8 *)((((data + index_map) + 6) + unicode_codepoint)));
+        bytes = ttUSHORT__6c3047e8f7(data + index_map + 2);
+        if (unicode_codepoint < bytes - 6) {
+            return *(stbtt_uint8 *)(data + index_map + 6 + unicode_codepoint);
         }
         return 0;
-    } else {
-        if (format == 6) {
-            first = ttUSHORT__6c3047e8f7(((data + index_map) + 6));
-            count = ttUSHORT__6c3047e8f7(((data + index_map) + 8));
-            if ((((stbtt_uint32)(unicode_codepoint)) >= first) && (((stbtt_uint32)(unicode_codepoint)) < (first + count))) {
-                return ttUSHORT__6c3047e8f7((((data + index_map) + 10) + ((unicode_codepoint - first) * 2)));
+    }
+    if (format == 6) {
+        first = ttUSHORT__6c3047e8f7(data + index_map + 6);
+        count = ttUSHORT__6c3047e8f7(data + index_map + 8);
+        if ((stbtt_uint32)unicode_codepoint >= first &&
+            (stbtt_uint32)unicode_codepoint < first + count) {
+            return ttUSHORT__6c3047e8f7(data + index_map + 10 +
+                (unicode_codepoint - first) * 2);
+        }
+        return 0;
+    }
+    if (format == 2) {
+        imgui_c89_assert_id(153);
+        return 0;
+    }
+    if (format == 4) {
+        segcount = ttUSHORT__6c3047e8f7(data + index_map + 6) >> 1;
+        search_range = ttUSHORT__6c3047e8f7(data + index_map + 8) >> 1;
+        entry_selector = ttUSHORT__6c3047e8f7(data + index_map + 10);
+        range_shift = ttUSHORT__6c3047e8f7(data + index_map + 12) >> 1;
+        end_count = index_map + 14;
+        search = end_count;
+        if (unicode_codepoint > 0xffff) return 0;
+        if (unicode_codepoint >= ttUSHORT__6c3047e8f7(data + search + range_shift * 2)) {
+            search += range_shift * 2;
+        }
+        search -= 2;
+        while (entry_selector) {
+            search_range >>= 1;
+            end = ttUSHORT__6c3047e8f7(data + search + search_range * 2);
+            if (unicode_codepoint > end) {
+                search += search_range * 2;
             }
-            return 0;
-        } else {
-            if (format == 2) {
-                do {
-                    imgui_c89_expect((!0), 0) ? imgui_c89_assert_id(153) : ((void)(0));
-                } while (0);
-                return 0;
+            --entry_selector;
+        }
+        search += 2;
+        item = (stbtt_uint16)((search - end_count) >> 1);
+        start = ttUSHORT__6c3047e8f7(data + index_map + 14 + segcount * 2 + 2 + 2 * item);
+        last = ttUSHORT__6c3047e8f7(data + end_count + 2 * item);
+        if (unicode_codepoint < start || unicode_codepoint > last) return 0;
+        offset = ttUSHORT__6c3047e8f7(data + index_map + 14 + segcount * 6 + 2 + 2 * item);
+        if (offset == 0) {
+            return (stbtt_uint16)(unicode_codepoint +
+                ttSHORT__a2f3949bdb(data + index_map + 14 + segcount * 4 + 2 + 2 * item));
+        }
+        return ttUSHORT__6c3047e8f7(data + offset + (unicode_codepoint - start) * 2 +
+            index_map + 14 + segcount * 6 + 2 + 2 * item);
+    }
+    if (format == 12 || format == 13) {
+        ngroups = ttULONG__59ff3d05a4(data + index_map + 12);
+        low = 0;
+        high = (stbtt_int32)ngroups;
+        while (low < high) {
+            mid = low + ((high - low) >> 1);
+            start_char = ttULONG__59ff3d05a4(data + index_map + 16 + mid * 12);
+            end_char = ttULONG__59ff3d05a4(data + index_map + 16 + mid * 12 + 4);
+            if ((stbtt_uint32)unicode_codepoint < start_char) {
+                high = mid;
+            } else if ((stbtt_uint32)unicode_codepoint > end_char) {
+                low = mid + 1;
             } else {
-                if (format == 4) {
-                    segcount = (ttUSHORT__6c3047e8f7(((data + index_map) + 6)) >> 1);
-                    searchRange = (ttUSHORT__6c3047e8f7(((data + index_map) + 8)) >> 1);
-                    entrySelector = ttUSHORT__6c3047e8f7(((data + index_map) + 10));
-                    rangeShift = (ttUSHORT__6c3047e8f7(((data + index_map) + 12)) >> 1);
-                    endCount = (index_map + 14);
-                    search = endCount;
-                    if (unicode_codepoint > 65535) {
-                        return 0;
-                    }
-                    if (unicode_codepoint >= ttUSHORT__6c3047e8f7(((data + search) + (rangeShift * 2)))) {
-                        search += (rangeShift * 2);
-                    }
-                    search -= 2;
-                    while (entrySelector) {
-                        searchRange >>= 1;
-                        end = ttUSHORT__6c3047e8f7(((data + search) + (searchRange * 2)));
-                        if (unicode_codepoint > end) {
-                            search += (searchRange * 2);
-                        }
-                        --entrySelector;
-                    }
-                    search += 2;
-                    item = ((stbtt_uint16)(((search - endCount) >> 1)));
-                    start = ttUSHORT__6c3047e8f7((((((data + index_map) + 14) + (segcount * 2)) + 2) + (2 * item)));
-                    last = ttUSHORT__6c3047e8f7(((data + endCount) + (2 * item)));
-                    if ((unicode_codepoint < start) || (unicode_codepoint > last)) {
-                        return 0;
-                    }
-                    offset = ttUSHORT__6c3047e8f7((((((data + index_map) + 14) + (segcount * 6)) + 2) + (2 * item)));
-                    if (offset == 0) {
-                        return (stbtt_uint16)((unicode_codepoint + ttSHORT__a2f3949bdb((((((data + index_map) + 14) + (segcount * 4)) + 2) + (2 * item)))));
-                    }
-                    return ttUSHORT__6c3047e8f7((((((((data + offset) + ((unicode_codepoint - start) * 2)) + index_map) + 14) + (segcount * 6)) + 2) + (2 * item)));
-                } else {
-                    if ((format == 12) || (format == 13)) {
-                        ngroups = ttULONG__59ff3d05a4(((data + index_map) + 12));
-                        low = 0;
-                        high = ((stbtt_int32)(ngroups));
-                        while (low < high) {
-                            mid = (low + ((high - low) >> 1));
-                            start_char = ttULONG__59ff3d05a4((((data + index_map) + 16) + (mid * 12)));
-                            end_char = ttULONG__59ff3d05a4(((((data + index_map) + 16) + (mid * 12)) + 4));
-                            if (((stbtt_uint32)(unicode_codepoint)) < start_char) {
-                                high = mid;
-                            } else {
-                                if (((stbtt_uint32)(unicode_codepoint)) > end_char) {
-                                    low = (mid + 1);
-                                } else {
-                                    start_glyph = ttULONG__59ff3d05a4(((((data + index_map) + 16) + (mid * 12)) + 8));
-                                    if (format == 12) {
-                                        return (start_glyph + unicode_codepoint) - start_char;
-                                    } else {
-                                        return start_glyph;
-                                    }
-                                }
-                            }
-                        }
-                        return 0;
-                    }
+                start_glyph = ttULONG__59ff3d05a4(data + index_map + 16 + mid * 12 + 8);
+                if (format == 12) {
+                    return start_glyph + unicode_codepoint - start_char;
                 }
+                return start_glyph;
             }
         }
+        return 0;
     }
-    do {
-        imgui_c89_expect((!0), 0) ? imgui_c89_assert_id(154) : ((void)(0));
-    } while (0);
+    imgui_c89_assert_id(154);
     return 0;
 }
 
@@ -8646,11 +8621,11 @@ static imgui_c89_anon_imstb_truetype_3493_9 * stbtt_FlattenCurves__87b2217cf1(Im
                 stbtt__add_point__e6d9c5de0c(points, (num_points++), x, y);
                 break;
                 case STBTT_vcurve:
-                    stbtt__tesselate_curve__50ed7f4c53(points, (&num_points), x, y, vertices[i].cx, vertices[i].cy, vertices[i].x, vertices[i].y, objspace_flatness_squared, 0);
+                    imgui__stbtt_tesselate_curve(points, (&num_points), x, y, vertices[i].cx, vertices[i].cy, vertices[i].x, vertices[i].y, objspace_flatness_squared, 0);
                 (x = vertices[i].x) , (y = vertices[i].y);
                 break;
                 case STBTT_vcubic:
-                    stbtt__tesselate_cubic__29babd912e(points, (&num_points), x, y, vertices[i].cx, vertices[i].cy, vertices[i].cx1, vertices[i].cy1, vertices[i].x, vertices[i].y, objspace_flatness_squared, 0);
+                    imgui__stbtt_tesselate_cubic(points, (&num_points), x, y, vertices[i].cx, vertices[i].cy, vertices[i].cx1, vertices[i].cy1, vertices[i].x, vertices[i].y, objspace_flatness_squared, 0);
                 (x = vertices[i].x) , (y = vertices[i].y);
                 break;
             }
@@ -8705,10 +8680,10 @@ static void stbtt_GetFontVMetrics__8c3aa77cea(const stbtt_fontinfo * info, int *
 
 static void stbtt_GetGlyphBitmapBox__4b83e04481(const stbtt_fontinfo * font, int glyph, float scale_x, float scale_y, int * ix0, int * iy0, int * ix1, int * iy1)
 {
-    stbtt_GetGlyphBitmapBoxSubpixel__0b267e35c6(font, glyph, scale_x, scale_y, 0.0f, 0.0f, ix0, iy0, ix1, iy1);
+    imgui__stbtt_get_glyph_bitmap_box_subpixel(font, glyph, scale_x, scale_y, 0.0f, 0.0f, ix0, iy0, ix1, iy1);
 }
 
-static void stbtt_GetGlyphBitmapBoxSubpixel__0b267e35c6(const stbtt_fontinfo * font, int glyph, float scale_x, float scale_y, float shift_x, float shift_y, int * ix0, int * iy0, int * ix1, int * iy1)
+static void imgui__stbtt_get_glyph_bitmap_box_subpixel(const stbtt_fontinfo * font, int glyph, float scale_x, float scale_y, float shift_x, float shift_y, int * ix0, int * iy0, int * ix1, int * iy1)
 {
     int x0;
     int y0;
@@ -8717,31 +8692,31 @@ static void stbtt_GetGlyphBitmapBoxSubpixel__0b267e35c6(const stbtt_fontinfo * f
 
     x0 = 0;
     y0 = 0;
-    if (!stbtt_GetGlyphBox__e86c1169a1(font, glyph, (&x0), (&y0), (&x1), (&y1))) {
-        if (ix0) {
-            (*ix0) = 0;
+    if (!stbtt_GetGlyphBox__e86c1169a1(font, glyph, &x0, &y0, &x1, &y1)) {
+        if (ix0 != NULL) {
+            *ix0 = 0;
         }
-        if (iy0) {
-            (*iy0) = 0;
+        if (iy0 != NULL) {
+            *iy0 = 0;
         }
-        if (ix1) {
-            (*ix1) = 0;
+        if (ix1 != NULL) {
+            *ix1 = 0;
         }
-        if (iy1) {
-            (*iy1) = 0;
+        if (iy1 != NULL) {
+            *iy1 = 0;
         }
     } else {
-        if (ix0) {
-            (*ix0) = ((int)(ImFloor__5652c8955b(((x0 * scale_x) + shift_x))));
+        if (ix0 != NULL) {
+            *ix0 = (int)ImFloor__5652c8955b(x0 * scale_x + shift_x);
         }
-        if (iy0) {
-            (*iy0) = ((int)(ImFloor__5652c8955b((((-y1) * scale_y) + shift_y))));
+        if (iy0 != NULL) {
+            *iy0 = (int)ImFloor__5652c8955b(-y1 * scale_y + shift_y);
         }
-        if (ix1) {
-            (*ix1) = ((int)(ceilf(((x1 * scale_x) + shift_x))));
+        if (ix1 != NULL) {
+            *ix1 = (int)ceilf(x1 * scale_x + shift_x);
         }
-        if (iy1) {
-            (*iy1) = ((int)(ceilf((((-y0) * scale_y) + shift_y))));
+        if (iy1 != NULL) {
+            *iy1 = (int)ceilf(-y0 * scale_y + shift_y);
         }
     }
 }
@@ -8795,13 +8770,12 @@ static void stbtt_GetGlyphHMetrics__899edd9be4(const stbtt_fontinfo * info, int 
     }
 }
 
-static int stbtt_GetGlyphShape__54121b5f12(ImGuiContext *imgui_c89_ctx, const stbtt_fontinfo * info, int glyph_index, imgui_c89_anon_imstb_truetype_840_12 ** pvertices)
+static int imgui__stbtt_get_glyph_shape(ImGuiContext *imgui_c89_ctx, const stbtt_fontinfo * info, int glyph_index, imgui_c89_anon_imstb_truetype_840_12 ** pvertices)
 {
     if (!info->cff.size) {
         return stbtt__GetGlyphShapeTT__29404cbec2(imgui_c89_ctx, info, glyph_index, pvertices);
-    } else {
-        return stbtt__GetGlyphShapeT2__357c013cd5(imgui_c89_ctx, info, glyph_index, pvertices);
     }
+    return stbtt__GetGlyphShapeT2__357c013cd5(imgui_c89_ctx, info, glyph_index, pvertices);
 }
 
 static int stbtt_InitFont__c5e65747d1(stbtt_fontinfo * info, const unsigned char * data, int offset)
@@ -8860,14 +8834,14 @@ static int stbtt_InitFont_internal__39ddee08e3(stbtt_fontinfo * info, unsigned c
         stbtt__buf_seek__3f9659771f((&b), stbtt__buf_get8__64be04e850((&b)));
         stbtt__cff_get_index__1fdcf073a8((&b));
         topdictidx = stbtt__cff_get_index__1fdcf073a8((&b));
-        topdict = stbtt__cff_index_get__357781c314(topdictidx, 0);
+        topdict = imgui__stbtt_cff_index_get(topdictidx, 0);
         stbtt__cff_get_index__1fdcf073a8((&b));
         info->gsubrs = stbtt__cff_get_index__1fdcf073a8((&b));
-        stbtt__dict_get_ints__29e4460ec3((&topdict), 17, 1, (&charstrings));
-        stbtt__dict_get_ints__29e4460ec3((&topdict), (256 | 6), 1, (&cstype));
-        stbtt__dict_get_ints__29e4460ec3((&topdict), (256 | 36), 1, (&fdarrayoff));
-        stbtt__dict_get_ints__29e4460ec3((&topdict), (256 | 37), 1, (&fdselectoff));
-        info->subrs = stbtt__get_subrs__32a2e58618(b, topdict);
+        imgui__stbtt_dict_get_ints((&topdict), 17, 1, (&charstrings));
+        imgui__stbtt_dict_get_ints((&topdict), (256 | 6), 1, (&cstype));
+        imgui__stbtt_dict_get_ints((&topdict), (256 | 36), 1, (&fdarrayoff));
+        imgui__stbtt_dict_get_ints((&topdict), (256 | 37), 1, (&fdselectoff));
+        info->subrs = imgui__stbtt_get_subrs(b, topdict);
         if (cstype != 2) {
             return 0;
         }
@@ -8925,8 +8899,8 @@ static void stbtt_MakeGlyphBitmapSubpixel__d54b9c6daf(ImGuiContext *imgui_c89_ct
     int num_verts;
     imgui_c89_anon_imstb_truetype_929_9 gbm;
 
-    num_verts = stbtt_GetGlyphShape__54121b5f12(imgui_c89_ctx, info, glyph, (&vertices));
-    stbtt_GetGlyphBitmapBoxSubpixel__0b267e35c6(info, glyph, scale_x, scale_y, shift_x, shift_y, (&ix0), (&iy0), 0, 0);
+    num_verts = imgui__stbtt_get_glyph_shape(imgui_c89_ctx, info, glyph, (&vertices));
+    imgui__stbtt_get_glyph_bitmap_box_subpixel(info, glyph, scale_x, scale_y, shift_x, shift_y, (&ix0), (&iy0), 0, 0);
     gbm.pixels = output;
     gbm.w = out_w;
     gbm.h = out_h;
@@ -9018,7 +8992,7 @@ static int stbtt__GetGlyphInfoT2__b34d18fe97(const stbtt_fontinfo * info, int gl
     c.max_y = 0;
     c.pvertices = 0;
     c.num_vertices = 0;
-    r = stbtt__run_charstring__38ed33710a(info, glyph_index, (&c));
+    r = imgui__stbtt_run_charstring(info, glyph_index, (&c));
     if (x0) {
         (*x0) = (r ? c.min_x : 0);
     }
@@ -9065,10 +9039,10 @@ static int stbtt__GetGlyphShapeT2__357c013cd5(ImGuiContext *imgui_c89_ctx, const
     output_ctx.max_y = 0;
     output_ctx.pvertices = 0;
     output_ctx.num_vertices = 0;
-    if (stbtt__run_charstring__38ed33710a(info, glyph_index, (&count_ctx))) {
+    if (imgui__stbtt_run_charstring(info, glyph_index, (&count_ctx))) {
         (*pvertices) = ((imgui_c89_anon_imstb_truetype_840_12 *)((((void)(info->userdata)) , imgui_mem_alloc(imgui_c89_ctx, (count_ctx.num_vertices * sizeof(imgui_c89_anon_imstb_truetype_840_12))))));
         output_ctx.pvertices = (*pvertices);
-        if (stbtt__run_charstring__38ed33710a(info, glyph_index, (&output_ctx))) {
+        if (imgui__stbtt_run_charstring(info, glyph_index, (&output_ctx))) {
             do {
                 imgui_c89_expect((!(output_ctx.num_vertices == count_ctx.num_vertices)), 0) ? imgui_c89_assert_id(157) : ((void)(0));
             } while (0);
@@ -9302,7 +9276,7 @@ static int stbtt__GetGlyphShapeTT__29404cbec2(ImGuiContext *imgui_c89_ctx, const
                 }
                 m = ((float)(sqrtf(((mtx[0] * mtx[0]) + (mtx[1] * mtx[1])))));
                 n = ((float)(sqrtf(((mtx[2] * mtx[2]) + (mtx[3] * mtx[3])))));
-                comp_num_verts = stbtt_GetGlyphShape__54121b5f12(imgui_c89_ctx, info, gidx, (&comp_verts));
+                comp_num_verts = imgui__stbtt_get_glyph_shape(imgui_c89_ctx, info, gidx, (&comp_verts));
                 if (comp_num_verts > 0) {
                     for (i = 0; i < comp_num_verts; ++i) {
                         v = (&comp_verts[i]);
@@ -9436,55 +9410,43 @@ static int stbtt__cff_index_count__1dd31fad46(imgui_c89_anon_imstb_truetype_518_
     return stbtt__buf_get__e7cd3e6edd(b, 2);
 }
 
-static imgui_c89_anon_imstb_truetype_518_9 stbtt__cff_index_get__357781c314(imgui_c89_anon_imstb_truetype_518_9 b, int i)
+static imgui_c89_anon_imstb_truetype_518_9 imgui__stbtt_cff_index_get(imgui_c89_anon_imstb_truetype_518_9 b, int i)
 {
     int count;
     int offsize;
     int start;
     int end;
 
-    stbtt__buf_seek__3f9659771f((&b), 0);
-    count = stbtt__buf_get__e7cd3e6edd((&b), 2);
-    offsize = stbtt__buf_get8__64be04e850((&b));
-    do {
-        imgui_c89_expect((!((i >= 0) && (i < count))), 0) ? imgui_c89_assert_id(151) : ((void)(0));
-    } while (0);
-    do {
-        imgui_c89_expect((!((offsize >= 1) && (offsize <= 4))), 0) ? imgui_c89_assert_id(152) : ((void)(0));
-    } while (0);
-    stbtt__buf_skip__eb21cea223((&b), (i * offsize));
-    start = stbtt__buf_get__e7cd3e6edd((&b), offsize);
-    end = stbtt__buf_get__e7cd3e6edd((&b), offsize);
-    return stbtt__buf_range__ade608e587((&b), ((2 + ((count + 1) * offsize)) + start), (end - start));
+    stbtt__buf_seek__3f9659771f(&b, 0);
+    count = stbtt__buf_get__e7cd3e6edd(&b, 2);
+    offsize = stbtt__buf_get8__64be04e850(&b);
+    if (!(i >= 0 && i < count)) {
+        imgui_c89_assert_id(151);
+    }
+    if (!(offsize >= 1 && offsize <= 4)) {
+        imgui_c89_assert_id(152);
+    }
+    stbtt__buf_skip__eb21cea223(&b, i * offsize);
+    start = stbtt__buf_get__e7cd3e6edd(&b, offsize);
+    end = stbtt__buf_get__e7cd3e6edd(&b, offsize);
+    return stbtt__buf_range__ade608e587(&b, 2 + (count + 1) * offsize + start, end - start);
 }
 
-static stbtt_uint32 stbtt__cff_int__65bc49b5b3(imgui_c89_anon_imstb_truetype_518_9 * b)
+static stbtt_uint32 imgui__stbtt_cff_int(imgui_c89_anon_imstb_truetype_518_9 * b)
 {
     int b0;
 
     b0 = stbtt__buf_get8__64be04e850(b);
-    if ((b0 >= 32) && (b0 <= 246)) {
-        return b0 - 139;
-    } else {
-        if ((b0 >= 247) && (b0 <= 250)) {
-            return (((b0 - 247) * 256) + stbtt__buf_get8__64be04e850(b)) + 108;
-        } else {
-            if ((b0 >= 251) && (b0 <= 254)) {
-                return (((-(b0 - 251)) * 256) - stbtt__buf_get8__64be04e850(b)) - 108;
-            } else {
-                if (b0 == 28) {
-                    return stbtt__buf_get__e7cd3e6edd(b, 2);
-                } else {
-                    if (b0 == 29) {
-                        return stbtt__buf_get__e7cd3e6edd(b, 4);
-                    }
-                }
-            }
-        }
+    if (b0 >= 32 && b0 <= 246) return b0 - 139;
+    if (b0 >= 247 && b0 <= 250) {
+        return (b0 - 247) * 256 + stbtt__buf_get8__64be04e850(b) + 108;
     }
-    do {
-        imgui_c89_expect((!0), 0) ? imgui_c89_assert_id(149) : ((void)(0));
-    } while (0);
+    if (b0 >= 251 && b0 <= 254) {
+        return -(b0 - 251) * 256 - stbtt__buf_get8__64be04e850(b) - 108;
+    }
+    if (b0 == 28) return stbtt__buf_get__e7cd3e6edd(b, 2);
+    if (b0 == 29) return stbtt__buf_get__e7cd3e6edd(b, 4);
+    imgui_c89_assert_id(149);
     return 0;
 }
 
@@ -9506,7 +9468,7 @@ static void stbtt__cff_skip_operand__9a986f5656(imgui_c89_anon_imstb_truetype_51
             }
         }
     } else {
-        stbtt__cff_int__65bc49b5b3(b);
+        imgui__stbtt_cff_int(b);
     }
 }
 
@@ -9546,7 +9508,7 @@ static imgui_c89_anon_imstb_truetype_518_9 stbtt__cid_get_glyph_subrs__7a9cad5a8
     if (fdselector == (-1)) {
         return stbtt__new_buf__abd0874c1b(0, 0);
     }
-    return stbtt__get_subrs__32a2e58618(info->cff, stbtt__cff_index_get__357781c314(info->fontdicts, fdselector));
+    return imgui__stbtt_get_subrs(info->cff, imgui__stbtt_cff_index_get(info->fontdicts, fdselector));
 }
 
 static int stbtt__close_shape__969ef366f4(imgui_c89_anon_imstb_truetype_840_12 * vertices, int num_vertices, int was_off, int start_off, stbtt_int32 sx, stbtt_int32 sy, stbtt_int32 scx, stbtt_int32 scy, stbtt_int32 cx, stbtt_int32 cy)
@@ -9644,14 +9606,14 @@ static imgui_c89_anon_imstb_truetype_518_9 stbtt__dict_get__71fc60a453(imgui_c89
     return stbtt__buf_range__ade608e587(b, 0, 0);
 }
 
-static void stbtt__dict_get_ints__29e4460ec3(imgui_c89_anon_imstb_truetype_518_9 * b, int key, int outcount, stbtt_uint32 * out)
+static void imgui__stbtt_dict_get_ints(imgui_c89_anon_imstb_truetype_518_9 * b, int key, int outcount, stbtt_uint32 * out)
 {
     int i;
-    imgui_c89_anon_imstb_truetype_518_9 operands;
+    stbtt_buf operands;
 
     operands = stbtt__dict_get__71fc60a453(b, key);
-    for (i = 0; (i < outcount) && (operands.cursor < operands.size); i++) {
-        out[i] = stbtt__cff_int__65bc49b5b3((&operands));
+    for (i = 0; i < outcount && operands.cursor < operands.size; i++) {
+        out[i] = imgui__stbtt_cff_int(&operands);
     }
 }
 
@@ -9697,10 +9659,10 @@ static void stbtt__fill_active_edges_new__437f38557d(float * scanline, float * s
             x0__ce34a912 = e->fx;
             if (x0__ce34a912 < len) {
                 if (x0__ce34a912 >= 0) {
-                    stbtt__handle_clipped_edge__7a807fed17(scanline, ((int)(x0__ce34a912)), e, x0__ce34a912, y_top, x0__ce34a912, y_bottom);
-                    stbtt__handle_clipped_edge__7a807fed17((scanline_fill - 1), (((int)(x0__ce34a912)) + 1), e, x0__ce34a912, y_top, x0__ce34a912, y_bottom);
+                    imgui__stbtt_handle_clipped_edge(scanline, ((int)(x0__ce34a912)), e, x0__ce34a912, y_top, x0__ce34a912, y_bottom);
+                    imgui__stbtt_handle_clipped_edge((scanline_fill - 1), (((int)(x0__ce34a912)) + 1), e, x0__ce34a912, y_top, x0__ce34a912, y_bottom);
                 } else {
-                    stbtt__handle_clipped_edge__7a807fed17((scanline_fill - 1), 0, e, x0__ce34a912, y_top, x0__ce34a912, y_bottom);
+                    imgui__stbtt_handle_clipped_edge((scanline_fill - 1), 0, e, x0__ce34a912, y_top, x0__ce34a912, y_bottom);
                 }
             }
         } else {
@@ -9791,32 +9753,32 @@ static void stbtt__fill_active_edges_new__437f38557d(float * scanline, float * s
                     y1 = (((x - x0) / dx) + y_top);
                     y2 = ((((x + 1) - x0) / dx) + y_top);
                     if ((x0 < x1) && (x3 > x2)) {
-                        stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x0, y0, x1, y1);
-                        stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x1, y1, x2, y2);
-                        stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x2, y2, x3, y3);
+                        imgui__stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x1, y1);
+                        imgui__stbtt_handle_clipped_edge(scanline, x, e, x1, y1, x2, y2);
+                        imgui__stbtt_handle_clipped_edge(scanline, x, e, x2, y2, x3, y3);
                     } else {
                         if ((x3 < x1) && (x0 > x2)) {
-                            stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x0, y0, x2, y2);
-                            stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x2, y2, x1, y1);
-                            stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x1, y1, x3, y3);
+                            imgui__stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x2, y2);
+                            imgui__stbtt_handle_clipped_edge(scanline, x, e, x2, y2, x1, y1);
+                            imgui__stbtt_handle_clipped_edge(scanline, x, e, x1, y1, x3, y3);
                         } else {
                             if ((x0 < x1) && (x3 > x1)) {
-                                stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x0, y0, x1, y1);
-                                stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x1, y1, x3, y3);
+                                imgui__stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x1, y1);
+                                imgui__stbtt_handle_clipped_edge(scanline, x, e, x1, y1, x3, y3);
                             } else {
                                 if ((x3 < x1) && (x0 > x1)) {
-                                    stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x0, y0, x1, y1);
-                                    stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x1, y1, x3, y3);
+                                    imgui__stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x1, y1);
+                                    imgui__stbtt_handle_clipped_edge(scanline, x, e, x1, y1, x3, y3);
                                 } else {
                                     if ((x0 < x2) && (x3 > x2)) {
-                                        stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x0, y0, x2, y2);
-                                        stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x2, y2, x3, y3);
+                                        imgui__stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x2, y2);
+                                        imgui__stbtt_handle_clipped_edge(scanline, x, e, x2, y2, x3, y3);
                                     } else {
                                         if ((x3 < x2) && (x0 > x2)) {
-                                            stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x0, y0, x2, y2);
-                                            stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x2, y2, x3, y3);
+                                            imgui__stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x2, y2);
+                                            imgui__stbtt_handle_clipped_edge(scanline, x, e, x2, y2, x3, y3);
                                         } else {
-                                            stbtt__handle_clipped_edge__7a807fed17(scanline, x, e, x0, y0, x3, y3);
+                                            imgui__stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x3, y3);
                                         }
                                     }
                                 }
@@ -9866,30 +9828,25 @@ static imgui_c89_anon_imstb_truetype_518_9 stbtt__get_subr__4a52de8ae5(imgui_c89
     if ((n < 0) || (n >= count)) {
         return stbtt__new_buf__abd0874c1b(0, 0);
     }
-    return stbtt__cff_index_get__357781c314(idx, n);
+    return imgui__stbtt_cff_index_get(idx, n);
 }
 
-static imgui_c89_anon_imstb_truetype_518_9 stbtt__get_subrs__32a2e58618(imgui_c89_anon_imstb_truetype_518_9 cff, imgui_c89_anon_imstb_truetype_518_9 fontdict)
+static imgui_c89_anon_imstb_truetype_518_9 imgui__stbtt_get_subrs(imgui_c89_anon_imstb_truetype_518_9 cff, imgui_c89_anon_imstb_truetype_518_9 fontdict)
 {
     stbtt_uint32 subrsoff;
     stbtt_uint32 private_loc[2];
-    imgui_c89_anon_imstb_truetype_518_9 pdict;
+    stbtt_buf pdict;
 
     subrsoff = 0;
-    memset(&private_loc, 0, sizeof(private_loc));
     private_loc[0] = 0;
     private_loc[1] = 0;
-    stbtt__dict_get_ints__29e4460ec3((&fontdict), 18, 2, private_loc);
-    if ((!private_loc[1]) || (!private_loc[0])) {
-        return stbtt__new_buf__abd0874c1b(0, 0);
-    }
-    pdict = stbtt__buf_range__ade608e587((&cff), private_loc[1], private_loc[0]);
-    stbtt__dict_get_ints__29e4460ec3((&pdict), 19, 1, (&subrsoff));
-    if (!subrsoff) {
-        return stbtt__new_buf__abd0874c1b(0, 0);
-    }
-    stbtt__buf_seek__3f9659771f((&cff), (private_loc[1] + subrsoff));
-    return stbtt__cff_get_index__1fdcf073a8((&cff));
+    imgui__stbtt_dict_get_ints(&fontdict, 18, 2, private_loc);
+    if (!private_loc[1] || !private_loc[0]) return stbtt__new_buf__abd0874c1b(NULL, 0);
+    pdict = stbtt__buf_range__ade608e587(&cff, private_loc[1], private_loc[0]);
+    imgui__stbtt_dict_get_ints(&pdict, 19, 1, &subrsoff);
+    if (!subrsoff) return stbtt__new_buf__abd0874c1b(NULL, 0);
+    stbtt__buf_seek__3f9659771f(&cff, private_loc[1] + subrsoff);
+    return stbtt__cff_get_index__1fdcf073a8(&cff);
 }
 
 static void stbtt__h_prefilter__cd8f8b18bb(unsigned char * pixels, int w, int h, int stride_in_bytes, unsigned int kernel_width)
@@ -9953,69 +9910,55 @@ static void stbtt__h_prefilter__cd8f8b18bb(unsigned char * pixels, int w, int h,
     }
 }
 
-static void stbtt__handle_clipped_edge__7a807fed17(float * scanline, int x, stbtt_active_edge * e, float x0, float y0, float x1, float y1)
+static void imgui__stbtt_handle_clipped_edge(float * scanline, int x, stbtt_active_edge * e, float x0, float y0, float x1, float y1)
 {
-    if (y0 == y1) {
-        return;
+    if (y0 == y1) return;
+    if (!(y0 < y1)) {
+        imgui_c89_assert_id(159);
     }
-    do {
-        imgui_c89_expect((!(y0 < y1)), 0) ? imgui_c89_assert_id(159) : ((void)(0));
-    } while (0);
-    do {
-        imgui_c89_expect((!(e->sy <= e->ey)), 0) ? imgui_c89_assert_id(160) : ((void)(0));
-    } while (0);
-    if (y0 > e->ey) {
-        return;
+    if (!(e->sy <= e->ey)) {
+        imgui_c89_assert_id(160);
     }
-    if (y1 < e->sy) {
-        return;
-    }
+    if (y0 > e->ey) return;
+    if (y1 < e->sy) return;
     if (y0 < e->sy) {
-        x0 += (((x1 - x0) * (e->sy - y0)) / (y1 - y0));
+        x0 += (x1 - x0) * (e->sy - y0) / (y1 - y0);
         y0 = e->sy;
     }
     if (y1 > e->ey) {
-        x1 += (((x1 - x0) * (e->ey - y1)) / (y1 - y0));
+        x1 += (x1 - x0) * (e->ey - y1) / (y1 - y0);
         y1 = e->ey;
     }
     if (x0 == x) {
-        do {
-            imgui_c89_expect((!(x1 <= (x + 1))), 0) ? imgui_c89_assert_id(161) : ((void)(0));
-        } while (0);
+        if (!(x1 <= x + 1)) {
+            imgui_c89_assert_id(161);
+        }
+    } else if (x0 == x + 1) {
+        if (!(x1 >= x)) {
+            imgui_c89_assert_id(162);
+        }
+    } else if (x0 <= x) {
+        if (!(x1 <= x)) {
+            imgui_c89_assert_id(163);
+        }
+    } else if (x0 >= x + 1) {
+        if (!(x1 >= x + 1)) {
+            imgui_c89_assert_id(164);
+        }
     } else {
-        if (x0 == (x + 1)) {
-            do {
-                imgui_c89_expect((!(x1 >= x)), 0) ? imgui_c89_assert_id(162) : ((void)(0));
-            } while (0);
-        } else {
-            if (x0 <= x) {
-                do {
-                    imgui_c89_expect((!(x1 <= x)), 0) ? imgui_c89_assert_id(163) : ((void)(0));
-                } while (0);
-            } else {
-                if (x0 >= (x + 1)) {
-                    do {
-                        imgui_c89_expect((!(x1 >= (x + 1))), 0) ? imgui_c89_assert_id(164) : ((void)(0));
-                    } while (0);
-                } else {
-                    do {
-                        imgui_c89_expect((!((x1 >= x) && (x1 <= (x + 1)))), 0) ? imgui_c89_assert_id(165) : ((void)(0));
-                    } while (0);
-                }
-            }
+        if (!(x1 >= x && x1 <= x + 1)) {
+            imgui_c89_assert_id(165);
         }
     }
-    if ((x0 <= x) && (x1 <= x)) {
-        scanline[x] += (e->direction * (y1 - y0));
+    if (x0 <= x && x1 <= x) {
+        scanline[x] += e->direction * (y1 - y0);
+    } else if (x0 >= x + 1 && x1 >= x + 1) {
     } else {
-        if ((x0 >= (x + 1)) && (x1 >= (x + 1))) {
-            ;
-        } else {
-            do {
-                imgui_c89_expect((!((((x0 >= x) && (x0 <= (x + 1))) && (x1 >= x)) && (x1 <= (x + 1)))), 0) ? imgui_c89_assert_id(166) : ((void)(0));
-            } while (0);
-            scanline[x] += ((e->direction * (y1 - y0)) * (1 - (((x0 - x) + (x1 - x)) / 2)));
+        if (!(x0 >= x && x0 <= x + 1 && x1 >= x && x1 <= x + 1)) {
+            imgui_c89_assert_id(166);
         }
+        scanline[x] += e->direction * (y1 - y0) *
+            (1.0f - ((x0 - x) + (x1 - x)) / 2.0f);
     }
 }
 
@@ -10288,8 +10231,12 @@ static void stbtt__rasterize_sorted_edges__613ed5e79d(ImGuiContext *imgui_c89_ct
     }
 }
 
-static int stbtt__run_charstring__38ed33710a(const stbtt_fontinfo * info, int glyph_index, imgui_c89_anon_imstb_truetype_1902_9 * c)
+static int imgui__stbtt_run_charstring(const stbtt_fontinfo * info, int glyph_index, imgui_c89_anon_imstb_truetype_1902_9 * c)
 {
+    static const unsigned char imgui_c89_cff_min_stack[32] = {
+        0,0,0,0,1,2,1,1,6,0,1,0,0,0,0,0,
+        0,0,0,0,0,2,1,0,8,8,4,4,0,1,4,4
+    };
     int in_header;
     int maskbits;
     int subr_stack_height;
@@ -10297,275 +10244,216 @@ static int stbtt__run_charstring__38ed33710a(const stbtt_fontinfo * info, int gl
     int v;
     int i;
     int b0;
+    int b1;
     int has_subrs;
     int clear_stack;
     float s[48];
-    imgui_c89_anon_imstb_truetype_518_9 subr_stack[10];
-    imgui_c89_anon_imstb_truetype_518_9 subrs;
-    imgui_c89_anon_imstb_truetype_518_9 b;
     float f;
-    float dx1;
-    float dx2;
-    float dx3;
-    float dx4;
-    float dx5;
+    float sumx;
+    float sumy;
     float dx6;
-    float dy1;
-    float dy2;
-    float dy3;
-    float dy4;
-    float dy5;
     float dy6;
-    float dx;
-    float dy;
-    int b1;
+    stbtt_buf subr_stack[10];
+    stbtt_buf subrs;
+    stbtt_buf b;
 
-    static const unsigned char imgui_c89_cff_min_stack[32] = {
-        0,0,0,0,1,2,1,1,6,0,1,0,0,0,0,0,
-        0,0,0,0,0,2,1,0,8,8,4,4,0,1,4,4
-    };
     in_header = 1;
     maskbits = 0;
     subr_stack_height = 0;
     sp = 0;
     has_subrs = 0;
     subrs = info->subrs;
-    b = stbtt__cff_index_get__357781c314(info->charstrings, glyph_index);
+    b = imgui__stbtt_cff_index_get(info->charstrings, glyph_index);
     while (b.cursor < b.size) {
         i = 0;
         clear_stack = 1;
-        b0 = stbtt__buf_get8__64be04e850((&b));
+        b0 = stbtt__buf_get8__64be04e850(&b);
         if (b0 < 32 && sp < imgui_c89_cff_min_stack[b0]) return 0;
         switch (b0) {
-            case 19:
-                case 20:
-                    if (in_header) {
-                        maskbits += (sp / 2);
-                    }
+        case 0x13:
+        case 0x14:
+            if (in_header) {
+                maskbits += sp / 2;
+            }
             in_header = 0;
-            stbtt__buf_skip__eb21cea223((&b), ((maskbits + 7) / 8));
+            stbtt__buf_skip__eb21cea223(&b, (maskbits + 7) / 8);
             break;
-            case 1:
-                case 3:
-                    case 18:
-                        case 23:
-                            maskbits += (sp / 2);
+
+        case 0x01:
+        case 0x03:
+        case 0x12:
+        case 0x17:
+            maskbits += sp / 2;
             break;
-            case 21:
-                in_header = 0;
-            stbtt__csctx_rmove_to__f84a99555e(c, s[(sp - 2)], s[(sp - 1)]);
+
+        case 0x15:
+            in_header = 0;
+            stbtt__csctx_rmove_to__f84a99555e(c, s[sp - 2], s[sp - 1]);
             break;
-            case 4:
-                in_header = 0;
-            stbtt__csctx_rmove_to__f84a99555e(c, 0, s[(sp - 1)]);
+        case 0x04:
+            in_header = 0;
+            stbtt__csctx_rmove_to__f84a99555e(c, 0.0f, s[sp - 1]);
             break;
-            case 22:
-                in_header = 0;
-            stbtt__csctx_rmove_to__f84a99555e(c, s[(sp - 1)], 0);
+        case 0x16:
+            in_header = 0;
+            stbtt__csctx_rmove_to__f84a99555e(c, s[sp - 1], 0.0f);
             break;
-            case 5:
-            for (; (i + 1) < sp; i += 2) {
-                stbtt__csctx_rline_to__b52cb79f52(c, s[i], s[(i + 1)]);
+
+        case 0x05:
+            for (; i + 1 < sp; i += 2) {
+                stbtt__csctx_rline_to__b52cb79f52(c, s[i], s[i + 1]);
             }
             break;
-            case 7:
+
+        case 0x07:
             goto vlineto;
-            case 6:
-            for (; ; ) {
-                if (i >= sp) {
-                    break;
-                }
-                stbtt__csctx_rline_to__b52cb79f52(c, s[i], 0);
+        case 0x06:
+            for (;;) {
+                if (i >= sp) break;
+                stbtt__csctx_rline_to__b52cb79f52(c, s[i], 0.0f);
                 i++;
-                vlineto:
-                    if (i >= sp) {
-                        break;
-                    }
-                stbtt__csctx_rline_to__b52cb79f52(c, 0, s[i]);
+    vlineto:
+                if (i >= sp) break;
+                stbtt__csctx_rline_to__b52cb79f52(c, 0.0f, s[i]);
                 i++;
             }
             break;
-            case 31:
+
+        case 0x1f:
             goto hvcurveto;
-            case 30:
-            for (; ; ) {
-                if ((i + 3) >= sp) {
-                    break;
-                }
-                stbtt__csctx_rccurve_to__bb35afb676(c, 0, s[i], s[(i + 1)], s[(i + 2)], s[(i + 3)], (((sp - i) == 5) ? s[(i + 4)] : 0.0f));
+        case 0x1e:
+            for (;;) {
+                if (i + 3 >= sp) break;
+                stbtt__csctx_rccurve_to__bb35afb676(c, 0.0f, s[i], s[i + 1], s[i + 2], s[i + 3],
+                    sp - i == 5 ? s[i + 4] : 0.0f);
                 i += 4;
-                hvcurveto:
-                    if ((i + 3) >= sp) {
-                        break;
-                    }
-                stbtt__csctx_rccurve_to__bb35afb676(c, s[i], 0, s[(i + 1)], s[(i + 2)], (((sp - i) == 5) ? s[(i + 4)] : 0.0f), s[(i + 3)]);
+    hvcurveto:
+                if (i + 3 >= sp) break;
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[i], 0.0f, s[i + 1], s[i + 2],
+                    sp - i == 5 ? s[i + 4] : 0.0f, s[i + 3]);
                 i += 4;
             }
             break;
-            case 8:
-            for (; (i + 5) < sp; i += 6) {
-                stbtt__csctx_rccurve_to__bb35afb676(c, s[i], s[(i + 1)], s[(i + 2)], s[(i + 3)], s[(i + 4)], s[(i + 5)]);
+
+        case 0x08:
+            for (; i + 5 < sp; i += 6) {
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[i], s[i + 1], s[i + 2], s[i + 3],
+                    s[i + 4], s[i + 5]);
             }
             break;
-            case 24:
-            for (; (i + 5) < (sp - 2); i += 6) {
-                stbtt__csctx_rccurve_to__bb35afb676(c, s[i], s[(i + 1)], s[(i + 2)], s[(i + 3)], s[(i + 4)], s[(i + 5)]);
+
+        case 0x18:
+            for (; i + 5 < sp - 2; i += 6) {
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[i], s[i + 1], s[i + 2], s[i + 3],
+                    s[i + 4], s[i + 5]);
             }
-            if ((i + 1) >= sp) {
-                return 0;
-            }
-            stbtt__csctx_rline_to__b52cb79f52(c, s[i], s[(i + 1)]);
+            if (i + 1 >= sp) return 0;
+            stbtt__csctx_rline_to__b52cb79f52(c, s[i], s[i + 1]);
             break;
-            case 25:
-            for (; (i + 1) < (sp - 6); i += 2) {
-                stbtt__csctx_rline_to__b52cb79f52(c, s[i], s[(i + 1)]);
+
+        case 0x19:
+            for (; i + 1 < sp - 6; i += 2) {
+                stbtt__csctx_rline_to__b52cb79f52(c, s[i], s[i + 1]);
             }
-            if ((i + 5) >= sp) {
-                return 0;
-            }
-            stbtt__csctx_rccurve_to__bb35afb676(c, s[i], s[(i + 1)], s[(i + 2)], s[(i + 3)], s[(i + 4)], s[(i + 5)]);
+            if (i + 5 >= sp) return 0;
+            stbtt__csctx_rccurve_to__bb35afb676(c, s[i], s[i + 1], s[i + 2], s[i + 3],
+                s[i + 4], s[i + 5]);
             break;
-            case 26:
-                case 27:
-            f = 0.0;
+
+        case 0x1a:
+        case 0x1b:
+            f = 0.0f;
             if (sp & 1) {
-                f = s[i];
-                i++;
+                f = s[i++];
             }
-            for (; (i + 3) < sp; i += 4) {
-                if (b0 == 27) {
-                    stbtt__csctx_rccurve_to__bb35afb676(c, s[i], f, s[(i + 1)], s[(i + 2)], s[(i + 3)], 0.0);
+            for (; i + 3 < sp; i += 4) {
+                if (b0 == 0x1b) {
+                    stbtt__csctx_rccurve_to__bb35afb676(c, s[i], f, s[i + 1], s[i + 2],
+                        s[i + 3], 0.0f);
                 } else {
-                    stbtt__csctx_rccurve_to__bb35afb676(c, f, s[i], s[(i + 1)], s[(i + 2)], 0.0, s[(i + 3)]);
+                    stbtt__csctx_rccurve_to__bb35afb676(c, f, s[i], s[i + 1], s[i + 2],
+                        0.0f, s[i + 3]);
                 }
-                f = 0.0;
+                f = 0.0f;
             }
             break;
-            case 10:
-                if (!has_subrs) {
-                    if (info->fdselect.size) {
-                        subrs = stbtt__cid_get_glyph_subrs__7a9cad5a8f(info, glyph_index);
-                    }
-                    has_subrs = 1;
+
+        case 0x0a:
+            if (!has_subrs) {
+                if (info->fdselect.size) {
+                    subrs = stbtt__cid_get_glyph_subrs__7a9cad5a8f(info, glyph_index);
                 }
-            case 29:
-            v = ((int)(s[(--sp)]));
-            if (subr_stack_height >= 10) {
-                return 0;
+                has_subrs = 1;
             }
-            subr_stack[(subr_stack_height++)] = b;
-            b = stbtt__get_subr__4a52de8ae5(((b0 == 10) ? subrs : info->gsubrs), v);
-            if (b.size == 0) {
-                return 0;
-            }
+            /* fall through */
+        case 0x1d:
+            v = (int)s[--sp];
+            if (subr_stack_height >= 10) return 0;
+            subr_stack[subr_stack_height++] = b;
+            b = stbtt__get_subr__4a52de8ae5(b0 == 0x0a ? subrs : info->gsubrs, v);
+            if (b.size == 0) return 0;
             b.cursor = 0;
             clear_stack = 0;
             break;
-            case 11:
-                if (subr_stack_height <= 0) {
-                    return 0;
-                }
-            b = subr_stack[(--subr_stack_height)];
+
+        case 0x0b:
+            if (subr_stack_height <= 0) return 0;
+            b = subr_stack[--subr_stack_height];
             clear_stack = 0;
             break;
-            case 14:
-                stbtt__csctx_close_shape__b91e8c7a08(c);
+
+        case 0x0e:
+            stbtt__csctx_close_shape__b91e8c7a08(c);
             return 1;
-            case 12:
-                b1 = stbtt__buf_get8__64be04e850((&b));
-                switch (b1) {
-                    case 34:
-                        if (sp < 7) {
-                            return 0;
-                        }
-                    dx1 = s[0];
-                    dx2 = s[1];
-                    dy2 = s[2];
-                    dx3 = s[3];
-                    dx4 = s[4];
-                    dx5 = s[5];
-                    dx6 = s[6];
-                    stbtt__csctx_rccurve_to__bb35afb676(c, dx1, 0, dx2, dy2, dx3, 0);
-                    stbtt__csctx_rccurve_to__bb35afb676(c, dx4, 0, dx5, (-dy2), dx6, 0);
-                    break;
-                    case 35:
-                        if (sp < 13) {
-                            return 0;
-                        }
-                    dx1 = s[0];
-                    dy1 = s[1];
-                    dx2 = s[2];
-                    dy2 = s[3];
-                    dx3 = s[4];
-                    dy3 = s[5];
-                    dx4 = s[6];
-                    dy4 = s[7];
-                    dx5 = s[8];
-                    dy5 = s[9];
-                    dx6 = s[10];
-                    dy6 = s[11];
-                    stbtt__csctx_rccurve_to__bb35afb676(c, dx1, dy1, dx2, dy2, dx3, dy3);
-                    stbtt__csctx_rccurve_to__bb35afb676(c, dx4, dy4, dx5, dy5, dx6, dy6);
-                    break;
-                    case 36:
-                        if (sp < 9) {
-                            return 0;
-                        }
-                    dx1 = s[0];
-                    dy1 = s[1];
-                    dx2 = s[2];
-                    dy2 = s[3];
-                    dx3 = s[4];
-                    dx4 = s[5];
-                    dx5 = s[6];
-                    dy5 = s[7];
-                    dx6 = s[8];
-                    stbtt__csctx_rccurve_to__bb35afb676(c, dx1, dy1, dx2, dy2, dx3, 0);
-                    stbtt__csctx_rccurve_to__bb35afb676(c, dx4, 0, dx5, dy5, dx6, (-((dy1 + dy2) + dy5)));
-                    break;
-                    case 37:
-                        if (sp < 11) {
-                            return 0;
-                        }
-                    dx1 = s[0];
-                    dy1 = s[1];
-                    dx2 = s[2];
-                    dy2 = s[3];
-                    dx3 = s[4];
-                    dy3 = s[5];
-                    dx4 = s[6];
-                    dy4 = s[7];
-                    dx5 = s[8];
-                    dy5 = s[9];
-                    dx6 = (dy6 = s[10]);
-                    dx = ((((dx1 + dx2) + dx3) + dx4) + dx5);
-                    dy = ((((dy1 + dy2) + dy3) + dy4) + dy5);
-                    if (fabsf(dx) > fabsf(dy)) {
-                        dy6 = (-dy);
-                    } else {
-                        dx6 = (-dx);
-                    }
-                    stbtt__csctx_rccurve_to__bb35afb676(c, dx1, dy1, dx2, dy2, dx3, dy3);
-                    stbtt__csctx_rccurve_to__bb35afb676(c, dx4, dy4, dx5, dy5, dx6, dy6);
-                    break;
-                    default:
-                        return 0;
+
+        case 0x0c:
+            b1 = stbtt__buf_get8__64be04e850(&b);
+            switch (b1) {
+            case 0x22:
+                if (sp < 7) return 0;
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[0], 0.0f, s[1], s[2], s[3], 0.0f);
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[4], 0.0f, s[5], -s[2], s[6], 0.0f);
+                break;
+            case 0x23:
+                if (sp < 13) return 0;
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[0], s[1], s[2], s[3], s[4], s[5]);
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[6], s[7], s[8], s[9], s[10], s[11]);
+                break;
+            case 0x24:
+                if (sp < 9) return 0;
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[0], s[1], s[2], s[3], s[4], 0.0f);
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[5], 0.0f, s[6], s[7], s[8],
+                    -(s[1] + s[3] + s[7]));
+                break;
+            case 0x25:
+                if (sp < 11) return 0;
+                sumx = s[0] + s[2] + s[4] + s[6] + s[8];
+                sumy = s[1] + s[3] + s[5] + s[7] + s[9];
+                dx6 = s[10];
+                dy6 = s[10];
+                if (fabsf(sumx) > fabsf(sumy)) {
+                    dy6 = -sumy;
+                } else {
+                    dx6 = -sumx;
                 }
-            break;
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[0], s[1], s[2], s[3], s[4], s[5]);
+                stbtt__csctx_rccurve_to__bb35afb676(c, s[6], s[7], s[8], s[9], dx6, dy6);
+                break;
             default:
-                if (((b0 != 255) && (b0 != 28)) && (b0 < 32)) {
-                    return 0;
-                }
-            if (b0 == 255) {
-                f = (((float)(((stbtt_int32)(stbtt__buf_get__e7cd3e6edd((&b), 4))))) / 65536);
-            } else {
-                stbtt__buf_skip__eb21cea223((&b), (-1));
-                f = ((float)(((stbtt_int16)(stbtt__cff_int__65bc49b5b3((&b))))));
-            }
-            if (sp >= 48) {
                 return 0;
             }
-            s[(sp++)] = f;
+            break;
+
+        default:
+            if (b0 != 255 && b0 != 28 && b0 < 32) return 0;
+            if (b0 == 255) {
+                f = (float)(stbtt_int32)stbtt__buf_get__e7cd3e6edd(&b, 4) / 65536.0f;
+            } else {
+                stbtt__buf_skip__eb21cea223(&b, -1);
+                f = (float)(stbtt_int16)imgui__stbtt_cff_int(&b);
+            }
+            if (sp >= 48) return 0;
+            s[sp++] = f;
             clear_stack = 0;
             break;
         }
@@ -10594,7 +10482,7 @@ static float stbtt__sized_triangle_area__b8e2ccc88b(float height, float width)
 
 static void stbtt__sort_edges__5f2009b7a0(stbtt_edge * p, int n)
 {
-    stbtt__sort_edges_quicksort__d7e26a5b22(p, n);
+    imgui__stbtt_sort_edges_quicksort(p, n);
     stbtt__sort_edges_ins_sort__dfd4771cef(p, n);
 }
 
@@ -10626,7 +10514,7 @@ static void stbtt__sort_edges_ins_sort__dfd4771cef(stbtt_edge * p, int n)
     }
 }
 
-static void stbtt__sort_edges_quicksort__d7e26a5b22(stbtt_edge * p, int n)
+static void imgui__stbtt_sort_edges_quicksort(stbtt_edge * p, int n)
 {
     stbtt_edge t;
     int c01;
@@ -10638,12 +10526,12 @@ static void stbtt__sort_edges_quicksort__d7e26a5b22(stbtt_edge * p, int n)
     int z;
 
     while (n > 12) {
-        m = (n >> 1);
-        c01 = ((&p[0])->y0 < (&p[m])->y0);
-        c12 = ((&p[m])->y0 < (&p[(n - 1)])->y0);
+        m = n >> 1;
+        c01 = p[0].y0 < p[m].y0;
+        c12 = p[m].y0 < p[n - 1].y0;
         if (c01 != c12) {
-            c = ((&p[0])->y0 < (&p[(n - 1)])->y0);
-            z = ((c == c12) ? 0 : (n - 1));
+            c = p[0].y0 < p[n - 1].y0;
+            z = c == c12 ? 0 : n - 1;
             t = p[z];
             p[z] = p[m];
             p[m] = t;
@@ -10652,39 +10540,33 @@ static void stbtt__sort_edges_quicksort__d7e26a5b22(stbtt_edge * p, int n)
         p[0] = p[m];
         p[m] = t;
         i = 1;
-        j = (n - 1);
-        for (; ; ) {
-            for (; ; ++i) {
-                if (!((&p[i])->y0 < (&p[0])->y0)) {
-                    break;
-                }
+        j = n - 1;
+        for (;;) {
+            while (p[i].y0 < p[0].y0) {
+                ++i;
             }
-            for (; ; --j) {
-                if (!((&p[0])->y0 < (&p[j])->y0)) {
-                    break;
-                }
+            while (p[0].y0 < p[j].y0) {
+                --j;
             }
-            if (i >= j) {
-                break;
-            }
+            if (i >= j) break;
             t = p[i];
             p[i] = p[j];
             p[j] = t;
             ++i;
             --j;
         }
-        if (j < (n - i)) {
-            stbtt__sort_edges_quicksort__d7e26a5b22(p, j);
-            p = (p + i);
-            n = (n - i);
+        if (j < n - i) {
+            imgui__stbtt_sort_edges_quicksort(p, j);
+            p += i;
+            n -= i;
         } else {
-            stbtt__sort_edges_quicksort__d7e26a5b22((p + i), (n - i));
+            imgui__stbtt_sort_edges_quicksort(p + i, n - i);
             n = j;
         }
     }
 }
 
-static void stbtt__tesselate_cubic__29babd912e(imgui_c89_anon_imstb_truetype_3493_9 * points, int * num_points, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float objspace_flatness_squared, int n)
+static void imgui__stbtt_tesselate_cubic(imgui_c89_anon_imstb_truetype_3493_9 * points, int * num_points, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float objspace_flatness_squared, int n)
 {
     float dx0;
     float dy0;
@@ -10710,61 +10592,65 @@ static void stbtt__tesselate_cubic__29babd912e(imgui_c89_anon_imstb_truetype_349
     float mx;
     float my;
 
-    dx0 = (x1 - x0);
-    dy0 = (y1 - y0);
-    dx1 = (x2 - x1);
-    dy1 = (y2 - y1);
-    dx2 = (x3 - x2);
-    dy2 = (y3 - y2);
-    dx = (x3 - x0);
-    dy = (y3 - y0);
-    longlen = ((float)(((sqrtf(((dx0 * dx0) + (dy0 * dy0))) + sqrtf(((dx1 * dx1) + (dy1 * dy1)))) + sqrtf(((dx2 * dx2) + (dy2 * dy2))))));
-    shortlen = ((float)(sqrtf(((dx * dx) + (dy * dy)))));
-    flatness_squared = ((longlen * longlen) - (shortlen * shortlen));
-    if (n > 16) {
-        return;
-    }
+    dx0 = x1 - x0;
+    dy0 = y1 - y0;
+    dx1 = x2 - x1;
+    dy1 = y2 - y1;
+    dx2 = x3 - x2;
+    dy2 = y3 - y2;
+    dx = x3 - x0;
+    dy = y3 - y0;
+    longlen = sqrtf(dx0 * dx0 + dy0 * dy0) +
+        sqrtf(dx1 * dx1 + dy1 * dy1) +
+        sqrtf(dx2 * dx2 + dy2 * dy2);
+    shortlen = sqrtf(dx * dx + dy * dy);
+    flatness_squared = longlen * longlen - shortlen * shortlen;
+    if (n > 16) return;
     if (flatness_squared > objspace_flatness_squared) {
-        x01 = ((x0 + x1) / 2);
-        y01 = ((y0 + y1) / 2);
-        x12 = ((x1 + x2) / 2);
-        y12 = ((y1 + y2) / 2);
-        x23 = ((x2 + x3) / 2);
-        y23 = ((y2 + y3) / 2);
-        xa = ((x01 + x12) / 2);
-        ya = ((y01 + y12) / 2);
-        xb = ((x12 + x23) / 2);
-        yb = ((y12 + y23) / 2);
-        mx = ((xa + xb) / 2);
-        my = ((ya + yb) / 2);
-        stbtt__tesselate_cubic__29babd912e(points, num_points, x0, y0, x01, y01, xa, ya, mx, my, objspace_flatness_squared, (n + 1));
-        stbtt__tesselate_cubic__29babd912e(points, num_points, mx, my, xb, yb, x23, y23, x3, y3, objspace_flatness_squared, (n + 1));
+        x01 = (x0 + x1) / 2.0f;
+        y01 = (y0 + y1) / 2.0f;
+        x12 = (x1 + x2) / 2.0f;
+        y12 = (y1 + y2) / 2.0f;
+        x23 = (x2 + x3) / 2.0f;
+        y23 = (y2 + y3) / 2.0f;
+        xa = (x01 + x12) / 2.0f;
+        ya = (y01 + y12) / 2.0f;
+        xb = (x12 + x23) / 2.0f;
+        yb = (y12 + y23) / 2.0f;
+        mx = (xa + xb) / 2.0f;
+        my = (ya + yb) / 2.0f;
+        imgui__stbtt_tesselate_cubic(points, num_points, x0, y0, x01, y01, xa, ya,
+            mx, my, objspace_flatness_squared, n + 1);
+        imgui__stbtt_tesselate_cubic(points, num_points, mx, my, xb, yb, x23, y23,
+            x3, y3, objspace_flatness_squared, n + 1);
     } else {
-        stbtt__add_point__e6d9c5de0c(points, (*num_points), x3, y3);
-        (*num_points) = ((*num_points) + 1);
+        stbtt__add_point__e6d9c5de0c(points, *num_points, x3, y3);
+        *num_points = *num_points + 1;
     }
 }
 
-static int stbtt__tesselate_curve__50ed7f4c53(imgui_c89_anon_imstb_truetype_3493_9 * points, int * num_points, float x0, float y0, float x1, float y1, float x2, float y2, float objspace_flatness_squared, int n)
+static int imgui__stbtt_tesselate_curve(imgui_c89_anon_imstb_truetype_3493_9 * points, int * num_points, float x0, float y0, float x1, float y1, float x2, float y2, float objspace_flatness_squared, int n)
 {
     float mx;
     float my;
     float dx;
     float dy;
 
-    mx = (((x0 + (2 * x1)) + x2) / 4);
-    my = (((y0 + (2 * y1)) + y2) / 4);
-    dx = (((x0 + x2) / 2) - mx);
-    dy = (((y0 + y2) / 2) - my);
-    if (n > 16) {
-        return 1;
-    }
-    if (((dx * dx) + (dy * dy)) > objspace_flatness_squared) {
-        stbtt__tesselate_curve__50ed7f4c53(points, num_points, x0, y0, ((x0 + x1) / 2.0f), ((y0 + y1) / 2.0f), mx, my, objspace_flatness_squared, (n + 1));
-        stbtt__tesselate_curve__50ed7f4c53(points, num_points, mx, my, ((x1 + x2) / 2.0f), ((y1 + y2) / 2.0f), x2, y2, objspace_flatness_squared, (n + 1));
+    mx = (x0 + 2.0f * x1 + x2) / 4.0f;
+    my = (y0 + 2.0f * y1 + y2) / 4.0f;
+    dx = (x0 + x2) / 2.0f - mx;
+    dy = (y0 + y2) / 2.0f - my;
+    if (n > 16) return 1;
+    if (dx * dx + dy * dy > objspace_flatness_squared) {
+        imgui__stbtt_tesselate_curve(points, num_points, x0, y0,
+            (x0 + x1) / 2.0f, (y0 + y1) / 2.0f, mx, my,
+            objspace_flatness_squared, n + 1);
+        imgui__stbtt_tesselate_curve(points, num_points, mx, my,
+            (x1 + x2) / 2.0f, (y1 + y2) / 2.0f, x2, y2,
+            objspace_flatness_squared, n + 1);
     } else {
-        stbtt__add_point__e6d9c5de0c(points, (*num_points), x2, y2);
-        (*num_points) = ((*num_points) + 1);
+        stbtt__add_point__e6d9c5de0c(points, *num_points, x2, y2);
+        *num_points = *num_points + 1;
     }
     return 1;
 }

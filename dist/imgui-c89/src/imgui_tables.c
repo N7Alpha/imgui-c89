@@ -67,7 +67,6 @@ static void imgui__table_setup_column_flags(ImGuiTable *table, ImGuiTableColumn 
 
 ImDrawList *ImDrawList_ImDrawList_at__d042a13f30(ImGuiContext *imgui_c89_ctx, void *memory, ImDrawListSharedData *shared_data);
 ImFontAtlas *ImFontAtlas_ImFontAtlas_at__e0f3099eea(void *memory);
-ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *memory);
 ImGuiMultiSelectState *ImGuiMultiSelectState_ImGuiMultiSelectState_at__07be8ac108(void *memory);
 ImGuiMultiSelectTempData ImGuiMultiSelectTempData_ImGuiMultiSelectTempData_value__24d89ca7b9(ImGuiContext *imgui_c89_ctx);
 ImGuiPtrOrIndex ImGuiPtrOrIndex_ImGuiPtrOrIndex_value__0bb7038807(void *ptr);

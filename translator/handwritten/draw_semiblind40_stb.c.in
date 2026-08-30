@@ -1,0 +1,668 @@
+/* IMGUI_C89_FUNCTION_BEGIN stb_run_charstring */
+    int in_header;
+    int maskbits;
+    int subr_stack_height;
+    int sp;
+    int v;
+    int i;
+    int b0;
+    int b1;
+    int has_subrs;
+    int clear_stack;
+    float s[48];
+    float f;
+    float sumx;
+    float sumy;
+    float dx6;
+    float dy6;
+    stbtt_buf subr_stack[10];
+    stbtt_buf subrs;
+    stbtt_buf b;
+
+    in_header = 1;
+    maskbits = 0;
+    subr_stack_height = 0;
+    sp = 0;
+    has_subrs = 0;
+    subrs = info->subrs;
+    b = @CFF_INDEX_GET@(info->charstrings, glyph_index);
+    while (b.cursor < b.size) {
+        i = 0;
+        clear_stack = 1;
+        b0 = @BUF_GET8@(&b);
+        if (b0 < 32 && sp < @CFF_MIN_STACK@[b0]) return 0;
+        switch (b0) {
+        case 0x13:
+        case 0x14:
+            if (in_header) {
+                maskbits += sp / 2;
+            }
+            in_header = 0;
+            @BUF_SKIP@(&b, (maskbits + 7) / 8);
+            break;
+
+        case 0x01:
+        case 0x03:
+        case 0x12:
+        case 0x17:
+            maskbits += sp / 2;
+            break;
+
+        case 0x15:
+            in_header = 0;
+            @CS_RMOVE@(c, s[sp - 2], s[sp - 1]);
+            break;
+        case 0x04:
+            in_header = 0;
+            @CS_RMOVE@(c, 0.0f, s[sp - 1]);
+            break;
+        case 0x16:
+            in_header = 0;
+            @CS_RMOVE@(c, s[sp - 1], 0.0f);
+            break;
+
+        case 0x05:
+            for (; i + 1 < sp; i += 2) {
+                @CS_RLINE@(c, s[i], s[i + 1]);
+            }
+            break;
+
+        case 0x07:
+            goto vlineto;
+        case 0x06:
+            for (;;) {
+                if (i >= sp) break;
+                @CS_RLINE@(c, s[i], 0.0f);
+                i++;
+    vlineto:
+                if (i >= sp) break;
+                @CS_RLINE@(c, 0.0f, s[i]);
+                i++;
+            }
+            break;
+
+        case 0x1f:
+            goto hvcurveto;
+        case 0x1e:
+            for (;;) {
+                if (i + 3 >= sp) break;
+                @CS_RCURVE@(c, 0.0f, s[i], s[i + 1], s[i + 2], s[i + 3],
+                    sp - i == 5 ? s[i + 4] : 0.0f);
+                i += 4;
+    hvcurveto:
+                if (i + 3 >= sp) break;
+                @CS_RCURVE@(c, s[i], 0.0f, s[i + 1], s[i + 2],
+                    sp - i == 5 ? s[i + 4] : 0.0f, s[i + 3]);
+                i += 4;
+            }
+            break;
+
+        case 0x08:
+            for (; i + 5 < sp; i += 6) {
+                @CS_RCURVE@(c, s[i], s[i + 1], s[i + 2], s[i + 3],
+                    s[i + 4], s[i + 5]);
+            }
+            break;
+
+        case 0x18:
+            for (; i + 5 < sp - 2; i += 6) {
+                @CS_RCURVE@(c, s[i], s[i + 1], s[i + 2], s[i + 3],
+                    s[i + 4], s[i + 5]);
+            }
+            if (i + 1 >= sp) return 0;
+            @CS_RLINE@(c, s[i], s[i + 1]);
+            break;
+
+        case 0x19:
+            for (; i + 1 < sp - 6; i += 2) {
+                @CS_RLINE@(c, s[i], s[i + 1]);
+            }
+            if (i + 5 >= sp) return 0;
+            @CS_RCURVE@(c, s[i], s[i + 1], s[i + 2], s[i + 3],
+                s[i + 4], s[i + 5]);
+            break;
+
+        case 0x1a:
+        case 0x1b:
+            f = 0.0f;
+            if (sp & 1) {
+                f = s[i++];
+            }
+            for (; i + 3 < sp; i += 4) {
+                if (b0 == 0x1b) {
+                    @CS_RCURVE@(c, s[i], f, s[i + 1], s[i + 2],
+                        s[i + 3], 0.0f);
+                } else {
+                    @CS_RCURVE@(c, f, s[i], s[i + 1], s[i + 2],
+                        0.0f, s[i + 3]);
+                }
+                f = 0.0f;
+            }
+            break;
+
+        case 0x0a:
+            if (!has_subrs) {
+                if (info->fdselect.size) {
+                    subrs = @CID_GET_SUBRS@(info, glyph_index);
+                }
+                has_subrs = 1;
+            }
+            /* fall through */
+        case 0x1d:
+            v = (int)s[--sp];
+            if (subr_stack_height >= 10) return 0;
+            subr_stack[subr_stack_height++] = b;
+            b = @GET_SUBR@(b0 == 0x0a ? subrs : info->gsubrs, v);
+            if (b.size == 0) return 0;
+            b.cursor = 0;
+            clear_stack = 0;
+            break;
+
+        case 0x0b:
+            if (subr_stack_height <= 0) return 0;
+            b = subr_stack[--subr_stack_height];
+            clear_stack = 0;
+            break;
+
+        case 0x0e:
+            @CS_CLOSE@(c);
+            return 1;
+
+        case 0x0c:
+            b1 = @BUF_GET8@(&b);
+            switch (b1) {
+            case 0x22:
+                if (sp < 7) return 0;
+                @CS_RCURVE@(c, s[0], 0.0f, s[1], s[2], s[3], 0.0f);
+                @CS_RCURVE@(c, s[4], 0.0f, s[5], -s[2], s[6], 0.0f);
+                break;
+            case 0x23:
+                if (sp < 13) return 0;
+                @CS_RCURVE@(c, s[0], s[1], s[2], s[3], s[4], s[5]);
+                @CS_RCURVE@(c, s[6], s[7], s[8], s[9], s[10], s[11]);
+                break;
+            case 0x24:
+                if (sp < 9) return 0;
+                @CS_RCURVE@(c, s[0], s[1], s[2], s[3], s[4], 0.0f);
+                @CS_RCURVE@(c, s[5], 0.0f, s[6], s[7], s[8],
+                    -(s[1] + s[3] + s[7]));
+                break;
+            case 0x25:
+                if (sp < 11) return 0;
+                sumx = s[0] + s[2] + s[4] + s[6] + s[8];
+                sumy = s[1] + s[3] + s[5] + s[7] + s[9];
+                dx6 = s[10];
+                dy6 = s[10];
+                if (@ABS_FLOAT@(sumx) > @ABS_FLOAT@(sumy)) {
+                    dy6 = -sumy;
+                } else {
+                    dx6 = -sumx;
+                }
+                @CS_RCURVE@(c, s[0], s[1], s[2], s[3], s[4], s[5]);
+                @CS_RCURVE@(c, s[6], s[7], s[8], s[9], dx6, dy6);
+                break;
+            default:
+                return 0;
+            }
+            break;
+
+        default:
+            if (b0 != 255 && b0 != 28 && b0 < 32) return 0;
+            if (b0 == 255) {
+                f = (float)(stbtt_int32)@BUF_GET@(&b, 4) / 65536.0f;
+            } else {
+                @BUF_SKIP@(&b, -1);
+                f = (float)(stbtt_int16)@CFF_INT@(&b);
+            }
+            if (sp >= 48) return 0;
+            s[sp++] = f;
+            clear_stack = 0;
+            break;
+        }
+        if (clear_stack) {
+            sp = 0;
+        }
+    }
+    return 0;
+/* IMGUI_C89_FUNCTION_END stb_run_charstring */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_get_glyph_shape */
+    if (!info->cff.size) {
+        return @GET_GLYPH_SHAPE_TT@(imgui_c89_ctx, info, glyph_index, pvertices);
+    }
+    return @GET_GLYPH_SHAPE_T2@(imgui_c89_ctx, info, glyph_index, pvertices);
+/* IMGUI_C89_FUNCTION_END stb_get_glyph_shape */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_find_glyph_index */
+    stbtt_uint8 *data;
+    stbtt_uint32 index_map;
+    stbtt_uint16 format;
+    stbtt_int32 bytes;
+    stbtt_uint32 first;
+    stbtt_uint32 count;
+    stbtt_uint16 segcount;
+    stbtt_uint16 search_range;
+    stbtt_uint16 entry_selector;
+    stbtt_uint16 range_shift;
+    stbtt_uint32 end_count;
+    stbtt_uint32 search;
+    stbtt_uint16 end;
+    stbtt_uint16 offset;
+    stbtt_uint16 start;
+    stbtt_uint16 last;
+    stbtt_uint16 item;
+    stbtt_uint32 ngroups;
+    stbtt_int32 low;
+    stbtt_int32 high;
+    stbtt_int32 mid;
+    stbtt_uint32 start_char;
+    stbtt_uint32 end_char;
+    stbtt_uint32 start_glyph;
+
+    data = info->data;
+    index_map = info->index_map;
+    format = @READ_U16@(data + index_map);
+    if (format == 0) {
+        bytes = @READ_U16@(data + index_map + 2);
+        if (unicode_codepoint < bytes - 6) {
+            return *(stbtt_uint8 *)(data + index_map + 6 + unicode_codepoint);
+        }
+        return 0;
+    }
+    if (format == 6) {
+        first = @READ_U16@(data + index_map + 6);
+        count = @READ_U16@(data + index_map + 8);
+        if ((stbtt_uint32)unicode_codepoint >= first &&
+            (stbtt_uint32)unicode_codepoint < first + count) {
+            return @READ_U16@(data + index_map + 10 +
+                (unicode_codepoint - first) * 2);
+        }
+        return 0;
+    }
+    if (format == 2) {
+        @ASSERT_1519@;
+        return 0;
+    }
+    if (format == 4) {
+        segcount = @READ_U16@(data + index_map + 6) >> 1;
+        search_range = @READ_U16@(data + index_map + 8) >> 1;
+        entry_selector = @READ_U16@(data + index_map + 10);
+        range_shift = @READ_U16@(data + index_map + 12) >> 1;
+        end_count = index_map + 14;
+        search = end_count;
+        if (unicode_codepoint > 0xffff) return 0;
+        if (unicode_codepoint >= @READ_U16@(data + search + range_shift * 2)) {
+            search += range_shift * 2;
+        }
+        search -= 2;
+        while (entry_selector) {
+            search_range >>= 1;
+            end = @READ_U16@(data + search + search_range * 2);
+            if (unicode_codepoint > end) {
+                search += search_range * 2;
+            }
+            --entry_selector;
+        }
+        search += 2;
+        item = (stbtt_uint16)((search - end_count) >> 1);
+        start = @READ_U16@(data + index_map + 14 + segcount * 2 + 2 + 2 * item);
+        last = @READ_U16@(data + end_count + 2 * item);
+        if (unicode_codepoint < start || unicode_codepoint > last) return 0;
+        offset = @READ_U16@(data + index_map + 14 + segcount * 6 + 2 + 2 * item);
+        if (offset == 0) {
+            return (stbtt_uint16)(unicode_codepoint +
+                @READ_S16@(data + index_map + 14 + segcount * 4 + 2 + 2 * item));
+        }
+        return @READ_U16@(data + offset + (unicode_codepoint - start) * 2 +
+            index_map + 14 + segcount * 6 + 2 + 2 * item);
+    }
+    if (format == 12 || format == 13) {
+        ngroups = @READ_U32@(data + index_map + 12);
+        low = 0;
+        high = (stbtt_int32)ngroups;
+        while (low < high) {
+            mid = low + ((high - low) >> 1);
+            start_char = @READ_U32@(data + index_map + 16 + mid * 12);
+            end_char = @READ_U32@(data + index_map + 16 + mid * 12 + 4);
+            if ((stbtt_uint32)unicode_codepoint < start_char) {
+                high = mid;
+            } else if ((stbtt_uint32)unicode_codepoint > end_char) {
+                low = mid + 1;
+            } else {
+                start_glyph = @READ_U32@(data + index_map + 16 + mid * 12 + 8);
+                if (format == 12) {
+                    return start_glyph + unicode_codepoint - start_char;
+                }
+                return start_glyph;
+            }
+        }
+        return 0;
+    }
+    @ASSERT_1590@;
+    return 0;
+/* IMGUI_C89_FUNCTION_END stb_find_glyph_index */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_sort_edges_quicksort */
+    stbtt_edge t;
+    int c01;
+    int c12;
+    int c;
+    int m;
+    int i;
+    int j;
+    int z;
+
+    while (n > 12) {
+        m = n >> 1;
+        c01 = p[0].y0 < p[m].y0;
+        c12 = p[m].y0 < p[n - 1].y0;
+        if (c01 != c12) {
+            c = p[0].y0 < p[n - 1].y0;
+            z = c == c12 ? 0 : n - 1;
+            t = p[z];
+            p[z] = p[m];
+            p[m] = t;
+        }
+        t = p[0];
+        p[0] = p[m];
+        p[m] = t;
+        i = 1;
+        j = n - 1;
+        for (;;) {
+            while (p[i].y0 < p[0].y0) {
+                ++i;
+            }
+            while (p[0].y0 < p[j].y0) {
+                --j;
+            }
+            if (i >= j) break;
+            t = p[i];
+            p[i] = p[j];
+            p[j] = t;
+            ++i;
+            --j;
+        }
+        if (j < n - i) {
+            @SORT_EDGES_QUICKSORT@(p, j);
+            p += i;
+            n -= i;
+        } else {
+            @SORT_EDGES_QUICKSORT@(p + i, n - i);
+            n = j;
+        }
+    }
+/* IMGUI_C89_FUNCTION_END stb_sort_edges_quicksort */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_handle_clipped_edge */
+    if (y0 == y1) return;
+    if (!(y0 < y1)) {
+        @ASSERT_3036@;
+    }
+    if (!(e->sy <= e->ey)) {
+        @ASSERT_3037@;
+    }
+    if (y0 > e->ey) return;
+    if (y1 < e->sy) return;
+    if (y0 < e->sy) {
+        x0 += (x1 - x0) * (e->sy - y0) / (y1 - y0);
+        y0 = e->sy;
+    }
+    if (y1 > e->ey) {
+        x1 += (x1 - x0) * (e->ey - y1) / (y1 - y0);
+        y1 = e->ey;
+    }
+    if (x0 == x) {
+        if (!(x1 <= x + 1)) {
+            @ASSERT_3050@;
+        }
+    } else if (x0 == x + 1) {
+        if (!(x1 >= x)) {
+            @ASSERT_3052@;
+        }
+    } else if (x0 <= x) {
+        if (!(x1 <= x)) {
+            @ASSERT_3054@;
+        }
+    } else if (x0 >= x + 1) {
+        if (!(x1 >= x + 1)) {
+            @ASSERT_3056@;
+        }
+    } else {
+        if (!(x1 >= x && x1 <= x + 1)) {
+            @ASSERT_3058@;
+        }
+    }
+    if (x0 <= x && x1 <= x) {
+        scanline[x] += e->direction * (y1 - y0);
+    } else if (x0 >= x + 1 && x1 >= x + 1) {
+    } else {
+        if (!(x0 >= x && x0 <= x + 1 && x1 >= x && x1 <= x + 1)) {
+            @ASSERT_3065@;
+        }
+        scanline[x] += e->direction * (y1 - y0) *
+            (1.0f - ((x0 - x) + (x1 - x)) / 2.0f);
+    }
+/* IMGUI_C89_FUNCTION_END stb_handle_clipped_edge */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_dict_get_ints */
+    int i;
+    stbtt_buf operands;
+
+    operands = @DICT_GET@(b, key);
+    for (i = 0; i < outcount && operands.cursor < operands.size; i++) {
+        out[i] = @CFF_INT@(&operands);
+    }
+/* IMGUI_C89_FUNCTION_END stb_dict_get_ints */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_get_glyph_bitmap_box_subpixel */
+    int x0;
+    int y0;
+    int x1;
+    int y1;
+
+    x0 = 0;
+    y0 = 0;
+    if (!@GET_GLYPH_BOX@(font, glyph, &x0, &y0, &x1, &y1)) {
+        if (ix0 != NULL) {
+            *ix0 = 0;
+        }
+        if (iy0 != NULL) {
+            *iy0 = 0;
+        }
+        if (ix1 != NULL) {
+            *ix1 = 0;
+        }
+        if (iy1 != NULL) {
+            *iy1 = 0;
+        }
+    } else {
+        if (ix0 != NULL) {
+            *ix0 = (int)@FLOOR@(x0 * scale_x + shift_x);
+        }
+        if (iy0 != NULL) {
+            *iy0 = (int)@FLOOR@(-y1 * scale_y + shift_y);
+        }
+        if (ix1 != NULL) {
+            *ix1 = (int)@CEIL@(x1 * scale_x + shift_x);
+        }
+        if (iy1 != NULL) {
+            *iy1 = (int)@CEIL@(-y0 * scale_y + shift_y);
+        }
+    }
+/* IMGUI_C89_FUNCTION_END stb_get_glyph_bitmap_box_subpixel */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_tesselate_cubic */
+    float dx0;
+    float dy0;
+    float dx1;
+    float dy1;
+    float dx2;
+    float dy2;
+    float dx;
+    float dy;
+    float longlen;
+    float shortlen;
+    float flatness_squared;
+    float x01;
+    float y01;
+    float x12;
+    float y12;
+    float x23;
+    float y23;
+    float xa;
+    float ya;
+    float xb;
+    float yb;
+    float mx;
+    float my;
+
+    dx0 = x1 - x0;
+    dy0 = y1 - y0;
+    dx1 = x2 - x1;
+    dy1 = y2 - y1;
+    dx2 = x3 - x2;
+    dy2 = y3 - y2;
+    dx = x3 - x0;
+    dy = y3 - y0;
+    longlen = @SQRT@(dx0 * dx0 + dy0 * dy0) +
+        @SQRT@(dx1 * dx1 + dy1 * dy1) +
+        @SQRT@(dx2 * dx2 + dy2 * dy2);
+    shortlen = @SQRT@(dx * dx + dy * dy);
+    flatness_squared = longlen * longlen - shortlen * shortlen;
+    if (n > 16) return;
+    if (flatness_squared > objspace_flatness_squared) {
+        x01 = (x0 + x1) / 2.0f;
+        y01 = (y0 + y1) / 2.0f;
+        x12 = (x1 + x2) / 2.0f;
+        y12 = (y1 + y2) / 2.0f;
+        x23 = (x2 + x3) / 2.0f;
+        y23 = (y2 + y3) / 2.0f;
+        xa = (x01 + x12) / 2.0f;
+        ya = (y01 + y12) / 2.0f;
+        xb = (x12 + x23) / 2.0f;
+        yb = (y12 + y23) / 2.0f;
+        mx = (xa + xb) / 2.0f;
+        my = (ya + yb) / 2.0f;
+        @TESSELATE_CUBIC@(points, num_points, x0, y0, x01, y01, xa, ya,
+            mx, my, objspace_flatness_squared, n + 1);
+        @TESSELATE_CUBIC@(points, num_points, mx, my, xb, yb, x23, y23,
+            x3, y3, objspace_flatness_squared, n + 1);
+    } else {
+        @ADD_POINT@(points, *num_points, x3, y3);
+        *num_points = *num_points + 1;
+    }
+/* IMGUI_C89_FUNCTION_END stb_tesselate_cubic */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_cff_index_get */
+    int count;
+    int offsize;
+    int start;
+    int end;
+
+    @BUF_SEEK@(&b, 0);
+    count = @BUF_GET@(&b, 2);
+    offsize = @BUF_GET8@(&b);
+    if (!(i >= 0 && i < count)) {
+        @ASSERT_1271@;
+    }
+    if (!(offsize >= 1 && offsize <= 4)) {
+        @ASSERT_1272@;
+    }
+    @BUF_SKIP@(&b, i * offsize);
+    start = @BUF_GET@(&b, offsize);
+    end = @BUF_GET@(&b, offsize);
+    return @BUF_RANGE@(&b, 2 + (count + 1) * offsize + start, end - start);
+/* IMGUI_C89_FUNCTION_END stb_cff_index_get */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_cff_int */
+    int b0;
+
+    b0 = @BUF_GET8@(b);
+    if (b0 >= 32 && b0 <= 246) return b0 - 139;
+    if (b0 >= 247 && b0 <= 250) {
+        return (b0 - 247) * 256 + @BUF_GET8@(b) + 108;
+    }
+    if (b0 >= 251 && b0 <= 254) {
+        return -(b0 - 251) * 256 - @BUF_GET8@(b) - 108;
+    }
+    if (b0 == 28) return @BUF_GET@(b, 2);
+    if (b0 == 29) return @BUF_GET@(b, 4);
+    @ASSERT_1217@;
+    return 0;
+/* IMGUI_C89_FUNCTION_END stb_cff_int */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_get_subrs */
+    stbtt_uint32 subrsoff;
+    stbtt_uint32 private_loc[2];
+    stbtt_buf pdict;
+
+    subrsoff = 0;
+    private_loc[0] = 0;
+    private_loc[1] = 0;
+    @DICT_GET_INTS@(&fontdict, 18, 2, private_loc);
+    if (!private_loc[1] || !private_loc[0]) return @NEW_BUF@(NULL, 0);
+    pdict = @BUF_RANGE@(&cff, private_loc[1], private_loc[0]);
+    @DICT_GET_INTS@(&pdict, 19, 1, &subrsoff);
+    if (!subrsoff) return @NEW_BUF@(NULL, 0);
+    @BUF_SEEK@(&cff, private_loc[1] + subrsoff);
+    return @CFF_GET_INDEX@(&cff);
+/* IMGUI_C89_FUNCTION_END stb_get_subrs */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_tesselate_curve */
+    float mx;
+    float my;
+    float dx;
+    float dy;
+
+    mx = (x0 + 2.0f * x1 + x2) / 4.0f;
+    my = (y0 + 2.0f * y1 + y2) / 4.0f;
+    dx = (x0 + x2) / 2.0f - mx;
+    dy = (y0 + y2) / 2.0f - my;
+    if (n > 16) return 1;
+    if (dx * dx + dy * dy > objspace_flatness_squared) {
+        @TESSELATE_CURVE@(points, num_points, x0, y0,
+            (x0 + x1) / 2.0f, (y0 + y1) / 2.0f, mx, my,
+            objspace_flatness_squared, n + 1);
+        @TESSELATE_CURVE@(points, num_points, mx, my,
+            (x1 + x2) / 2.0f, (y1 + y2) / 2.0f, x2, y2,
+            objspace_flatness_squared, n + 1);
+    } else {
+        @ADD_POINT@(points, *num_points, x2, y2);
+        *num_points = *num_points + 1;
+    }
+    return 1;
+/* IMGUI_C89_FUNCTION_END stb_tesselate_curve */
+
+/* IMGUI_C89_FUNCTION_BEGIN stb_adler32 */
+    const unsigned long adler_mod = 65521;
+    unsigned long s1;
+    unsigned long s2;
+    unsigned long blocklen;
+    unsigned long i;
+
+    s1 = adler32 & 0xffff;
+    s2 = adler32 >> 16;
+    blocklen = buflen % 5552;
+    while (buflen) {
+        for (i = 0; i + 7 < blocklen; i += 8) {
+            s1 += buffer[0]; s2 += s1;
+            s1 += buffer[1]; s2 += s1;
+            s1 += buffer[2]; s2 += s1;
+            s1 += buffer[3]; s2 += s1;
+            s1 += buffer[4]; s2 += s1;
+            s1 += buffer[5]; s2 += s1;
+            s1 += buffer[6]; s2 += s1;
+            s1 += buffer[7]; s2 += s1;
+            buffer += 8;
+        }
+        for (; i < blocklen; ++i) {
+            s1 += *buffer++;
+            s2 += s1;
+        }
+        s1 %= adler_mod;
+        s2 %= adler_mod;
+        buflen -= blocklen;
+        blocklen = 5552;
+    }
+    return (unsigned int)(s2 << 16) + (unsigned int)s1;
+/* IMGUI_C89_FUNCTION_END stb_adler32 */

@@ -478,7 +478,6 @@ static ImVec4 ImRect_ToVec4__80b1b7e70a(ImRect *self);
 static void ImRect_TranslateX__028712fc17(ImRect *self, float dx);
 static void ImRect_TranslateY__230c488194(ImRect *self, float dy);
 static void ImVec1_ImVec1__633ef4f5cc(ImVec1 *self);
-static void ImVec2i_ImVec2i__14dc273a24(ImVec2i *self);
 static void ImVec2ih_ImVec2ih__f743980f8f(ImVec2ih *self);
 static void ImVec2ih_ImVec2ih__940d7dadd2(ImVec2ih *self, const ImVec2 * rhs);
 static void ImVec2ih_ImVec2ih__3d812f53ee(ImVec2ih *self, short _x, short _y);
@@ -488,7 +487,6 @@ static ImDrawCmd * ImVector_ImDrawCmd__back__9e12f0cfc2(ImVector_ImDrawCmd *self
 static const ImDrawCmd * ImVector_ImDrawCmd__back__76decd74fd(ImVector_ImDrawCmd *self);
 static const ImDrawCmd * ImVector_ImDrawCmd__begin__f5fe5d0a62(ImVector_ImDrawCmd *self);
 static void ImVector_ImDrawCmd__push_front__f82108fe4a(ImGuiContext *imgui_c89_ctx, ImVector_ImDrawCmd *self, const ImDrawCmd * v);
-static void ImVector_ImFontAtlasRectEntry__ImVector__da829d86a5(ImVector_ImFontAtlasRectEntry *self);
 static ImFontAtlasRectEntry * ImVector_ImFontAtlasRectEntry__begin__d0e7c70e64(ImVector_ImFontAtlasRectEntry *self);
 static ImFontAtlasRectEntry * ImVector_ImFontAtlasRectEntry__end__1754b36f57(ImVector_ImFontAtlasRectEntry *self);
 static int ImVector_ImFontAtlasRectEntry__index_from_ptr__6330f5b866(ImVector_ImFontAtlasRectEntry *self, const ImFontAtlasRectEntry * it);
@@ -637,9 +635,10 @@ static void ImVector_ImTextureRect__ImVector__4a9782721e(ImVector_ImTextureRect 
 static void ImVector_ImTextureRect__dtor_ImVector__e3e8dcd7b5(ImGuiContext *imgui_c89_ctx, ImVector_ImTextureRect *self);
 static ImVec4 * ImVector_ImVec4__back__4bb95f8b77(ImVector_ImVec4 *self);
 static const ImVec4 * ImVector_ImVec4__back__08b2cba266(ImVector_ImVec4 *self);
-static void ImVector_stbrp_node__ImVector__d8f4cb206a(ImVector_stbrp_node *self);
+static void ImVector_ImDrawList____ImVector__40035d1030(ImVector_ImDrawList_ptr *self);
 static unsigned char ImVector_ImDrawList____empty__3c6fcdcbc7(ImVector_ImDrawList_ptr *self);
 static void ImVector_ImDrawList____resize__170927dbe5(ImGuiContext *imgui_c89_ctx, ImVector_ImDrawList_ptr *self, int new_size);
+static ImFont * * ImVector_ImFont____operator____0cce6192b3(ImVector_ImFont_ptr *self, int i);
 static void ImVector_ImFontAtlas____ImVector__b22ffeb0d1(ImVector_ImFontAtlas_ptr *self);
 static ImFontAtlas ** ImVector_ImFontAtlas____begin__9e48a97069(ImVector_ImFontAtlas_ptr *self);
 static ImFontAtlas ** ImVector_ImFontAtlas____end__5b2cfe8a63(ImVector_ImFontAtlas_ptr *self);
@@ -648,7 +647,6 @@ static ImFontAtlas ** ImVector_ImFontAtlas____find__84fa71018a(ImVector_ImFontAt
 static unsigned char ImVector_ImFontAtlas____find_erase__b636e397c6(ImVector_ImFontAtlas_ptr *self, ImFontAtlas *const * v);
 static void ImVector_ImFontAtlas____push_back__1efd58fafe(ImGuiContext *imgui_c89_ctx, ImVector_ImFontAtlas_ptr *self, ImFontAtlas *const * v);
 static void ImVector_ImFontAtlas____dtor_ImVector__5228b43699(ImGuiContext *imgui_c89_ctx, ImVector_ImFontAtlas_ptr *self);
-static void ImVector_ImFontBaked____ImVector__807d7b9d50(ImVector_ImFontBaked_ptr *self);
 static ImFontConfig *const * ImVector_ImFontConfig____operator____9f17293841(ImVector_ImFontConfig_ptr *self, int i);
 static void ImVector_ImGuiViewportP____ImVector__857599d901(ImVector_ImGuiViewportP_ptr *self);
 static ImGuiViewportP ** ImVector_ImGuiViewportP____begin__134ec71aef(ImVector_ImGuiViewportP_ptr *self);
@@ -675,6 +673,8 @@ static void ImVector_ImGuiWindow____reserve__604ace7022(ImGuiContext *imgui_c89_
 static void ImVector_ImGuiWindow____resize__9ae44f8796(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiWindow_ptr *self, int new_size);
 static void ImVector_ImGuiWindow____swap__0acefa6e3d(ImVector_ImGuiWindow_ptr *self, ImVector_ImGuiWindow_ptr * rhs);
 static void ImVector_ImGuiWindow____dtor_ImVector__e780d35da8(ImGuiContext *imgui_c89_ctx, ImVector_ImGuiWindow_ptr *self);
+static ImTextureData ** ImVector_ImTextureData____begin__5f590fe7fe(ImVector_ImTextureData_ptr *self);
+static ImTextureData ** ImVector_ImTextureData____end__3efe30f1db(ImVector_ImTextureData_ptr *self);
 static ImTextureData ** ImVector_ImTextureData____erase__6e199e4060(ImVector_ImTextureData_ptr *self, ImTextureData *const * it);
 static ImTextureData ** ImVector_ImTextureData____find__b4bf908e7b(ImVector_ImTextureData_ptr *self, ImTextureData *const * v);
 static unsigned char ImVector_ImTextureData____find_erase__1716c03711(ImVector_ImTextureData_ptr *self, ImTextureData *const * v);
@@ -838,7 +838,6 @@ static int ImGui_UpdateWindowManualResize__44f900090b(ImGuiContext *imgui_c89_ct
 static ImColor ImColor_ImColor_value__80c1c36ab0(float r, float g, float b, float a);
 ImDrawList *ImDrawList_ImDrawList_at__d042a13f30(ImGuiContext *imgui_c89_ctx, void *memory, ImDrawListSharedData * shared_data);
 ImFontAtlas *ImFontAtlas_ImFontAtlas_at__e0f3099eea(void *memory);
-ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *memory);
 static ImGuiContext *ImGuiContext_ImGuiContext_at__57017b82b5(ImGuiContext *imgui_c89_ctx, void *memory, ImFontAtlas * shared_font_atlas);
 static ImGuiKeyRoutingData ImGuiKeyRoutingData_ImGuiKeyRoutingData_value__29506258e3(void);
 static ImGuiListClipperData ImGuiListClipperData_ImGuiListClipperData_value__e71b8bf02a(void);
@@ -1006,13 +1005,6 @@ static ImColor ImColor_ImColor_value__80c1c36ab0(float r, float g, float b, floa
 {
     ImColor result;
     ImColor_ImColor__32afc6d5c2(&result, r, g, b, a);
-    return result;
-}
-
-ImFontAtlasBuilder *ImFontAtlasBuilder_ImFontAtlasBuilder_at__ef8f71b6b3(void *memory)
-{
-    ImFontAtlasBuilder *result = (ImFontAtlasBuilder *)memory;
-    ImFontAtlasBuilder_ImFontAtlasBuilder__dc97765d12(result);
     return result;
 }
 
@@ -14452,28 +14444,6 @@ void imgui_font_atlas_set_tex_id_texture_id(ImFontAtlas *self, ImTextureID id)
     self->imgui_c89_unnamed_50ed8dbe.TexRef._TexData->TexID = id;
 }
 
-IMGUI_C89_NOINLINE void ImFontAtlasBuilder_ImFontAtlasBuilder__dc97765d12(ImFontAtlasBuilder *self)
-{
-    memset(self, 0, sizeof(*self));
-    memset(&self->PackContext, 0, sizeof(self->PackContext));
-    ImVector_stbrp_node__ImVector__d8f4cb206a(&self->PackNodes);
-    ImVector_ImTextureRect__ImVector__4a9782721e(&self->Rects);
-    ImVector_ImFontAtlasRectEntry__ImVector__da829d86a5(&self->RectsIndex);
-    ImVector_unsigned_char__ImVector__dd9c86aa77(&self->TempBuffer);
-    ImVec2i_ImVec2i__14dc273a24(&self->MaxRectSize);
-    ImVec2i_ImVec2i__14dc273a24(&self->MaxRectBounds);
-    memset(&self->BakedPool, 0, sizeof(self->BakedPool));
-    self->BakedPool.Size = 0;
-    self->BakedPool.Capacity = 0;
-    ImVector_ImFontBaked____ImVector__807d7b9d50(&self->BakedPool.Blocks);
-    memset(&self->BakedMap, 0, sizeof(self->BakedMap));
-    ImVector_ImGuiStoragePair__ImVector__a22baf84e2(&self->BakedMap.Data);
-    memset(((void *)(self)), 0, sizeof((*self)));
-    self->FrameCount = (-1);
-    self->RectsIndexFreeListStart = (-1);
-    self->PackIdMouseCursors = (self->PackIdLinesTexData = (-1));
-}
-
 void ImFontAtlasRect_ImFontAtlasRect__a33e8f2147(ImFontAtlasRect *self)
 {
     ImVec2_ImVec2__22b45734f5(&self->uv0);
@@ -17118,12 +17088,6 @@ float ImVec2_operator____dddfb65966(ImVec2 *self, size_t idx)
     return ((const float *)(((const void *)(((const char *)(self))))))[idx];
 }
 
-static void ImVec2i_ImVec2i__14dc273a24(ImVec2i *self)
-{
-    self->x = 0;
-    self->y = 0;
-}
-
 void ImVec2i_ImVec2i__9d63c0311f(ImVec2i *self, int _x, int _y)
 {
     self->x = _x;
@@ -17238,12 +17202,6 @@ void ImVector_ImDrawVert__reserve__2cccf7446f(ImGuiContext *imgui_c89_ctx, ImVec
 {
     self->Data = imgui_c89_vector_reserve(imgui_c89_ctx, self->Data, self->Size,
         &self->Capacity, new_capacity, sizeof(*self->Data), 0);
-}
-
-static void ImVector_ImFontAtlasRectEntry__ImVector__da829d86a5(ImVector_ImFontAtlasRectEntry *self)
-{
-    self->Size = (self->Capacity = 0);
-    self->Data = 0;
 }
 
 static ImFontAtlasRectEntry * ImVector_ImFontAtlasRectEntry__begin__d0e7c70e64(ImVector_ImFontAtlasRectEntry *self)
@@ -18243,13 +18201,7 @@ static const ImVec4 * ImVector_ImVec4__back__08b2cba266(ImVector_ImVec4 *self)
         self->Data, self->Size, sizeof(*self->Data), 2272);
 }
 
-static void ImVector_stbrp_node__ImVector__d8f4cb206a(ImVector_stbrp_node *self)
-{
-    self->Size = (self->Capacity = 0);
-    self->Data = 0;
-}
-
-void ImVector_ImDrawList____ImVector__40035d1030(ImVector_ImDrawList_ptr *self)
+static void ImVector_ImDrawList____ImVector__40035d1030(ImVector_ImDrawList_ptr *self)
 {
     self->Size = (self->Capacity = 0);
     self->Data = 0;
@@ -18303,7 +18255,7 @@ ImFont ** ImVector_ImFont____end__43d2d7f52c(ImVector_ImFont_ptr *self)
     return self->Data == 0 ? 0 : self->Data + self->Size;
 }
 
-ImFont * * ImVector_ImFont____operator____0cce6192b3(ImVector_ImFont_ptr *self, int i)
+static ImFont * * ImVector_ImFont____operator____0cce6192b3(ImVector_ImFont_ptr *self, int i)
 {
     return (ImFont * *)imgui_c89_vector_at(
         self->Data, self->Size, i, sizeof(*self->Data), 2262);
@@ -18370,12 +18322,6 @@ static void ImVector_ImFontAtlas____dtor_ImVector__5228b43699(ImGuiContext *imgu
 {
     imgui_c89_vector_destroy(
         imgui_c89_ctx, self->Data);
-}
-
-static void ImVector_ImFontBaked____ImVector__807d7b9d50(ImVector_ImFontBaked_ptr *self)
-{
-    self->Size = (self->Capacity = 0);
-    self->Data = 0;
 }
 
 ImFontBaked * * ImVector_ImFontBaked____operator____551016c6b0(ImVector_ImFontBaked_ptr *self, int i)
@@ -18591,12 +18537,12 @@ void ImVector_ImTextureData____ImVector__ad4479a99e(ImVector_ImTextureData_ptr *
     self->Data = 0;
 }
 
-ImTextureData ** ImVector_ImTextureData____begin__5f590fe7fe(ImVector_ImTextureData_ptr *self)
+static ImTextureData ** ImVector_ImTextureData____begin__5f590fe7fe(ImVector_ImTextureData_ptr *self)
 {
     return self->Data;
 }
 
-ImTextureData ** ImVector_ImTextureData____end__3efe30f1db(ImVector_ImTextureData_ptr *self)
+static ImTextureData ** ImVector_ImTextureData____end__3efe30f1db(ImVector_ImTextureData_ptr *self)
 {
     return self->Data == 0 ? 0 : self->Data + self->Size;
 }

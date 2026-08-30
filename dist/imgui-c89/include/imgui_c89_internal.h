@@ -3461,7 +3461,6 @@ void imgui__im_font_init(ImFont *self);
 void imgui__im_font_destroy(ImGuiContext *imgui_c89_ctx, ImFont *self);
 void imgui__im_font_atlas_init(ImFontAtlas *self);
 void imgui__im_font_atlas_destroy(ImGuiContext *imgui_c89_ctx, ImFontAtlas *self);
-void ImFontAtlasBuilder_ImFontAtlasBuilder__dc97765d12(ImFontAtlasBuilder *self);
 void ImFontAtlasRect_ImFontAtlasRect__a33e8f2147(ImFontAtlasRect *self);
 void imgui__im_font_baked_init(ImFontBaked *self);
 void imgui__im_font_config_init(ImFontConfig *self);
@@ -4844,7 +4843,6 @@ void ImVector_stbrp_node__shrink__7bbe50bab5(ImVector_stbrp_node *self, int new_
 int ImVector_stbrp_node__size__a34493cdd7(ImVector_stbrp_node *self);
 int ImVector_stbrp_node__size_in_bytes__da627bad6c(ImVector_stbrp_node *self);
 void ImVector_stbrp_node__swap__e76f6b3d62(ImVector_stbrp_node *self, ImVector_stbrp_node * rhs);
-void ImVector_ImDrawList____ImVector__40035d1030(ImVector_ImDrawList_ptr *self);
 void ImVector_ImDrawList____ImVector__c7875b66c9(ImVector_ImDrawList_ptr *self, const ImVector_ImDrawList_ptr * src);
 int ImVector_ImDrawList_____grow_capacity__440e116c08(ImVector_ImDrawList_ptr *self, int sz);
 ImDrawList * * ImVector_ImDrawList____back__3722ae1c59(ImVector_ImDrawList_ptr *self);
@@ -4933,7 +4931,6 @@ int ImVector_ImFont____index_from_ptr__d0e2b6c963(ImVector_ImFont_ptr *self, ImF
 ImFont ** ImVector_ImFont____insert__0f2a7776e9(ImVector_ImFont_ptr *self, ImFont *const * it, ImFont *const * v);
 int ImVector_ImFont____max_size__06472b44ac(ImVector_ImFont_ptr *self);
 ImVector_ImFont_ptr * ImVector_ImFont____operator___1d26cab799(ImVector_ImFont_ptr *self, const ImVector_ImFont_ptr * src);
-ImFont * * ImVector_ImFont____operator____0cce6192b3(ImVector_ImFont_ptr *self, int i);
 ImFont *const * ImVector_ImFont____operator____392d365733(ImVector_ImFont_ptr *self, int i);
 void ImVector_ImFont____push_front__ebe166cdce(ImVector_ImFont_ptr *self, ImFont *const * v);
 void ImVector_ImFont____reserve_discard__6ff07747da(ImVector_ImFont_ptr *self, int new_capacity);
@@ -5104,13 +5101,11 @@ void ImVector_ImTextureData____ImVector__ad4479a99e(ImVector_ImTextureData_ptr *
 void ImVector_ImTextureData____ImVector__d2c6906057(ImVector_ImTextureData_ptr *self, const ImVector_ImTextureData_ptr * src);
 ImTextureData * * ImVector_ImTextureData____back__2deba8eb32(ImVector_ImTextureData_ptr *self);
 ImTextureData *const * ImVector_ImTextureData____back__735970ceeb(ImVector_ImTextureData_ptr *self);
-ImTextureData ** ImVector_ImTextureData____begin__5f590fe7fe(ImVector_ImTextureData_ptr *self);
 ImTextureData *const * ImVector_ImTextureData____begin__6b9e054c88(ImVector_ImTextureData_ptr *self);
 int ImVector_ImTextureData____capacity__e9cacd69ba(ImVector_ImTextureData_ptr *self);
 void ImVector_ImTextureData____clear_destruct__78721a0cb2(ImVector_ImTextureData_ptr *self);
 unsigned char ImVector_ImTextureData____contains__aa0cb5ba70(ImVector_ImTextureData_ptr *self, ImTextureData *const * v);
 unsigned char ImVector_ImTextureData____empty__b7ecd70fea(ImVector_ImTextureData_ptr *self);
-ImTextureData ** ImVector_ImTextureData____end__3efe30f1db(ImVector_ImTextureData_ptr *self);
 ImTextureData *const * ImVector_ImTextureData____end__b80c05188b(ImVector_ImTextureData_ptr *self);
 ImTextureData ** ImVector_ImTextureData____erase__c5406a2ec3(ImVector_ImTextureData_ptr *self, ImTextureData *const * it, ImTextureData *const * it_last);
 ImTextureData ** ImVector_ImTextureData____erase_unsorted__a6adc96b22(ImVector_ImTextureData_ptr *self, ImTextureData *const * it);
